@@ -1,0 +1,418 @@
+import React, { useState } from 'react';
+import { PoliceEmblem, StateEmblemOfIndia, RunForHerBadge } from './Emblems';
+import { Shield, Award, MapPin, UserPlus, FileCheck, Menu, X, Heart, Phone, HelpCircle, Sun, CloudRain } from 'lucide-react';
+
+export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, activePage = 'home', onNavigate, totalRegistered = 18450 }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [fontSize, setFontSize] = useState("normal"); // "normal", "large", "xlarge"
+  const [lang, setLang] = useState("hi"); // "hi" or "en"
+
+  const handleNav = (pageId) => {
+    setMobileMenuOpen(false);
+    if (onNavigate) {
+      onNavigate(pageId);
+    } else {
+      const element = document.getElementById(pageId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
+  const handleFontChange = (size) => {
+    setFontSize(size);
+    if (size === "large") document.documentElement.style.fontSize = "17px";
+    else if (size === "xlarge") document.documentElement.style.fontSize = "18px";
+    else document.documentElement.style.fontSize = "16px";
+  };
+
+  return (
+    <header style={{
+      position: 'sticky',
+      top: 0,
+      zIndex: 1000,
+      background: '#ffffff',
+      boxShadow: 'var(--shadow-md)',
+      width: '100%'
+    }}>
+      {/* 1. Indian National Flag Tricolor Ribbon */}
+      <div className="tiranga-line"></div>
+
+      {/* 2. Official Government Top Utility Bar */}
+      <div style={{
+        background: '#0a1c3d',
+        color: '#f8fafc',
+        fontSize: '0.78rem',
+        padding: '5px 0',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+      }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+          {/* Left: Govt Identity */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontWeight: 800, color: '#fde68a', letterSpacing: '0.03em' }}>
+              राजस्थान सरकार | GOVERNMENT OF RAJASTHAN
+            </span>
+          </div>
+
+          {/* Right: Emergency Helpline, Accessibility, Nodal Admin */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#fca5a5', fontWeight: 700 }}>
+              <Phone size={12} />
+              <span>महिला हेल्पलाइन: 1090 / 112</span>
+            </div>
+
+            {/* Accessibility Font Size Controls */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} className="d-tablet-inline">
+              <span style={{ color: '#94a3b8', fontSize: '0.72rem' }}>Font:</span>
+              <button 
+                onClick={() => handleFontChange("normal")}
+                style={{ background: fontSize === "normal" ? '#1e3a8a' : 'transparent', color: '#fff', border: '1px solid #3b82f6', borderRadius: '2px', padding: '1px 5px', fontSize: '0.68rem' }}
+              >
+                A
+              </button>
+              <button 
+                onClick={() => handleFontChange("large")}
+                style={{ background: fontSize === "large" ? '#1e3a8a' : 'transparent', color: '#fff', border: '1px solid #3b82f6', borderRadius: '2px', padding: '1px 5px', fontSize: '0.72rem', fontWeight: 700 }}
+              >
+                A+
+              </button>
+            </div>
+
+            {/* Language Switcher */}
+            <button
+              onClick={() => setLang(lang === 'hi' ? 'en' : 'hi')}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: '#fde68a',
+                border: '1px solid rgba(253, 230, 138, 0.4)',
+                borderRadius: '3px',
+                padding: '2px 8px',
+                fontSize: '0.72rem',
+                fontWeight: 700
+              }}
+            >
+              {lang === 'hi' ? 'English' : 'हिन्दी'}
+            </button>
+
+            {/* Nodal Desk button */}
+            <button
+              onClick={onOpenAdmin}
+              title="पुलिस कमान डेस्क (Shortcut: Ctrl + Shift + A)"
+              style={{
+                background: 'rgba(217, 119, 6, 0.25)',
+                color: '#fef3c7',
+                border: '1px solid #d97706',
+                padding: '2px 10px',
+                borderRadius: '4px',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              <Shield size={11} /> Nodal Desk (2FA)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Main Government Branding Banner (Police Header) */}
+      <div style={{
+        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+        borderBottom: '2px solid var(--police-gold-500)',
+        padding: '12px 0'
+      }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
+          
+          {/* Official Emblem + Rajasthan Police Crest + Headings */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }} onClick={() => handleNav('home')}>
+            {/* State Emblem of India */}
+            <div className="d-tablet-inline">
+              <StateEmblemOfIndia size={48} />
+            </div>
+
+            {/* Divider */}
+            <div style={{ width: '1px', height: '48px', background: 'var(--border-medium)' }} className="d-tablet-inline"></div>
+
+            {/* Official Rajasthan Police Emblem with Vijay Stambh */}
+            <PoliceEmblem size={56} />
+
+            <div>
+              {/* Devanagari Primary Heading */}
+              <div style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: 'clamp(1.15rem, 2.5vw, 1.7rem)',
+                fontWeight: 900,
+                color: 'var(--police-navy-900)',
+                lineHeight: 1.1,
+                letterSpacing: '0.01em'
+              }}>
+                राजस्थान पुलिस मैराथन 2026
+              </div>
+
+              {/* English Sub-Heading & Tagline */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
+                <span style={{
+                  fontSize: 'clamp(0.85rem, 1.8vw, 1.05rem)',
+                  fontWeight: 900,
+                  color: 'var(--crimson-600)',
+                  letterSpacing: '0.04em'
+                }}>
+                  RUN FOR HER
+                </span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--police-gold-700)', fontWeight: 800 }}>
+                  ★ सेवार्थ कटिबद्धता ★
+                </span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }} className="d-tablet-inline">
+                  • Every Step for Her Safety
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Header: Cause Badge & Quick Registration */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Dignitary Authority Callout */}
+            <div style={{ textAlign: 'right', display: 'none' }} className="d-desktop-block">
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>आयोजन नेतृत्व</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>राजीव शर्मा (IPS), DGP</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--police-gold-700)', fontWeight: 700 }}>महानिदेशक पुलिस, राजस्थान</div>
+            </div>
+
+            {/* Bulk / Institutional Action */}
+            <button 
+              onClick={onOpenBulkRegister}
+              className="btn-gold"
+              style={{ padding: '8px 14px', fontSize: '0.82rem', whiteSpace: 'nowrap', display: 'none' }}
+              id="bulk-btn-header"
+            >
+              संस्थागत / बल्क
+            </button>
+
+            {/* Quick Register CTA */}
+            <button 
+              onClick={onOpenRegister} 
+              className="btn-glass-primary btn-glass-register" 
+              style={{ padding: '8px 18px', fontSize: '0.88rem', whiteSpace: 'nowrap' }}
+            >
+              <UserPlus size={15} /> रजिस्ट्रेशन
+            </button>
+
+            {/* Mobile / Tablet Toggle Hamburger */}
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              style={{
+                background: 'var(--police-navy-50)',
+                color: 'var(--police-navy-900)',
+                border: '1px solid var(--border-medium)',
+                borderRadius: '6px',
+                padding: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+              }}
+              className="mobile-toggle"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Tier 3: Sticky Interactive Navigation Menu Bar */}
+      <div style={{
+        background: '#0a1c3d',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '0'
+      }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {/* Desktop Nav Items */}
+          <nav style={{ display: 'none', alignItems: 'center', gap: '3px' }} className="desktop-nav-items">
+            {[
+              { id: 'home', label: '🏠 होम' },
+              { id: 'categories', label: '🏃 दौड़ श्रेणियां' },
+              { id: 'route-schedule', label: '🗺️ रूट व एक्सपो' },
+              { id: 'districts', label: '🏛️ 50 जिले' },
+              { id: 'certificates', label: '🏆 सर्टिफिकेट', isGold: true },
+              { id: 'photos', label: '📸 फोटो फाइंडर', isGreen: true },
+              { id: 'pledge-safety', label: '❤️ नारी सुरक्षा' },
+              { id: 'all', label: '📑 समस्त विवरण' }
+            ].map(tab => {
+              const isActive = activePage === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleNav(tab.id)}
+                  style={{
+                    padding: '10px 12px',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    color: isActive ? '#fde68a' : tab.isGold ? '#fde68a' : tab.isGreen ? '#6ee7b7' : '#f8fafc',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    background: isActive ? 'rgba(255, 255, 255, 0.16)' : 'transparent',
+                    border: 'none',
+                    borderBottom: isActive ? '3px solid var(--police-gold-400)' : '3px solid transparent',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    borderRadius: '4px 4px 0 0'
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                      e.currentTarget.style.borderBottomColor = 'var(--police-gold-400)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.borderBottomColor = 'transparent';
+                    }
+                  }}
+                >
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Weather / Running Conditions Widget in Nav (Interactive Suggestion) */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.75rem',
+            color: '#cbd5e1',
+            padding: '8px 0'
+          }} className="d-tablet-inline">
+            <Sun size={14} color="#fde68a" />
+            <span>जयपुर: <strong>16°C</strong> • आदर्श रनिंग मौसम</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. Mobile & Tablet Slide-Down Navigation Menu */}
+      {mobileMenuOpen && (
+        <div style={{
+          background: '#ffffff',
+          borderTop: '2px solid var(--police-gold-500)',
+          padding: '16px 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          boxShadow: 'var(--shadow-lg)',
+          maxHeight: '80vh',
+          overflowY: 'auto'
+        }}>
+          {[
+            { id: 'home', label: '🏠 होम (Home / Overview)' },
+            { id: 'categories', label: '🏃 दौड़ श्रेणियां व रजिस्ट्रेशन (Categories)' },
+            { id: 'route-schedule', label: '🗺️ रूट मैप व एक्सपो समय-सारणी (Route & Expo)' },
+            { id: 'districts', label: '🏛️ राजस्थान के समस्त 50 पुलिस जिले (Districts)' },
+            { id: 'certificates', label: '🏆 फिनिशर सर्टिफिकेट व सत्यापन (Certificates)', color: 'var(--police-gold-700)' },
+            { id: 'photos', label: '📸 AI फोटो फाइंडर व सोशल स्टेटस (Photos & Story)', color: '#059669' },
+            { id: 'pledge-safety', label: '❤️ महिला सुरक्षा सामूहिक संकल्प व 1090 (Safety)', color: 'var(--crimson-600)' },
+            { id: 'all', label: '📑 समस्त विवरण एक साथ (All in One View)' }
+          ].map(tab => {
+            const isActive = activePage === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => handleNav(tab.id)}
+                style={{
+                  background: isActive ? 'var(--police-navy-100)' : 'var(--police-navy-50)',
+                  color: tab.color || 'var(--police-navy-900)',
+                  border: isActive ? '1.5px solid var(--police-navy-800)' : '1px solid var(--border-subtle)',
+                  borderRadius: '6px',
+                  padding: '10px 12px',
+                  textAlign: 'left',
+                  fontSize: '0.88rem',
+                  fontWeight: isActive ? 800 : 700,
+                  cursor: 'pointer'
+                }}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+
+          <button
+            onClick={() => { setMobileMenuOpen(false); onOpenBulkRegister(); }}
+            className="btn-glass-gold"
+            style={{
+              padding: '11px',
+              textAlign: 'center',
+              fontWeight: 800,
+              fontSize: '0.88rem',
+              justifyContent: 'center',
+              marginTop: '4px'
+            }}
+          >
+            🏢 संस्थागत / ग्रुप बल्क रजिस्ट्रेशन
+          </button>
+
+          <button
+            onClick={() => { setMobileMenuOpen(false); onOpenAdmin(); }}
+            style={{
+              background: 'var(--police-navy-900)',
+              color: '#ffffff',
+              padding: '12px',
+              borderRadius: '6px',
+              textAlign: 'center',
+              fontWeight: 800,
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              marginTop: '6px'
+            }}
+          >
+            <Shield size={16} color="var(--police-gold-400)" /> पुलिस कमान एवं नोडल डेस्क (Admin)
+          </button>
+        </div>
+      )}
+
+      {/* Responsive Breakpoint Styles */}
+      <style>{`
+        .d-tablet-inline {
+          display: none !important;
+        }
+        .d-desktop-block {
+          display: none !important;
+        }
+        .desktop-nav-items {
+          display: none !important;
+        }
+        .mobile-toggle {
+          display: flex !important;
+        }
+
+        /* Tablet (>= 640px) */
+        @media (min-width: 640px) {
+          .d-tablet-inline {
+            display: inline-flex !important;
+          }
+        }
+
+        /* Desktop (>= 1024px) */
+        @media (min-width: 1024px) {
+          .d-desktop-block {
+            display: block !important;
+          }
+          .desktop-nav-items {
+            display: flex !important;
+          }
+          .mobile-toggle {
+            display: none !important;
+          }
+        }
+      `}</style>
+    </header>
+  );
+}
