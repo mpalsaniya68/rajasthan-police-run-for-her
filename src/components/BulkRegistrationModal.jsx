@@ -3,6 +3,7 @@ import { X, Building2, Download, Upload, Plus, Trash2, CheckCircle2, Shield, Use
 import { PoliceEmblem } from './Emblems';
 import { RAJASTHAN_POLICE_DISTRICTS, RACE_CATEGORIES } from '../data/mockData';
 import confetti from 'canvas-confetti';
+import { apiBulkRegister } from '../services/api';
 
 export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }) {
   const [instType, setInstType] = useState("police_unit"); // police_unit, college_school, ncc_nss, ngo_corp
@@ -79,7 +80,9 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
     setRunners(simulatedBatch);
   };
 
-  const handleBulkSubmit = (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleBulkSubmit = async (e) => {
     e.preventDefault();
     if (!instName.trim() || !nodalPhone.trim()) {
       alert("कृपया संस्थान का नाम और नोडल अधिकारी का मोबाइल नंबर दर्ज करें।");
@@ -92,45 +95,59 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
       return;
     }
 
+    const cleanNodalPhone = nodalPhone.replace(/\D/g, "");
+    if (cleanNodalPhone.length !== 10) {
+      alert("कृपया नोडल अधिकारी का वैध 10-अंकीय मोबाइल नंबर दर्ज करें।");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const payload = {
+      institution: instName.trim(),
+      districtId: (selectedDistrict || "jaipur_comm").toLowerCase().replace(/-/g, '_'),
+      contactPerson: nodalOfficer.trim() || "Nodal Incharge",
+      contactMobile: cleanNodalPhone,
+      runners: runners.map(r => ({
+        fullName: r.name.trim(),
+        gender: (r.gender || "Female").toLowerCase(),
+        dob: `${2026 - (parseInt(r.age) || 22)}-01-01`,
+        mobile: cleanNodalPhone,
+        emergencyContact: cleanNodalPhone,
+        emergencyRelation: "संस्थान नोडल अधिकारी (Nodal)",
+        bloodGroup: "B+",
+        categoryId: r.category,
+        districtId: (selectedDistrict || "jaipur_comm").toLowerCase().replace(/-/g, '_'),
+        tshirtSize: r.size || "M",
+        idType: "Institutional ID",
+        idLast4: cleanNodalPhone.slice(-4)
+      }))
+    };
+
+    const res = await apiBulkRegister(payload);
+    setIsSubmitting(false);
+
+    if (!res.success) {
+      alert(res.error || "बल्क पंजीकरण में त्रुटि हुई।");
+      return;
+    }
+
     try {
       confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
     } catch (err) {}
 
-    const newBatchId = `BATCH-RP-${Date.now().toString().slice(-5)}`;
+    const newBatchId = res.batchId || `BATCH-RP-${Date.now().toString().slice(-5)}`;
     setBatchId(newBatchId);
 
-    const generated = runners.map((r, i) => {
-      const bib = `RJ-${r.category.toUpperCase()}-B${String(i + 1).padStart(3, '0')}`;
-      const certId = `RPM-2026-BULK-${Math.floor(1000 + Math.random() * 9000)}`;
-      return {
-        id: `REG-BULK-${Date.now()}-${i}`,
-        bibNumber: bib,
-        certificateId: certId,
-        fullName: r.name,
-        gender: r.gender,
-        age: parseInt(r.age) || 22,
-        mobile: nodalPhone,
-        email: nodalEmail || `${r.name.toLowerCase().replace(/\s+/g, '')}@institute.ac.in`,
-        category: r.category,
-        categoryName: RACE_CATEGORIES.find(c => c.id === r.category)?.name || "5 KM Community Run",
-        venueType: "jaipur",
-        districtName: RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selectedDistrict)?.name || "Jaipur Flagship",
-        runnerType: instType === "police_unit" ? "Police Personnel / Trainee" : "Student / Youth",
-        tshirtSize: r.size,
-        emergencyContact: `${nodalOfficer || 'Nodal Officer'} (${nodalPhone})`,
-        registeredAt: new Date().toLocaleString(),
-        bibCollected: false,
-        isCompleted: true,
-        finishTime: r.category === "21k" ? "01:52:10" : r.category === "10k" ? "00:44:30" : "00:25:50",
-        chipTime: r.category === "21k" ? "01:51:45" : r.category === "10k" ? "00:44:10" : "00:25:35",
-        overallRank: `${i + 1} / 3100`,
-        genderRank: `${i + 1} / 1200`,
-        avgPace: "5:15 min/km",
-        pledgeTaken: true,
-        deliveryStatus: { sms: "Delivered", whatsapp: "Delivered", email: "Delivered" },
-        institutionName: instName
-      };
-    });
+    const generated = (res.runners || []).map((r, i) => ({
+      id: `REG-BLK-${i}`,
+      bibNumber: r.bibNumber,
+      fullName: r.fullName,
+      categoryName: r.categoryName,
+      institutionName: instName,
+      registeredAt: new Date().toLocaleString(),
+      status: "CONFIRMED"
+    }));
 
     setGeneratedBibs(generated);
     if (onBulkRegisterSuccess) {

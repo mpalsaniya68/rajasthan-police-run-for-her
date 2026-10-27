@@ -1,0 +1,135 @@
+import crypto from "crypto";
+import { z } from "zod";
+
+const APP_SECRET = process.env.APP_SECRET || "rajpol_marathon_2026_super_secure_salt_jaipur";
+
+/**
+ * 1. Zod Validation Schemas
+ */
+export const registrationSchema = z.object({
+  fullName: z.string().min(2, "नाम कम से कम 2 अक्षर का होना चाहिए").max(100).trim(),
+  gender: z.enum(["female", "male", "other"]),
+  dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "अमान्य जन्म तिथि प्रारूप (YYYY-MM-DD)"),
+  mobile: z.string().regex(/^[6-9]\d{9}$/, "वैध 10-अंकीय भारतीय मोबाइल नंबर दर्ज करें"),
+  emergencyContact: z.string().regex(/^[6-9]\d{9}$/, "वैध 10-अंकीय आपातकालीन मोबाइल नंबर दर्ज करें"),
+  emergencyRelation: z.string().min(2).max(50).trim(),
+  bloodGroup: z.string().min(1).max(5),
+  categoryId: z.enum(["21k", "10k", "5k", "2k"]),
+  districtId: z.string().min(2).max(50),
+  tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL"]),
+  idType: z.string().optional(),
+  idLast4: z.string().regex(/^\d{4}$/, "आईडी के अंतिम 4 अंक दर्ज करें").optional().or(z.literal(""))
+});
+
+export const bulkRegistrationSchema = z.object({
+  institution: z.string().min(3).max(150),
+  districtId: z.string().min(2),
+  contactPerson: z.string().min(2),
+  contactMobile: z.string().regex(/^[6-9]\d{9}$/),
+  runners: z.array(registrationSchema).min(1).max(5000)
+});
+
+/**
+ * 2. Mobile Number Masking for PII Protection
+ * Converts '9829012345' to 'XXXXXX2345'
+ */
+export function maskMobile(mobile) {
+  if (!mobile || typeof mobile !== "string") return "XXXXXXXXXX";
+  const clean = mobile.replace(/\D/g, "");
+  if (clean.length < 4) return "XXXXXXXXXX";
+  return "XXXXXX" + clean.slice(-4);
+}
+
+/**
+ * 3. Secure Bib Generation
+ * Generates official high-authority Bib numbers based on category
+ */
+export function generateBibNumber(categoryId, counter) {
+  const pad = String(counter).padStart(4, "0");
+  switch (categoryId) {
+    case "21k":
+      return `RJ-21K-${pad}`;
+    case "10k":
+      return `RJ-10K-${pad}`;
+    case "5k":
+      return `RJ-05K-${pad}`;
+    case "2k":
+      return `RJ-02K-${pad}`;
+    default:
+      return `RJ-GEN-${pad}`;
+  }
+}
+
+/**
+ * 4. Generate Certificate ID & Cryptographic QR Verification Token
+ */
+export function generateCertificateId() {
+  const hex = crypto.randomBytes(3).toString("hex").toUpperCase();
+  return `RJ-POL-2026-${hex}`;
+}
+
+export function generateSecureQrToken(bibNumber, certId) {
+  return crypto
+    .createHmac("sha256", APP_SECRET)
+    .update(`${bibNumber}:${certId}`)
+    .digest("hex")
+    .slice(0, 16)
+    .toUpperCase();
+}
+
+/**
+ * 5. Password Hashing with SHA-256 + Salt
+ */
+export function hashPassword(password) {
+  return crypto
+    .createHash("sha256")
+    .update(`${password}:${APP_SECRET}`)
+    .digest("hex");
+}
+
+export function verifyPassword(password, storedHash) {
+  const computed = hashPassword(password);
+  return crypto.timingSafeEqual(Buffer.from(computed), Buffer.from(storedHash));
+}
+
+/**
+ * 6. In-Memory Leaky Bucket Rate Limiter
+ * Limits requests per IP (Default: 30 requests per minute)
+ */
+class SlidingRateLimiter {
+  constructor(limit = 30, windowMs = 60000) {
+    this.limit = limit;
+    this.windowMs = windowMs;
+    this.hits = new Map();
+  }
+
+  isRateLimited(ip) {
+    const now = Date.now();
+    const timestamps = this.hits.get(ip) || [];
+    const validTimestamps = timestamps.filter(ts => now - ts < this.windowMs);
+
+    if (validTimestamps.length >= this.limit) {
+      return true;
+    }
+
+    validTimestamps.push(now);
+    this.hits.set(ip, validTimestamps);
+    return false;
+  }
+}
+
+export const registrationLimiter = new SlidingRateLimiter(20, 60000); // 20 regs/min per IP
+export const adminLoginLimiter = new SlidingRateLimiter(5, 60000); // 5 login attempts/min per IP
+
+/**
+ * 7. CSV Injection Prevention
+ * Protects Excel from Formula Injection by prefixing '=, +, -, @' with a single quote
+ */
+export function sanitizeCsvCell(cell) {
+  if (cell == null) return "";
+  let str = String(cell).replace(/"/g, '""');
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = "'" + str;
+  }
+  return `"${str}"`;
+}

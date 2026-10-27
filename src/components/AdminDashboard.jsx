@@ -128,9 +128,8 @@ export function AdminDashboard({ isOpen, onClose, registrations = [], onUpdateRe
 
   // 1. OVERALL STATEWIDE SINGLE MASTER CSV EXPORT
   const handleExportOverallMaster = () => {
-    const filename = `Rajasthan_Police_Marathon_ALL_50_DISTRICTS_Master_${Date.now()}.csv`;
-    downloadCSVFile(registrations, filename);
-    setExportNotice(`सम्पूर्ण राज्य (All 50 Districts) का मास्टर डेटा (${registrations.length} रिकॉर्ड्स) सफलतापूर्वक डाउनलोड हुआ!`);
+    window.open('/api/admin/export', '_blank');
+    setExportNotice(`सम्पूर्ण राज्य (All 50 Districts) का सुरक्षित मास्टर डेटाबेस एक्सपोर्ट प्रारंभ हुआ!`);
     setTimeout(() => setExportNotice(null), 4500);
   };
 

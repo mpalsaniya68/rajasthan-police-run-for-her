@@ -5,6 +5,7 @@ import {
   AlertTriangle, CheckCircle2, Radio, Zap, Shield, Phone, 
   ChevronRight, ArrowRight, User, RefreshCw, Sparkles 
 } from 'lucide-react';
+import { apiTrackRunner, apiSimulateScan } from '../services/api';
 
 export function LiveTrackerHub({ onNavigate }) {
   const [tracks, setTracks] = useState(() => {
@@ -41,6 +42,45 @@ export function LiveTrackerHub({ onNavigate }) {
     const matchesCat = filterCategory === "all" || r.category === filterCategory;
     return matchesSearch && matchesCat;
   });
+
+  // Action: Live Backend Runner Search
+  const handleLiveSearch = async (e) => {
+    if (e) e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    const res = await apiTrackRunner(searchQuery.trim());
+    if (res.success && res.runner) {
+      const r = res.runner;
+      const formatted = {
+        bibNumber: r.bibNumber,
+        fullName: r.fullName,
+        gender: r.gender === 'female' ? 'महिला (Female)' : 'पुरुष (Male)',
+        category: (r.categoryName || '').includes('21') ? '21k' : (r.categoryName || '').includes('10') ? '10k' : '5k',
+        categoryName: r.categoryName,
+        mobile: r.mobile,
+        district: r.districtName,
+        status: r.status,
+        currentKm: r.splits?.length > 0 ? r.splits[r.splits.length - 1].km : 0,
+        currentProgressPct: r.splits?.length > 0 ? Math.min(100, Math.round((r.splits[r.splits.length - 1].km / 21.097) * 100)) : 5,
+        lastCheckpointName: r.splits?.length > 0 ? r.splits[r.splits.length - 1].checkpointName : 'Albert Hall Start Gantry',
+        currentPace: r.splits?.length > 0 ? r.splits[r.splits.length - 1].pace : '5:10 min/km',
+        safetyStatus: 'NORMAL',
+        overallRank: r.overallRank || 15,
+        genderRank: r.genderRank || 4,
+        splits: (r.splits || []).map(s => ({
+          checkpointId: s.checkpointId,
+          name: s.checkpointName,
+          km: s.km,
+          status: 'completed',
+          splitTime: s.scanTime,
+          pace: s.pace,
+          speed: `${s.speedKmh} km/h`
+        }))
+      };
+      setTracks(prev => [formatted, ...prev.filter(x => x.bibNumber !== r.bibNumber)]);
+      setSelectedBib(r.bibNumber);
+    }
+  };
 
   // Action: Send Live Cheer
   const handleSendCheer = () => {
@@ -203,7 +243,7 @@ export function LiveTrackerHub({ onNavigate }) {
         }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', alignItems: 'center' }}>
             {/* Search Input */}
-            <div style={{ position: 'relative' }}>
+            <form onSubmit={handleLiveSearch} style={{ position: 'relative' }}>
               <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
                 type="text"
@@ -221,7 +261,7 @@ export function LiveTrackerHub({ onNavigate }) {
                   background: 'var(--police-navy-50)'
                 }}
               />
-            </div>
+            </form>
 
             {/* Category Filter Buttons */}
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>

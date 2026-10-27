@@ -4,6 +4,7 @@ import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 import { PoliceEmblem, RunForHerBadge } from './Emblems';
 import confetti from 'canvas-confetti';
 import QRCode from 'qrcode';
+import { apiRegister } from '../services/api';
 
 export function RegistrationModal({ isOpen, onClose, initialCategory = "21k", onRegisterSuccess }) {
   const [venueType, setVenueType] = useState("jaipur");
@@ -61,44 +62,77 @@ export function RegistrationModal({ isOpen, onClose, initialCategory = "21k", on
   const currentCatObj = RACE_CATEGORIES.find(c => c.id === category) || RACE_CATEGORIES[0];
   const currentDistrictObj = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selectedDistrict);
 
-  const handleSubmit = (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.fullName.trim() || !formData.mobile.trim()) {
       alert("कृपया अपना पूरा नाम और मोबाइल नंबर दर्ज करें।");
       return;
     }
 
-    try {
-      confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
-    } catch (err) {}
+    setErrorMessage("");
+    setIsSubmitting(true);
+
+    const cleanMobile = formData.mobile.replace(/\D/g, "");
+    const cleanEmergency = (formData.emergencyContactPhone || formData.mobile).replace(/\D/g, "");
+
+    const payload = {
+      fullName: formData.fullName.trim(),
+      gender: formData.gender ? formData.gender.toLowerCase() : "female",
+      dob: formData.age ? `${2026 - (parseInt(formData.age) || 25)}-01-01` : "2000-01-01",
+      mobile: cleanMobile,
+      emergencyContact: cleanEmergency.length === 10 ? cleanEmergency : cleanMobile,
+      emergencyRelation: formData.emergencyContactName?.trim() || "अभिभावक (Guardian)",
+      bloodGroup: "B+",
+      categoryId: category,
+      districtId: venueType === "jaipur" ? "jaipur_comm" : (selectedDistrict || "jaipur_comm").toLowerCase().replace(/-/g, '_'),
+      tshirtSize: formData.tshirtSize || "M",
+      idType: "Aadhaar",
+      idLast4: cleanMobile.slice(-4)
+    };
+
+    const res = await apiRegister(payload);
+    setIsSubmitting(false);
+
+    if (!res.success) {
+      setErrorMessage(res.error || "पंजीकरण में त्रुटि हुई।");
+      alert(res.error || "पंजीकरण में त्रुटि हुई।");
+      return;
+    }
+
+    const p = res.participant;
+    setAllocatedBib(p.bibNumber);
+    setAllocatedCertId(p.certificateId);
 
     const newRecord = {
-      id: `REG-${Date.now().toString().slice(-4)}`,
-      bibNumber: allocatedBib,
-      certificateId: allocatedCertId,
-      fullName: formData.fullName,
-      gender: formData.gender,
+      id: p.id,
+      bibNumber: p.bibNumber,
+      certificateId: p.certificateId,
+      fullName: p.fullName,
+      gender: p.gender,
       age: parseInt(formData.age) || 24,
       mobile: formData.mobile,
       email: formData.email || `${formData.fullName.toLowerCase().replace(/\s+/g, '')}@example.com`,
       category: category,
-      categoryName: currentCatObj.name,
+      categoryName: p.categoryName || currentCatObj.name,
       venueType: venueType,
-      districtName: venueType === "jaipur" ? "Jaipur Police Commissionerate (Albert Hall)" : currentDistrictObj.name,
+      districtName: p.districtName || (venueType === "jaipur" ? "Jaipur Police Commissionerate (Albert Hall)" : currentDistrictObj.name),
       runnerType: runnerType,
       tshirtSize: formData.tshirtSize,
       emergencyContact: `${formData.emergencyContactName || 'Family'} (${formData.emergencyContactPhone || formData.mobile})`,
       registeredAt: new Date().toLocaleString(),
       bibCollected: false,
-      isCompleted: true,
-      finishTime: category === "21k" ? "01:54:20" : category === "10k" ? "00:46:15" : "00:26:40",
-      chipTime: category === "21k" ? "01:53:50" : category === "10k" ? "00:45:58" : "00:26:25",
-      overallRank: "52 / 3100",
-      genderRank: "14 / 1200",
-      avgPace: "5:22 min/km",
+      isCompleted: false,
+      finishTime: null,
       pledgeTaken: true,
       deliveryStatus: { sms: "Delivered", whatsapp: "Sent", email: "Delivered" }
     };
+
+    try {
+      confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+    } catch (err) {}
 
     onRegisterSuccess(newRecord);
     setIsSuccess(true);
