@@ -9,10 +9,6 @@ import { DistrictHub } from './components/DistrictHub';
 import { ScheduleExpo } from './components/ScheduleExpo';
 import { CertificateHub } from './components/CertificateHub';
 import { CertificateVerification } from './components/CertificateVerification';
-import { InteractiveMedal } from './components/InteractiveMedal';
-import { SafetySimulator } from './components/SafetySimulator';
-import { PhotoFinderHub } from './components/PhotoFinderHub';
-import { SocialStoryGenerator } from './components/SocialStoryGenerator';
 import { BulkRegistrationModal } from './components/BulkRegistrationModal';
 import { Footer } from './components/Footer';
 import { RegistrationModal } from './components/RegistrationModal';
@@ -173,11 +169,6 @@ export default function App() {
               onOpenBulkRegister={() => setIsBulkModalOpen(true)}
               onNavigate={navigateToPage}
             />
-            {activePage === 'home' && (
-              <div className="container" style={{ paddingBottom: '60px' }}>
-                <InteractiveMedal />
-              </div>
-            )}
           </div>
         )}
 
@@ -188,7 +179,7 @@ export default function App() {
               <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>🏠 मुख्य पृष्ठ</button>
+                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
                     <span>/</span>
                     <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>दौड़ श्रेणियां एवं रजिस्ट्रेशन</span>
                   </div>
@@ -210,7 +201,7 @@ export default function App() {
               <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>🏠 मुख्य पृष्ठ</button>
+                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
                     <span>/</span>
                     <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>रूट मैप, कार्यक्रम समय-सारणी एवं एक्सपो किट</span>
                   </div>
@@ -230,7 +221,7 @@ export default function App() {
               <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>🏠 मुख्य पृष्ठ</button>
+                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
                     <span>/</span>
                     <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>राजस्थान के समस्त 50 पुलिस जिले</span>
                   </div>
@@ -249,7 +240,7 @@ export default function App() {
               <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>🏠 मुख्य पृष्ठ</button>
+                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
                     <span>/</span>
                     <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>ई-सर्टिफिकेट डाउनलोड एवं आधिकारिक सत्यापन पोर्टल</span>
                   </div>
@@ -259,42 +250,17 @@ export default function App() {
             )}
             <CertificateHub registrations={registrations} />
             <CertificateVerification registrations={registrations} />
-            {activePage !== 'all' && (
-              <div className="container" style={{ paddingBottom: '60px' }}>
-                <InteractiveMedal />
-              </div>
-            )}
           </div>
         )}
 
-        {/* 6. AI PHOTO FINDER & VIRAL SOCIAL STORY PAGE */}
-        {(activePage === 'photos' || activePage === 'all') && (
-          <div id="page-photos">
-            {activePage !== 'all' && (
-              <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>🏠 मुख्य पृष्ठ</button>
-                    <span>/</span>
-                    <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>AI रेस फोटो खोजें व सोशल स्टेटस बनाएं</span>
-                  </div>
-                  <span className="badge-pink">स्मार्ट फोटो व 9:16 स्टेटस स्टूडियो</span>
-                </div>
-              </div>
-            )}
-            <PhotoFinderHub />
-            <SocialStoryGenerator />
-          </div>
-        )}
-
-        {/* 7. WOMEN SAFETY PLEDGE & 1090/112 SIMULATOR PAGE */}
+        {/* 6. WOMEN SAFETY PLEDGE & 24x7 HELPLINE DIRECTORY PAGE */}
         {(activePage === 'pledge-safety' || activePage === 'all') && (
           <div id="page-pledge-safety">
             {activePage !== 'all' && (
               <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>🏠 मुख्य पृष्ठ</button>
+                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
                     <span>/</span>
                     <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>महिला सुरक्षा संकल्प एवं 24x7 आपातकालीन हेल्पलाइन</span>
                   </div>
@@ -303,7 +269,6 @@ export default function App() {
               </div>
             )}
             <SafetyPledge />
-            <SafetySimulator />
           </div>
         )}
 

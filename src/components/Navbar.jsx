@@ -230,18 +230,17 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
         padding: '0'
       }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* Desktop Nav Items */}
-          <nav style={{ display: 'none', alignItems: 'center', gap: '3px' }} className="desktop-nav-items">
+          {/* Desktop Nav Items - Clean, Professional Government Format */}
+          <nav style={{ display: 'none', alignItems: 'center', gap: '4px' }} className="desktop-nav-items">
             {[
-              { id: 'home', label: '🏠 होम' },
-              { id: 'categories', label: '🏃 दौड़ श्रेणियां' },
-              { id: 'route-schedule', label: '🗺️ रूट व एक्सपो' },
-              { id: 'districts', label: '🏛️ 50 जिले' },
-              { id: 'live-tracker', label: '🔴 लाइव ट्रैकर', isLive: true },
-              { id: 'certificates', label: '🏆 सर्टिफिकेट', isGold: true },
-              { id: 'photos', label: '📸 फोटो फाइंडर', isGreen: true },
-              { id: 'pledge-safety', label: '❤️ नारी सुरक्षा' },
-              { id: 'all', label: '📑 समस्त विवरण' }
+              { id: 'home', label: 'मुख्य पृष्ठ' },
+              { id: 'categories', label: 'दौड़ श्रेणियां' },
+              { id: 'route-schedule', label: 'रूट व एक्सपो' },
+              { id: 'districts', label: '50 जिला केंद्र' },
+              { id: 'live-tracker', label: 'लाइव ट्रैकर', isLive: true },
+              { id: 'certificates', label: 'ई-प्रमाण पत्र', isGold: true },
+              { id: 'pledge-safety', label: 'सुरक्षा संकल्प' },
+              { id: 'all', label: 'समस्त विवरण' }
             ].map(tab => {
               const isActive = activePage === tab.id;
               return (
@@ -249,13 +248,13 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
                   key={tab.id}
                   onClick={() => handleNav(tab.id)}
                   style={{
-                    padding: '10px 12px',
-                    fontSize: '0.82rem',
+                    padding: '11px 14px',
+                    fontSize: '0.84rem',
                     fontWeight: 700,
-                    color: isActive ? '#fde68a' : tab.isGold ? '#fde68a' : tab.isGreen ? '#6ee7b7' : '#f8fafc',
+                    color: isActive ? '#fde68a' : tab.isGold ? '#fde68a' : '#f8fafc',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '4px',
+                    gap: '6px',
                     background: isActive ? 'rgba(255, 255, 255, 0.16)' : 'transparent',
                     border: 'none',
                     borderBottom: isActive ? '3px solid var(--police-gold-400)' : '3px solid transparent',
@@ -276,23 +275,27 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
                     }
                   }}
                 >
+                  {tab.isLive && (
+                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ef4444', display: 'inline-block', boxShadow: '0 0 6px #ef4444' }}></span>
+                  )}
                   <span>{tab.label}</span>
                 </button>
               );
             })}
           </nav>
 
-          {/* Weather / Running Conditions Widget in Nav (Interactive Suggestion) */}
+          {/* Official Helpline Callout in Nav Right */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            fontSize: '0.75rem',
+            fontSize: '0.78rem',
             color: '#cbd5e1',
             padding: '8px 0'
           }} className="d-tablet-inline">
-            <Sun size={14} color="#fde68a" />
-            <span>जयपुर: <strong>16°C</strong> • आदर्श रनिंग मौसम</span>
+            <span style={{ color: '#fde68a', fontWeight: 800 }}>★ राजस्थान पुलिस</span>
+            <span>|</span>
+            <span style={{ color: '#fca5a5', fontWeight: 700 }}>हेल्पलाइन: 1090 / 112</span>
           </div>
         </div>
       </div>
@@ -311,15 +314,14 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
           overflowY: 'auto'
         }}>
           {[
-            { id: 'home', label: '🏠 होम (Home / Overview)' },
-            { id: 'categories', label: '🏃 दौड़ श्रेणियां व रजिस्ट्रेशन (Categories)' },
-            { id: 'route-schedule', label: '🗺️ रूट मैप व एक्सपो समय-सारणी (Route & Expo)' },
-            { id: 'districts', label: '🏛️ राजस्थान के समस्त 50 पुलिस जिले (Districts)' },
-            { id: 'live-tracker', label: '🔴 लाइव रनर ट्रैकर (Live RFID Course Radar)', color: '#dc2626' },
-            { id: 'certificates', label: '🏆 फिनिशर सर्टिफिकेट व सत्यापन (Certificates)', color: 'var(--police-gold-700)' },
-            { id: 'photos', label: '📸 AI फोटो फाइंडर व सोशल स्टेटस (Photos & Story)', color: '#059669' },
-            { id: 'pledge-safety', label: '❤️ महिला सुरक्षा सामूहिक संकल्प व 1090 (Safety)', color: 'var(--crimson-600)' },
-            { id: 'all', label: '📑 समस्त विवरण एक साथ (All in One View)' }
+            { id: 'home', label: 'मुख्य पृष्ठ (Home)' },
+            { id: 'categories', label: 'दौड़ श्रेणियां व रजिस्ट्रेशन (Categories)' },
+            { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी (Route & Schedule)' },
+            { id: 'districts', label: 'राजस्थान के समस्त 50 पुलिस जिले (Districts)' },
+            { id: 'live-tracker', label: 'लाइव रनर ट्रैकर (Live RFID Course Radar)', isLive: true, color: '#dc2626' },
+            { id: 'certificates', label: 'फिनिशर सर्टिफिकेट व सत्यापन (Certificates)', color: 'var(--police-gold-700)' },
+            { id: 'pledge-safety', label: 'महिला सुरक्षा संकल्प (Safety Protocol)', color: 'var(--crimson-600)' },
+            { id: 'all', label: 'समस्त विवरण (Overview)' }
           ].map(tab => {
             const isActive = activePage === tab.id;
             return (
@@ -331,14 +333,20 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
                   color: tab.color || 'var(--police-navy-900)',
                   border: isActive ? '1.5px solid var(--police-navy-800)' : '1px solid var(--border-subtle)',
                   borderRadius: '6px',
-                  padding: '10px 12px',
+                  padding: '11px 14px',
                   textAlign: 'left',
-                  fontSize: '0.88rem',
+                  fontSize: '0.9rem',
                   fontWeight: isActive ? 800 : 700,
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
                 }}
               >
-                {tab.label}
+                {tab.isLive && (
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', display: 'inline-block' }}></span>
+                )}
+                <span>{tab.label}</span>
               </button>
             );
           })}
@@ -355,7 +363,7 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
               marginTop: '4px'
             }}
           >
-            🏢 संस्थागत / ग्रुप बल्क रजिस्ट्रेशन
+            संस्थागत एवं ग्रुप बल्क रजिस्ट्रेशन (RPA / कॉलेज)
           </button>
 
           <button

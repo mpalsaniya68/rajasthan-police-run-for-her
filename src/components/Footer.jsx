@@ -75,14 +75,14 @@ export function Footer({ onNavigate }) {
             <h4 style={{ fontSize: '0.85rem', color: '#fef08a', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
               महत्वपूर्ण लिंक्स
             </h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.8rem', color: '#e2e8f0' }}>
-              <li><a href="#home" onClick={(e) => handleNav(e, 'home')}>🏠 होम / मुख्य विवरण</a></li>
-              <li><a href="#categories" onClick={(e) => handleNav(e, 'categories')}>🏃 दौड़ श्रेणियां (21K / 10K / 5K / 2K)</a></li>
-              <li><a href="#route-schedule" onClick={(e) => handleNav(e, 'route-schedule')}>🗺️ कोर्स रूट एवं समय-सारणी</a></li>
-              <li><a href="#pledge-safety" onClick={(e) => handleNav(e, 'pledge-safety')}>❤️ नारी सुरक्षा सामूहिक शपथ</a></li>
-              <li><a href="#districts" onClick={(e) => handleNav(e, 'districts')}>🏛️ समस्त 50 पुलिस जिले</a></li>
-              <li><a href="#certificates" onClick={(e) => handleNav(e, 'certificates')}>🏆 फिनिशर सर्टिफिकेट एवं सत्यापन</a></li>
-              <li><a href="#photos" onClick={(e) => handleNav(e, 'photos')}>📸 AI फोटो फाइंडर व सोशल स्टेटस</a></li>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', color: '#e2e8f0' }}>
+              <li><a href="#home" onClick={(e) => handleNav(e, 'home')}>मुख्य पृष्ठ (Home)</a></li>
+              <li><a href="#categories" onClick={(e) => handleNav(e, 'categories')}>दौड़ श्रेणियां (21K / 10K / 5K / 2K)</a></li>
+              <li><a href="#route-schedule" onClick={(e) => handleNav(e, 'route-schedule')}>कोर्स रूट एवं समय-सारणी (Route & Schedule)</a></li>
+              <li><a href="#live-tracker" onClick={(e) => handleNav(e, 'live-tracker')}>लाइव रनर ट्रैकर (Live RFID Tracking)</a></li>
+              <li><a href="#districts" onClick={(e) => handleNav(e, 'districts')}>राजस्थान के समस्त 50 पुलिस जिले</a></li>
+              <li><a href="#certificates" onClick={(e) => handleNav(e, 'certificates')}>फिनिशर सर्टिफिकेट एवं सत्यापन</a></li>
+              <li><a href="#pledge-safety" onClick={(e) => handleNav(e, 'pledge-safety')}>नारी सुरक्षा सामूहिक संकल्प निर्देशिका</a></li>
             </ul>
           </div>
 

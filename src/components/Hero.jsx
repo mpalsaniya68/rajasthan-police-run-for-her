@@ -136,36 +136,26 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
       </div>
 
       <div className="container">
-        {/* Dignitary Badges */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
-          <span style={{
-            background: 'rgba(212, 175, 55, 0.2)',
-            color: '#fef08a',
-            padding: '4px 14px',
-            borderRadius: '20px',
-            fontSize: '0.78rem',
+        {/* Official Organizing Body Crest Badge */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '18px' }}>
+          <div style={{
+            background: 'rgba(5, 17, 38, 0.88)',
+            backdropFilter: 'blur(10px)',
+            color: '#fde68a',
+            padding: '7px 22px',
+            borderRadius: '6px',
+            fontSize: '0.82rem',
             fontWeight: 800,
-            border: '1px solid rgba(212, 175, 55, 0.5)',
+            border: '1.5px solid rgba(212, 175, 55, 0.45)',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '6px'
+            gap: '8px',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.35)',
+            letterSpacing: '0.03em'
           }}>
-            <Shield size={14} color="#fef08a" /> राजस्थान पुलिस मुख्यालय, जयपुर का राज्यव्यापी जन-आंदोलन
-          </span>
-          <span style={{
-            background: 'rgba(239, 68, 68, 0.25)',
-            color: '#fca5a5',
-            padding: '4px 14px',
-            borderRadius: '20px',
-            fontSize: '0.78rem',
-            fontWeight: 800,
-            border: '1px solid rgba(239, 68, 68, 0.45)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px'
-          }}>
-            <Heart size={14} /> नारी सुरक्षा, गरिमा एवं सशक्तिकरण
-          </span>
+            <Shield size={15} color="#fde68a" />
+            <span>राजस्थान पुलिस मुख्यालय, जयपुर | राज्यव्यापी जन-अभियान • नारी सुरक्षा, गरिमा एवं सशक्तिकरण</span>
+          </div>
         </div>
 
         {/* Hero Headings - Majestic, Authoritative & Grounded */}
@@ -285,7 +275,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
               title="ग्रुप व बल्क रजिस्ट्रेशन"
             >
               <Shield size={18} color="var(--police-gold-400)" />
-              <span>🏢 ग्रुप / बल्क रजिस्ट्रेशन (कॉलेज/RPA)</span>
+              <span>ग्रुप व संस्थागत रजिस्ट्रेशन (RPA / कॉलेज)</span>
             </button>
 
             <button 
