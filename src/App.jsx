@@ -18,9 +18,10 @@ import { Footer } from './components/Footer';
 import { RegistrationModal } from './components/RegistrationModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginModal } from './components/AdminLoginModal';
+import { LiveTrackerHub } from './components/LiveTrackerHub';
 
 export default function App() {
-  // Active Page State ('home', 'categories', 'route-schedule', 'districts', 'certificates', 'photos', 'pledge-safety', 'all')
+  // Active Page State ('home', 'categories', 'route-schedule', 'districts', 'live-tracker', 'certificates', 'photos', 'pledge-safety', 'all')
   const [activePage, setActivePage] = useState('home');
 
   // Persistent registrations state
@@ -297,6 +298,28 @@ export default function App() {
             )}
             <SafetyPledge />
             <SafetySimulator />
+          </div>
+        )}
+
+        {/* 8. LIVE RUNNER RFID TRACKER & COURSE RADAR PAGE */}
+        {(activePage === 'live-tracker' || activePage === 'all') && (
+          <div id="page-live-tracker">
+            {activePage !== 'all' && (
+              <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
+                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>🏠 मुख्य पृष्ठ</button>
+                    <span>/</span>
+                    <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>लाइव रनर ट्रैकिंग एवं जेएलएन मार्ग कोर्स मॉनिटर</span>
+                  </div>
+                  <span className="badge-pink" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ef4444' }}></span>
+                    RFID ग्राउंड टाइमिंग सेंसर सक्रिय
+                  </span>
+                </div>
+              </div>
+            )}
+            <LiveTrackerHub onNavigate={navigateToPage} />
           </div>
         )}
       </main>

@@ -1,14 +1,51 @@
 import React, { useState } from 'react';
-import { X, Shield, Download, Search, CheckCircle2, Shirt, Send, LogOut, FileSpreadsheet, MapPin, Filter, Database } from 'lucide-react';
+import { 
+  X, Shield, Download, Search, CheckCircle2, Shirt, Send, LogOut, 
+  FileSpreadsheet, MapPin, Filter, Database, Radio, AlertTriangle, 
+  Activity, Users, Phone, Zap, ArrowRight, RefreshCw
+} from 'lucide-react';
 import { PoliceEmblem } from './Emblems';
 import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 
 export function AdminDashboard({ isOpen, onClose, registrations = [], onUpdateRegistration, onLogout }) {
+  const [adminTab, setAdminTab] = useState("registrations"); // "registrations" | "live_radar"
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCatFilter, setSelectedCatFilter] = useState("all");
   const [districtFilter, setDistrictFilter] = useState("all");
   const [selectedExportDistrict, setSelectedExportDistrict] = useState(RAJASTHAN_POLICE_DISTRICTS[0]?.name || "Jaipur Police Commissionerate (Flagship Host)");
   const [exportNotice, setExportNotice] = useState(null);
+
+  // Live Course Delayed Runner Alerts
+  const [delayedRunners, setDelayedRunners] = useState([
+    {
+      id: "ALERT-1",
+      bibNumber: "RJ-21K-7714",
+      fullName: "Manvendra Singh Rathore",
+      category: "21 KM Half Marathon",
+      sector: "Sector 2 (5KM - 10KM JLN Marg)",
+      lastSeen: "06:31:05 AM (52 mins ago at RU Gate)",
+      expectedPace: "5:30 min/km",
+      currentDelay: "असामान्य विलंब (+28 मिनट)",
+      mobile: "+91 94141 33445",
+      emergencyContact: "Bhawani Singh (94141 99880)",
+      status: "DISPATCHED",
+      notes: "बाइक पेट्रोल यूनिट 04 मौके पर रवाना।"
+    },
+    {
+      id: "ALERT-2",
+      bibNumber: "RJ-21K-6640",
+      fullName: "Anita Meena",
+      category: "21 KM Half Marathon",
+      sector: "Sector 3 (10KM - 15KM WTP to Jawahar Circle)",
+      lastSeen: "07:05:10 AM (35 mins ago at WTP Gate)",
+      expectedPace: "6:00 min/km",
+      currentDelay: "विलंब (+16 मिनट)",
+      mobile: "+91 98291 44332",
+      emergencyContact: "Rajesh Meena (98291 00112)",
+      status: "PENDING",
+      notes: "संभावित डिहाइड्रेशन या क्रैम्प। निकटतम हाइड्रेशन पोस्ट को सूचित किया गया।"
+    }
+  ]);
 
   if (!isOpen) return null;
 
@@ -270,6 +307,68 @@ export function AdminDashboard({ isOpen, onClose, registrations = [], onUpdateRe
           </div>
         </div>
 
+        {/* Sub-Navigation Tabs */}
+        <div style={{
+          background: 'var(--police-navy-900)',
+          padding: '0 22px',
+          display: 'flex',
+          gap: '8px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          flexShrink: 0
+        }}>
+          <button
+            onClick={() => setAdminTab("registrations")}
+            style={{
+              padding: '12px 16px',
+              fontSize: '0.85rem',
+              fontWeight: 800,
+              background: 'transparent',
+              border: 'none',
+              borderBottom: adminTab === "registrations" ? '3px solid var(--police-gold-400)' : '3px solid transparent',
+              color: adminTab === "registrations" ? '#fde68a' : '#cbd5e1',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <Database size={15} />
+            <span>📋 राज्यव्यापी धावक सूची एवं CSV एक्सपोर्ट</span>
+          </button>
+
+          <button
+            onClick={() => setAdminTab("live_radar")}
+            style={{
+              padding: '12px 16px',
+              fontSize: '0.85rem',
+              fontWeight: 800,
+              background: 'transparent',
+              border: 'none',
+              borderBottom: adminTab === "live_radar" ? '3px solid #ef4444' : '3px solid transparent',
+              color: adminTab === "live_radar" ? '#fca5a5' : '#cbd5e1',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', display: 'inline-block' }}></span>
+            <span>📡 लाइव कोर्स रडार एवं पुलिस सुरक्षा कमांड</span>
+            {delayedRunners.length > 0 && (
+              <span style={{
+                background: '#ef4444',
+                color: '#fff',
+                fontSize: '0.68rem',
+                padding: '1px 6px',
+                borderRadius: '10px',
+                fontWeight: 800
+              }}>
+                {delayedRunners.length} अलर्ट
+              </span>
+            )}
+          </button>
+        </div>
+
         {/* Admin Body (Scrollable) */}
         <div style={{ padding: '20px', background: 'var(--bg-surface)', overflowY: 'auto', flex: 1 }}>
           {/* Notification Toast */}
@@ -293,14 +392,17 @@ export function AdminDashboard({ isOpen, onClose, registrations = [], onUpdateRe
             </div>
           )}
 
-          {/* DEDICATED CSV EXPORT CENTER (User Requirement) */}
-          <div className="gov-card" style={{
-            padding: '16px 20px',
-            marginBottom: '20px',
-            background: 'linear-gradient(135deg, #ffffff 0%, var(--police-navy-50) 100%)',
-            border: '2px solid var(--police-navy-200)',
-            borderRadius: '8px'
-          }}>
+          {/* TAB 1: REGISTRATIONS & CSV EXPORT */}
+          {adminTab === "registrations" && (
+            <>
+              {/* DEDICATED CSV EXPORT CENTER (User Requirement) */}
+              <div className="gov-card" style={{
+                padding: '16px 20px',
+                marginBottom: '20px',
+                background: 'linear-gradient(135deg, #ffffff 0%, var(--police-navy-50) 100%)',
+                border: '2px solid var(--police-navy-200)',
+                borderRadius: '8px'
+              }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <FileSpreadsheet size={20} color="var(--police-navy-900)" />
@@ -577,8 +679,244 @@ export function AdminDashboard({ isOpen, onClose, registrations = [], onUpdateRe
               </tbody>
             </table>
           </div>
+        </>
+      )}
+
+      {/* TAB 2: LIVE COURSE RADAR & SAFETY COMMAND */}
+      {adminTab === "live_radar" && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* Top Live Command Metric Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '12px' }}>
+            <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--police-navy-700)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Activity size={15} color="var(--crimson-600)" /> कोर्स पर सक्रिय धावक
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--police-navy-950)', margin: '4px 0' }}>2,410</div>
+              <div style={{ fontSize: '0.7rem', color: '#16a34a', fontWeight: 700 }}>● 21K: 890 | 10K: 1,020 | 5K: 500</div>
+            </div>
+
+            <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--police-navy-700)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <CheckCircle2 size={15} color="#16a34a" /> मेडल प्राप्त फिनिशर
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#15803d', margin: '4px 0' }}>142</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>फिनिश लाइन क्रॉसिंग दर: ~18/min</div>
+            </div>
+
+            <div style={{ background: delayedRunners.length > 0 ? '#fff1f2' : '#ffffff', padding: '16px', borderRadius: '8px', border: delayedRunners.length > 0 ? '1.5px solid #f87171' : '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#991b1b', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <AlertTriangle size={15} color="#dc2626" /> स्वास्थ्य / विलंब सुरक्षा अलर्ट
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#dc2626', margin: '4px 0' }}>{delayedRunners.length}</div>
+              <div style={{ fontSize: '0.7rem', color: '#b91c1c', fontWeight: 700 }}>
+                {delayedRunners.length > 0 ? '⚠️ मेडिकल व बाइक पेट्रोल निर्देशित' : 'सभी धावक सामान्य गति पर'}
+              </div>
+            </div>
+
+            <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--police-navy-700)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Shield size={15} color="var(--police-navy-900)" /> ग्राउंड पुलिस स्क्वाड गश्त
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--police-navy-900)', margin: '4px 0' }}>16 यूनिट्स</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--police-gold-700)', fontWeight: 700 }}>निर्भया स्क्वाड + 8 एम्बुलेंस वैन</div>
+            </div>
+          </div>
+
+          {/* Sector Density Distribution Gauge */}
+          <div className="gov-card" style={{ padding: '18px 20px', background: '#ffffff', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+              <h3 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 800, color: 'var(--police-navy-900)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Radio size={18} color="var(--crimson-600)" />
+                जेएलएन मार्ग सेक्टरवार धावक घनत्व (Course Sector Runner Density)
+              </h3>
+              <span style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 800 }}>● 6 टाइमिंग गेट्स लाइव कनेक्टेड</span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+              {[
+                { sector: 'Sector 1 (0K - 5K)', label: 'अल्बर्ट हॉल से RU गेट', count: 420, pct: 17, color: 'var(--police-navy-700)', patrol: 'PCR वैन 02 & निर्भया 01' },
+                { sector: 'Sector 2 (5K - 10K)', label: 'RU गेट से WTP मोड़', count: 860, pct: 36, color: 'var(--police-gold-600)', patrol: 'बाइक पेट्रोल 04 & एम्बुलेंस 03' },
+                { sector: 'Sector 3 (10K - 15K)', label: 'WTP से जवाहर सर्किल लूप', count: 680, pct: 28, color: 'var(--crimson-600)', patrol: 'ट्रैफिक स्क्वाड & एम्बुलेंस 05' },
+                { sector: 'Sector 4 (15K - 21.1K)', label: 'जवाहर सर्किल से अमर जवान ज्योति / फिनिश', count: 450, pct: 19, color: '#10b981', patrol: 'अल्बर्ट हॉल रिकवरी एरिना' }
+              ].map((sec, idx) => (
+                <div key={idx} style={{ background: 'var(--police-navy-50)', padding: '12px 14px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>{sec.sector}</span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 900, color: sec.color }}>{sec.count} धावक</span>
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '8px' }}>{sec.label}</div>
+                  
+                  {/* Mini bar */}
+                  <div style={{ height: '6px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden', marginBottom: '8px' }}>
+                    <div style={{ height: '100%', width: `${sec.pct}%`, background: sec.color, borderRadius: '4px' }}></div>
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--police-navy-900)', fontWeight: 700 }}>
+                    🛡️ गश्त: {sec.patrol}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Stalled / Delayed Runner Safety Alert Table */}
+          <div className="gov-card" style={{ padding: '18px 20px', background: '#ffffff', borderRadius: '8px', border: '1.5px solid #fecaca' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#991b1b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <AlertTriangle size={18} color="#dc2626" />
+                  स्वास्थ्य एवं विलंब निगरानी कतार (Overdue Runners Queue)
+                </h3>
+                <p style={{ margin: '2px 0 0 0', fontSize: '0.75rem', color: '#b91c1c' }}>
+                  अपेक्षित पेस से 20+ मिनट अधिक विलंब होने पर ऑटोमैटिक अलर्ट जनरेट होता है।
+                </p>
+              </div>
+              <span className="badge-pink" style={{ fontSize: '0.72rem' }}>
+                राजस्थान पुलिस त्वरित सुरक्षा प्रोटोकॉल
+              </span>
+            </div>
+
+            {delayedRunners.length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: '#16a34a', fontWeight: 700, fontSize: '0.88rem' }}>
+                ✓ वर्तमान में सभी धावक सामान्य गति पर हैं। कोई सुरक्षा अलर्ट पेंडिंग नहीं है।
+              </div>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem' }}>
+                  <thead>
+                    <tr style={{ background: '#fff1f2', borderBottom: '2px solid #fecaca', color: '#991b1b' }}>
+                      <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 800 }}>Bib / धावक</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 800 }}>अंतिम देखा गया स्थान</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 800 }}>विलंब स्थिति</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 800 }}>इमरजेंसी संपर्क</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 800 }}>पुलिस कार्यवाही</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 800 }}>एक्शन</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {delayedRunners.map(item => (
+                      <tr key={item.id} style={{ borderBottom: '1px solid #fee2e2' }}>
+                        <td style={{ padding: '12px' }}>
+                          <div style={{ fontWeight: 800, color: 'var(--police-navy-950)' }}>{item.fullName}</div>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--crimson-600)', fontWeight: 700 }}>{item.bibNumber} • {item.category}</div>
+                        </td>
+                        <td style={{ padding: '12px' }}>
+                          <div style={{ fontWeight: 700, color: 'var(--police-navy-900)' }}>{item.sector}</div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{item.lastSeen}</div>
+                        </td>
+                        <td style={{ padding: '12px' }}>
+                          <span style={{ background: '#fee2e2', color: '#991b1b', padding: '3px 8px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 800 }}>
+                            {item.currentDelay}
+                          </span>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: '2px' }}>लक्ष्य: {item.expectedPace}</div>
+                        </td>
+                        <td style={{ padding: '12px' }}>
+                          <div style={{ fontWeight: 700 }}>{item.mobile}</div>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>परिजन: {item.emergencyContact}</div>
+                        </td>
+                        <td style={{ padding: '12px' }}>
+                          <span style={{
+                            background: item.status === 'DISPATCHED' ? '#fef3c7' : '#f1f5f9',
+                            color: item.status === 'DISPATCHED' ? '#92400e' : '#475569',
+                            padding: '3px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.72rem',
+                            fontWeight: 800
+                          }}>
+                            {item.status === 'DISPATCHED' ? '🚨 गश्त रवाना' : 'पेंडिंग'}
+                          </span>
+                          <div style={{ fontSize: '0.68rem', color: '#475569', marginTop: '2px' }}>{item.notes}</div>
+                        </td>
+                        <td style={{ padding: '12px', textAlign: 'right' }}>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                            <button
+                              onClick={() => {
+                                setDelayedRunners(prev => prev.map(r => r.id === item.id ? { ...r, status: 'DISPATCHED', notes: 'बाइक पेट्रोल 04 मौके पर पहुंच चुकी है।' } : r));
+                                setExportNotice(`बाइक पेट्रोल यूनिट को धावक ${item.fullName} (Bib: ${item.bibNumber}) की ओर रवाना कर दिया गया है।`);
+                                setTimeout(() => setExportNotice(null), 4000);
+                              }}
+                              style={{
+                                background: '#dc2626',
+                                color: '#ffffff',
+                                border: 'none',
+                                padding: '5px 10px',
+                                borderRadius: '4px',
+                                fontSize: '0.74rem',
+                                fontWeight: 800,
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
+                              🚨 बाइक पेट्रोल भेजें
+                            </button>
+                            <button
+                              onClick={() => {
+                                setDelayedRunners(prev => prev.filter(r => r.id !== item.id));
+                                setExportNotice(`धावक ${item.fullName} की स्थिति सामान्य सत्यापित हुई। अलर्ट बंद किया गया।`);
+                                setTimeout(() => setExportNotice(null), 4000);
+                              }}
+                              style={{
+                                background: '#16a34a',
+                                color: '#ffffff',
+                                border: 'none',
+                                padding: '5px 8px',
+                                borderRadius: '4px',
+                                fontSize: '0.74rem',
+                                fontWeight: 800,
+                                cursor: 'pointer'
+                              }}
+                              title="स्थिति सामान्य मार्क करें"
+                            >
+                              ✓ सुरक्षित
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Hardware & IoT Sensor Mats Health Status Matrix */}
+          <div className="gov-card" style={{ padding: '16px 20px', background: 'var(--police-navy-950)', color: '#ffffff', borderRadius: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--police-gold-400)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Zap size={16} /> ग्राउंड RFID टाइमिंग मैट हार्डवेयर स्वास्थ्य (Timing Readers Health Matrix)
+              </span>
+              <span style={{ fontSize: '0.72rem', color: '#86efac', fontWeight: 700 }}>सिस्टम लेटेंसी: 8ms • 100% अपटाइम</span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
+              {[
+                { name: 'Albert Hall Gantry', ip: '10.24.1.101', status: 'ONLINE', pings: '4ms', battery: 'AC Mains' },
+                { name: '5K RU Gate Mat', ip: '10.24.1.102', status: 'ONLINE', pings: '7ms', battery: '98% UPS' },
+                { name: '10K WTP Turn Mat', ip: '10.24.1.103', status: 'ONLINE', pings: '9ms', battery: '94% UPS' },
+                { name: '15K Patrika Gate Mat', ip: '10.24.1.104', status: 'ONLINE', pings: '11ms', battery: '91% UPS' },
+                { name: 'Grand Finish Gantry', ip: '10.24.1.105', status: 'ONLINE', pings: '3ms', battery: 'AC Redundant' }
+              ].map((hw, idx) => (
+                <div key={idx} style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '10px', borderRadius: '5px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', fontWeight: 800 }}>
+                    <span>{hw.name}</span>
+                    <span style={{ color: '#4ade80', fontSize: '0.65rem' }}>● {hw.status}</span>
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '2px' }}>
+                    IP: {hw.ip} | लेटेंसी: {hw.pings}
+                  </div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--police-gold-400)', marginTop: '2px' }}>
+                    पावर: {hw.battery}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
-      </div>
+      )}
+
     </div>
-  );
+  </div>
+</div>
+);
 }
