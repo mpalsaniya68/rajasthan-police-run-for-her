@@ -54,47 +54,80 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
       paddingTop: '20px',
       paddingBottom: '60px'
     }}>
-      {/* Official State Notice Ticker */}
+      {/* Official State Notice Ticker (Dark Theme - High Contrast) */}
       <div className="container" style={{ marginBottom: '28px' }}>
-        <div className="notice-ticker-wrapper" style={{ background: 'rgba(255, 255, 255, 0.95)', border: '1px solid rgba(255, 255, 255, 0.4)' }}>
-          <div className="notice-ticker-badge" style={{ background: 'var(--police-navy-950)', color: '#fde68a' }}>
-            <span className="pulse-dot"></span>
-            <Bell size={13} />
-            <span>लाइव सूचना / NOTICE</span>
+        <div style={{
+          background: 'rgba(5, 17, 38, 0.96)',
+          backdropFilter: 'blur(12px)',
+          border: '1.5px solid rgba(212, 175, 55, 0.5)',
+          borderRadius: '10px',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+          display: 'flex',
+          alignItems: 'center',
+          overflow: 'hidden',
+          position: 'relative',
+          height: '46px'
+        }}>
+          {/* Badge */}
+          <div style={{
+            background: 'linear-gradient(135deg, #b91c1c 0%, #991b1b 100%)',
+            color: '#ffffff',
+            padding: '0 16px',
+            height: '100%',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontWeight: 900,
+            fontSize: '0.78rem',
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            flexShrink: 0,
+            zIndex: 3,
+            boxShadow: '4px 0 12px rgba(0, 0, 0, 0.4)'
+          }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fef08a', display: 'inline-block', boxShadow: '0 0 8px #fef08a' }}></span>
+            <Bell size={13} color="#fef08a" />
+            <span style={{ color: '#ffffff' }}>लाइव सूचना / NOTICE</span>
           </div>
 
-          <div className="notice-ticker-track-container">
+          {/* Marquee Track */}
+          <div className="notice-ticker-track-container" style={{
+            maskImage: 'linear-gradient(90deg, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%)'
+          }}>
             <div className="notice-ticker-track">
               {notices.map((n, i) => (
-                <div key={`n1-${i}`} className="notice-item" style={{ color: 'var(--police-navy-950)' }}>
+                <div key={`n1-${i}`} className="notice-item" style={{ color: '#ffffff' }}>
                   <span style={{
-                    background: 'rgba(10, 28, 61, 0.1)',
-                    color: 'var(--police-navy-900)',
-                    padding: '2px 8px',
+                    background: 'rgba(212, 175, 55, 0.22)',
+                    color: '#fef08a',
+                    padding: '3px 10px',
                     borderRadius: '4px',
                     fontSize: '0.72rem',
-                    fontWeight: 800
+                    fontWeight: 800,
+                    border: '1px solid rgba(212, 175, 55, 0.4)'
                   }}>
                     {n.tag}
                   </span>
-                  <span>{n.text}</span>
-                  <span className="notice-item-divider"></span>
+                  <span style={{ color: '#f8fafc', fontWeight: 600 }}>{n.text}</span>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444', display: 'inline-block', opacity: 0.85 }}></span>
                 </div>
               ))}
               {notices.map((n, i) => (
-                <div key={`n2-${i}`} className="notice-item" style={{ color: 'var(--police-navy-950)' }}>
+                <div key={`n2-${i}`} className="notice-item" style={{ color: '#ffffff' }}>
                   <span style={{
-                    background: 'rgba(10, 28, 61, 0.1)',
-                    color: 'var(--police-navy-900)',
-                    padding: '2px 8px',
+                    background: 'rgba(212, 175, 55, 0.22)',
+                    color: '#fef08a',
+                    padding: '3px 10px',
                     borderRadius: '4px',
                     fontSize: '0.72rem',
-                    fontWeight: 800
+                    fontWeight: 800,
+                    border: '1px solid rgba(212, 175, 55, 0.4)'
                   }}>
                     {n.tag}
                   </span>
-                  <span>{n.text}</span>
-                  <span className="notice-item-divider"></span>
+                  <span style={{ color: '#f8fafc', fontWeight: 600 }}>{n.text}</span>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444', display: 'inline-block', opacity: 0.85 }}></span>
                 </div>
               ))}
             </div>
@@ -103,7 +136,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
       </div>
 
       <div className="container">
-        {/* Dignitary & Official Dispatch Badges */}
+        {/* Dignitary Badges */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
           <span style={{
             background: 'rgba(212, 175, 55, 0.2)',
@@ -132,16 +165,6 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             gap: '6px'
           }}>
             <Heart size={14} /> नारी सुरक्षा, गरिमा एवं सशक्तिकरण
-          </span>
-          <span style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: '#e2e8f0',
-            padding: '4px 12px',
-            borderRadius: '20px',
-            fontSize: '0.74rem',
-            fontWeight: 700
-          }}>
-            पत्रांक: पु.मु./कल्याण/मैराथन-2026/1842
           </span>
         </div>
 
@@ -319,21 +342,22 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                 { label: 'सेकंड (SECS)', val: String(timeLeft.seconds).padStart(2, '0') }
               ].map((item, idx) => (
                 <div key={idx} style={{
-                  background: 'var(--police-navy-50)',
-                  borderRadius: '8px',
-                  padding: '12px 6px',
-                  border: '1px solid var(--border-subtle)'
+                  background: '#0a1c3d',
+                  borderRadius: '10px',
+                  padding: '14px 6px',
+                  border: '1.5px solid #d4af37',
+                  boxShadow: '0 4px 14px rgba(10, 28, 61, 0.25)'
                 }}>
                   <div style={{
-                    fontFamily: 'var(--font-heading)',
-                    fontSize: 'clamp(1.6rem, 3.5vw, 2.3rem)',
+                    fontSize: 'clamp(1.8rem, 3.8vw, 2.6rem)',
                     fontWeight: 900,
-                    color: 'var(--police-navy-950)',
-                    lineHeight: 1
+                    color: '#fde68a',
+                    lineHeight: 1,
+                    textShadow: '0 2px 4px rgba(0,0,0,0.5)'
                   }}>
                     {item.val}
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 800, letterSpacing: '0.04em', marginTop: '4px' }}>
+                  <div style={{ fontSize: '0.74rem', color: '#f1f5f9', fontWeight: 800, letterSpacing: '0.04em', marginTop: '6px' }}>
                     {item.label}
                   </div>
                 </div>

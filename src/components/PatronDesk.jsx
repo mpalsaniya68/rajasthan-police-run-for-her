@@ -34,8 +34,8 @@ export function PatronDesk({ onOpenRegister, onOpenBulkRegister, onNavigate }) {
                 राजस्थान पुलिस मुख्यालय, जयपुर | HEADQUARTERS DESK
               </span>
             </div>
-            <div style={{ fontSize: '0.74rem', color: '#cbd5e1' }}>
-              शासकीय पत्रांक: पु.मु./कल्याण/मैराथन-2026/1842
+            <div style={{ fontSize: '0.74rem', color: '#fef08a', fontWeight: 700 }}>
+              ★ सेवार्थ कटिबद्धता ★
             </div>
           </div>
 
@@ -142,136 +142,7 @@ export function PatronDesk({ onOpenRegister, onOpenBulkRegister, onNavigate }) {
           </div>
         </div>
 
-        {/* 2. SECTION: VOICES OF THE MARATHON — REAL HUMAN STORIES */}
-        <div style={{ marginBottom: '50px' }}>
-          <div className="section-header" style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <span className="badge-pink">धावकों की वास्तविक आवाज</span>
-            <h2 style={{ fontSize: 'clamp(1.3rem, 2.4vw, 1.8rem)', fontWeight: 900, color: 'var(--police-navy-950)' }}>
-              क्यों दौड़ रहे हैं राजस्थान के लोग? (Voices of Courage & Unity)
-            </h2>
-            <p style={{ maxWidth: '640px', margin: '0 auto', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-              वर्दीधारी पुलिसकर्मियों से लेकर कॉलेज छात्राओं और वरिष्ठ चिकित्सकों तक — जानिए उन लोगों की सच्ची कहानियां जो इस दौड़ को अपनी जिंदगी का सबसे बड़ा संकल्प मानते हैं।
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '22px' }}>
-            {/* Story 1: Female Police Constable */}
-            <div className="gov-card" style={{ padding: '24px', background: '#ffffff', borderRadius: '12px', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    background: 'var(--police-navy-100)',
-                    color: 'var(--police-navy-900)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 900,
-                    fontSize: '1.2rem',
-                    flexShrink: 0
-                  }}>
-                    👮‍♀️
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--police-navy-950)' }}>
-                      कॉन्स्टेबल सुनीता बिश्नोई
-                    </div>
-                    <div style={{ fontSize: '0.74rem', color: 'var(--police-gold-700)', fontWeight: 700 }}>
-                      3rd RAC बटालियन, जयपुर • 21K हाफ मैराथन
-                    </div>
-                  </div>
-                </div>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-body)', lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}>
-                  "जब हम वर्दी में जयपुर की सड़कों पर 21 किलोमीटर दौड़ेंगे, तो हर बेटी को यह अहसास होगा कि पुलिस केवल थानों में नहीं, बल्कि हर मोड़ पर उनकी ढाल बनकर मौजूद है। यह दौड़ हमारी ताकत और उनकी आजादी का प्रतीक है।"
-                </p>
-              </div>
-              <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px dashed var(--border-subtle)', fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between' }}>
-                <span>Bib: RJ-21K-2410</span>
-                <span>व्यक्तिगत लक्ष्य: 01:50:00</span>
-              </div>
-            </div>
-
-            {/* Story 2: Senior Doctor & Veteran Marathoner */}
-            <div className="gov-card" style={{ padding: '24px', background: '#ffffff', borderRadius: '12px', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    background: '#ecfdf5',
-                    color: '#059669',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 900,
-                    fontSize: '1.2rem',
-                    flexShrink: 0
-                  }}>
-                    👨‍⚕️
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--police-navy-950)' }}>
-                      डॉ. आलोक सेन (52 वर्ष)
-                    </div>
-                    <div style={{ fontSize: '0.74rem', color: '#059669', fontWeight: 700 }}>
-                      सीनियर कार्डियोलॉजिस्ट, SMS हॉस्पिटल, जयपुर • 10K रन
-                    </div>
-                  </div>
-                </div>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-body)', lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}>
-                  "जयपुर की गुलाबी ठंड में जेएलएन मार्ग का चौड़ा और समतल कोर्स देश के बेहतरीन ट्रैक्स में से एक है। एक डॉक्टर के नाते मैं मानता हूँ कि जब पूरा शहर एक नेक मकसद—नारी सुरक्षा—के लिए दौड़ता है, तो समाज की सेहत और सोच दोनों सुधरती हैं।"
-                </p>
-              </div>
-              <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px dashed var(--border-subtle)', fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between' }}>
-                <span>Bib: RJ-10K-0842</span>
-                <span>पेस लक्ष्य: 5:10 min/km</span>
-              </div>
-            </div>
-
-            {/* Story 3: University Student Youth Ambassador */}
-            <div className="gov-card" style={{ padding: '24px', background: '#ffffff', borderRadius: '12px', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    background: '#fdf2f8',
-                    color: '#db2777',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 900,
-                    fontSize: '1.2rem',
-                    flexShrink: 0
-                  }}>
-                    👩‍🎓
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--police-navy-950)' }}>
-                      आरुषि माथुर
-                    </div>
-                    <div style={{ fontSize: '0.74rem', color: '#db2777', fontWeight: 700 }}>
-                      छात्रा प्रतिनिधि, राजस्थान विश्वविद्यालय • 5K कम्युनिटी रन
-                    </div>
-                  </div>
-                </div>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-body)', lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}>
-                  "हमारे कॉलेज की 420 छात्राओं ने इस मैराथन के लिए एक साथ बल्क रजिस्ट्रेशन कराया है। अल्बर्ट हॉल पर हजारों लोगों के साथ दौड़ना हमें यह भरोसा देगा कि हमें डरने की जरूरत नहीं है, सड़कें और शहर हमारा भी है।"
-                </p>
-              </div>
-              <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px dashed var(--border-subtle)', fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between' }}>
-                <span>Bib: RJ-05K-5120</span>
-                <span>यूनिवर्सिटी यूथ टीम लीडर</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 3. SECTION: RACE DAY LOGISTICS & GROUND ADVISORY (REAL OPERATIONAL FACTS) */}
+        {/* 2. SECTION: RACE DAY LOGISTICS & GROUND ADVISORY (REAL OPERATIONAL FACTS) */}
         <div style={{
           background: '#ffffff',
           borderRadius: '16px',
