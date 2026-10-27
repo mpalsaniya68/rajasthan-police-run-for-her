@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Calendar, MapPin, Users, Award, ChevronRight, Heart, Bell, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
+import { Shield, Calendar, MapPin, Users, Award, Heart, Bell, CheckCircle2, ArrowRight, Sparkles, Radio } from 'lucide-react';
 import { RunForHerBadge, PoliceEmblem } from './Emblems';
 
 export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegistered = 18450 }) {
@@ -28,34 +28,6 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
     return () => clearInterval(timer);
   }, []);
 
-  // Letter-by-letter typing animation for "RUN FOR HER" in repeat mode
-  const [typedTitle, setTypedTitle] = useState('');
-  const [isDeletingTitle, setIsDeletingTitle] = useState(false);
-  const FULL_TITLE = "RUN FOR HER";
-
-  useEffect(() => {
-    let timeout;
-    const typingSpeed = isDeletingTitle ? 60 : 120;
-    const pauseBeforeDelete = 2400; // Pause when full text is typed
-    const pauseBeforeRestart = 500;  // Pause before re-typing
-
-    if (!isDeletingTitle && typedTitle === FULL_TITLE) {
-      timeout = setTimeout(() => setIsDeletingTitle(true), pauseBeforeDelete);
-    } else if (isDeletingTitle && typedTitle === '') {
-      timeout = setTimeout(() => setIsDeletingTitle(false), pauseBeforeRestart);
-    } else {
-      timeout = setTimeout(() => {
-        setTypedTitle(prev =>
-          isDeletingTitle
-            ? FULL_TITLE.substring(0, prev.length - 1)
-            : FULL_TITLE.substring(0, prev.length + 1)
-        );
-      }, typingSpeed);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [typedTitle, isDeletingTitle]);
-
   const notices = [
     { text: "राजस्थान पुलिस मैराथन 'RUN FOR HER' — रेस दिवस: 20 दिसंबर 2026", tag: "इवेंट तिथि" },
     { text: "अल्बर्ट हॉल, जयपुर एवं प्रदेश के सभी 50 पुलिस जिलों में एक साथ भव्य आयोजन", tag: "वेन्यू" },
@@ -73,15 +45,19 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
   return (
     <section id="hero" style={{
       position: 'relative',
-      background: 'linear-gradient(180deg, #ffffff 0%, #f4f6fa 100%)',
+      backgroundImage: `linear-gradient(180deg, rgba(10, 28, 61, 0.92) 0%, rgba(10, 28, 61, 0.82) 45%, rgba(10, 28, 61, 0.96) 100%), url('/images/marathon_hero_jaipur.jpg')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center 30%',
+      backgroundRepeat: 'no-repeat',
+      color: '#ffffff',
       borderBottom: '1px solid var(--border-subtle)',
       paddingTop: '20px',
       paddingBottom: '60px'
     }}>
-      {/* Official State Notice Ticker (Repeated Loop moving Left-to-Right) */}
-      <div className="container" style={{ marginBottom: '24px' }}>
-        <div className="notice-ticker-wrapper">
-          <div className="notice-ticker-badge">
+      {/* Official State Notice Ticker */}
+      <div className="container" style={{ marginBottom: '28px' }}>
+        <div className="notice-ticker-wrapper" style={{ background: 'rgba(255, 255, 255, 0.95)', border: '1px solid rgba(255, 255, 255, 0.4)' }}>
+          <div className="notice-ticker-badge" style={{ background: 'var(--police-navy-950)', color: '#fde68a' }}>
             <span className="pulse-dot"></span>
             <Bell size={13} />
             <span>लाइव सूचना / NOTICE</span>
@@ -89,12 +65,11 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
 
           <div className="notice-ticker-track-container">
             <div className="notice-ticker-track">
-              {/* Loop Duplicate 1 */}
               {notices.map((n, i) => (
-                <div key={`n1-${i}`} className="notice-item">
+                <div key={`n1-${i}`} className="notice-item" style={{ color: 'var(--police-navy-950)' }}>
                   <span style={{
-                    background: 'rgba(10, 28, 61, 0.08)',
-                    color: 'var(--police-navy-800)',
+                    background: 'rgba(10, 28, 61, 0.1)',
+                    color: 'var(--police-navy-900)',
                     padding: '2px 8px',
                     borderRadius: '4px',
                     fontSize: '0.72rem',
@@ -106,13 +81,11 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                   <span className="notice-item-divider"></span>
                 </div>
               ))}
-
-              {/* Loop Duplicate 2 for seamless infinite loop */}
               {notices.map((n, i) => (
-                <div key={`n2-${i}`} className="notice-item">
+                <div key={`n2-${i}`} className="notice-item" style={{ color: 'var(--police-navy-950)' }}>
                   <span style={{
-                    background: 'rgba(10, 28, 61, 0.08)',
-                    color: 'var(--police-navy-800)',
+                    background: 'rgba(10, 28, 61, 0.1)',
+                    color: 'var(--police-navy-900)',
                     padding: '2px 8px',
                     borderRadius: '4px',
                     fontSize: '0.72rem',
@@ -130,138 +103,211 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
       </div>
 
       <div className="container">
-        {/* Dignitary & Official Patron Badges */}
+        {/* Dignitary & Official Dispatch Badges */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
-          <span className="badge-gov">
-            <Shield size={13} color="var(--police-navy-800)" /> राजस्थान पुलिस का राज्यव्यापी जन-आंदोलन
+          <span style={{
+            background: 'rgba(212, 175, 55, 0.2)',
+            color: '#fef08a',
+            padding: '4px 14px',
+            borderRadius: '20px',
+            fontSize: '0.78rem',
+            fontWeight: 800,
+            border: '1px solid rgba(212, 175, 55, 0.5)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <Shield size={14} color="#fef08a" /> राजस्थान पुलिस मुख्यालय, जयपुर का राज्यव्यापी जन-आंदोलन
           </span>
-          <span className="badge-pink">
-            <Heart size={13} /> नारी सुरक्षा, गरिमा एवं सशक्तिकरण
+          <span style={{
+            background: 'rgba(239, 68, 68, 0.25)',
+            color: '#fca5a5',
+            padding: '4px 14px',
+            borderRadius: '20px',
+            fontSize: '0.78rem',
+            fontWeight: 800,
+            border: '1px solid rgba(239, 68, 68, 0.45)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <Heart size={14} /> नारी सुरक्षा, गरिमा एवं सशक्तिकरण
+          </span>
+          <span style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            color: '#e2e8f0',
+            padding: '4px 12px',
+            borderRadius: '20px',
+            fontSize: '0.74rem',
+            fontWeight: 700
+          }}>
+            पत्रांक: पु.मु./कल्याण/मैराथन-2026/1842
           </span>
         </div>
 
-        {/* Hero Headings (High Contrast Light Theme) */}
+        {/* Hero Headings - Majestic, Authoritative & Grounded */}
         <div style={{ textAlign: 'center', maxWidth: '960px', margin: '0 auto' }}>
+          
           <div style={{
-            fontSize: 'clamp(0.95rem, 2vw, 1.2rem)',
+            fontSize: 'clamp(0.9rem, 2vw, 1.15rem)',
             fontWeight: 800,
-            color: 'var(--police-gold-700)',
-            letterSpacing: '0.08em',
+            color: '#fde68a',
+            letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            marginBottom: '6px'
+            marginBottom: '8px',
+            textShadow: '0 2px 8px rgba(0,0,0,0.5)'
           }}>
-            RAJASTHAN POLICE MARATHON 2026
+            ★ RAJASTHAN POLICE STATEWIDE MARATHON 2026 ★
           </div>
 
-          {/* Animated Main Title */}
-          <div style={{
-            minHeight: 'clamp(2.6rem, 6vw, 4.8rem)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '14px',
-            width: '100%'
+          <h1 style={{
+            fontSize: 'clamp(2.4rem, 6vw, 4.6rem)',
+            fontWeight: 900,
+            lineHeight: 1.08,
+            letterSpacing: '-0.02em',
+            color: '#ffffff',
+            textTransform: 'uppercase',
+            margin: '0 0 14px 0',
+            textShadow: '0 4px 20px rgba(0, 0, 0, 0.7)'
           }}>
-            <h1 style={{
-              fontSize: 'clamp(2.2rem, 5.5vw, 4.2rem)',
-              fontWeight: 900,
-              lineHeight: 1.1,
-              letterSpacing: '-0.03em',
-              color: 'var(--police-navy-900)',
-              textTransform: 'uppercase',
-              margin: 0,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '2px'
-            }}>
-              <span>{typedTitle}</span>
-              <span className="typewriter-cursor">|</span>
-            </h1>
-          </div>
+            RUN FOR HER
+          </h1>
 
-          {/* Slogans from Official PDF */}
-          <div style={{ width: '100%', marginBottom: '18px' }}>
+          {/* Slogan Banner */}
+          <div style={{ width: '100%', marginBottom: '22px' }}>
             <div style={{
-              background: 'var(--crimson-50)',
-              border: '1px solid rgba(201, 24, 74, 0.25)',
+              background: 'rgba(201, 24, 74, 0.85)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
               display: 'inline-block',
-              padding: '8px 24px',
-              borderRadius: '100px'
+              padding: '10px 28px',
+              borderRadius: '100px',
+              boxShadow: '0 4px 15px rgba(201, 24, 74, 0.4)'
             }}>
               <span style={{
-                fontSize: 'clamp(1rem, 2.2vw, 1.4rem)',
-                fontWeight: 800,
-                color: 'var(--crimson-600)',
+                fontSize: 'clamp(1rem, 2.2vw, 1.35rem)',
+                fontWeight: 900,
+                color: '#ffffff',
                 letterSpacing: '0.02em'
               }}>
-                "Every Step for Her Safety — हर कदम नारी सुरक्षा के लिए"
+                "हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के नाम"
               </span>
             </div>
           </div>
 
+          {/* Core Descriptive Text */}
           <p style={{
-            fontSize: 'clamp(0.95rem, 1.8vw, 1.12rem)',
-            color: 'var(--text-body)',
-            maxWidth: '780px',
-            margin: '0 auto 28px auto',
-            lineHeight: 1.6
+            fontSize: 'clamp(0.98rem, 1.9vw, 1.15rem)',
+            color: '#f1f5f9',
+            maxWidth: '820px',
+            margin: '0 auto 32px auto',
+            lineHeight: 1.65,
+            textShadow: '0 2px 10px rgba(0,0,0,0.6)'
           }}>
-            <strong>Run Together. Stand Together. Make Rajasthan Safer.</strong> <strong>20 दिसंबर 2026</strong> को पुलिस महानिदेशक (DGP) <strong>राजीव शर्मा (IPS)</strong> के नेतृत्व में जयपुर के प्रतिष्ठित अल्बर्ट हॉल से 10,000+ नागरिकों का फ्लैगशिप रन एवं प्रदेश के सभी 50 पुलिस जिलों में एक साथ 5KM/10KM कम्युनिटी रन।
+            <strong>20 दिसंबर 2026</strong> को पुलिस महानिदेशक (DGP) <strong>राजीव शर्मा (IPS)</strong> के नेतृत्व में जयपुर के ऐतिहासिक अल्बर्ट हॉल से 10,000+ नागरिकों का फ्लैगशिप रन एवं प्रदेश के सभी 50 पुलिस जिलों में एक साथ 5KM/10KM कम्युनिटी रन।
           </p>
 
-          {/* Action Buttons - Rounded Shape with Glassmorphism & Eye-catching Sway/Gleam */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: '38px' }}>
+          {/* Action CTAs - Human, Tactile & High-Contrast */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '14px', flexWrap: 'wrap', marginBottom: '38px' }}>
             <button 
               onClick={onOpenRegister} 
-              className="btn-glass-primary btn-glass-register" 
-              style={{ padding: '15px 32px', fontSize: '1.04rem', fontWeight: 800 }}
+              style={{
+                background: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
+                color: '#ffffff',
+                border: '1.5px solid rgba(255, 255, 255, 0.4)',
+                padding: '15px 32px',
+                borderRadius: '8px',
+                fontSize: '1.02rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                boxShadow: '0 8px 24px rgba(225, 29, 72, 0.45)',
+                transition: 'transform 0.2s, box-shadow 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               title="निःशुल्क इंडिविजुअल रजिस्ट्रेशन"
             >
-              <Sparkles size={19} />
               <span>इंडिविजुअल रजिस्ट्रेशन (निःशुल्क)</span>
-              <ArrowRight size={17} />
+              <ArrowRight size={18} />
             </button>
+
             <button 
               onClick={onOpenBulkRegister} 
-              className="btn-glass-navy" 
-              style={{ padding: '15px 26px', fontSize: '0.98rem', fontWeight: 800 }}
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                color: '#ffffff',
+                border: '1.5px solid rgba(255, 255, 255, 0.35)',
+                padding: '15px 24px',
+                borderRadius: '8px',
+                fontSize: '0.96rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
               title="ग्रुप व बल्क रजिस्ट्रेशन"
             >
-              <Shield size={19} color="var(--police-gold-400)" />
-              <span>🏢 ग्रुप / बल्क रजिस्ट्रेशन (RPA/कॉलेज)</span>
+              <Shield size={18} color="var(--police-gold-400)" />
+              <span>🏢 ग्रुप / बल्क रजिस्ट्रेशन (कॉलेज/RPA)</span>
             </button>
+
             <button 
-              onClick={() => onNavigate ? onNavigate('photos') : scrollTo('story-generator')} 
-              className="btn-glass-gold" 
-              style={{ padding: '14px 22px', fontSize: '0.94rem' }}
+              onClick={() => onNavigate ? onNavigate('live-tracker') : scrollTo('live-tracker')} 
+              style={{
+                background: 'rgba(220, 38, 38, 0.2)',
+                border: '1.5px solid #f87171',
+                color: '#fecaca',
+                padding: '15px 22px',
+                borderRadius: '8px',
+                fontSize: '0.94rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
-              📱 WhatsApp स्टेटस बनाएं
-            </button>
-            <button 
-              onClick={() => onNavigate ? onNavigate('photos') : scrollTo('photos')} 
-              className="btn-secondary" 
-              style={{ padding: '14px 22px', fontSize: '0.92rem' }}
-            >
-              📸 AI फोटो खोजें
+              <Radio size={16} color="#ef4444" />
+              <span>🔴 लाइव रनर ट्रैकर (RFID)</span>
             </button>
           </div>
 
-          {/* Official Countdown Card (Clean White Surface) */}
-          <div className="gov-card" style={{
-            maxWidth: '680px',
+          {/* Official Countdown Card (Glassmorphic Dignified White Surface) */}
+          <div style={{
+            maxWidth: '720px',
             margin: '0 auto 36px auto',
-            padding: '22px 26px',
-            border: '2px solid var(--border-medium)',
-            background: '#ffffff'
+            padding: '24px 28px',
+            borderRadius: '12px',
+            background: 'rgba(255, 255, 255, 0.96)',
+            backdropFilter: 'blur(12px)',
+            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.35)',
+            border: '2px solid rgba(212, 175, 55, 0.5)',
+            color: 'var(--police-navy-950)'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '14px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--police-navy-800)', fontWeight: 800, fontSize: '0.9rem' }}>
-                <Calendar size={18} color="var(--police-navy-800)" />
-                <span>RACE DAY COUNTDOWN • 20 DEC 2026 • JAIPUR & ALL DISTRICTS</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--police-navy-900)', fontWeight: 800, fontSize: '0.92rem' }}>
+                <Calendar size={18} color="var(--police-navy-900)" />
+                <span>RACE DAY COUNTDOWN • 20 DEC 2026</span>
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--crimson-600)', fontWeight: 700 }}>
-                Flag-off: 20 दिसंबर 2026, सुबह 06:00 AM by DGP Rajeev Sharma, IPS
+              <div style={{ fontSize: '0.84rem', color: 'var(--crimson-600)', fontWeight: 800 }}>
+                फ्लैग-ऑफ: 20 दिसंबर 2026, सुबह 06:00 AM • अल्बर्ट हॉल, जयपुर
               </div>
             </div>
 
@@ -274,20 +320,20 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
               ].map((item, idx) => (
                 <div key={idx} style={{
                   background: 'var(--police-navy-50)',
-                  borderRadius: 'var(--radius-sm)',
-                  padding: '10px 4px',
+                  borderRadius: '8px',
+                  padding: '12px 6px',
                   border: '1px solid var(--border-subtle)'
                 }}>
                   <div style={{
                     fontFamily: 'var(--font-heading)',
-                    fontSize: 'clamp(1.5rem, 3.2vw, 2.2rem)',
+                    fontSize: 'clamp(1.6rem, 3.5vw, 2.3rem)',
                     fontWeight: 900,
-                    color: 'var(--police-navy-900)',
+                    color: 'var(--police-navy-950)',
                     lineHeight: 1
                   }}>
                     {item.val}
                   </div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.04em', marginTop: '4px' }}>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 800, letterSpacing: '0.04em', marginTop: '4px' }}>
                     {item.label}
                   </div>
                 </div>
@@ -295,105 +341,73 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             </div>
           </div>
 
-          {/* Key Facts / Dignitary Protocols Strip */}
+          {/* Key Administrative Facts Strip */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '16px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
+            gap: '14px'
           }}>
-            <div className="gov-card" style={{ padding: '16px 20px', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div style={{ width: '44px', height: '44px', borderRadius: '8px', background: 'var(--police-navy-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <Users size={22} color="var(--police-navy-800)" />
+            <div style={{
+              background: 'rgba(10, 28, 61, 0.75)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '8px',
+              padding: '14px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              textAlign: 'left'
+            }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Users size={20} color="#fef08a" />
               </div>
               <div>
-                <div style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>
-                  {totalRegistered.toLocaleString()}+
-                </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>पंजीकृत धावक (Statewide)</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#fde68a' }}>{totalRegistered.toLocaleString()}+</div>
+                <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>पंजीकृत नागरिक व पुलिस धावक</div>
               </div>
             </div>
 
-            <div className="gov-card" style={{ padding: '16px 20px', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div style={{ width: '44px', height: '44px', borderRadius: '8px', background: 'var(--police-gold-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <MapPin size={22} color="var(--police-gold-700)" />
+            <div style={{
+              background: 'rgba(10, 28, 61, 0.75)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '8px',
+              padding: '14px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              textAlign: 'left'
+            }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <MapPin size={20} color="#fca5a5" />
               </div>
               <div>
-                <div style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>50 पुलिस जिले</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>एक साथ 5K/10K का आयोजन</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff' }}>50 पुलिस जिले</div>
+                <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>एक साथ 5K/10K का राज्यव्यापी आयोजन</div>
               </div>
             </div>
 
-            <div className="gov-card" style={{ padding: '16px 20px', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div style={{ width: '44px', height: '44px', borderRadius: '8px', background: 'var(--crimson-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <Award size={22} color="var(--crimson-600)" />
+            <div style={{
+              background: 'rgba(10, 28, 61, 0.75)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '8px',
+              padding: '14px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              textAlign: 'left'
+            }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Award size={20} color="#86efac" />
               </div>
               <div>
-                <div style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>माननीय मुख्यमंत्री</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>शाम के समारोह में पदक वितरण</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#86efac' }}>माननीय मुख्यमंत्री</div>
+                <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>शाम 06:00 बजे पदक वितरण समारोह</div>
               </div>
             </div>
           </div>
 
-          {/* Quick Portal Access Hub (Multi-Page Navigation Grid) */}
-          <div style={{ marginTop: '36px', textAlign: 'center' }}>
-            <div style={{
-              fontSize: '0.8rem',
-              fontWeight: 800,
-              color: 'var(--police-gold-700)',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              marginBottom: '14px'
-            }}>
-              ★ आधिकारिक पोर्टल सेवाएं एवं अनुभाग (PORTAL DIRECTORY) ★
-            </div>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '12px'
-            }}>
-              {[
-                { id: 'categories', icon: '🏃', title: 'दौड़ श्रेणियां', desc: '21K, 10K, 5K, 2K विवरण' },
-                { id: 'route-schedule', icon: '🗺️', title: 'रूट व एक्सपो', desc: 'रूट मैप व किट वितरण' },
-                { id: 'districts', icon: '🏛️', title: '50 पुलिस जिले', desc: 'जिला वेन्यू व नोडल अधिकारी' },
-                { id: 'certificates', icon: '🏆', title: 'सर्टिफिकेट', desc: 'ई-सर्टिफिकेट डाउनलोड व सत्यापन' },
-                { id: 'photos', icon: '📸', title: 'AI फोटो खोजें', desc: 'चेहरा व बिब फोटो फाइंडर' },
-                { id: 'pledge-safety', icon: '❤️', title: 'नारी सुरक्षा', desc: 'सुरक्षा संकल्प व 1090/112' }
-              ].map(card => (
-                <button
-                  key={card.id}
-                  onClick={() => onNavigate ? onNavigate(card.id) : scrollTo(card.id)}
-                  className="gov-card"
-                  style={{
-                    padding: '14px 16px',
-                    textAlign: 'left',
-                    background: '#ffffff',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--police-gold-500)';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                >
-                  <span style={{ fontSize: '1.6rem', flexShrink: 0 }}>{card.icon}</span>
-                  <div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>{card.title}</div>
-                    <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{card.desc}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </section>

@@ -19,6 +19,7 @@ import { RegistrationModal } from './components/RegistrationModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { LiveTrackerHub } from './components/LiveTrackerHub';
+import { PatronDesk } from './components/PatronDesk';
 
 export default function App() {
   // Active Page State ('home', 'categories', 'route-schedule', 'districts', 'live-tracker', 'certificates', 'photos', 'pledge-safety', 'all')
@@ -166,6 +167,11 @@ export default function App() {
               onOpenBulkRegister={() => setIsBulkModalOpen(true)}
               onNavigate={navigateToPage}
               totalRegistered={registrations.length + 18450}
+            />
+            <PatronDesk
+              onOpenRegister={() => setIsRegisterOpen(true)}
+              onOpenBulkRegister={() => setIsBulkModalOpen(true)}
+              onNavigate={navigateToPage}
             />
             {activePage === 'home' && (
               <div className="container" style={{ paddingBottom: '60px' }}>
