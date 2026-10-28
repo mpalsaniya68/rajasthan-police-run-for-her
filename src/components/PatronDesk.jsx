@@ -56,8 +56,9 @@ export function PatronDesk({ onOpenRegister, onOpenBulkRegister, onNavigate }) {
                   style={{
                     width: '100%',
                     maxWidth: '280px',
-                    height: '320px',
+                    height: '340px',
                     objectFit: 'cover',
+                    objectPosition: 'top center',
                     borderRadius: '12px',
                     display: 'block'
                   }}

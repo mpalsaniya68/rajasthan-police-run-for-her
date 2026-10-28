@@ -13,12 +13,13 @@ import { BulkRegistrationModal } from './components/BulkRegistrationModal';
 import { Footer } from './components/Footer';
 import { RegistrationModal } from './components/RegistrationModal';
 import { AdminDashboard } from './components/AdminDashboard';
-import { AdminLoginModal } from './components/AdminLoginModal';
+import { AdminLoginPage } from './components/AdminLoginPage';
 import { LiveTrackerHub } from './components/LiveTrackerHub';
 import { PatronDesk } from './components/PatronDesk';
+import { RegistrationPage } from './components/RegistrationPage';
 
 export default function App() {
-  // Active Page State ('home', 'categories', 'route-schedule', 'districts', 'live-tracker', 'certificates', 'photos', 'pledge-safety', 'all')
+  // Active Page State ('home', 'register', 'categories', 'route-schedule', 'districts', 'live-tracker', 'certificates', 'photos', 'pledge-safety', 'all')
   const [activePage, setActivePage] = useState('home');
 
   // Persistent registrations state
@@ -35,12 +36,18 @@ export default function App() {
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [selectedCategoryForModal, setSelectedCategoryForModal] = useState("21k");
   
-  // Single Access Admin States & 2FA
+  // Single Access Admin States & RBAC Credentials
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
     return sessionStorage.getItem('rajpol_admin_auth') === 'true';
   });
-  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [adminUser, setAdminUser] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('rajpol_admin_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
   const [hotkeyToast, setHotkeyToast] = useState(null);
 
   // Global Keyboard Shortcut: [Ctrl + Shift + A] / [Cmd + Shift + A]
@@ -52,11 +59,9 @@ export default function App() {
         setTimeout(() => setHotkeyToast(null), 3000);
 
         if (sessionStorage.getItem('rajpol_admin_auth') === 'true') {
-          setIsAdminOpen(true);
-          setIsAdminLoginOpen(false);
+          navigateToPage('admin');
         } else {
-          setIsAdminLoginOpen(true);
-          setIsAdminOpen(false);
+          navigateToPage('admin-login');
         }
       }
     };
@@ -67,22 +72,25 @@ export default function App() {
 
   const handleOpenAdminTrigger = () => {
     if (sessionStorage.getItem('rajpol_admin_auth') === 'true') {
-      setIsAdminOpen(true);
+      navigateToPage('admin');
     } else {
-      setIsAdminLoginOpen(true);
+      navigateToPage('admin-login');
     }
   };
 
-  const handleAdminLoginSuccess = () => {
+  const handleAdminLoginSuccess = (user) => {
     setIsAdminAuthenticated(true);
-    setIsAdminLoginOpen(false);
-    setIsAdminOpen(true);
+    setAdminUser(user);
+    navigateToPage('admin');
   };
 
   const handleAdminLogout = () => {
     sessionStorage.removeItem('rajpol_admin_auth');
+    sessionStorage.removeItem('rajpol_admin_user');
+    sessionStorage.removeItem('rajpol_admin_token');
     setIsAdminAuthenticated(false);
-    setIsAdminOpen(false);
+    setAdminUser(null);
+    navigateToPage('home');
   };
 
   // Sync with LocalStorage
@@ -108,7 +116,7 @@ export default function App() {
 
   const openRegisterModalWithCat = (catId) => {
     setSelectedCategoryForModal(catId);
-    setIsRegisterOpen(true);
+    navigateToPage('register');
   };
 
   const navigateToPage = (pageId) => {
@@ -120,12 +128,13 @@ export default function App() {
     <div className="app-root" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Official Top Navbar with Page Tabs */}
       <Navbar
-        onOpenRegister={() => setIsRegisterOpen(true)}
+        onOpenRegister={() => navigateToPage('register')}
         onOpenBulkRegister={() => setIsBulkModalOpen(true)}
         onOpenAdmin={handleOpenAdminTrigger}
         activePage={activePage}
         onNavigate={navigateToPage}
         totalRegistered={registrations.length + 18450}
+        isAdminAuthenticated={isAdminAuthenticated}
       />
 
       {/* Secret Hotkey Notification Toast */}
@@ -155,17 +164,28 @@ export default function App() {
 
       {/* Main Content View Container */}
       <main style={{ flex: 1 }}>
+        {/* 0. DEDICATED FULL-PAGE ONLINE RUNNER REGISTRATION */}
+        {activePage === 'register' && (
+          <div id="page-register">
+            <RegistrationPage
+              initialCategory={selectedCategoryForModal}
+              onNavigate={navigateToPage}
+              onRegisterSuccess={handleRegisterSuccess}
+            />
+          </div>
+        )}
+
         {/* 1. HOME PAGE */}
         {(activePage === 'home' || activePage === 'all') && (
           <div id="page-home">
             <Hero
-              onOpenRegister={() => setIsRegisterOpen(true)}
+              onOpenRegister={() => navigateToPage('register')}
               onOpenBulkRegister={() => setIsBulkModalOpen(true)}
               onNavigate={navigateToPage}
               totalRegistered={registrations.length + 18450}
             />
             <PatronDesk
-              onOpenRegister={() => setIsRegisterOpen(true)}
+              onOpenRegister={() => navigateToPage('register')}
               onOpenBulkRegister={() => setIsBulkModalOpen(true)}
               onNavigate={navigateToPage}
             />
@@ -293,10 +313,43 @@ export default function App() {
             <LiveTrackerHub onNavigate={navigateToPage} />
           </div>
         )}
+
+        {/* 9. DEDICATED FULL-PAGE ADMINISTRATIVE LOGIN */}
+        {activePage === 'admin-login' && (
+          <div id="page-admin-login">
+            <AdminLoginPage
+              onNavigate={navigateToPage}
+              onLoginSuccess={handleAdminLoginSuccess}
+            />
+          </div>
+        )}
+
+        {/* 10. DEDICATED FULL-PAGE ADMINISTRATIVE COMMAND DESK */}
+        {activePage === 'admin' && (
+          <div id="page-admin">
+            {isAdminAuthenticated ? (
+              <AdminDashboard
+                isFullPage={true}
+                isOpen={true}
+                currentUser={adminUser}
+                onNavigate={navigateToPage}
+                onClose={() => navigateToPage('home')}
+                onLogout={handleAdminLogout}
+                registrations={registrations}
+                onUpdateRegistration={handleUpdateRegistration}
+              />
+            ) : (
+              <AdminLoginPage
+                onNavigate={navigateToPage}
+                onLoginSuccess={handleAdminLoginSuccess}
+              />
+            )}
+          </div>
+        )}
       </main>
 
       {/* Footer with Helpline Matrix & Quick Page Navigation */}
-      <Footer onNavigate={navigateToPage} />
+      {activePage !== 'admin' && <Footer onNavigate={navigateToPage} />}
 
       {/* Interactive Registration Modal with Live Bib Generator */}
       <RegistrationModal
@@ -311,22 +364,6 @@ export default function App() {
         isOpen={isBulkModalOpen}
         onClose={() => setIsBulkModalOpen(false)}
         onBulkRegisterSuccess={handleBulkRegisterSuccess}
-      />
-
-      {/* Police 2FA Security Clearance Login (Mobile + OTP) */}
-      <AdminLoginModal
-        isOpen={isAdminLoginOpen}
-        onClose={() => setIsAdminLoginOpen(false)}
-        onLoginSuccess={handleAdminLoginSuccess}
-      />
-
-      {/* Police Nodal Command Desk (Admin Dashboard) */}
-      <AdminDashboard
-        isOpen={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
-        onLogout={handleAdminLogout}
-        registrations={registrations}
-        onUpdateRegistration={handleUpdateRegistration}
       />
     </div>
   );

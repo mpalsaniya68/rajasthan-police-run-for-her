@@ -93,6 +93,46 @@ export async function apiGetAdminParticipants(filters = {}) {
   }
 }
 
-export function apiGetExportUrl() {
-  return `${API_BASE}/admin/export`;
+export function apiGetExportUrl(district = "") {
+  return district && district !== "all" && district !== "ALL"
+    ? `${API_BASE}/admin/export?district=${encodeURIComponent(district)}`
+    : `${API_BASE}/admin/export`;
+}
+
+export async function apiGetAdminStats(district = "") {
+  try {
+    const url = district && district !== "all" && district !== "ALL"
+      ? `${API_BASE}/admin/stats?district=${encodeURIComponent(district)}`
+      : `${API_BASE}/admin/stats`;
+    const res = await fetch(url);
+    return await res.json();
+  } catch (err) {
+    console.error("apiGetAdminStats error:", err);
+    return { success: false, stats: null };
+  }
+}
+
+export async function apiDistributeKit(payload) {
+  try {
+    const res = await fetch(`${API_BASE}/admin/kit-distribution`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiDistributeKit error:", err);
+    return { success: false, error: "सर्वर से कनेक्ट नहीं हो सका।" };
+  }
+}
+
+export async function apiGetLeaderboard(filters = {}) {
+  try {
+    const params = new URLSearchParams(filters);
+    const res = await fetch(`${API_BASE}/leaderboard?${params.toString()}`);
+    return await res.json();
+  } catch (err) {
+    console.error("apiGetLeaderboard error:", err);
+    return { success: false, leaderboard: [], count: 0 };
+  }
 }

@@ -2,7 +2,15 @@ import React, { useState } from 'react';
 import { PoliceEmblem, StateEmblemOfIndia, RunForHerBadge } from './Emblems';
 import { Shield, Award, MapPin, UserPlus, FileCheck, Menu, X, Heart, Phone, HelpCircle, Sun, CloudRain } from 'lucide-react';
 
-export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, activePage = 'home', onNavigate, totalRegistered = 18450 }) {
+export function Navbar({ 
+  onOpenRegister, 
+  onOpenBulkRegister, 
+  onOpenAdmin, 
+  activePage = 'home', 
+  onNavigate, 
+  totalRegistered = 18450,
+  isAdminAuthenticated = false 
+}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [fontSize, setFontSize] = useState("normal"); // "normal", "large", "xlarge"
   const [lang, setLang] = useState("hi"); // "hi" or "en"
@@ -92,27 +100,6 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
               }}
             >
               {lang === 'hi' ? 'English' : 'हिन्दी'}
-            </button>
-
-            {/* Nodal Desk button */}
-            <button
-              onClick={onOpenAdmin}
-              title="पुलिस कमान डेस्क (Shortcut: Ctrl + Shift + A)"
-              style={{
-                background: 'rgba(217, 119, 6, 0.25)',
-                color: '#fef3c7',
-                border: '1px solid #d97706',
-                padding: '2px 10px',
-                borderRadius: '4px',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              <Shield size={11} /> Nodal Desk (2FA)
             </button>
           </div>
         </div>
@@ -234,11 +221,12 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
           <nav style={{ display: 'none', alignItems: 'center', gap: '4px' }} className="desktop-nav-items">
             {[
               { id: 'home', label: 'मुख्य पृष्ठ' },
+              { id: 'register', label: 'रजिस्ट्रेशन (e-Pass)', isGold: true },
               { id: 'categories', label: 'दौड़ श्रेणियां' },
               { id: 'route-schedule', label: 'रूट व एक्सपो' },
               { id: 'districts', label: '50 जिला केंद्र' },
               { id: 'live-tracker', label: 'लाइव ट्रैकर', isLive: true },
-              { id: 'certificates', label: 'ई-प्रमाण पत्र', isGold: true },
+              { id: 'certificates', label: 'ई-प्रमाण पत्र' },
               { id: 'pledge-safety', label: 'सुरक्षा संकल्प' },
               { id: 'all', label: 'समस्त विवरण' }
             ].map(tab => {
@@ -284,18 +272,59 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
             })}
           </nav>
 
-          {/* Official Helpline Callout in Nav Right */}
+          {/* Official Helpline & Admin Login in Nav Right */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: '12px',
             fontSize: '0.78rem',
             color: '#cbd5e1',
-            padding: '8px 0'
-          }} className="d-tablet-inline">
-            <span style={{ color: '#fde68a', fontWeight: 800 }}>★ राजस्थान पुलिस</span>
-            <span>|</span>
-            <span style={{ color: '#fca5a5', fontWeight: 700 }}>हेल्पलाइन: 1090 / 112</span>
+            padding: '4px 0'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }} className="d-tablet-inline">
+              <span style={{ color: '#fde68a', fontWeight: 800 }}>★ राजस्थान पुलिस</span>
+              <span>|</span>
+              <span style={{ color: '#fca5a5', fontWeight: 700 }}>हेल्पलाइन: 1090 / 112</span>
+            </div>
+
+            {/* Admin Login Button - Placed rightmost in this exact bar as requested */}
+            <button
+              id="btn-nav-admin-login"
+              onClick={() => handleNav(isAdminAuthenticated ? 'admin' : 'admin-login')}
+              style={{
+                background: isAdminAuthenticated 
+                  ? 'linear-gradient(135deg, #15803d 0%, #166534 100%)' 
+                  : (activePage === 'admin-login' 
+                    ? 'linear-gradient(135deg, #d97706 0%, #92400e 100%)' 
+                    : 'linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%)'),
+                color: '#fef08a',
+                border: '1.5px solid var(--police-gold-500)',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                padding: '5px 14px',
+                borderRadius: '4px',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
+                letterSpacing: '0.02em'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.boxShadow = '0 3px 8px rgba(217, 119, 6, 0.4)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.4)';
+              }}
+              title="अधिकृत पुलिस प्रशासनिक कमान एवं जिला SP लॉगिन"
+            >
+              <Shield size={13} color="#fde68a" />
+              <span>{isAdminAuthenticated ? 'प्रशासनिक कमान' : 'प्रशासनिक लॉगिन'}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -315,7 +344,9 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
         }}>
           {[
             { id: 'home', label: 'मुख्य पृष्ठ (Home)' },
-            { id: 'categories', label: 'दौड़ श्रेणियां व रजिस्ट्रेशन (Categories)' },
+            { id: 'register', label: 'ऑनलाइन रजिस्ट्रेशन (e-Pass Form)', color: 'var(--police-gold-700)' },
+            { id: 'admin-login', label: 'प्रशासनिक लॉगिन (Admin Portal)', color: '#d97706' },
+            { id: 'categories', label: 'दौड़ श्रेणियां व दूरी (Categories)' },
             { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी (Route & Schedule)' },
             { id: 'districts', label: 'राजस्थान के समस्त 50 पुलिस जिले (Districts)' },
             { id: 'live-tracker', label: 'लाइव रनर ट्रैकर (Live RFID Course Radar)', isLive: true, color: '#dc2626' },
@@ -367,10 +398,11 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
           </button>
 
           <button
-            onClick={() => { setMobileMenuOpen(false); onOpenAdmin(); }}
+            onClick={() => { setMobileMenuOpen(false); handleNav(isAdminAuthenticated ? 'admin' : 'admin-login'); }}
             style={{
-              background: 'var(--police-navy-900)',
-              color: '#ffffff',
+              background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
+              color: '#fde68a',
+              border: '1px solid var(--police-gold-500)',
               padding: '12px',
               borderRadius: '6px',
               textAlign: 'center',
@@ -379,11 +411,13 @@ export function Navbar({ onOpenRegister, onOpenBulkRegister, onOpenAdmin, active
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '6px',
-              marginTop: '6px'
+              gap: '8px',
+              marginTop: '6px',
+              cursor: 'pointer'
             }}
           >
-            <Shield size={16} color="var(--police-gold-400)" /> पुलिस कमान एवं नोडल डेस्क (Admin)
+            <Shield size={16} color="var(--police-gold-400)" /> 
+            <span>{isAdminAuthenticated ? 'प्रशासनिक कमान (Admin Dashboard)' : 'प्रशासनिक लॉगिन (Admin Login)'}</span>
           </button>
         </div>
       )}

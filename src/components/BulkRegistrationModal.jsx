@@ -25,6 +25,7 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [batchId, setBatchId] = useState("");
   const [generatedBibs, setGeneratedBibs] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
@@ -79,8 +80,6 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
     ];
     setRunners(simulatedBatch);
   };
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleBulkSubmit = async (e) => {
     e.preventDefault();

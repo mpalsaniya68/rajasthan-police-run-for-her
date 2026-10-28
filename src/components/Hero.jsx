@@ -45,17 +45,58 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
   return (
     <section id="hero" style={{
       position: 'relative',
-      backgroundImage: `linear-gradient(180deg, rgba(10, 28, 61, 0.92) 0%, rgba(10, 28, 61, 0.82) 45%, rgba(10, 28, 61, 0.96) 100%), url('/images/marathon_hero_jaipur.jpg')`,
+      overflow: 'hidden',
+      backgroundImage: `url('/images/marathon_hero_jaipur.jpg')`,
       backgroundSize: 'cover',
-      backgroundPosition: 'center 30%',
+      backgroundPosition: 'center 25%',
       backgroundRepeat: 'no-repeat',
       color: '#ffffff',
       borderBottom: '1px solid var(--border-subtle)',
       paddingTop: '20px',
       paddingBottom: '60px'
     }}>
-      {/* Official State Notice Ticker (Dark Theme - High Contrast) */}
-      <div className="container" style={{ marginBottom: '28px' }}>
+      {/* 1. Base Subtle Dark Tint (Keeps the background photo clearly visible) */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(180deg, rgba(5, 17, 38, 0.45) 0%, rgba(10, 28, 61, 0.55) 100%)',
+        zIndex: 1,
+        pointerEvents: 'none'
+      }} />
+
+      {/* 2. Right-Angled Triangle Overlay: Subtle Rajasthan Police Red + Blue Gradient */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        clipPath: 'polygon(0 0, 100% 0, 100% 100%)', // Right-angled triangle (90° right angle at Top-Right)
+        background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.45) 0%, rgba(185, 28, 28, 0.32) 42%, rgba(10, 28, 61, 0.55) 88%)',
+        zIndex: 1,
+        pointerEvents: 'none'
+      }} />
+
+      {/* 3. Subtle Complementary Triangle with 90° angle at Bottom-Left */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        clipPath: 'polygon(0 0, 0 100%, 100% 100%)', // Right-angled triangle (90° right angle at Bottom-Left)
+        background: 'linear-gradient(135deg, rgba(10, 28, 61, 0.6) 0%, rgba(15, 23, 42, 0.45) 65%, rgba(185, 28, 28, 0.22) 100%)',
+        zIndex: 1,
+        pointerEvents: 'none'
+      }} />
+
+      {/* 4. Sleek Golden Diagonal Accent Line along the Hypotenuse */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(to bottom right, transparent calc(50% - 1.5px), rgba(212, 175, 55, 0.4) 50%, transparent calc(50% + 1.5px))',
+        zIndex: 1,
+        pointerEvents: 'none'
+      }} />
+
+      {/* Hero Content Wrapper */}
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        {/* Official State Notice Ticker (Dark Theme - High Contrast) */}
+        <div className="container" style={{ marginBottom: '28px' }}>
         <div style={{
           background: 'rgba(5, 17, 38, 0.96)',
           backdropFilter: 'blur(12px)',
@@ -424,6 +465,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
 
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }

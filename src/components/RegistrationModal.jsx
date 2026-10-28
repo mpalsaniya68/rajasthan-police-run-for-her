@@ -29,6 +29,8 @@ export function RegistrationModal({ isOpen, onClose, initialCategory = "21k", on
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [dispatchAlert, setDispatchAlert] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (initialCategory) setCategory(initialCategory);
@@ -60,10 +62,7 @@ export function RegistrationModal({ isOpen, onClose, initialCategory = "21k", on
   if (!isOpen) return null;
 
   const currentCatObj = RACE_CATEGORIES.find(c => c.id === category) || RACE_CATEGORIES[0];
-  const currentDistrictObj = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selectedDistrict);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const currentDistrictObj = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selectedDistrict) || RAJASTHAN_POLICE_DISTRICTS[0];
 
   const handleSubmit = async (e) => {
     e.preventDefault();

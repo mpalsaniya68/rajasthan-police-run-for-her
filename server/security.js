@@ -8,13 +8,16 @@ const APP_SECRET = process.env.APP_SECRET || "rajpol_marathon_2026_super_secure_
  */
 export const registrationSchema = z.object({
   fullName: z.string().min(2, "नाम कम से कम 2 अक्षर का होना चाहिए").max(100).trim(),
-  gender: z.enum(["female", "male", "other"]),
+  gender: z.string().transform(v => v.toLowerCase()).pipe(z.enum(["female", "male", "other"])),
   dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "अमान्य जन्म तिथि प्रारूप (YYYY-MM-DD)"),
   mobile: z.string().regex(/^[6-9]\d{9}$/, "वैध 10-अंकीय भारतीय मोबाइल नंबर दर्ज करें"),
   emergencyContact: z.string().regex(/^[6-9]\d{9}$/, "वैध 10-अंकीय आपातकालीन मोबाइल नंबर दर्ज करें"),
   emergencyRelation: z.string().min(2).max(50).trim(),
   bloodGroup: z.string().min(1).max(5),
-  categoryId: z.enum(["21k", "10k", "5k", "2k"]),
+  hasMedicalIssue: z.boolean().optional().default(false),
+  medicalCondition: z.string().max(200).optional().default(""),
+  medicalNotes: z.string().max(300).optional().default(""),
+  categoryId: z.enum(["21k", "10k", "5k", "3k", "2k"]),
   districtId: z.string().min(2).max(50),
   tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL"]),
   idType: z.string().optional(),
@@ -53,6 +56,8 @@ export function generateBibNumber(categoryId, counter) {
       return `RJ-10K-${pad}`;
     case "5k":
       return `RJ-05K-${pad}`;
+    case "3k":
+      return `RJ-03K-${pad}`;
     case "2k":
       return `RJ-02K-${pad}`;
     default:
@@ -88,8 +93,14 @@ export function hashPassword(password) {
 }
 
 export function verifyPassword(password, storedHash) {
+  if (!password || !storedHash) return false;
   const computed = hashPassword(password);
-  return crypto.timingSafeEqual(Buffer.from(computed), Buffer.from(storedHash));
+  if (computed.length !== storedHash.length) return false;
+  try {
+    return crypto.timingSafeEqual(Buffer.from(computed), Buffer.from(storedHash));
+  } catch (e) {
+    return false;
+  }
 }
 
 /**

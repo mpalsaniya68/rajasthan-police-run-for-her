@@ -9,6 +9,19 @@ if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
+// Auto-load .env or .env.local file if present
+try {
+  if (typeof process.loadEnvFile === "function") {
+    if (fs.existsSync(".env")) {
+      process.loadEnvFile(".env");
+    } else if (fs.existsSync(".env.local")) {
+      process.loadEnvFile(".env.local");
+    }
+  }
+} catch (e) {
+  // Ignore if not present
+}
+
 // Check for Turso Database URL; fallback to local persistent SQLite
 const isProductionTurso = Boolean(process.env.TURSO_DATABASE_URL);
 const dbUrl = process.env.TURSO_DATABASE_URL || "file:data/rajasthan_police_marathon.db";
@@ -50,6 +63,12 @@ export async function initDatabase() {
         batch_id TEXT,
         certificate_id TEXT UNIQUE NOT NULL,
         qr_token TEXT NOT NULL,
+        medical_condition TEXT DEFAULT '',
+        medical_notes TEXT DEFAULT '',
+        kit_collected INTEGER DEFAULT 0,
+        kit_collected_at TEXT,
+        rfid_tag_id TEXT DEFAULT '',
+        collected_by TEXT DEFAULT '',
         status TEXT DEFAULT 'CONFIRMED',
         finish_time TEXT,
         overall_rank INTEGER,
@@ -57,6 +76,26 @@ export async function initDatabase() {
         created_at TEXT NOT NULL
       );
     `);
+
+    // Migration helper for existing databases
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN medical_condition TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN medical_notes TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN kit_collected INTEGER DEFAULT 0;");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN kit_collected_at TEXT;");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN rfid_tag_id TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN collected_by TEXT DEFAULT '';");
+    } catch (e) {}
 
     // High-performance B-tree indexes for fast lookups
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_bib ON participants(bib_number);`);
