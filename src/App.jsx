@@ -15,6 +15,7 @@ import { AdminLoginPage } from './components/AdminLoginPage';
 import { LiveTrackerHub } from './components/LiveTrackerHub';
 import { PatronDesk } from './components/PatronDesk';
 import { RegistrationPage } from './components/RegistrationPage';
+import { FAQSection } from './components/FAQSection';
 
 export default function App() {
   // Active Page State ('home', 'register', 'categories', 'route-schedule', 'districts', 'live-tracker', 'certificates', 'photos', 'pledge-safety')
@@ -170,6 +171,7 @@ export default function App() {
               initialDistrict={selectedDistrictForRegister}
               onNavigate={navigateToPage}
               onRegisterSuccess={handleRegisterSuccess}
+              registrations={registrations}
             />
           </div>
         )}
@@ -186,6 +188,10 @@ export default function App() {
             <PatronDesk
               onOpenRegister={() => navigateToPage('register')}
               onOpenBulkRegister={() => setIsBulkModalOpen(true)}
+              onNavigate={navigateToPage}
+            />
+            <FAQSection
+              onOpenRegister={() => navigateToPage('register')}
               onNavigate={navigateToPage}
             />
           </div>

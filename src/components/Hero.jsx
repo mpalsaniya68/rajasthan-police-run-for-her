@@ -258,7 +258,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             lineHeight: 1.65,
             textShadow: '0 2px 10px rgba(0,0,0,0.6)'
           }}>
-            <strong>20 दिसंबर 2026</strong> को पुलिस महानिदेशक (DGP) <strong>राजीव शर्मा (IPS)</strong> के नेतृत्व में जयपुर के ऐतिहासिक अल्बर्ट हॉल से 10,000+ नागरिकों का फ्लैगशिप रन एवं प्रदेश के सभी 50 पुलिस जिलों में एक साथ 5KM/10KM कम्युनिटी रन।
+            <strong>20 दिसंबर 2026</strong> को पुलिस महानिदेशक (DGP) <strong>राजीव शर्मा (IPS)</strong> के नेतृत्व में जयपुर के ऐतिहासिक अल्बर्ट हॉल से 10,000+ नागरिकों का फ्लैगशिप रन एवं प्रदेश के सभी 41 पुलिस जिलों व कमिश्नरेट में एक साथ 5KM/10KM कम्युनिटी रन।
           </p>
 
           {/* Action CTAs - Human, Tactile & High-Contrast */}

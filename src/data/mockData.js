@@ -37,7 +37,7 @@ export const RACE_CATEGORIES = [
     minAge: 10,
     flagOff: "06:45 AM",
     reporting: "05:30 AM",
-    description: "The flagship mass awareness run happening simultaneously in Jaipur and all 50 Rajasthan Police Districts.",
+    description: "The flagship mass awareness run happening simultaneously in Jaipur and all 41 Rajasthan Police Districts and Commissionerates.",
     perks: ["Finisher Commemorative Medal", "Event T-Shirt", "Participation Certificate", "Women's Safety Awareness Kit", "Post-Run Refreshments"],
     fee: "Free Entry (Govt. Initiative)",
     color: "#00d2d3",

@@ -13,7 +13,6 @@ export function Navbar({
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [fontSize, setFontSize] = useState("normal"); // "normal", "large", "xlarge"
-  const [lang, setLang] = useState("hi"); // "hi" or "en"
 
   const handleNav = (pageId) => {
     setMobileMenuOpen(false);
@@ -74,57 +73,40 @@ export function Navbar({
               <span style={{ color: '#94a3b8', fontSize: '0.72rem' }}>Font:</span>
               <button 
                 onClick={() => handleFontChange("normal")}
-                style={{ background: fontSize === "normal" ? '#1e3a8a' : 'transparent', color: '#fff', border: '1px solid #3b82f6', borderRadius: '2px', padding: '1px 5px', fontSize: '0.68rem' }}
+                style={{ background: fontSize === "normal" ? '#1e3a8a' : 'transparent', color: '#fff', border: '1px solid #3b82f6', borderRadius: '2px', padding: '1px 5px', fontSize: '0.68rem', cursor: 'pointer' }}
               >
                 A
               </button>
               <button 
                 onClick={() => handleFontChange("large")}
-                style={{ background: fontSize === "large" ? '#1e3a8a' : 'transparent', color: '#fff', border: '1px solid #3b82f6', borderRadius: '2px', padding: '1px 5px', fontSize: '0.72rem', fontWeight: 700 }}
+                style={{ background: fontSize === "large" ? '#1e3a8a' : 'transparent', color: '#fff', border: '1px solid #3b82f6', borderRadius: '2px', padding: '1px 5px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
               >
                 A+
               </button>
             </div>
-
-            {/* Language Switcher */}
-            <button
-              onClick={() => setLang(lang === 'hi' ? 'en' : 'hi')}
-              style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                color: '#fde68a',
-                border: '1px solid rgba(253, 230, 138, 0.4)',
-                borderRadius: '3px',
-                padding: '2px 8px',
-                fontSize: '0.72rem',
-                fontWeight: 700
-              }}
-            >
-              {lang === 'hi' ? 'English' : 'हिन्दी'}
-            </button>
           </div>
         </div>
       </div>
 
       {/* 3. Main Government Branding Banner (Police Header) */}
-      <div style={{
+      <div className="navbar-brand-bar" style={{
         background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-        borderBottom: '2px solid var(--police-gold-500)',
-        padding: '12px 0'
+        borderBottom: '2px solid var(--police-gold-500)'
       }}>
-        <div className="container-fluid" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
+        <div className="container-fluid" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
           
           {/* Official Emblem + Rajasthan Police Crest + Headings */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }} onClick={() => handleNav('home')}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => handleNav('home')}>
             {/* State Emblem of India */}
             <div className="d-tablet-inline">
-              <StateEmblemOfIndia size={48} />
+              <StateEmblemOfIndia size={46} />
             </div>
 
             {/* Divider */}
-            <div style={{ width: '1px', height: '48px', background: 'var(--border-medium)' }} className="d-tablet-inline"></div>
+            <div style={{ width: '1px', height: '44px', background: 'var(--border-medium)' }} className="d-tablet-inline"></div>
 
             {/* Official Rajasthan Police Emblem with Vijay Stambh */}
-            <PoliceEmblem size={56} />
+            <PoliceEmblem size={52} className="navbar-police-logo" />
 
             <div>
               {/* Devanagari Primary Heading */}
@@ -159,25 +141,8 @@ export function Navbar({
             </div>
           </div>
 
-          {/* Right Header: Cause Badge & Quick Registration */}
+          {/* Right Header: Quick Registration & Mobile Toggle */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {/* Dignitary Authority Callout */}
-            <div style={{ textAlign: 'right', display: 'none' }} className="d-desktop-block">
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>आयोजन नेतृत्व</div>
-              <div style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>राजीव शर्मा (IPS), DGP</div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--police-gold-700)', fontWeight: 700 }}>महानिदेशक पुलिस, राजस्थान</div>
-            </div>
-
-            {/* Bulk / Institutional Action */}
-            <button 
-              onClick={onOpenBulkRegister}
-              className="btn-gold"
-              style={{ padding: '8px 14px', fontSize: '0.82rem', whiteSpace: 'nowrap', display: 'none' }}
-              id="bulk-btn-header"
-            >
-              संस्थागत / बल्क
-            </button>
-
             {/* Quick Register CTA */}
             <button 
               onClick={onOpenRegister} 
@@ -403,6 +368,9 @@ export function Navbar({
 
       {/* Responsive Breakpoint Styles */}
       <style>{`
+        .navbar-brand-bar {
+          padding: 8px 0;
+        }
         .d-tablet-inline {
           display: none !important;
         }
@@ -416,8 +384,23 @@ export function Navbar({
           display: flex !important;
         }
 
+        /* Mobile specific compact polish (< 640px) */
+        @media (max-width: 639px) {
+          .navbar-police-logo {
+            width: 40px !important;
+            height: 40px !important;
+          }
+          .btn-glass-register {
+            padding: 6px 12px !important;
+            font-size: 0.8rem !important;
+          }
+        }
+
         /* Tablet (>= 640px) */
         @media (min-width: 640px) {
+          .navbar-brand-bar {
+            padding: 12px 0;
+          }
           .d-tablet-inline {
             display: inline-flex !important;
           }

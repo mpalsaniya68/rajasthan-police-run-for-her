@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { 
   CheckCircle2, AlertCircle, HeartPulse, ArrowLeft, Share2, 
-  Check, Printer
+  Check, Printer, Search, Download, FileText, UserCheck
 } from 'lucide-react';
-import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
+import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS, INITIAL_REGISTRATIONS } from '../data/mockData';
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
 import confetti from 'canvas-confetti';
 import QRCode from 'qrcode';
-import { apiRegister } from '../services/api';
+import { apiRegister, apiTrackRunner } from '../services/api';
 
-export function RegistrationPage({ initialCategory = "21k", initialDistrict = "JPR-COMM", onNavigate, onRegisterSuccess }) {
+export function RegistrationPage({ 
+  initialCategory = "21k", 
+  initialDistrict = "JPR-COMM", 
+  onNavigate, 
+  onRegisterSuccess,
+  registrations = []
+}) {
   const [venueType, setVenueType] = useState(() => (initialDistrict && initialDistrict !== "JPR-COMM" && initialDistrict !== "jaipur_comm") ? "district" : "jaipur");
   const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict || "JPR-COMM");
   const [category, setCategory] = useState(initialCategory);
@@ -41,6 +47,88 @@ export function RegistrationPage({ initialCategory = "21k", initialDistrict = "J
   const [isSuccess, setIsSuccess] = useState(false);
   const [registeredParticipant, setRegisteredParticipant] = useState(null);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+
+  // Tab State: "register" (New Registration) or "find" (Find/Re-print Existing E-Pass)
+  const [activeTab, setActiveTab] = useState("register");
+  const [findQuery, setFindQuery] = useState("");
+  const [findResults, setFindResults] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isFinding, setIsFinding] = useState(false);
+
+  const handleFindPass = async (e) => {
+    if (e) e.preventDefault();
+    const q = findQuery.trim().toLowerCase();
+    if (!q) {
+      alert("कृपया अपना 10-अंकीय मोबाइल नंबर, बिब संख्या या प्रमाण पत्र आईडी दर्ज करें।");
+      return;
+    }
+    setIsFinding(true);
+    setHasSearched(true);
+
+    const cleanDigits = q.replace(/\D/g, "");
+
+    let savedLocal = [];
+    try {
+      const stored = localStorage.getItem('rpm_registrations');
+      if (stored) savedLocal = JSON.parse(stored);
+    } catch (err) {}
+
+    const localPool = [...(registrations || []), ...savedLocal, ...INITIAL_REGISTRATIONS];
+    const matched = localPool.filter(r => {
+      const rMobile = (r.mobile || "").replace(/\D/g, "");
+      const matchMobile = cleanDigits.length >= 6 && (rMobile.includes(cleanDigits) || cleanDigits.includes(rMobile));
+      const matchBib = (r.bibNumber || "").toLowerCase().includes(q);
+      const matchCert = (r.certificateId || "").toLowerCase().includes(q);
+      const matchName = (r.fullName || "").toLowerCase().includes(q);
+      return matchMobile || matchBib || matchCert || matchName;
+    });
+
+    let apiMatches = [];
+    try {
+      const res = await apiTrackRunner(q);
+      if (res && res.success && res.runner) {
+        const r = res.runner;
+        apiMatches.push({
+          id: r.id || r.bibNumber,
+          bibNumber: r.bibNumber,
+          certificateId: r.certificateId || `RPM-2026-${r.bibNumber}`,
+          fullName: r.fullName,
+          gender: r.gender,
+          age: r.age || 25,
+          mobile: r.mobile,
+          email: r.email || "runner@rajasthan.gov.in",
+          idType: r.idType || "Aadhaar",
+          idMasked: r.idMasked || "XXXX-XXXX-1048",
+          bloodGroup: r.bloodGroup || "B+",
+          medicalCondition: r.medicalCondition || "None / Fully Fit",
+          category: r.category || "21k",
+          categoryName: r.categoryName || "21 KM Half Marathon",
+          districtName: r.districtName || "जयपुर पुलिस कमिश्नरेट (Albert Hall)",
+          tshirtSize: r.tshirtSize || "M",
+          emergencyContact: r.emergencyContact || "Registered Relative"
+        });
+      }
+    } catch (err) {}
+
+    const combined = [...matched, ...apiMatches];
+    const unique = [];
+    const seen = new Set();
+    for (const item of combined) {
+      const key = item.bibNumber || item.id;
+      if (!seen.has(key)) {
+        seen.add(key);
+        unique.push(item);
+      }
+    }
+
+    setIsFinding(false);
+    setFindResults(unique);
+
+    if (unique.length === 1) {
+      setRegisteredParticipant(unique[0]);
+      setIsSuccess(true);
+    }
+  };
 
   const bloodGroupOptions = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -291,6 +379,76 @@ export function RegistrationPage({ initialCategory = "21k", initialDistrict = "J
 
       <div className="container" style={{ maxWidth: '960px', marginTop: '28px' }}>
         
+        {/* Navigation Tabs: New Registration vs Find My E-Pass */}
+        {!isSuccess && (
+          <div style={{
+            display: 'flex',
+            gap: '10px',
+            marginBottom: '20px',
+            background: '#ffffff',
+            padding: '6px',
+            borderRadius: '12px',
+            border: '1.5px solid var(--border-medium)',
+            boxShadow: 'var(--shadow-sm)'
+          }}>
+            <button
+              onClick={() => setActiveTab('register')}
+              style={{
+                flex: 1,
+                padding: '12px 18px',
+                borderRadius: '8px',
+                border: 'none',
+                background: activeTab === 'register' ? 'var(--police-navy-900)' : 'transparent',
+                color: activeTab === 'register' ? '#ffffff' : 'var(--police-navy-800)',
+                fontWeight: 800,
+                fontSize: '0.94rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <FileText size={18} color={activeTab === 'register' ? '#fde68a' : 'currentColor'} />
+              <span>नया धावक पंजीकरण (New Registration)</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('find')}
+              style={{
+                flex: 1,
+                padding: '12px 18px',
+                borderRadius: '8px',
+                border: 'none',
+                background: activeTab === 'find' ? 'var(--police-navy-900)' : 'transparent',
+                color: activeTab === 'find' ? '#ffffff' : 'var(--police-navy-800)',
+                fontWeight: 800,
+                fontSize: '0.94rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <Search size={18} color={activeTab === 'find' ? '#fde68a' : 'currentColor'} />
+              <span>ई-पास खोजें / पुनः डाउनलोड (Find My E-Pass)</span>
+              <span style={{
+                background: activeTab === 'find' ? '#fde68a' : 'var(--police-gold-100)',
+                color: activeTab === 'find' ? '#0a1c3d' : 'var(--police-navy-900)',
+                fontSize: '0.72rem',
+                padding: '2px 8px',
+                borderRadius: '10px',
+                fontWeight: 900
+              }}>
+                त्वरित खोज
+              </span>
+            </button>
+          </div>
+        )}
+
         {/* SUCCESS STATE: OFFICIAL DIGITAL E-PASS & BIB CARD */}
         {isSuccess && registeredParticipant ? (
           <div style={{
@@ -548,10 +706,215 @@ export function RegistrationPage({ initialCategory = "21k", initialDistrict = "J
                     cursor: 'pointer'
                   }}
                 >
-                  + अन्य व्यक्ति का नया पंजीकरण करें
+                  + नया पंजीकरण करें
+                </button>
+
+                <button
+                  onClick={() => {
+                    setIsSuccess(false);
+                    setActiveTab('find');
+                    setRegisteredParticipant(null);
+                  }}
+                  style={{
+                    background: 'var(--police-navy-50)',
+                    border: '1px solid var(--police-navy-300)',
+                    color: 'var(--police-navy-900)',
+                    borderRadius: '8px',
+                    padding: '12px 20px',
+                    fontSize: '0.88rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <Search size={15} /> अन्य ई-पास खोजें
                 </button>
               </div>
 
+            </div>
+          </div>
+        ) : activeTab === 'find' ? (
+          /* 2. FIND EXISTING E-PASS INTERFACE */
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '16px',
+            border: '1.5px solid var(--border-medium)',
+            boxShadow: 'var(--shadow-lg)',
+            overflow: 'hidden'
+          }}>
+            {/* Header */}
+            <div style={{
+              background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
+              color: '#ffffff',
+              padding: '24px',
+              borderBottom: '3px solid var(--police-gold-500)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '14px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <PoliceEmblem size={44} />
+                <div>
+                  <h2 style={{ fontSize: '1.25rem', margin: '0 0 4px 0', color: '#fef08a', fontWeight: 900 }}>
+                    आधिकारिक ई-पास खोज एवं पुनः डाउनलोड केंद्र
+                  </h2>
+                  <div style={{ fontSize: '0.8rem', color: '#e2e8f0' }}>
+                    Rajasthan Police Marathon 2026 • अपना पंजीकृत ई-पास खोजें व प्रिंट करें
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setActiveTab('register')}
+                className="btn-gold"
+                style={{ padding: '8px 16px', fontSize: '0.82rem' }}
+              >
+                + नया पंजीकरण करें
+              </button>
+            </div>
+
+            <div style={{ padding: 'clamp(20px, 4vw, 36px)' }}>
+              {/* Search Form */}
+              <form onSubmit={handleFindPass} style={{ marginBottom: '28px' }}>
+                <label style={{ display: 'block', fontSize: '0.92rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
+                  अपना पंजीकृत 10-अंकीय मोबाइल नंबर या बिब संख्या दर्ज करें:
+                </label>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
+                    <input
+                      type="text"
+                      placeholder="उदा. 9829012345 या RJ-21K-1048"
+                      value={findQuery}
+                      onChange={(e) => setFindQuery(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '12px 14px 12px 38px',
+                        borderRadius: '8px',
+                        border: '1.5px solid var(--police-navy-300)',
+                        fontSize: '0.96rem',
+                        fontWeight: 600
+                      }}
+                    />
+                    <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={isFinding}
+                    style={{ padding: '12px 28px', fontSize: '0.95rem', fontWeight: 800, whiteSpace: 'nowrap' }}
+                  >
+                    {isFinding ? "खोज जारी है..." : "ई-पास खोजें"}
+                  </button>
+                </div>
+                <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '6px' }}>
+                  💡 सुझाव: फॉर्म भरते समय दिया गया 10 अंकों का मोबाइल नंबर दर्ज करें।
+                </div>
+              </form>
+
+              {/* Search Results */}
+              {hasSearched && findResults.length === 0 && (
+                <div style={{
+                  background: '#fef2f2',
+                  border: '1.5px solid #fecaca',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  textAlign: 'center',
+                  marginBottom: '20px'
+                }}>
+                  <AlertCircle size={32} color="#dc2626" style={{ margin: '0 auto 8px auto', display: 'block' }} />
+                  <div style={{ fontSize: '1rem', fontWeight: 800, color: '#991b1b', marginBottom: '4px' }}>
+                    कोई पंजीकरण रिकॉर्ड नहीं मिला
+                  </div>
+                  <p style={{ fontSize: '0.84rem', color: '#7f1d1d', margin: '0 0 14px 0' }}>
+                    दर्ज किए गए विवरण <strong>"{findQuery}"</strong> से संबंधित कोई ई-पास नहीं मिला। कृपया नंबर की जांच करें या अभी नया निःशुल्क पंजीकरण करें।
+                  </p>
+                  <button
+                    onClick={() => setActiveTab('register')}
+                    className="btn-primary"
+                    style={{ padding: '10px 20px', fontSize: '0.88rem' }}
+                  >
+                    + नया पंजीकरण फॉर्म खोलें
+                  </button>
+                </div>
+              )}
+
+              {/* Multiple Results List */}
+              {findResults.length > 1 && (
+                <div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '12px' }}>
+                    कुल {findResults.length} पंजीकृत ई-पास मिले (Select a Pass):
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '14px' }}>
+                    {findResults.map((r, i) => (
+                      <div
+                        key={r.bibNumber || i}
+                        style={{
+                          background: 'var(--police-navy-50)',
+                          border: '1.5px solid var(--border-medium)',
+                          borderRadius: '10px',
+                          padding: '16px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                            <span style={{ fontSize: '0.78rem', fontWeight: 900, color: 'var(--crimson-600)', background: '#ffffff', padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--border-subtle)' }}>
+                              {r.bibNumber}
+                            </span>
+                            <span style={{ fontSize: '0.74rem', color: '#047857', fontWeight: 800 }}>
+                              ✓ सत्यापित
+                            </span>
+                          </div>
+                          <div style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--police-navy-950)' }}>
+                            {r.fullName}
+                          </div>
+                          <div style={{ fontSize: '0.82rem', color: 'var(--text-body)', marginTop: '2px' }}>
+                            {r.categoryName || r.category}
+                          </div>
+                          <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                            📍 {r.districtName || 'जयपुर पुलिस कमिश्नरेट'}
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            setRegisteredParticipant(r);
+                            setIsSuccess(true);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className="btn-glass-primary"
+                          style={{ marginTop: '14px', width: '100%', padding: '8px', fontSize: '0.84rem', justifyContent: 'center' }}
+                        >
+                          ई-पास देखें व प्रिंट करें &rarr;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Information Advisory */}
+              <div style={{
+                marginTop: '28px',
+                background: '#f8fafc',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '8px',
+                padding: '16px',
+                fontSize: '0.8rem',
+                color: 'var(--text-muted)',
+                lineHeight: 1.6
+              }}>
+                <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '4px' }}>
+                  ℹ️ महत्वपूर्ण सूचना (Official Advisory):
+                </div>
+                • यह ई-पास 18 व 19 दिसंबर 2026 को बिब व टी-शर्ट किट प्राप्त करने हेतु अनिवार्य है।<br />
+                • 20 दिसंबर 2026 को दौड़ स्थल (अल्बर्ट हॉल / जिला केंद्र) पर प्रवेश इसी ई-पास के डिजिटल अथवा प्रिंटेड रूप में दिखाने पर दिया जाएगा।
+              </div>
             </div>
           </div>
         ) : (
