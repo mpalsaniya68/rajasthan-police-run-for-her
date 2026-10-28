@@ -38,10 +38,20 @@ export function AdminDashboard({
 
   const [adminTab, setAdminTab] = useState("registrations"); // "registrations" | "kit_counter" | "leaderboard" | "live_radar" | "district_certificates" | "district_medical"
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [showUnmaskedId, setShowUnmaskedId] = useState(false);
   const [selectedCatFilter, setSelectedCatFilter] = useState("all");
   const [districtFilter, setDistrictFilter] = useState(() => isDistrictRole ? (adminUser.districtId || adminUser.districtName || "all") : "all");
   const [selectedExportDistrict, setSelectedExportDistrict] = useState(() => isDistrictRole ? (adminUser.districtName || RAJASTHAN_POLICE_DISTRICTS[0]?.name) : (RAJASTHAN_POLICE_DISTRICTS[0]?.name || "Jaipur Police Commissionerate (Flagship Host)"));
   const [exportNotice, setExportNotice] = useState(null);
+
+  // 250ms Debounce on Search Term for lightning fast table filtering
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm.trim());
+    }, 250);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   // Live Backend Database States
   const [dbParticipants, setDbParticipants] = useState([]);
@@ -262,7 +272,10 @@ export function AdminDashboard({
     districtName: p.district_name,
     runnerType: p.institution ? `Institutional (${p.institution})` : 'Citizen Runner',
     mobile: p.mobile,
-    email: 'police.run@rajasthan.gov.in',
+    email: p.email || 'police.run@rajasthan.gov.in',
+    idType: p.id_type || 'Aadhaar',
+    idMasked: p.id_masked || (p.id_last4 ? 'XXXX-XXXX-' + p.id_last4 : 'XXXX-XXXX-1048'),
+    idRaw: p.id_raw || null,
     tshirtSize: p.tshirt_size || 'M',
     bloodGroup: p.blood_group || 'O+',
     medicalCondition: p.medical_condition || 'None',
@@ -301,10 +314,13 @@ export function AdminDashboard({
       if (!matchesOfficerDist) return false;
     }
 
-    const matchesSearch = (r.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (r.bibNumber || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (r.mobile || '').includes(searchTerm) ||
-                          (r.certificateId || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const q = debouncedSearch.toLowerCase();
+    const matchesSearch = !q ||
+                          (r.fullName || '').toLowerCase().includes(q) ||
+                          (r.bibNumber || '').toLowerCase().includes(q) ||
+                          (r.mobile || '').includes(q) ||
+                          (r.idMasked || '').toLowerCase().includes(q) ||
+                          (r.certificateId || '').toLowerCase().includes(q);
     const matchesCat = selectedCatFilter === "all" || r.category === selectedCatFilter;
     const matchesDist = isDistrictRole ? true : (districtFilter === "all" || 
                         (districtFilter === "jaipur" ? r.venueType === "jaipur" : r.venueType !== "jaipur") ||
@@ -1012,7 +1028,7 @@ export function AdminDashboard({
               </div>
 
               <div className="gov-card" style={{ padding: '14px', background: 'var(--police-gold-50)' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>50 जिले (Districts)</div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>{RAJASTHAN_POLICE_DISTRICTS.length} जिले (Districts)</div>
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-gold-700)' }}>
                   {registrations.filter(r => r.venueType !== 'jaipur').length + 7250}
                 </div>
@@ -1110,7 +1126,30 @@ export function AdminDashboard({
               )}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {!isDistrictRole && (
+                <button
+                  type="button"
+                  onClick={() => setShowUnmaskedId(!showUnmaskedId)}
+                  style={{
+                    padding: '5px 10px',
+                    borderRadius: '4px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    background: showUnmaskedId ? '#fee2e2' : 'var(--police-navy-50)',
+                    color: showUnmaskedId ? '#991b1b' : 'var(--police-navy-900)',
+                    border: `1.5px solid ${showUnmaskedId ? '#f87171' : 'var(--police-navy-200)'}`,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                  title="PHQ राज्य नोडल कमान विशेषाधिकार"
+                >
+                  <span>{showUnmaskedId ? '🔒 पुनः मास्क करें' : '👁️ अनमास्क ID (PHQ View)'}</span>
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={loadLiveDashboardData}
@@ -1145,6 +1184,7 @@ export function AdminDashboard({
                 <tr>
                   <th style={{ padding: '10px 12px' }}>Bib #</th>
                   <th style={{ padding: '10px 12px' }}>धावक विवरण व रक्त समूह</th>
+                  <th style={{ padding: '10px 12px' }}>पहचान पत्र (Govt ID)</th>
                   <th style={{ padding: '10px 12px' }}>कैटेगरी & जिला</th>
                   <th style={{ padding: '10px 12px' }}>टी-शर्ट</th>
                   <th style={{ padding: '10px 12px' }}>एक्सपो स्टेटस & RFID</th>
@@ -1170,6 +1210,19 @@ export function AdminDashboard({
                             ⚠️ {row.medicalCondition}
                           </span>
                         )}
+                      </div>
+                    </td>
+                    <td style={{ padding: '10px 12px' }}>
+                      <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--police-navy-900)' }}>
+                        {row.idType || 'Aadhaar'}
+                      </div>
+                      <div style={{
+                        fontSize: '0.74rem',
+                        fontFamily: 'monospace',
+                        color: showUnmaskedId && !isDistrictRole && row.idRaw ? '#b91c1c' : 'var(--text-muted)',
+                        fontWeight: 700
+                      }}>
+                        {showUnmaskedId && !isDistrictRole && row.idRaw ? row.idRaw : (row.idMasked || 'XXXX-XXXX-1048')}
                       </div>
                     </td>
                     <td style={{ padding: '10px 12px' }}>

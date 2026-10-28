@@ -4,6 +4,7 @@ import {
   registrationSchema,
   bulkRegistrationSchema,
   maskMobile,
+  maskIdNumber,
   generateBibNumber,
   generateCertificateId,
   generateSecureQrToken,
@@ -151,13 +152,16 @@ export async function handleApiRequest(req, res) {
       const catName = CATEGORY_NAMES[data.categoryId] || data.categoryId.toUpperCase();
       const distName = DISTRICT_NAMES[data.districtId] || data.districtId;
 
+      const maskedId = maskIdNumber(data.idType, data.idNumber);
+      const maskedMob = maskMobile(data.mobile);
+
       await db.execute({
         sql: `INSERT INTO participants (
-          id, bib_number, full_name, gender, dob, mobile, masked_mobile, emergency_contact, emergency_relation, blood_group,
+          id, bib_number, full_name, gender, dob, mobile, masked_mobile, email, emergency_contact, emergency_relation, blood_group,
           medical_condition, medical_notes,
-          category_id, category_name, district_id, district_name, tshirt_size, id_type, id_last4, certificate_id, qr_token,
+          category_id, category_name, district_id, district_name, tshirt_size, id_type, id_last4, id_masked, id_raw, certificate_id, qr_token,
           status, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
         args: [
           participantId,
           bibNumber,
@@ -165,7 +169,8 @@ export async function handleApiRequest(req, res) {
           data.gender,
           data.dob,
           data.mobile,
-          maskMobile(data.mobile),
+          maskedMob,
+          data.email,
           data.emergencyContact,
           data.emergencyRelation,
           data.bloodGroup,
@@ -177,7 +182,9 @@ export async function handleApiRequest(req, res) {
           distName,
           data.tshirtSize,
           data.idType || "Aadhaar",
-          data.idLast4 || "XXXX",
+          data.idNumber ? data.idNumber.slice(-4) : "XXXX",
+          maskedId,
+          data.idNumber || "",
           certificateId,
           qrToken,
           now
@@ -198,8 +205,11 @@ export async function handleApiRequest(req, res) {
           bibNumber,
           fullName: data.fullName,
           gender: data.gender,
-          mobile: maskMobile(data.mobile),
+          mobile: maskedMob,
+          email: data.email,
           bloodGroup: data.bloodGroup,
+          idType: data.idType,
+          idMasked: maskedId,
           medicalCondition: data.medicalCondition || "",
           medicalNotes: data.medicalNotes || "",
           categoryName: catName,
@@ -534,12 +544,22 @@ export async function handleApiRequest(req, res) {
       const dataSql = `SELECT * FROM participants ${whereClause} ORDER BY created_at DESC LIMIT ? OFFSET ?;`;
       const dataRes = await db.execute({ sql: dataSql, args: [...args, limit, offset] });
 
+      const requesterRole = (parsedUrl.searchParams.get("role") || "").toUpperCase();
+      // Sensitive PII protection: raw unmasked ID is ONLY disclosed to PHQ State Command
+      const safeParticipants = dataRes.rows.map(row => {
+        if (requesterRole !== "PHQ") {
+          const { id_raw, ...safeRow } = row;
+          return safeRow;
+        }
+        return row;
+      });
+
       return json({
         success: true,
         total: countRes.rows[0].total,
         limit,
         offset,
-        participants: dataRes.rows
+        participants: safeParticipants
       });
     }
 

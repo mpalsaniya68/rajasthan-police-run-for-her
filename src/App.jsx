@@ -8,10 +8,8 @@ import { SafetyPledge } from './components/SafetyPledge';
 import { DistrictHub } from './components/DistrictHub';
 import { ScheduleExpo } from './components/ScheduleExpo';
 import { CertificateHub } from './components/CertificateHub';
-import { CertificateVerification } from './components/CertificateVerification';
 import { BulkRegistrationModal } from './components/BulkRegistrationModal';
 import { Footer } from './components/Footer';
-import { RegistrationModal } from './components/RegistrationModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginPage } from './components/AdminLoginPage';
 import { LiveTrackerHub } from './components/LiveTrackerHub';
@@ -19,7 +17,7 @@ import { PatronDesk } from './components/PatronDesk';
 import { RegistrationPage } from './components/RegistrationPage';
 
 export default function App() {
-  // Active Page State ('home', 'register', 'categories', 'route-schedule', 'districts', 'live-tracker', 'certificates', 'photos', 'pledge-safety', 'all')
+  // Active Page State ('home', 'register', 'categories', 'route-schedule', 'districts', 'live-tracker', 'certificates', 'photos', 'pledge-safety')
   const [activePage, setActivePage] = useState('home');
 
   // Persistent registrations state
@@ -32,9 +30,9 @@ export default function App() {
     }
   });
 
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [selectedCategoryForModal, setSelectedCategoryForModal] = useState("21k");
+  const [selectedDistrictForRegister, setSelectedDistrictForRegister] = useState("JPR-COMM");
   
   // Single Access Admin States & RBAC Credentials
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
@@ -169,6 +167,7 @@ export default function App() {
           <div id="page-register">
             <RegistrationPage
               initialCategory={selectedCategoryForModal}
+              initialDistrict={selectedDistrictForRegister}
               onNavigate={navigateToPage}
               onRegisterSuccess={handleRegisterSuccess}
             />
@@ -176,7 +175,7 @@ export default function App() {
         )}
 
         {/* 1. HOME PAGE */}
-        {(activePage === 'home' || activePage === 'all') && (
+        {activePage === 'home' && (
           <div id="page-home">
             <Hero
               onOpenRegister={() => navigateToPage('register')}
@@ -193,20 +192,18 @@ export default function App() {
         )}
 
         {/* 2. CATEGORIES & REGISTRATION PAGE */}
-        {(activePage === 'categories' || activePage === 'all') && (
+        {activePage === 'categories' && (
           <div id="page-categories">
-            {activePage !== 'all' && (
-              <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
-                    <span>/</span>
-                    <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>दौड़ श्रेणियां एवं रजिस्ट्रेशन</span>
-                  </div>
-                  <span className="badge-gov">निःशुल्क पंजीकरण खुला है</span>
+            <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
+              <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
+                  <span>/</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>दौड़ श्रेणियां एवं रजिस्ट्रेशन</span>
                 </div>
+                <span className="badge-gov">निःशुल्क पंजीकरण खुला है</span>
               </div>
-            )}
+            </div>
             <Categories 
               onSelectCategory={openRegisterModalWithCat}
               onOpenBulkRegister={() => setIsBulkModalOpen(true)} 
@@ -215,101 +212,93 @@ export default function App() {
         )}
 
         {/* 3. ROUTE & SCHEDULE EXPO PAGE */}
-        {(activePage === 'route-schedule' || activePage === 'all') && (
+        {activePage === 'route-schedule' && (
           <div id="page-route-schedule">
-            {activePage !== 'all' && (
-              <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
-                    <span>/</span>
-                    <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>रूट मैप, कार्यक्रम समय-सारणी एवं एक्सपो किट</span>
-                  </div>
-                  <span className="badge-gold">फ्लैग-ऑफ: 20 दिसंबर, सुबह 06:00 बजे</span>
+            <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
+              <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
+                  <span>/</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>रूट मैप, कार्यक्रम समय-सारणी एवं एक्सपो किट</span>
                 </div>
+                <span className="badge-gold">फ्लैग-ऑफ: 20 दिसंबर, सुबह 06:00 बजे</span>
               </div>
-            )}
+            </div>
             <ScheduleExpo />
             <InteractiveRoute />
           </div>
         )}
 
-        {/* 4. 50 POLICE DISTRICTS PAGE */}
-        {(activePage === 'districts' || activePage === 'all') && (
+        {/* 4. POLICE DISTRICTS PAGE */}
+        {activePage === 'districts' && (
           <div id="page-districts">
-            {activePage !== 'all' && (
-              <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
-                    <span>/</span>
-                    <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>राजस्थान के समस्त पुलिस जिले</span>
-                  </div>
-                  <span className="badge-gov">राज्यव्यापी पुलिस जिला केंद्र</span>
+            <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
+              <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
+                  <span>/</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>राजस्थान के समस्त पुलिस जिले</span>
                 </div>
+                <span className="badge-gov">राज्यव्यापी पुलिस जिला केंद्र</span>
               </div>
-            )}
-            <DistrictHub onSelectDistrict={() => setIsRegisterOpen(true)} />
+            </div>
+            <DistrictHub onSelectDistrict={(distId) => {
+              setSelectedDistrictForRegister(distId);
+              navigateToPage('register');
+            }} />
           </div>
         )}
 
         {/* 5. FINISHER CERTIFICATES & LEDGER VERIFICATION PAGE */}
-        {(activePage === 'certificates' || activePage === 'all') && (
+        {activePage === 'certificates' && (
           <div id="page-certificates">
-            {activePage !== 'all' && (
-              <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
-                    <span>/</span>
-                    <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>ई-सर्टिफिकेट डाउनलोड एवं आधिकारिक सत्यापन पोर्टल</span>
-                  </div>
-                  <span className="badge-gold">आधिकारिक राजस्थान पुलिस ई-प्रमाण पत्र</span>
+            <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
+              <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
+                  <span>/</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>ई-सर्टिफिकेट डाउनलोड एवं आधिकारिक सत्यापन पोर्टल</span>
                 </div>
+                <span className="badge-gold">आधिकारिक राजस्थान पुलिस ई-प्रमाण पत्र</span>
               </div>
-            )}
+            </div>
             <CertificateHub registrations={registrations} />
-            <CertificateVerification registrations={registrations} />
           </div>
         )}
 
         {/* 6. WOMEN SAFETY PLEDGE & 24x7 HELPLINE DIRECTORY PAGE */}
-        {(activePage === 'pledge-safety' || activePage === 'all') && (
+        {activePage === 'pledge-safety' && (
           <div id="page-pledge-safety">
-            {activePage !== 'all' && (
-              <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
-                    <span>/</span>
-                    <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>महिला सुरक्षा संकल्प एवं 24x7 आपातकालीन हेल्पलाइन</span>
-                  </div>
-                  <span className="badge-pink">महिला हेल्पलाइन: 1090 / 112</span>
+            <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
+              <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
+                  <span>/</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>महिला सुरक्षा संकल्प एवं 24x7 आपातकालीन हेल्पलाइन</span>
                 </div>
+                <span className="badge-pink">महिला हेल्पलाइन: 1090 / 112</span>
               </div>
-            )}
+            </div>
             <SafetyPledge />
           </div>
         )}
 
         {/* 8. LIVE RUNNER RFID TRACKER & COURSE RADAR PAGE */}
-        {(activePage === 'live-tracker' || activePage === 'all') && (
+        {activePage === 'live-tracker' && (
           <div id="page-live-tracker">
-            {activePage !== 'all' && (
-              <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>🏠 मुख्य पृष्ठ</button>
-                    <span>/</span>
-                    <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>लाइव रनर ट्रैकिंग एवं जेएलएन मार्ग कोर्स मॉनिटर</span>
-                  </div>
-                  <span className="badge-pink" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ef4444' }}></span>
-                    RFID ग्राउंड टाइमिंग सेंसर सक्रिय
-                  </span>
+            <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
+              <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>🏠 मुख्य पृष्ठ</button>
+                  <span>/</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>लाइव रनर ट्रैकिंग एवं जेएलएन मार्ग कोर्स मॉनिटर</span>
                 </div>
+                <span className="badge-pink" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ef4444' }}></span>
+                  RFID ग्राउंड टाइमिंग सेंसर सक्रिय
+                </span>
               </div>
-            )}
+            </div>
             <LiveTrackerHub onNavigate={navigateToPage} />
           </div>
         )}
@@ -350,14 +339,6 @@ export default function App() {
 
       {/* Footer with Helpline Matrix & Quick Page Navigation */}
       {activePage !== 'admin' && <Footer onNavigate={navigateToPage} />}
-
-      {/* Interactive Registration Modal with Live Bib Generator */}
-      <RegistrationModal
-        isOpen={isRegisterOpen}
-        onClose={() => setIsRegisterOpen(false)}
-        initialCategory={selectedCategoryForModal}
-        onRegisterSuccess={handleRegisterSuccess}
-      />
 
       {/* Top Rec 1: Institutional & Bulk Registration Portal (RPA / Battalion / Colleges) */}
       <BulkRegistrationModal

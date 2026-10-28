@@ -10,7 +10,8 @@ export const registrationSchema = z.object({
   fullName: z.string().min(2, "नाम कम से कम 2 अक्षर का होना चाहिए").max(100).trim(),
   gender: z.string().transform(v => v.toLowerCase()).pipe(z.enum(["female", "male", "other"])),
   dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "अमान्य जन्म तिथि प्रारूप (YYYY-MM-DD)"),
-  mobile: z.string().regex(/^[6-9]\d{9}$/, "वैध 10-अंकीय भारतीय मोबाइल नंबर दर्ज करें"),
+  mobile: z.string().regex(/^[6-9]\d{9}$/, "वैध 10-अंकीय भारतीय मोबाइल नंबर दर्ज करें (6, 7, 8 या 9 से शुरू होना आवश्यक है)"),
+  email: z.string().email("वैध ईमेल पता दर्ज करें (उदा. runner@example.com)").trim(),
   emergencyContact: z.string().regex(/^[6-9]\d{9}$/, "वैध 10-अंकीय आपातकालीन मोबाइल नंबर दर्ज करें"),
   emergencyRelation: z.string().min(2).max(50).trim(),
   bloodGroup: z.string().min(1).max(5),
@@ -20,8 +21,9 @@ export const registrationSchema = z.object({
   categoryId: z.enum(["21k", "10k", "5k", "3k", "2k"]),
   districtId: z.string().min(2).max(50),
   tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL"]),
-  idType: z.string().optional(),
-  idLast4: z.string().regex(/^\d{4}$/, "आईडी के अंतिम 4 अंक दर्ज करें").optional().or(z.literal(""))
+  idType: z.enum(["Aadhaar", "PAN", "Voter ID"]).default("Aadhaar"),
+  idNumber: z.string().min(5, "पहचान पत्र संख्या आवश्यक है").max(30).trim(),
+  idLast4: z.string().optional()
 });
 
 export const bulkRegistrationSchema = z.object({
@@ -33,14 +35,37 @@ export const bulkRegistrationSchema = z.object({
 });
 
 /**
- * 2. Mobile Number Masking for PII Protection
- * Converts '9829012345' to 'XXXXXX2345'
+ * 2. Sensitive PII Masking: Mobile & Govt Photo IDs
+ * Keeps privacy by default: only last 4 chars visible
  */
 export function maskMobile(mobile) {
   if (!mobile || typeof mobile !== "string") return "XXXXXXXXXX";
   const clean = mobile.replace(/\D/g, "");
   if (clean.length < 4) return "XXXXXXXXXX";
   return "XXXXXX" + clean.slice(-4);
+}
+
+export function maskIdNumber(idType, idNumber) {
+  if (!idNumber || typeof idNumber !== "string") return "XXXX-XXXX";
+  const clean = idNumber.replace(/\s+/g, "").toUpperCase();
+  if (idType === "Aadhaar") {
+    const digits = clean.replace(/\D/g, "");
+    if (digits.length >= 4) {
+      return `XXXX-XXXX-${digits.slice(-4)}`;
+    }
+    return "XXXX-XXXX-XXXX";
+  } else if (idType === "PAN") {
+    if (clean.length >= 4) {
+      return `XXXXXX${clean.slice(-4)}`;
+    }
+    return "XXXXXXXXXX";
+  } else {
+    // Voter ID / EPIC
+    if (clean.length >= 4) {
+      return `XXXXXX${clean.slice(-4)}`;
+    }
+    return "XXXXXXXXXX";
+  }
 }
 
 /**

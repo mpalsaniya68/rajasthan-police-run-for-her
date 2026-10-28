@@ -800,23 +800,77 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(15, 43, 92, 0.12);
 }
 
-/* Printable Official Certificate */
+/* Standard Government A4 Print Engine for E-Pass & Certificate */
 @media print {
-  body * {
-    visibility: hidden;
+  @page {
+    size: auto;
+    margin: 10mm;
   }
-  .printable-certificate, .printable-certificate * {
-    visibility: visible;
+
+  /* Hide non-printable portal navigation, footers, buttons, and ticker */
+  header,
+  footer,
+  nav,
+  button,
+  input,
+  select,
+  .btn-glass-primary,
+  .btn-primary,
+  .btn-secondary,
+  .btn-navy,
+  .notice-ticker-wrapper,
+  .no-print,
+  #page-register > div:first-child,
+  .app-root > div:nth-child(2) {
+    display: none !important;
+    visibility: hidden !important;
   }
-  .printable-certificate {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    padding: 20px;
+
+  body, html, .app-root, main {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
     box-shadow: none !important;
+  }
+
+  /* When printing Registration E-Pass */
+  .print-pass-card {
+    display: block !important;
+    visibility: visible !important;
+    background: #ffffff !important;
+    border: 2px solid #0a1c3d !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .print-pass-card * {
+    visibility: visible !important;
+  }
+
+  /* When printing Official Finisher Certificate */
+  .printable-certificate {
+    display: block !important;
+    visibility: visible !important;
+    background: #ffffff !important;
+    border: 6px double #b45309 !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    padding: 24px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .printable-certificate * {
+    visibility: visible !important;
   }
 }
 

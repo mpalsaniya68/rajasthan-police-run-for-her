@@ -9,9 +9,9 @@ import confetti from 'canvas-confetti';
 import QRCode from 'qrcode';
 import { apiRegister } from '../services/api';
 
-export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegisterSuccess }) {
-  const [venueType, setVenueType] = useState("jaipur"); // "jaipur" or "district"
-  const [selectedDistrict, setSelectedDistrict] = useState("JPR-COMM");
+export function RegistrationPage({ initialCategory = "21k", initialDistrict = "JPR-COMM", onNavigate, onRegisterSuccess }) {
+  const [venueType, setVenueType] = useState(() => (initialDistrict && initialDistrict !== "JPR-COMM" && initialDistrict !== "jaipur_comm") ? "district" : "jaipur");
+  const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict || "JPR-COMM");
   const [category, setCategory] = useState(initialCategory);
   const [runnerType, setRunnerType] = useState("Citizen Runner");
 
@@ -22,6 +22,8 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
     dob: "2002-05-15",
     mobile: "",
     email: "",
+    idType: "Aadhaar",
+    idNumber: "",
     bloodGroup: "B+",
     hasMedicalIssue: false,
     medicalConditions: [],
@@ -96,6 +98,16 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
     });
   };
 
+  const getMaskedId = (type, val) => {
+    if (!val) return "XXXX-XXXX";
+    const clean = val.replace(/\s+/g, "").toUpperCase();
+    if (type === "Aadhaar") {
+      const d = clean.replace(/\D/g, "");
+      return d.length >= 4 ? `XXXX-XXXX-${d.slice(-4)}` : "XXXX-XXXX-XXXX";
+    }
+    return clean.length >= 4 ? `XXXXXX${clean.slice(-4)}` : "XXXXXXXXXX";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.fullName.trim()) {
@@ -103,14 +115,43 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
       return;
     }
     const cleanMobile = formData.mobile.replace(/\D/g, "");
-    if (cleanMobile.length !== 10) {
-      alert("कृपया वैध 10-अंकीय मोबाइल नंबर दर्ज करें।");
+    if (!/^[6-9]\d{9}$/.test(cleanMobile)) {
+      alert("कृपया वैध 10-अंकीय भारतीय मोबाइल नंबर दर्ज करें (नंबर 6, 7, 8 या 9 से शुरू होना आवश्यक है)।");
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email.trim())) {
+      alert("कृपया वैध ईमेल पता दर्ज करें (सर्टिफिकेट एवं आधिकारिक ई-पास सीधे इसी ईमेल पर प्रेषित होंगे)।");
+      return;
+    }
+
+    const cleanId = formData.idNumber.replace(/\s+/g, "").toUpperCase();
+    if (!cleanId) {
+      alert("कृपया अपने पहचान पत्र (Govt ID) की संख्या दर्ज करें।");
+      return;
+    }
+    if (formData.idType === "Aadhaar") {
+      const digits = cleanId.replace(/\D/g, "");
+      if (digits.length !== 12) {
+        alert("कृपया वैध 12-अंकीय आधार कार्ड संख्या दर्ज करें।");
+        return;
+      }
+    } else if (formData.idType === "PAN") {
+      if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(cleanId)) {
+        alert("कृपया वैध 10-अक्षरीय पैन कार्ड संख्या दर्ज करें (उदा. ABCDE1234F)।");
+        return;
+      }
+    } else if (formData.idType === "Voter ID") {
+      if (cleanId.length < 8 || cleanId.length > 16) {
+        alert("कृपया वैध मतदाता पहचान पत्र (Voter ID) संख्या दर्ज करें।");
+        return;
+      }
+    }
+
     const cleanEmergency = (formData.emergencyContactPhone || formData.mobile).replace(/\D/g, "");
-    if (cleanEmergency.length !== 10) {
-      alert("कृपया वैध 10-अंकीय आपातकालीन मोबाइल नंबर दर्ज करें।");
+    if (!/^[6-9]\d{9}$/.test(cleanEmergency)) {
+      alert("कृपया वैध 10-अंकीय आपातकालीन मोबाइल नंबर दर्ज करें (6, 7, 8 या 9 से शुरू)।");
       return;
     }
 
@@ -126,6 +167,7 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
       gender: formData.gender ? formData.gender.toLowerCase() : "female",
       dob: calculatedDob,
       mobile: cleanMobile,
+      email: formData.email.trim(),
       emergencyContact: cleanEmergency,
       emergencyRelation: formData.emergencyRelation?.trim() || "अभिभावक (Guardian)",
       bloodGroup: formData.bloodGroup || "B+",
@@ -135,8 +177,9 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
       categoryId: category,
       districtId: selectedDistId,
       tshirtSize: formData.tshirtSize || "M",
-      idType: "Aadhaar",
-      idLast4: cleanMobile.slice(-4)
+      idType: formData.idType,
+      idNumber: cleanId,
+      idLast4: cleanId.slice(-4)
     };
 
     const res = await apiRegister(payload);
@@ -149,6 +192,7 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
     }
 
     const p = res.participant;
+    const maskedIdVal = p.idMasked || getMaskedId(formData.idType, cleanId);
     const fullRecord = {
       id: p.id,
       bibNumber: p.bibNumber,
@@ -157,10 +201,13 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
       gender: p.gender,
       age: parseInt(formData.age) || 24,
       mobile: formData.mobile,
+      email: formData.email.trim(),
+      idType: formData.idType,
+      idMasked: maskedIdVal,
+      idRaw: cleanId,
       bloodGroup: p.bloodGroup || formData.bloodGroup,
       medicalCondition: p.medicalCondition,
       medicalNotes: p.medicalNotes,
-      email: formData.email || `${formData.fullName.toLowerCase().replace(/\s+/g, '')}@citizen.rj`,
       category: category,
       categoryName: p.categoryName || currentCatObj.name,
       venueType: venueType,
@@ -288,7 +335,7 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
             <div style={{ padding: 'clamp(20px, 4vw, 36px)' }}>
               
               {/* Printable Official Police Runner Bib Card */}
-              <div style={{
+              <div className="print-pass-card" style={{
                 background: 'linear-gradient(180deg, #ffffff 0%, #fffdf5 100%)',
                 border: '3px solid var(--police-navy-900)',
                 borderRadius: '14px',
@@ -366,6 +413,11 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
                       <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--police-navy-800)' }}>
                         📍 {registeredParticipant.districtName}
                       </div>
+                    </div>
+
+                    <div style={{ marginTop: '10px', background: 'var(--police-navy-50)', padding: '8px 12px', borderRadius: '8px', fontSize: '0.76rem', color: 'var(--police-navy-900)', border: '1px solid var(--border-subtle)' }}>
+                      <div><strong>पहचान पत्र (Govt ID):</strong> {registeredParticipant.idType || 'Aadhaar'} ({registeredParticipant.idMasked || 'XXXX-XXXX-1234'})</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}><strong>आधिकारिक ईमेल:</strong> {registeredParticipant.email}</div>
                     </div>
 
                     {registeredParticipant.medicalCondition && registeredParticipant.medicalCondition !== "None / Fully Fit" && (
@@ -649,7 +701,7 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
                       />
                       <div>
                         <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          🚩 अन्य जिला पुलिस लाइन (50 जिले)
+                          🚩 अन्य जिला पुलिस लाइन ({RAJASTHAN_POLICE_DISTRICTS.length} जिले)
                         </div>
                         <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                           अपने स्थानीय ज़िला मुख्यालय / पुलिस लाइन में एक साथ रन
@@ -803,7 +855,7 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      10-अंकीय मोबाइल नंबर <span style={{ color: '#ef4444' }}>*</span>:
+                      10-अंकीय मोबाइल नंबर (6, 7, 8 या 9 से शुरू) <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <input
                       type="tel"
@@ -812,11 +864,23 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
                       placeholder="उदा. 9829012345"
                       value={formData.mobile}
                       onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '') })}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        border: formData.mobile && !/^[6-9]/.test(formData.mobile) ? '1.5px solid #dc2626' : '1px solid var(--border-medium)',
+                        fontSize: '0.92rem'
+                      }}
                     />
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                      ई-पास और टाइमिंग एसएमएस इसी नंबर पर भेजे जाएंगे।
-                    </div>
+                    {formData.mobile && !/^[6-9]/.test(formData.mobile) ? (
+                      <div style={{ fontSize: '0.72rem', color: '#dc2626', marginTop: '4px', fontWeight: 700 }}>
+                        ⚠️ भारतीय मोबाइल नंबर केवल 6, 7, 8 या 9 से शुरू होना चाहिए।
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                        ई-पास और टाइमिंग एसएमएस सीधे इसी नंबर व व्हाट्सएप पर भेजे जाएंगे।
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -844,15 +908,63 @@ export function RegistrationPage({ initialCategory = "21k", onNavigate, onRegist
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      ईमेल पता (Email - ऐच्छिक):
+                      आधिकारिक ईमेल पता (Email Address) <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <input
                       type="email"
+                      required
                       placeholder="उदा. runner@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     />
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                      आधिकारिक ई-प्रमाण पत्र एवं ई-पास सीधे इसी ईमेल पर प्रेषित किए जाएंगे।
+                    </div>
+                  </div>
+
+                  {/* Photo ID Proof Type */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                      पहचान पत्र प्रकार (Govt Photo ID Proof) <span style={{ color: '#ef4444' }}>*</span>:
+                    </label>
+                    <select
+                      value={formData.idType}
+                      onChange={(e) => setFormData({ ...formData, idType: e.target.value, idNumber: "" })}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
+                    >
+                      <option value="Aadhaar">आधार कार्ड (Aadhaar Card - 12 अंकीय)</option>
+                      <option value="PAN">पैन कार्ड (PAN Card - 10 अंकीय)</option>
+                      <option value="Voter ID">मतदाता पहचान पत्र (Voter ID / EPIC)</option>
+                    </select>
+                  </div>
+
+                  {/* Photo ID Number */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                      {formData.idType === "Aadhaar" ? "12-अंकीय आधार कार्ड संख्या" : formData.idType === "PAN" ? "10-अक्षरीय पैन संख्या (उदा. ABCDE1234F)" : "मतदाता पहचान पत्र संख्या"} <span style={{ color: '#ef4444' }}>*</span>:
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      maxLength={formData.idType === "Aadhaar" ? 14 : 16}
+                      placeholder={formData.idType === "Aadhaar" ? "उदा. 4920 1928 1048" : formData.idType === "PAN" ? "उदा. ABCDE1234F" : "उदा. RJ01234567"}
+                      value={formData.idNumber}
+                      onChange={(e) => {
+                        let val = e.target.value;
+                        if (formData.idType === "Aadhaar") {
+                          val = val.replace(/\D/g, '').slice(0, 12);
+                        } else {
+                          val = val.toUpperCase().trim();
+                        }
+                        setFormData({ ...formData, idNumber: val });
+                      }}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem', fontFamily: 'monospace' }}
+                    />
+                    <div style={{ fontSize: '0.72rem', color: '#047857', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span>🔒</span>
+                      <span>संवेदनशील डेटा सुरक्षा: डेटाबेस में केवल मास्क प्रारूप ({formData.idType === 'Aadhaar' ? 'XXXX-XXXX-1234' : 'XXXXXX1234'}) सुरक्षित रहेगा।</span>
+                    </div>
                   </div>
 
                   <div>

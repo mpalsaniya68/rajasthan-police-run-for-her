@@ -96,6 +96,15 @@ export async function initDatabase() {
     try {
       await db.execute("ALTER TABLE participants ADD COLUMN collected_by TEXT DEFAULT '';");
     } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN email TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN id_masked TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN id_raw TEXT DEFAULT '';");
+    } catch (e) {}
 
     // High-performance B-tree indexes for fast lookups
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_bib ON participants(bib_number);`);
