@@ -224,11 +224,9 @@ export function Navbar({
               { id: 'register', label: 'रजिस्ट्रेशन (e-Pass)', isGold: true },
               { id: 'categories', label: 'दौड़ श्रेणियां' },
               { id: 'route-schedule', label: 'रूट व एक्सपो' },
-              { id: 'districts', label: '50 जिला केंद्र' },
               { id: 'live-tracker', label: 'लाइव ट्रैकर', isLive: true },
               { id: 'certificates', label: 'ई-प्रमाण पत्र' },
-              { id: 'pledge-safety', label: 'सुरक्षा संकल्प' },
-              { id: 'all', label: 'समस्त विवरण' }
+              { id: 'pledge-safety', label: 'सुरक्षा संकल्प' }
             ].map(tab => {
               const isActive = activePage === tab.id;
               return (
@@ -236,8 +234,8 @@ export function Navbar({
                   key={tab.id}
                   onClick={() => handleNav(tab.id)}
                   style={{
-                    padding: '11px 14px',
-                    fontSize: '0.84rem',
+                    padding: '11px 16px',
+                    fontSize: '0.86rem',
                     fontWeight: 700,
                     color: isActive ? '#fde68a' : tab.isGold ? '#fde68a' : '#f8fafc',
                     display: 'inline-flex',
@@ -272,23 +270,12 @@ export function Navbar({
             })}
           </nav>
 
-          {/* Official Helpline & Admin Login in Nav Right (Placed at extreme right corner) */}
+          {/* Admin Login Button - Placed cleanly at the extreme right corner */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
-            fontSize: '0.78rem',
-            color: '#cbd5e1',
-            padding: '4px 0',
             marginLeft: 'auto'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }} className="d-tablet-inline">
-              <span style={{ color: '#fde68a', fontWeight: 800 }}>★ राजस्थान पुलिस</span>
-              <span>|</span>
-              <span style={{ color: '#fca5a5', fontWeight: 700 }}>हेल्पलाइन: 1090 / 112</span>
-            </div>
-
-            {/* Admin Login Button - Placed at the extreme right corner */}
             <button
               id="btn-nav-admin-login"
               onClick={() => handleNav(isAdminAuthenticated ? 'admin' : 'admin-login')}
@@ -296,9 +283,9 @@ export function Navbar({
                 background: isAdminAuthenticated ? '#15803d' : '#1e3a8a',
                 color: '#ffffff',
                 border: '1.5px solid var(--police-gold-500)',
-                padding: '6px 14px',
+                padding: '6px 16px',
                 borderRadius: '4px',
-                fontSize: '0.78rem',
+                fontSize: '0.8rem',
                 fontWeight: 800,
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -342,11 +329,9 @@ export function Navbar({
             { id: 'admin-login', label: 'प्रशासनिक लॉगिन (Admin Portal)', color: '#d97706' },
             { id: 'categories', label: 'दौड़ श्रेणियां व दूरी (Categories)' },
             { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी (Route & Schedule)' },
-            { id: 'districts', label: 'राजस्थान के समस्त 50 पुलिस जिले (Districts)' },
             { id: 'live-tracker', label: 'लाइव रनर ट्रैकर (Live RFID Course Radar)', isLive: true, color: '#dc2626' },
             { id: 'certificates', label: 'फिनिशर सर्टिफिकेट व सत्यापन (Certificates)', color: 'var(--police-gold-700)' },
-            { id: 'pledge-safety', label: 'महिला सुरक्षा संकल्प (Safety Protocol)', color: 'var(--crimson-600)' },
-            { id: 'all', label: 'समस्त विवरण (Overview)' }
+            { id: 'pledge-safety', label: 'महिला सुरक्षा संकल्प (Safety Protocol)', color: 'var(--crimson-600)' }
           ].map(tab => {
             const isActive = activePage === tab.id;
             return (
