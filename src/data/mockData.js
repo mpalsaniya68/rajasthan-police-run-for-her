@@ -74,56 +74,70 @@ export const RACE_CATEGORIES = [
 ];
 
 export const RAJASTHAN_POLICE_DISTRICTS = [
+  // 1. State Capital / Flagship Host
   { id: "JPR-COMM", name: "Jaipur Police Commissionerate (Flagship Host)", zone: "Jaipur", flagship: true, nodalOfficer: "Addl. CP (HQ), Jaipur", flagOffVenue: "Albert Hall Museum, Ram Niwas Garden" },
-  { id: "JPR-RURAL", name: "Jaipur Rural", zone: "Jaipur", nodalOfficer: "SP Jaipur Rural", flagOffVenue: "Police Lines Ground, Chandwaji" },
-  { id: "JDH-COMM", name: "Jodhpur Police Commissionerate", zone: "Jodhpur", nodalOfficer: "DCP HQ, Jodhpur", flagOffVenue: "Umaid Stadium, Jodhpur" },
-  { id: "JDH-RURAL", name: "Jodhpur Rural", zone: "Jodhpur", nodalOfficer: "SP Jodhpur Rural", flagOffVenue: "Police Parade Ground, Mandore" },
-  { id: "UDR", name: "Udaipur", zone: "Udaipur", nodalOfficer: "SP Udaipur", flagOffVenue: "Fateh Sagar Paal, Udaipur" },
-  { id: "KTA-CITY", name: "Kota City", zone: "Kota", nodalOfficer: "SP Kota City", flagOffVenue: "Kishore Sagar Talab Promenade" },
-  { id: "KTA-RURAL", name: "Kota Rural", zone: "Kota", nodalOfficer: "SP Kota Rural", flagOffVenue: "Police Lines, Kota" },
+  
+  // 2. Jodhpur Commissionerate
+  { id: "JDH-COMM", name: "Jodhpur Police Commissionerate", zone: "Jodhpur", nodalOfficer: "DCP (HQ), Jodhpur", flagOffVenue: "Umaid Stadium, Jodhpur" },
+  
+  // 3. Kota Units
+  { id: "KTA-CITY", name: "Kota City", zone: "Kota", nodalOfficer: "SP Kota City", flagOffVenue: "Kishore Sagar Talab Promenade, Kota" },
+  { id: "KTA-RURAL", name: "Kota Rural", zone: "Kota", nodalOfficer: "SP Kota Rural", flagOffVenue: "Police Lines Ground, Kota" },
+  
+  // 4. Industrial Police District
+  { id: "BHW", name: "Bhiwadi (Police District)", zone: "Jaipur", nodalOfficer: "SP Bhiwadi", flagOffVenue: "Police Lines Ground, Bhiwadi" },
+  
+  // 5. Ajmer Range
   { id: "AJM", name: "Ajmer", zone: "Ajmer", nodalOfficer: "SP Ajmer", flagOffVenue: "Ana Sagar Chaupati, Ajmer" },
-  { id: "BKN", name: "Bikaner", zone: "Bikaner", nodalOfficer: "SP Bikaner", flagOffVenue: "Dr. Karni Singh Stadium, Bikaner" },
-  { id: "ALW", name: "Alwar", zone: "Jaipur", nodalOfficer: "SP Alwar", flagOffVenue: "Company Bagh, Alwar" },
   { id: "BHL", name: "Bhilwara", zone: "Ajmer", nodalOfficer: "SP Bhilwara", flagOffVenue: "Sukhadia Stadium, Bhilwara" },
-  { id: "SKR", name: "Sikar", zone: "Jaipur", nodalOfficer: "SP Sikar", flagOffVenue: "District Sports Stadium, Sikar" },
-  { id: "BTP", name: "Bharatpur", zone: "Bharatpur", nodalOfficer: "SP Bharatpur", flagOffVenue: "Loha Garh Stadium, Bharatpur" },
-  { id: "PLI", name: "Pali", zone: "Jodhpur", nodalOfficer: "SP Pali", flagOffVenue: "Bangur Stadium, Pali" },
-  { id: "SGN", name: "Sri Ganganagar", zone: "Bikaner", nodalOfficer: "SP Sri Ganganagar", flagOffVenue: "Maharaja Ganga Singh Stadium" },
-  { id: "CHT", name: "Chittorgarh", zone: "Udaipur", nodalOfficer: "SP Chittorgarh", flagOffVenue: "Indira Gandhi Stadium" },
-  { id: "JJN", name: "Jhunjhunu", zone: "Jaipur", nodalOfficer: "SP Jhunjhunu", flagOffVenue: "Swarn Jayanti Stadium" },
-  { id: "CHU", name: "Churu", zone: "Bikaner", nodalOfficer: "SP Churu", flagOffVenue: "Police Line Ground, Churu" },
-  { id: "BMR", name: "Barmer", zone: "Jodhpur", nodalOfficer: "SP Barmer", flagOffVenue: "Adarsh Stadium, Barmer" },
-  { id: "JSM", name: "Jaisalmer", zone: "Jodhpur", nodalOfficer: "SP Jaisalmer", flagOffVenue: "Poonam Singh Stadium, Jaisalmer" },
   { id: "NGR", name: "Nagaur", zone: "Ajmer", nodalOfficer: "SP Nagaur", flagOffVenue: "District Stadium, Nagaur" },
   { id: "TNK", name: "Tonk", zone: "Ajmer", nodalOfficer: "SP Tonk", flagOffVenue: "Police Parade Ground, Tonk" },
-  { id: "DSA", name: "Dausa", zone: "Jaipur", nodalOfficer: "SP Dausa", flagOffVenue: "Rajesh Pilot Stadium, Dausa" },
-  { id: "BND", name: "Bundi", zone: "Kota", nodalOfficer: "SP Bundi", flagOffVenue: "Khel Sankul, Bundi" },
-  { id: "JHL", name: "Jhalawar", zone: "Kota", nodalOfficer: "SP Jhalawar", flagOffVenue: "Sports Complex, Jhalawar" },
-  { id: "BRN", name: "Baran", zone: "Kota", nodalOfficer: "SP Baran", flagOffVenue: "Police Lines, Baran" },
-  { id: "SWM", name: "Sawai Madhopur", zone: "Bharatpur", nodalOfficer: "SP Sawai Madhopur", flagOffVenue: "Indira Ground, Sawai Madhopur" },
-  { id: "KRL", name: "Karauli", zone: "Bharatpur", nodalOfficer: "SP Karauli", flagOffVenue: "Munshi Trilok Chand Mathur Stadium" },
-  { id: "DHP", name: "Dholpur", zone: "Bharatpur", nodalOfficer: "SP Dholpur", flagOffVenue: "RAC Ground, Dholpur" },
-  { id: "RSM", name: "Rajsamand", zone: "Udaipur", nodalOfficer: "SP Rajsamand", flagOffVenue: "JK Stadium, Kankroli" },
-  { id: "DNG", name: "Dungarpur", zone: "Udaipur", nodalOfficer: "SP Dungarpur", flagOffVenue: "Laxman Ground, Dungarpur" },
-  { id: "BSW", name: "Banswara", zone: "Udaipur", nodalOfficer: "SP Banswara", flagOffVenue: "Kushal Bagh Ground, Banswara" },
-  { id: "PRT", name: "Pratapgarh", zone: "Udaipur", nodalOfficer: "SP Pratapgarh", flagOffVenue: "Sports Stadium, Pratapgarh" },
-  { id: "SRH", name: "Sirohi", zone: "Jodhpur", nodalOfficer: "SP Sirohi", flagOffVenue: "Arvind Pavilion, Sirohi" },
-  { id: "JLR", name: "Jalore", zone: "Jodhpur", nodalOfficer: "SP Jalore", flagOffVenue: "Stadium Ground, Jalore" },
-  { id: "KTP", name: "Kotputli-Behror", zone: "Jaipur", nodalOfficer: "SP Kotputli-Behror", flagOffVenue: "Police Ground, Kotputli" },
-  { id: "KHT", name: "Khairthal-Tijara", zone: "Jaipur", nodalOfficer: "SP Khairthal", flagOffVenue: "Sports Ground, Khairthal" },
-  { id: "NKT", name: "Neem Ka Thana", zone: "Jaipur", nodalOfficer: "SP Neem Ka Thana", flagOffVenue: "Subhash Stadium, Neem Ka Thana" },
-  { id: "PHL", name: "Phalodi", zone: "Jodhpur", nodalOfficer: "SP Phalodi", flagOffVenue: "Stadium Ground, Phalodi" },
-  { id: "BLT", name: "Balotra", zone: "Jodhpur", nodalOfficer: "SP Balotra", flagOffVenue: "Jasol Ground, Balotra" },
-  { id: "ANP", name: "Anupgarh", zone: "Bikaner", nodalOfficer: "SP Anupgarh", flagOffVenue: "Public Park Ground, Anupgarh" },
-  { id: "DID", name: "Didwana-Kuchaman", zone: "Ajmer", nodalOfficer: "SP Didwana", flagOffVenue: "District Sports Ground, Didwana" },
-  { id: "GPC", name: "Gangapur City", zone: "Bharatpur", nodalOfficer: "SP Gangapur City", flagOffVenue: "Railway Stadium, Gangapur City" },
-  { id: "SLM", name: "Salumber", zone: "Udaipur", nodalOfficer: "SP Salumber", flagOffVenue: "Police Ground, Salumber" },
-  { id: "SNC", name: "Sanchore", zone: "Jodhpur", nodalOfficer: "SP Sanchore", flagOffVenue: "Panchayat Samiti Ground, Sanchore" },
-  { id: "KKR", name: "Kekri", zone: "Ajmer", nodalOfficer: "SP Kekri", flagOffVenue: "Patel Stadium, Kekri" },
   { id: "BWR", name: "Beawar", zone: "Ajmer", nodalOfficer: "SP Beawar", flagOffVenue: "Subhash Udyan Ground, Beawar" },
-  { id: "SHP", name: "Shahpura", zone: "Ajmer", nodalOfficer: "SP Shahpura", flagOffVenue: "Umaid Sagar Ground, Shahpura" },
+  { id: "DID", name: "Didwana-Kuchaman", zone: "Ajmer", nodalOfficer: "SP Didwana-Kuchaman", flagOffVenue: "District Sports Ground, Didwana" },
+  
+  // 6. Jaipur Range
+  { id: "ALW", name: "Alwar", zone: "Jaipur", nodalOfficer: "SP Alwar", flagOffVenue: "Company Bagh, Alwar" },
+  { id: "DSA", name: "Dausa", zone: "Jaipur", nodalOfficer: "SP Dausa", flagOffVenue: "Rajesh Pilot Stadium, Dausa" },
+  { id: "JJN", name: "Jhunjhunu", zone: "Jaipur", nodalOfficer: "SP Jhunjhunu", flagOffVenue: "Swarn Jayanti Stadium, Jhunjhunu" },
+  { id: "SKR", name: "Sikar", zone: "Jaipur", nodalOfficer: "SP Sikar", flagOffVenue: "District Sports Stadium, Sikar" },
+  { id: "KHT", name: "Khairthal-Tijara", zone: "Jaipur", nodalOfficer: "SP Khairthal-Tijara", flagOffVenue: "Sports Ground, Khairthal" },
+  { id: "KTP", name: "Kotputli-Behror", zone: "Jaipur", nodalOfficer: "SP Kotputli-Behror", flagOffVenue: "Police Ground, Kotputli" },
+  
+  // 7. Bikaner Range
+  { id: "BKN", name: "Bikaner", zone: "Bikaner", nodalOfficer: "SP Bikaner", flagOffVenue: "Dr. Karni Singh Stadium, Bikaner" },
+  { id: "CHU", name: "Churu", zone: "Bikaner", nodalOfficer: "SP Churu", flagOffVenue: "Police Line Ground, Churu" },
+  { id: "HNM", name: "Hanumangarh", zone: "Bikaner", nodalOfficer: "SP Hanumangarh", flagOffVenue: "Rajiv Gandhi Stadium, Hanumangarh" },
+  { id: "SGN", name: "Sri Ganganagar", zone: "Bikaner", nodalOfficer: "SP Sri Ganganagar", flagOffVenue: "Maharaja Ganga Singh Stadium, Sri Ganganagar" },
+  
+  // 8. Bharatpur Range
+  { id: "BTP", name: "Bharatpur", zone: "Bharatpur", nodalOfficer: "SP Bharatpur", flagOffVenue: "Loha Garh Stadium, Bharatpur" },
   { id: "DEG", name: "Deeg", zone: "Bharatpur", nodalOfficer: "SP Deeg", flagOffVenue: "Mela Ground, Deeg" },
-  { id: "DUD", name: "Dudu", zone: "Jaipur", nodalOfficer: "SP Dudu", flagOffVenue: "Govt Sr Sec School Ground, Dudu" }
+  { id: "DHP", name: "Dholpur", zone: "Bharatpur", nodalOfficer: "SP Dholpur", flagOffVenue: "RAC Ground, Dholpur" },
+  { id: "KRL", name: "Karauli", zone: "Bharatpur", nodalOfficer: "SP Karauli", flagOffVenue: "Munshi Trilok Chand Mathur Stadium, Karauli" },
+  { id: "SWM", name: "Sawai Madhopur", zone: "Bharatpur", nodalOfficer: "SP Sawai Madhopur", flagOffVenue: "Indira Ground, Sawai Madhopur" },
+  
+  // 9. Kota Range
+  { id: "BND", name: "Bundi", zone: "Kota", nodalOfficer: "SP Bundi", flagOffVenue: "Khel Sankul, Bundi" },
+  { id: "BRN", name: "Baran", zone: "Kota", nodalOfficer: "SP Baran", flagOffVenue: "Police Lines, Baran" },
+  { id: "JHL", name: "Jhalawar", zone: "Kota", nodalOfficer: "SP Jhalawar", flagOffVenue: "Sports Complex, Jhalawar" },
+  
+  // 10. Jodhpur Range
+  { id: "BLT", name: "Balotra", zone: "Jodhpur", nodalOfficer: "SP Balotra", flagOffVenue: "Jasol Ground, Balotra" },
+  { id: "BMR", name: "Barmer", zone: "Jodhpur", nodalOfficer: "SP Barmer", flagOffVenue: "Adarsh Stadium, Barmer" },
+  { id: "JSM", name: "Jaisalmer", zone: "Jodhpur", nodalOfficer: "SP Jaisalmer", flagOffVenue: "Poonam Singh Stadium, Jaisalmer" },
+  { id: "JLR", name: "Jalore", zone: "Jodhpur", nodalOfficer: "SP Jalore", flagOffVenue: "Stadium Ground, Jalore" },
+  { id: "PLI", name: "Pali", zone: "Jodhpur", nodalOfficer: "SP Pali", flagOffVenue: "Bangur Stadium, Pali" },
+  { id: "PHL", name: "Phalodi", zone: "Jodhpur", nodalOfficer: "SP Phalodi", flagOffVenue: "Stadium Ground, Phalodi" },
+  { id: "SRH", name: "Sirohi", zone: "Jodhpur", nodalOfficer: "SP Sirohi", flagOffVenue: "Arvind Pavilion, Sirohi" },
+  
+  // 11. Udaipur Range
+  { id: "BSW", name: "Banswara", zone: "Udaipur", nodalOfficer: "SP Banswara", flagOffVenue: "Kushal Bagh Ground, Banswara" },
+  { id: "CHT", name: "Chittorgarh", zone: "Udaipur", nodalOfficer: "SP Chittorgarh", flagOffVenue: "Indira Gandhi Stadium, Chittorgarh" },
+  { id: "DNG", name: "Dungarpur", zone: "Udaipur", nodalOfficer: "SP Dungarpur", flagOffVenue: "Laxman Ground, Dungarpur" },
+  { id: "PRT", name: "Pratapgarh", zone: "Udaipur", nodalOfficer: "SP Pratapgarh", flagOffVenue: "Sports Stadium, Pratapgarh" },
+  { id: "RSM", name: "Rajsamand", zone: "Udaipur", nodalOfficer: "SP Rajsamand", flagOffVenue: "JK Stadium, Kankroli" },
+  { id: "SLM", name: "Salumber", zone: "Udaipur", nodalOfficer: "SP Salumber", flagOffVenue: "Police Ground, Salumber" },
+  { id: "UDR", name: "Udaipur", zone: "Udaipur", nodalOfficer: "SP Udaipur", flagOffVenue: "Fateh Sagar Paal, Udaipur" }
 ];
 
 export const RACE_DAY_TIMELINE = [

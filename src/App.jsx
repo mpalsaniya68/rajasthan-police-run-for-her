@@ -243,9 +243,9 @@ export default function App() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                     <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
                     <span>/</span>
-                    <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>राजस्थान के समस्त 50 पुलिस जिले</span>
+                    <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>राजस्थान के समस्त पुलिस जिले</span>
                   </div>
-                  <span className="badge-gov">राज्यव्यापी 50 जिला केंद्र</span>
+                  <span className="badge-gov">राज्यव्यापी पुलिस जिला केंद्र</span>
                 </div>
               </div>
             )}

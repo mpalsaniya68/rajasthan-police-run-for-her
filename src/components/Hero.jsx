@@ -30,7 +30,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
 
   const notices = [
     { text: "राजस्थान पुलिस मैराथन 'RUN FOR HER' — रेस दिवस: 20 दिसंबर 2026", tag: "इवेंट तिथि" },
-    { text: "अल्बर्ट हॉल, जयपुर एवं प्रदेश के सभी 50 पुलिस जिलों में एक साथ भव्य आयोजन", tag: "वेन्यू" },
+    { text: "अल्बर्ट हॉल, जयपुर एवं प्रदेश के समस्त पुलिस जिलों में एक साथ भव्य आयोजन", tag: "वेन्यू" },
     { text: "प्रातः 06:00 बजे फ्लैग-ऑफ पुलिस महानिदेशक (DGP) राजीव शर्मा (IPS) द्वारा", tag: "फ्लैग-ऑफ" },
     { text: "21K, 10K, 5K एवं 2K श्रेणियों हेतु निःशुल्क ऑनलाइन पंजीकरण जारी है", tag: "रजिस्ट्रेशन" },
     { text: "संस्थाओं, कॉलेजों व RPA बटालियनों हेतु बल्क / ग्रुप रजिस्ट्रेशन उपलब्ध", tag: "ग्रुप पोर्टल" },
@@ -437,7 +437,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                 <MapPin size={20} color="#fca5a5" />
               </div>
               <div>
-                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff' }}>50 पुलिस जिले</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff' }}>समस्त पुलिस जिले</div>
                 <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>एक साथ 5K/10K का राज्यव्यापी आयोजन</div>
               </div>
             </div>

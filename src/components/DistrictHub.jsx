@@ -21,7 +21,7 @@ export function DistrictHub({ onSelectDistrict }) {
       <div className="container">
         <div className="section-header">
           <span className="badge-gold">Simultaneous Statewide Runs</span>
-          <h2>राजस्थान के समस्त 50 पुलिस जिले (Districts Coordination)</h2>
+          <h2>राजस्थान के समस्त पुलिस जिले (Districts Coordination)</h2>
           <p>
             महानिदेशक पुलिस के निर्देशानुसार संबंधित जिला पुलिस अधीक्षक (SP) के नेतृत्व में एक साथ 5KM एवं 10KM की दौड़ आयोजित होगी।
           </p>

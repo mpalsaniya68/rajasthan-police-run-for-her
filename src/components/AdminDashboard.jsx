@@ -538,7 +538,7 @@ export function AdminDashboard({
               <div style={{ fontSize: '0.75rem', color: 'var(--police-gold-400)', marginTop: '2px' }}>
                 {isDistrictRole 
                   ? `स्थानीय धावक विवरण, आपातकालीन सुरक्षा सूची एवं जिला ई-सर्टिफिकेट प्रबंधन`
-                  : 'Statewide Real-time Logistics, 50 Districts CSV Engine & Certificate Control'}
+                  : 'Statewide Real-time Logistics, Statewide CSV Engine & Certificate Control'}
               </div>
             </div>
           </div>

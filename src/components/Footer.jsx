@@ -80,7 +80,7 @@ export function Footer({ onNavigate }) {
               <li><a href="#categories" onClick={(e) => handleNav(e, 'categories')}>दौड़ श्रेणियां (21K / 10K / 5K / 2K)</a></li>
               <li><a href="#route-schedule" onClick={(e) => handleNav(e, 'route-schedule')}>कोर्स रूट एवं समय-सारणी (Route & Schedule)</a></li>
               <li><a href="#live-tracker" onClick={(e) => handleNav(e, 'live-tracker')}>लाइव रनर ट्रैकर (Live RFID Tracking)</a></li>
-              <li><a href="#districts" onClick={(e) => handleNav(e, 'districts')}>राजस्थान के समस्त 50 पुलिस जिले</a></li>
+              <li><a href="#districts" onClick={(e) => handleNav(e, 'districts')}>राजस्थान के समस्त पुलिस जिले</a></li>
               <li><a href="#certificates" onClick={(e) => handleNav(e, 'certificates')}>फिनिशर सर्टिफिकेट एवं सत्यापन</a></li>
               <li><a href="#pledge-safety" onClick={(e) => handleNav(e, 'pledge-safety')}>नारी सुरक्षा सामूहिक संकल्प निर्देशिका</a></li>
             </ul>
