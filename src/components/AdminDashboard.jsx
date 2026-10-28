@@ -474,7 +474,7 @@ export function AdminDashboard({
 
   const wrapperStyle = isFullPage ? {
     minHeight: '100vh',
-    background: '#0a1c3d',
+    background: '#f8fafc',
     display: 'flex',
     flexDirection: 'column',
     width: '100%'

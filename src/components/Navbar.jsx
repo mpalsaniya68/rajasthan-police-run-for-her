@@ -54,7 +54,7 @@ export function Navbar({
         padding: '5px 0',
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
       }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+        <div className="container-fluid" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
           {/* Left: Govt Identity */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ fontWeight: 800, color: '#fde68a', letterSpacing: '0.03em' }}>
@@ -111,7 +111,7 @@ export function Navbar({
         borderBottom: '2px solid var(--police-gold-500)',
         padding: '12px 0'
       }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
+        <div className="container-fluid" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
           
           {/* Official Emblem + Rajasthan Police Crest + Headings */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }} onClick={() => handleNav('home')}>
@@ -216,7 +216,7 @@ export function Navbar({
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         padding: '0'
       }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="container-fluid" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           {/* Desktop Nav Items - Clean, Professional Government Format */}
           <nav style={{ display: 'none', alignItems: 'center', gap: '4px' }} className="desktop-nav-items">
             {[
@@ -272,14 +272,15 @@ export function Navbar({
             })}
           </nav>
 
-          {/* Official Helpline & Admin Login in Nav Right */}
+          {/* Official Helpline & Admin Login in Nav Right (Placed at extreme right corner) */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
             fontSize: '0.78rem',
             color: '#cbd5e1',
-            padding: '4px 0'
+            padding: '4px 0',
+            marginLeft: 'auto'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }} className="d-tablet-inline">
               <span style={{ color: '#fde68a', fontWeight: 800 }}>★ राजस्थान पुलिस</span>
@@ -287,20 +288,15 @@ export function Navbar({
               <span style={{ color: '#fca5a5', fontWeight: 700 }}>हेल्पलाइन: 1090 / 112</span>
             </div>
 
-            {/* Admin Login Button - Placed rightmost in this exact bar as requested */}
+            {/* Admin Login Button - Placed at the extreme right corner */}
             <button
               id="btn-nav-admin-login"
               onClick={() => handleNav(isAdminAuthenticated ? 'admin' : 'admin-login')}
               style={{
-                background: isAdminAuthenticated 
-                  ? 'linear-gradient(135deg, #15803d 0%, #166534 100%)' 
-                  : (activePage === 'admin-login' 
-                    ? 'linear-gradient(135deg, #d97706 0%, #92400e 100%)' 
-                    : 'linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%)'),
-                color: '#fef08a',
+                background: isAdminAuthenticated ? '#15803d' : '#1e3a8a',
+                color: '#ffffff',
                 border: '1.5px solid var(--police-gold-500)',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
-                padding: '5px 14px',
+                padding: '6px 14px',
                 borderRadius: '4px',
                 fontSize: '0.78rem',
                 fontWeight: 800,
@@ -308,17 +304,15 @@ export function Navbar({
                 alignItems: 'center',
                 gap: '6px',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
                 whiteSpace: 'nowrap',
-                letterSpacing: '0.02em'
+                boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                transition: 'background 0.2s ease'
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 3px 8px rgba(217, 119, 6, 0.4)';
+                e.currentTarget.style.background = isAdminAuthenticated ? '#166534' : '#2563eb';
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.4)';
+                e.currentTarget.style.background = isAdminAuthenticated ? '#15803d' : '#1e3a8a';
               }}
               title="अधिकृत पुलिस प्रशासनिक कमान एवं जिला SP लॉगिन"
             >

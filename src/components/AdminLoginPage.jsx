@@ -60,7 +60,6 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
       setIsLoading(false);
 
       if (res && res.success && res.user) {
-        // Store in session storage
         sessionStorage.setItem('rajpol_admin_auth', 'true');
         sessionStorage.setItem('rajpol_admin_user', JSON.stringify(res.user));
         if (res.token) {
@@ -77,7 +76,6 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
     } catch (err) {
       setIsLoading(false);
       console.error('Login error:', err);
-      // Fallback local auth if server unreachable
       handleFallbackAuth();
     }
   };
@@ -129,16 +127,15 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(145deg, #051126 0%, #0a1c3d 50%, #0f172a 100%)',
-      color: '#ffffff',
+      background: '#f8fafc',
+      color: '#0f172a',
       display: 'flex',
       flexDirection: 'column',
-      position: 'relative',
-      overflow: 'hidden'
+      position: 'relative'
     }}>
-      {/* Background Decorative Police Watermark */}
+      {/* Subtle Background Watermark */}
       <div style={{
-        position: 'absolute',
+        position: 'fixed',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
@@ -146,64 +143,64 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
         pointerEvents: 'none',
         zIndex: 0
       }}>
-        <PoliceEmblem size={700} />
+        <PoliceEmblem size={600} />
       </div>
 
-      {/* Top Government Navigation Bar */}
+      {/* Top Government Navigation Bar - Clean Light Professional Format */}
       <header style={{
-        background: 'rgba(5, 17, 38, 0.92)',
+        background: '#ffffff',
         borderBottom: '2px solid var(--police-gold-500)',
-        backdropFilter: 'blur(10px)',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
         padding: '12px 24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
         position: 'relative',
         zIndex: 10
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <StateEmblemOfIndia size={42} />
-          <div style={{ width: '1px', height: '36px', background: 'rgba(255,255,255,0.2)' }}></div>
-          <PoliceEmblem size={44} />
-          <div>
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fde68a', letterSpacing: '0.03em' }}>
-              राजस्थान सरकार | GOVERNMENT OF RAJASTHAN
-            </div>
-            <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
-              राजस्थान पुलिस मैराथन 2026 - प्रशासनिक नियंत्रण एवं कमान पोर्टल
+        <div className="container-fluid" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <StateEmblemOfIndia size={42} />
+            <div style={{ width: '1px', height: '36px', background: '#e2e8f0' }} className="d-tablet-inline"></div>
+            <PoliceEmblem size={44} />
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0a1c3d', letterSpacing: '0.03em' }}>
+                राजस्थान सरकार | GOVERNMENT OF RAJASTHAN
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                राजस्थान पुलिस मैराथन 2026 — प्रशासनिक नियंत्रण एवं कमान पोर्टल
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Back to Portal Button */}
-        <button
-          onClick={() => onNavigate('home')}
-          style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: '#f8fafc',
-            border: '1px solid rgba(255, 255, 255, 0.25)',
-            borderRadius: '6px',
-            padding: '7px 16px',
-            fontSize: '0.84rem',
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-            e.currentTarget.style.borderColor = 'var(--police-gold-400)';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-          }}
-        >
-          <ArrowLeft size={16} />
-          <span>मुख्य वेबसाइट पर वापस जाएं</span>
-        </button>
+          {/* Back to Portal Button */}
+          <button
+            onClick={() => onNavigate('home')}
+            style={{
+              background: '#ffffff',
+              color: '#0a1c3d',
+              border: '1.5px solid #cbd5e1',
+              borderRadius: '6px',
+              padding: '8px 16px',
+              fontSize: '0.84rem',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = '#f1f5f9';
+              e.currentTarget.style.borderColor = '#94a3b8';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = '#ffffff';
+              e.currentTarget.style.borderColor = '#cbd5e1';
+            }}
+          >
+            <ArrowLeft size={16} />
+            <span>मुख्य वेबसाइट पर वापस जाएं</span>
+          </button>
+        </div>
       </header>
 
       {/* Main Content Login Container */}
@@ -212,52 +209,59 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '30px 16px',
+        padding: '36px 16px',
         position: 'relative',
         zIndex: 5
       }}>
         <div style={{
           width: '100%',
           maxWidth: '520px',
-          background: 'rgba(10, 28, 61, 0.88)',
-          border: '1px solid rgba(212, 175, 55, 0.45)',
-          borderRadius: '12px',
-          boxShadow: '0 20px 45px rgba(0, 0, 0, 0.6), 0 0 25px rgba(30, 58, 138, 0.35)',
-          backdropFilter: 'blur(16px)',
+          background: '#ffffff',
+          border: '1px solid #cbd5e1',
+          borderRadius: '10px',
+          boxShadow: '0 4px 20px rgba(15, 23, 42, 0.08)',
           overflow: 'hidden'
         }}>
-          {/* Card Top Official Header */}
+          {/* Card Official Police Navy Header */}
           <div style={{
-            background: 'linear-gradient(135deg, #051126 0%, #1e3a8a 100%)',
-            padding: '24px 28px',
-            borderBottom: '2px solid var(--police-gold-500)',
-            textAlign: 'center'
+            background: 'var(--police-navy-950)',
+            padding: '22px 28px',
+            borderBottom: '3px solid var(--police-gold-500)',
+            textAlign: 'center',
+            color: '#ffffff'
           }}>
-            <div style={{ display: 'inline-flex', padding: '10px', background: 'rgba(255,255,255,0.06)', borderRadius: '50%', marginBottom: '10px', border: '1px solid rgba(212, 175, 55, 0.3)' }}>
-              <Shield size={38} color="#fde68a" />
+            <div style={{ 
+              display: 'inline-flex', 
+              padding: '10px', 
+              background: 'rgba(255,255,255,0.08)', 
+              borderRadius: '50%', 
+              marginBottom: '10px', 
+              border: '1px solid rgba(212, 175, 55, 0.4)' 
+            }}>
+              <Shield size={36} color="#fde68a" />
             </div>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 4px', color: '#ffffff', letterSpacing: '0.02em' }}>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 900, margin: '0 0 4px', color: '#ffffff', letterSpacing: '0.02em' }}>
               अधिकृत प्रशासनिक कमान लॉगिन
             </h1>
-            <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--police-gold-400)' }}>
-              Authorized Police Headquarters & District SP Command Desk
+            <p style={{ margin: 0, fontSize: '0.78rem', color: '#fde68a', fontWeight: 600 }}>
+              Police Headquarters & District SP Command Desk
             </p>
           </div>
 
           <div style={{ padding: '24px 28px' }}>
-            {/* 2-Tier Access Level Selection Tabs */}
+            {/* 2-Tier Access Level Selection Tabs - Clean Segmented Pill */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
                 लॉगिन स्तर का चयन करें (Select Command Level):
               </label>
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
-                gap: '8px',
-                background: 'rgba(5, 17, 38, 0.7)',
+                gap: '6px',
+                background: '#f1f5f9',
                 padding: '4px',
                 borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.1)'
+                border: '1px solid #e2e8f0'
               }}>
                 <button
                   type="button"
@@ -265,7 +269,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                   style={{
                     padding: '10px 8px',
                     borderRadius: '6px',
-                    border: 'none',
+                    border: accessType === 'phq' ? '1px solid #cbd5e1' : 'none',
                     fontSize: '0.82rem',
                     fontWeight: 700,
                     display: 'flex',
@@ -274,12 +278,12 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     gap: '6px',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
-                    background: accessType === 'phq' ? 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)' : 'transparent',
-                    color: accessType === 'phq' ? '#ffffff' : '#94a3b8',
-                    boxShadow: accessType === 'phq' ? '0 2px 6px rgba(0,0,0,0.4)' : 'none'
+                    background: accessType === 'phq' ? '#ffffff' : 'transparent',
+                    color: accessType === 'phq' ? '#0a1c3d' : '#64748b',
+                    boxShadow: accessType === 'phq' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none'
                   }}
                 >
-                  <Building2 size={15} color={accessType === 'phq' ? '#fde68a' : '#94a3b8'} />
+                  <Building2 size={15} color={accessType === 'phq' ? '#0a1c3d' : '#64748b'} />
                   <span>PHQ राज्य कमान</span>
                 </button>
 
@@ -289,7 +293,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                   style={{
                     padding: '10px 8px',
                     borderRadius: '6px',
-                    border: 'none',
+                    border: accessType === 'district' ? '1px solid #cbd5e1' : 'none',
                     fontSize: '0.82rem',
                     fontWeight: 700,
                     display: 'flex',
@@ -298,12 +302,12 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     gap: '6px',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
-                    background: accessType === 'district' ? 'linear-gradient(135deg, #b91c1c 0%, #dc2626 100%)' : 'transparent',
-                    color: accessType === 'district' ? '#ffffff' : '#94a3b8',
-                    boxShadow: accessType === 'district' ? '0 2px 6px rgba(0,0,0,0.4)' : 'none'
+                    background: accessType === 'district' ? '#ffffff' : 'transparent',
+                    color: accessType === 'district' ? '#b91c1c' : '#64748b',
+                    boxShadow: accessType === 'district' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none'
                   }}
                 >
-                  <MapPin size={15} color={accessType === 'district' ? '#fde68a' : '#94a3b8'} />
+                  <MapPin size={15} color={accessType === 'district' ? '#b91c1c' : '#64748b'} />
                   <span>जिला SP डेस्क</span>
                 </button>
               </div>
@@ -311,8 +315,8 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
 
             {/* If District SP Mode: District Selector */}
             {accessType === 'district' && (
-              <div style={{ marginBottom: '18px', background: 'rgba(220, 38, 38, 0.1)', border: '1px solid rgba(220, 38, 38, 0.3)', borderRadius: '8px', padding: '12px' }}>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#fca5a5', marginBottom: '6px' }}>
+              <div style={{ marginBottom: '18px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '12px' }}>
+                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#991b1b', marginBottom: '6px' }}>
                   जिला पुलिस कार्यालय चुनें (Select Police District):
                 </label>
                 <select
@@ -321,21 +325,22 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                   style={{
                     width: '100%',
                     padding: '9px 12px',
-                    background: '#051126',
-                    border: '1px solid #dc2626',
+                    background: '#ffffff',
+                    border: '1.5px solid #dc2626',
                     borderRadius: '6px',
-                    color: '#ffffff',
+                    color: '#0f172a',
                     fontSize: '0.86rem',
-                    fontWeight: 600
+                    fontWeight: 600,
+                    outline: 'none'
                   }}
                 >
                   {RAJASTHAN_POLICE_DISTRICTS.map(d => (
-                    <option key={d.id} value={d.id} style={{ background: '#0a1c3d', color: '#fff' }}>
+                    <option key={d.id} value={d.id}>
                       {d.name} ({d.nodalOfficer})
                     </option>
                   ))}
                 </select>
-                <div style={{ fontSize: '0.72rem', color: '#fca5a5', marginTop: '6px' }}>
+                <div style={{ fontSize: '0.72rem', color: '#b91c1c', marginTop: '6px' }}>
                   ℹ️ जिला एसपी लॉगिन पर केवल उस जिले के आंकड़े, धावक सूची एवं ई-सर्टिफिकेट प्रदर्शित होंगे।
                 </div>
               </div>
@@ -344,9 +349,9 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
             {/* Error Message Alert */}
             {errorMessage && (
               <div style={{
-                background: 'rgba(239, 68, 68, 0.18)',
-                border: '1px solid #ef4444',
-                color: '#fecaca',
+                background: '#fef2f2',
+                border: '1px solid #f87171',
+                color: '#991b1b',
                 padding: '10px 14px',
                 borderRadius: '6px',
                 fontSize: '0.82rem',
@@ -355,7 +360,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                 gap: '8px',
                 marginBottom: '18px'
               }}>
-                <AlertTriangle size={16} color="#ef4444" style={{ flexShrink: 0 }} />
+                <AlertTriangle size={16} color="#dc2626" style={{ flexShrink: 0 }} />
                 <span>{errorMessage}</span>
               </div>
             )}
@@ -364,7 +369,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
             <form onSubmit={handleSubmit}>
               {/* Username / ID */}
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
                   अधिकारी आईडी / उपयोगकर्ता नाम (Officer ID):
                 </label>
                 <div style={{ position: 'relative' }}>
@@ -373,29 +378,29 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
-                    placeholder="उदा. phq_admin अथवा sp_kota"
+                    placeholder="उदा. phq_admin अथवा sp_kta_city"
                     style={{
                       width: '100%',
                       padding: '10px 12px 10px 38px',
-                      background: 'rgba(5, 17, 38, 0.8)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: '#ffffff',
+                      border: '1.5px solid #cbd5e1',
                       borderRadius: '6px',
-                      color: '#ffffff',
+                      color: '#0f172a',
                       fontSize: '0.9rem',
                       outline: 'none',
                       transition: 'border-color 0.2s',
                       boxSizing: 'border-box'
                     }}
-                    onFocus={(e) => e.target.style.borderColor = 'var(--police-gold-500)'}
-                    onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
+                    onFocus={(e) => e.target.style.borderColor = 'var(--police-navy-800)'}
+                    onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
                   />
-                  <UserCheck size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <UserCheck size={16} color="#64748b" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                 </div>
               </div>
 
               {/* Password */}
               <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
                   सुरक्षा पासवर्ड (Security Password):
                 </label>
                 <div style={{ position: 'relative' }}>
@@ -408,19 +413,19 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     style={{
                       width: '100%',
                       padding: '10px 40px 10px 38px',
-                      background: 'rgba(5, 17, 38, 0.8)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: '#ffffff',
+                      border: '1.5px solid #cbd5e1',
                       borderRadius: '6px',
-                      color: '#ffffff',
+                      color: '#0f172a',
                       fontSize: '0.9rem',
                       outline: 'none',
                       transition: 'border-color 0.2s',
                       boxSizing: 'border-box'
                     }}
-                    onFocus={(e) => e.target.style.borderColor = 'var(--police-gold-500)'}
-                    onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
+                    onFocus={(e) => e.target.style.borderColor = 'var(--police-navy-800)'}
+                    onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
                   />
-                  <KeyRound size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <KeyRound size={16} color="#64748b" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -431,7 +436,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                       transform: 'translateY(-50%)',
                       background: 'transparent',
                       border: 'none',
-                      color: '#94a3b8',
+                      color: '#64748b',
                       cursor: 'pointer',
                       padding: '4px'
                     }}
@@ -442,16 +447,16 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                 </div>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit Button - Official Police Navy */}
               <button
                 type="submit"
                 disabled={isLoading}
                 style={{
                   width: '100%',
                   padding: '12px',
-                  background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #d97706 100%)',
+                  background: 'var(--police-navy-950)',
                   color: '#ffffff',
-                  border: '1px solid var(--police-gold-400)',
+                  border: '1.5px solid var(--police-gold-500)',
                   borderRadius: '6px',
                   fontSize: '0.95rem',
                   fontWeight: 800,
@@ -460,16 +465,22 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                   justifyContent: 'center',
                   gap: '8px',
                   cursor: isLoading ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-                  transition: 'all 0.2s ease',
+                  boxShadow: '0 2px 6px rgba(10, 28, 61, 0.2)',
+                  transition: 'background 0.2s ease',
                   opacity: isLoading ? 0.7 : 1
+                }}
+                onMouseOver={(e) => {
+                  if (!isLoading) e.currentTarget.style.background = '#1e3a8a';
+                }}
+                onMouseOut={(e) => {
+                  if (!isLoading) e.currentTarget.style.background = 'var(--police-navy-950)';
                 }}
               >
                 {isLoading ? (
                   <span>सुरक्षा सत्यापन जारी...</span>
                 ) : (
                   <>
-                    <Lock size={16} />
+                    <Lock size={16} color="#fde68a" />
                     <span>कमान पोर्टल में प्रवेश करें (Secure Sign In)</span>
                     <ChevronRight size={16} />
                   </>
@@ -477,16 +488,16 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
               </button>
             </form>
 
-            {/* Quick Demo Credentials Guide for easy testing */}
+            {/* Quick Demo Credentials Guide for testing */}
             <div style={{
               marginTop: '22px',
               padding: '12px',
-              background: 'rgba(5, 17, 38, 0.65)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
               borderRadius: '8px'
             }}>
-              <div style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--police-gold-400)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <CheckCircle2 size={13} /> अधिकृत टेस्ट क्रेडेंशियल्स (Quick Test Sign-In):
+              <div style={{ fontSize: '0.74rem', fontWeight: 700, color: '#475569', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <CheckCircle2 size={13} color="#15803d" /> अधिकृत टेस्ट क्रेडेंशियल्स (Quick Test Sign-In):
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                 <button
@@ -498,9 +509,9 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     setErrorMessage('');
                   }}
                   style={{
-                    background: 'rgba(30, 58, 138, 0.35)',
-                    border: '1px solid rgba(59, 130, 246, 0.5)',
-                    color: '#93c5fd',
+                    background: '#ffffff',
+                    border: '1px solid #cbd5e1',
+                    color: '#0a1c3d',
                     padding: '6px 8px',
                     borderRadius: '4px',
                     fontSize: '0.72rem',
@@ -508,6 +519,8 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     cursor: 'pointer',
                     textAlign: 'left'
                   }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#eff6ff'}
+                  onMouseOut={(e) => e.currentTarget.style.background = '#ffffff'}
                 >
                   🏛️ PHQ Admin
                 </button>
@@ -522,9 +535,9 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     setErrorMessage('');
                   }}
                   style={{
-                    background: 'rgba(185, 28, 28, 0.25)',
-                    border: '1px solid rgba(239, 68, 68, 0.5)',
-                    color: '#fca5a5',
+                    background: '#ffffff',
+                    border: '1px solid #fecaca',
+                    color: '#991b1b',
                     padding: '6px 8px',
                     borderRadius: '4px',
                     fontSize: '0.72rem',
@@ -532,6 +545,8 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     cursor: 'pointer',
                     textAlign: 'left'
                   }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
+                  onMouseOut={(e) => e.currentTarget.style.background = '#ffffff'}
                 >
                   🚔 SP Kota City
                 </button>
@@ -546,9 +561,9 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     setErrorMessage('');
                   }}
                   style={{
-                    background: 'rgba(185, 28, 28, 0.25)',
-                    border: '1px solid rgba(239, 68, 68, 0.5)',
-                    color: '#fca5a5',
+                    background: '#ffffff',
+                    border: '1px solid #fecaca',
+                    color: '#991b1b',
                     padding: '6px 8px',
                     borderRadius: '4px',
                     fontSize: '0.72rem',
@@ -556,6 +571,8 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     cursor: 'pointer',
                     textAlign: 'left'
                   }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
+                  onMouseOut={(e) => e.currentTarget.style.background = '#ffffff'}
                 >
                   🚔 SP Jodhpur
                 </button>
@@ -570,9 +587,9 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     setErrorMessage('');
                   }}
                   style={{
-                    background: 'rgba(185, 28, 28, 0.25)',
-                    border: '1px solid rgba(239, 68, 68, 0.5)',
-                    color: '#fca5a5',
+                    background: '#ffffff',
+                    border: '1px solid #fecaca',
+                    color: '#991b1b',
                     padding: '6px 8px',
                     borderRadius: '4px',
                     fontSize: '0.72rem',
@@ -580,18 +597,20 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     cursor: 'pointer',
                     textAlign: 'left'
                   }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
+                  onMouseOut={(e) => e.currentTarget.style.background = '#ffffff'}
                 >
                   🚔 SP Udaipur
                 </button>
               </div>
             </div>
 
-            {/* Security Warning Notice */}
+            {/* Official Security Warning Notice */}
             <div style={{
               marginTop: '16px',
               textAlign: 'center',
-              fontSize: '0.68rem',
-              color: '#94a3b8',
+              fontSize: '0.7rem',
+              color: '#64748b',
               lineHeight: 1.4
             }}>
               🔒 यह राजस्थान पुलिस का गोपनीय व सुरक्षित आंतरिक पोर्टल है। अनाधिकृत प्रवेश आईटी अधिनियम की धारा 66/70 के तहत दंडनीय अपराध है।
