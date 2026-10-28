@@ -56,42 +56,28 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
       paddingBottom: '60px'
     }}>
       {/* 1. Base Subtle Dark Tint (Keeps the background photo clearly visible) */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'linear-gradient(180deg, rgba(5, 17, 38, 0.45) 0%, rgba(10, 28, 61, 0.55) 100%)',
-        zIndex: 1,
-        pointerEvents: 'none'
-      }} />
+      <div className="hero-base-tint" />
 
-      {/* 2. Right-Angled Triangle Overlay: Subtle Rajasthan Police Red + Blue Gradient */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        clipPath: 'polygon(0 0, 100% 0, 100% 100%)', // Right-angled triangle (90° right angle at Top-Right)
-        background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.45) 0%, rgba(185, 28, 28, 0.32) 42%, rgba(10, 28, 61, 0.55) 88%)',
-        zIndex: 1,
-        pointerEvents: 'none'
-      }} />
+      {/* 2. Rajasthan Police Red Half Overlay (50% on both Desktop & Mobile) */}
+      <div className="hero-overlay-red" />
 
-      {/* 3. Subtle Complementary Triangle with 90° angle at Bottom-Left */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        clipPath: 'polygon(0 0, 0 100%, 100% 100%)', // Right-angled triangle (90° right angle at Bottom-Left)
-        background: 'linear-gradient(135deg, rgba(10, 28, 61, 0.6) 0%, rgba(15, 23, 42, 0.45) 65%, rgba(185, 28, 28, 0.22) 100%)',
-        zIndex: 1,
-        pointerEvents: 'none'
-      }} />
+      {/* 3. Rajasthan Police Navy Blue Half Overlay (50% on both Desktop & Mobile) */}
+      <div className="hero-overlay-blue" />
 
-      {/* 4. Sleek Golden Diagonal Accent Line along the Hypotenuse */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'linear-gradient(to bottom right, transparent calc(50% - 1.5px), rgba(212, 175, 55, 0.4) 50%, transparent calc(50% + 1.5px))',
-        zIndex: 1,
-        pointerEvents: 'none'
-      }} />
+      {/* 4. Sleek Golden Dividing Accent Line */}
+      <svg className="hero-golden-divider" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="heroGoldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#fef08a" stopOpacity="0.4" />
+            <stop offset="50%" stopColor="#fde68a" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#d4af37" stopOpacity="0.45" />
+          </linearGradient>
+        </defs>
+        {/* Desktop diagonal line (0 0 -> 100 100) */}
+        <line className="hero-line-desktop" x1="0" y1="0" x2="100" y2="100" stroke="url(#heroGoldGlow)" strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
+        {/* Mobile dynamic center diagonal line (0 46 -> 100 54) */}
+        <line className="hero-line-mobile" x1="0" y1="46" x2="100" y2="54" stroke="url(#heroGoldGlow)" strokeWidth="1.8" vectorEffect="non-scaling-stroke" />
+      </svg>
 
       {/* Hero Content Wrapper */}
       <div style={{ position: 'relative', zIndex: 2 }}>
@@ -466,6 +452,74 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
         </div>
       </div>
     </div>
+
+    {/* Responsive 50/50 Dual-Tone Police Banner Styles */}
+    <style>{`
+      .hero-base-tint {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(5, 17, 38, 0.42) 0%, rgba(10, 28, 61, 0.52) 100%);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .hero-overlay-red {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.52) 0%, rgba(185, 28, 28, 0.42) 50%, rgba(153, 27, 27, 0.35) 100%);
+      }
+
+      .hero-overlay-blue {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: linear-gradient(135deg, rgba(10, 28, 61, 0.65) 0%, rgba(15, 23, 42, 0.55) 50%, rgba(10, 28, 61, 0.68) 100%);
+      }
+
+      .hero-golden-divider {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      /* Mobile & Small Screens (< 768px): Exact 50/50 Area Split Across the Center */
+      @media (max-width: 767px) {
+        .hero-overlay-red {
+          clip-path: polygon(0 0, 100% 0, 100% 54%, 0 46%);
+        }
+        .hero-overlay-blue {
+          clip-path: polygon(0 46%, 100% 54%, 100% 100%, 0 100%);
+        }
+        .hero-line-desktop {
+          display: none !important;
+        }
+        .hero-line-mobile {
+          display: block !important;
+        }
+      }
+
+      /* Desktop & Large Screens (>= 768px): Corner-to-Corner 50/50 Split */
+      @media (min-width: 768px) {
+        .hero-overlay-red {
+          clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+        .hero-overlay-blue {
+          clip-path: polygon(0 0, 0 100%, 100% 100%);
+        }
+        .hero-line-desktop {
+          display: block !important;
+        }
+        .hero-line-mobile {
+          display: none !important;
+        }
+      }
+    `}</style>
   </section>
 );
 }
