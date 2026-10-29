@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { TRACKING_CHECKPOINTS, INITIAL_TRACKING_PROFILES } from '../data/mockData';
-import { 
-  Search, Timer, MapPin, Activity, Award, Heart, Share2, 
-  AlertTriangle, CheckCircle2, Radio, Zap, Shield, Phone, 
-  ChevronRight, ArrowRight, User, RefreshCw, Sparkles 
+import {
+  Search, Timer, MapPin, Activity, Award, Heart, Share2,
+  AlertTriangle, CheckCircle2, Radio, Zap, Shield, Phone,
+  ChevronRight, ArrowRight, User, RefreshCw, Sparkles
 } from 'lucide-react';
 import { apiTrackRunner, apiSimulateScan } from '../services/api';
 
@@ -27,7 +27,7 @@ export function LiveTrackerHub({ onNavigate }) {
   useEffect(() => {
     try {
       localStorage.setItem('rpm_live_tracks', JSON.stringify(tracks));
-    } catch (e) {}
+    } catch (e) { }
   }, [tracks]);
 
   // Selected runner profile
@@ -35,7 +35,7 @@ export function LiveTrackerHub({ onNavigate }) {
 
   // Filtered list for search results or quick-picker
   const filteredRunners = tracks.filter(r => {
-    const matchesSearch = 
+    const matchesSearch =
       r.bibNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.mobile.includes(searchQuery);
@@ -142,7 +142,7 @@ export function LiveTrackerHub({ onNavigate }) {
     setTimeout(() => setSimUpdateToast(null), 3500);
   };
 
-  // Share on WhatsApp
+  // Share on WhatsApp User can share there data to the parents and friends and family with live tracking server 
   const handleShareWhatsApp = () => {
     const text = encodeURIComponent(
       `🏃‍♂️ राजस्थान पुलिस मैराथन 2026: मैं ${currentRunner.fullName} (Bib: ${currentRunner.bibNumber}) को लाइव ट्रैक कर रहा हूँ!\n` +
@@ -566,11 +566,11 @@ export function LiveTrackerHub({ onNavigate }) {
                 <div style={{
                   height: '100%',
                   width: `${currentRunner.currentProgressPct}%`,
-                  background: currentRunner.status === 'FINISHED' 
-                    ? 'linear-gradient(90deg, #10b981, #059669)' 
+                  background: currentRunner.status === 'FINISHED'
+                    ? 'linear-gradient(90deg, #10b981, #059669)'
                     : currentRunner.status === 'DELAYED_ALERT'
-                    ? 'linear-gradient(90deg, #f59e0b, #ef4444)'
-                    : 'linear-gradient(90deg, var(--police-navy-700), var(--crimson-600))',
+                      ? 'linear-gradient(90deg, #f59e0b, #ef4444)'
+                      : 'linear-gradient(90deg, var(--police-navy-700), var(--crimson-600))',
                   borderRadius: '8px',
                   transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
                   position: 'relative'
@@ -722,7 +722,7 @@ export function LiveTrackerHub({ onNavigate }) {
                   </thead>
                   <tbody>
                     {currentRunner.splits.map((s, idx) => (
-                      <tr 
+                      <tr
                         key={idx}
                         style={{
                           borderBottom: '1px solid var(--border-subtle)',
