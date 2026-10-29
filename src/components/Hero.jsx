@@ -325,7 +325,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
               onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
               <Radio size={16} color="#ef4444" />
-              <span>🔴 लाइव रनर ट्रैकर (RFID)</span>
+              <span>लाइव रनर ट्रैकर (RFID Radar)</span>
             </button>
           </div>
 

@@ -33,28 +33,37 @@ export function InteractiveRoute() {
         {/* Layer Filters */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
           {[
-            { id: 'all', label: 'समस्त सुविधाएं (All)' },
-            { id: 'water', label: '💧 जल एवं हाइड्रेशन (12 स्टेशंस)' },
-            { id: 'medical', label: '🚑 मेडिकल एवं एम्बुलेंस (8 पोस्ट)' },
-            { id: 'timing', label: '⏱️ RFID टाइमिंग मैट्स (6 चेकपॉइंट)' },
-            { id: 'cheer', label: '🥁 पुलिस बैंड व चीयरिंग ज़ोन' }
-          ].map(btn => (
-            <button
-              key={btn.id}
-              onClick={() => setActiveLayer(btn.id)}
-              style={{
-                padding: '7px 14px',
-                borderRadius: '4px',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                background: activeLayer === btn.id ? 'var(--police-navy-800)' : 'var(--police-navy-50)',
-                color: activeLayer === btn.id ? '#ffffff' : 'var(--text-body)',
-                border: activeLayer === btn.id ? '1px solid var(--police-navy-800)' : '1px solid var(--border-subtle)'
-              }}
-            >
-              {btn.label}
-            </button>
-          ))}
+            { id: 'all', label: 'समस्त सुविधाएं (All)', icon: MapPin },
+            { id: 'water', label: 'जल एवं हाइड्रेशन (12 स्टेशंस)', icon: Droplets },
+            { id: 'medical', label: 'मेडिकल एवं एम्बुलेंस (8 पोस्ट)', icon: HeartPulse },
+            { id: 'timing', label: 'RFID टाइमिंग मैट्स (6 चेकपॉइंट)', icon: Timer },
+            { id: 'cheer', label: 'पुलिस बैंड व चीयरिंग ज़ोन', icon: Music }
+          ].map(btn => {
+            const Icon = btn.icon;
+            return (
+              <button
+                key={btn.id}
+                onClick={() => setActiveLayer(btn.id)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: activeLayer === btn.id ? 'var(--police-navy-800)' : 'var(--police-navy-50)',
+                  color: activeLayer === btn.id ? '#ffffff' : 'var(--text-body)',
+                  border: activeLayer === btn.id ? '1.5px solid var(--police-navy-800)' : '1px solid var(--border-subtle)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+              >
+                <Icon size={14} color={activeLayer === btn.id ? 'var(--police-gold-300)' : 'var(--police-navy-700)'} />
+                <span>{btn.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Visual Course Diagram / Map Interface */}

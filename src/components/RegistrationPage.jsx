@@ -964,20 +964,29 @@ export function RegistrationPage({
               </div>
             </div>
 
-            {/* Error Callout if any */}
+            {/* Error Callout if any (Accessible WCAG Alert) */}
             {errorMessage && (
-              <div style={{
-                background: '#fef2f2',
-                borderLeft: '4px solid #ef4444',
-                padding: '14px 20px',
-                color: '#991b1b',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                fontSize: '0.92rem',
-                fontWeight: 700
-              }}>
-                <AlertCircle size={20} />
+              <div 
+                role="alert" 
+                aria-live="assertive"
+                style={{
+                  background: '#fef2f2',
+                  borderLeft: '4px solid #ef4444',
+                  border: '1.5px solid #fecaca',
+                  borderLeftWidth: '5px',
+                  borderRadius: '6px',
+                  margin: '16px 24px',
+                  padding: '14px 20px',
+                  color: '#991b1b',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  fontSize: '0.92rem',
+                  fontWeight: 700,
+                  boxShadow: '0 2px 8px rgba(239, 68, 68, 0.15)'
+                }}
+              >
+                <AlertCircle size={20} color="#dc2626" />
                 <span>{errorMessage}</span>
               </div>
             )}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Shield } from 'lucide-react';
 import { INITIAL_REGISTRATIONS } from './data/mockData';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -125,6 +126,10 @@ export default function App() {
 
   return (
     <div className="app-root" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* WCAG Accessible Skip Link */}
+      <a href="#main-content" className="skip-to-content">
+        मुख्य सामग्री पर जाएं (Skip to main content)
+      </a>
       {/* Official Top Navbar with Page Tabs */}
       <Navbar
         onOpenRegister={() => navigateToPage('register')}
@@ -156,13 +161,13 @@ export default function App() {
           gap: '10px',
           animation: 'fadeIn 0.2s ease-in'
         }}>
-          <span>🛡️</span>
+          <Shield size={18} color="var(--police-gold-400)" />
           <span>{hotkeyToast}</span>
         </div>
       )}
 
       {/* Main Content View Container */}
-      <main style={{ flex: 1 }}>
+      <main id="main-content" tabIndex="-1" style={{ flex: 1 }}>
         {/* 0. DEDICATED FULL-PAGE ONLINE RUNNER REGISTRATION */}
         {activePage === 'register' && (
           <div id="page-register">

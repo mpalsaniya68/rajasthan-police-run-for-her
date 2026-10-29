@@ -516,7 +516,7 @@ export function LiveTrackerHub({ onNavigate }) {
                 <AlertTriangle size={24} color="#e11d48" style={{ flexShrink: 0 }} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 800, color: '#9f1239', fontSize: '0.9rem' }}>
-                    🚨 राजस्थान पुलिस स्वास्थ्य एवं सुरक्षा निगरानी अलर्ट
+                    राजस्थान पुलिस स्वास्थ्य एवं सुरक्षा निगरानी अलर्ट
                   </div>
                   <div style={{ fontSize: '0.82rem', color: '#be123c', marginTop: '2px' }}>
                     {currentRunner.medicalNotes || "धावक का 5KM से 10KM के बीच अपेक्षित समय से अधिक विलंब हुआ है। जेएलएन मार्ग पर तैनात पुलिस बाइक पेट्रोल व मेडिकल वैन 04 को स्थिति जांचने का निर्देश दिया गया है।"}
@@ -533,10 +533,14 @@ export function LiveTrackerHub({ onNavigate }) {
                     fontSize: '0.78rem',
                     fontWeight: 700,
                     cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  📞 कंट्रोल रूम जांच स्थिति
+                  <Phone size={14} />
+                  कंट्रोल रूम स्थिति
                 </button>
               </div>
             )}
@@ -594,7 +598,7 @@ export function LiveTrackerHub({ onNavigate }) {
                     zIndex: 2,
                     cursor: 'pointer'
                   }} title={`वर्तमान स्थान: ${currentRunner.currentKm} KM`}>
-                    🏃
+                    <Activity size={18} color="var(--police-gold-300)" />
                   </div>
                 </div>
 
@@ -700,8 +704,9 @@ export function LiveTrackerHub({ onNavigate }) {
             {/* Split Timings Checkpoint Table */}
             <div style={{ padding: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-                  ⏱️ आधिकारिक चेकपॉइंट एवं स्प्लिट टाइमिंग (Split Timings Ledger)
+                <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--police-navy-900)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <Timer size={18} color="var(--police-navy-800)" />
+                  <span>आधिकारिक चेकपॉइंट एवं स्प्लिट टाइमिंग (Split Timings Ledger)</span>
                 </h3>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                   * सेंसर मैट द्वारा मिलीसेकंड स्तर पर रिकॉर्डेड

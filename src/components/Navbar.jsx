@@ -68,17 +68,19 @@ export function Navbar({
               <span>महिला हेल्पलाइन: 1090 / 112</span>
             </div>
 
-            {/* Accessibility Font Size Controls */}
+            {/* Accessibility Font Size Controls (WCAG 1.4.4) */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} className="d-tablet-inline">
               <span style={{ color: '#94a3b8', fontSize: '0.72rem' }}>Font:</span>
               <button 
                 onClick={() => handleFontChange("normal")}
+                aria-label="सामान्य फ़ॉन्ट आकार (Normal font size)"
                 style={{ background: fontSize === "normal" ? '#1e3a8a' : 'transparent', color: '#fff', border: '1px solid #3b82f6', borderRadius: '2px', padding: '1px 5px', fontSize: '0.68rem', cursor: 'pointer' }}
               >
                 A
               </button>
               <button 
                 onClick={() => handleFontChange("large")}
+                aria-label="बड़ा फ़ॉन्ट आकार (Large font size)"
                 style={{ background: fontSize === "large" ? '#1e3a8a' : 'transparent', color: '#fff', border: '1px solid #3b82f6', borderRadius: '2px', padding: '1px 5px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}
               >
                 A+
@@ -183,7 +185,7 @@ export function Navbar({
       }}>
         <div className="container-fluid" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           {/* Desktop Nav Items - Clean, Professional Government Format */}
-          <nav style={{ display: 'none', alignItems: 'center', gap: '4px' }} className="desktop-nav-items">
+          <nav aria-label="मुख्य नेविगेशन मेन्यू (Main Navigation)" style={{ display: 'none', alignItems: 'center', gap: '4px' }} className="desktop-nav-items">
             {[
               { id: 'home', label: 'मुख्य पृष्ठ' },
               { id: 'register', label: 'रजिस्ट्रेशन (e-Pass)', isGold: true },
@@ -198,6 +200,7 @@ export function Navbar({
                 <button
                   key={tab.id}
                   onClick={() => handleNav(tab.id)}
+                  aria-current={isActive ? 'page' : undefined}
                   style={{
                     padding: '11px 16px',
                     fontSize: '0.86rem',
