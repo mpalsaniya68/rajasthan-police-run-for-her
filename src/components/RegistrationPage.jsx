@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  CheckCircle2, AlertCircle, HeartPulse, ArrowLeft, Share2, 
+import {
+  CheckCircle2, AlertCircle, HeartPulse, ArrowLeft, Share2,
   Check, Printer, Search, Download, FileText, UserCheck
 } from 'lucide-react';
 import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS, INITIAL_REGISTRATIONS } from '../data/mockData';
@@ -9,10 +9,10 @@ import confetti from 'canvas-confetti';
 import QRCode from 'qrcode';
 import { apiRegister, apiTrackRunner } from '../services/api';
 
-export function RegistrationPage({ 
-  initialCategory = "21k", 
-  initialDistrict = "JPR-COMM", 
-  onNavigate, 
+export function RegistrationPage({
+  initialCategory = "21k",
+  initialDistrict = "JPR-COMM",
+  onNavigate,
   onRegisterSuccess,
   registrations = []
 }) {
@@ -71,7 +71,7 @@ export function RegistrationPage({
     try {
       const stored = localStorage.getItem('rpm_registrations');
       if (stored) savedLocal = JSON.parse(stored);
-    } catch (err) {}
+    } catch (err) { }
 
     const localPool = [...(registrations || []), ...savedLocal, ...INITIAL_REGISTRATIONS];
     const matched = localPool.filter(r => {
@@ -108,7 +108,7 @@ export function RegistrationPage({
           emergencyContact: r.emergencyContact || "Registered Relative"
         });
       }
-    } catch (err) {}
+    } catch (err) { }
 
     const combined = [...matched, ...apiMatches];
     const unique = [];
@@ -179,7 +179,7 @@ export function RegistrationPage({
   const handleConditionToggle = (label) => {
     setFormData(prev => {
       const exists = prev.medicalConditions.includes(label);
-      const updated = exists 
+      const updated = exists
         ? prev.medicalConditions.filter(item => item !== label)
         : [...prev.medicalConditions, label];
       return { ...prev, medicalConditions: updated };
@@ -311,7 +311,7 @@ export function RegistrationPage({
 
     try {
       confetti({ particleCount: 110, spread: 80, origin: { y: 0.5 } });
-    } catch (err) {}
+    } catch (err) { }
 
     setRegisteredParticipant(fullRecord);
     if (onRegisterSuccess) {
@@ -337,12 +337,12 @@ export function RegistrationPage({
 
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '80px' }}>
-      
+
       {/* 1. Official Government Header Breadcrumb */}
       <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.86rem' }}>
-            <button 
+            <button
               onClick={() => onNavigate && onNavigate('home')}
               style={{
                 background: 'none',
@@ -378,7 +378,7 @@ export function RegistrationPage({
       </div>
 
       <div className="container" style={{ maxWidth: '960px', marginTop: '28px' }}>
-        
+
         {/* Navigation Tabs: New Registration vs Find My E-Pass */}
         {!isSuccess && (
           <div style={{
@@ -491,7 +491,7 @@ export function RegistrationPage({
             </div>
 
             <div style={{ padding: 'clamp(20px, 4vw, 36px)' }}>
-              
+
               {/* Printable Official Police Runner Bib Card */}
               <div className="print-pass-card" style={{
                 background: 'linear-gradient(180deg, #ffffff 0%, #fffdf5 100%)',
@@ -522,7 +522,7 @@ export function RegistrationPage({
 
                 {/* Bib Main Content Grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', alignItems: 'center' }}>
-                  
+
                   {/* Left: Huge Bib Number & Category */}
                   <div style={{ textAlign: 'center', background: 'var(--police-navy-50)', padding: '20px', borderRadius: '12px', border: '1.5px dashed var(--police-navy-800)' }}>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase' }}>
@@ -926,7 +926,7 @@ export function RegistrationPage({
             boxShadow: 'var(--shadow-lg)',
             overflow: 'hidden'
           }}>
-            
+
             {/* Form Top Branding Banner */}
             <div style={{
               background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
@@ -966,8 +966,8 @@ export function RegistrationPage({
 
             {/* Error Callout if any (Accessible WCAG Alert) */}
             {errorMessage && (
-              <div 
-                role="alert" 
+              <div
+                role="alert"
                 aria-live="assertive"
                 style={{
                   background: '#fef2f2',
@@ -992,7 +992,7 @@ export function RegistrationPage({
             )}
 
             <form onSubmit={handleSubmit} style={{ padding: 'clamp(20px, 3.5vw, 36px)' }}>
-              
+
               {/* SECTION 1: दौड़ श्रेणी एवं स्थान चयन (CATEGORY & VENUE) */}
               <div style={{ marginBottom: '32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', borderBottom: '2px solid var(--police-navy-50)', paddingBottom: '8px' }}>
@@ -1019,7 +1019,7 @@ export function RegistrationPage({
                     आप कहाँ दौड़ना चाहते हैं? (Select Participation Location):
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
-                    <div 
+                    <div
                       onClick={() => setVenueType("jaipur")}
                       style={{
                         padding: '14px',
@@ -1033,11 +1033,11 @@ export function RegistrationPage({
                         transition: 'all 0.2s'
                       }}
                     >
-                      <input 
-                        type="radio" 
-                        name="venueType" 
-                        checked={venueType === "jaipur"} 
-                        onChange={() => setVenueType("jaipur")} 
+                      <input
+                        type="radio"
+                        name="venueType"
+                        checked={venueType === "jaipur"}
+                        onChange={() => setVenueType("jaipur")}
                         style={{ cursor: 'pointer' }}
                       />
                       <div>
@@ -1050,7 +1050,7 @@ export function RegistrationPage({
                       </div>
                     </div>
 
-                    <div 
+                    <div
                       onClick={() => setVenueType("district")}
                       style={{
                         padding: '14px',
@@ -1064,11 +1064,11 @@ export function RegistrationPage({
                         transition: 'all 0.2s'
                       }}
                     >
-                      <input 
-                        type="radio" 
-                        name="venueType" 
-                        checked={venueType === "district"} 
-                        onChange={() => setVenueType("district")} 
+                      <input
+                        type="radio"
+                        name="venueType"
+                        checked={venueType === "district"}
+                        onChange={() => setVenueType("district")}
                         style={{ cursor: 'pointer' }}
                       />
                       <div>
