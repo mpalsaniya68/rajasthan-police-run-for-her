@@ -8,6 +8,7 @@ export const RACE_CATEGORIES = [
     distance: "21.097 KM",
     minAge: 18,
     flagOff: "06:00 AM",
+    cutOffTime: "3 घंटे 30 मिनट (सुबह 09:30 AM)",
     reporting: "05:00 AM",
     description: "The premier competitive endurance run for seasoned marathoners, police personnel, and serious athletes.",
     perks: ["RFID Timing Chip", "Official Finisher Medal", "Dry-Fit Running T-Shirt", "DGP Signed Timing Certificate", "Hot Breakfast & Energy Hydration"],
@@ -22,6 +23,7 @@ export const RACE_CATEGORIES = [
     distance: "10.0 KM",
     minAge: 15,
     flagOff: "06:15 AM",
+    cutOffTime: "1 घंटा 45 मिनट (सुबह 08:00 AM)",
     reporting: "05:15 AM",
     description: "High-energy timed course designed for intermediate runners, university athletes, and enthusiastic youth.",
     perks: ["RFID Timing Chip", "Finisher Medal", "Official Event T-Shirt", "E-Certificate with Net Time", "Hydration & Energy Fuel"],
@@ -36,6 +38,7 @@ export const RACE_CATEGORIES = [
     distance: "5.0 KM",
     minAge: 10,
     flagOff: "06:45 AM",
+    cutOffTime: "1 घंटा (सुबह 07:45 AM)",
     reporting: "05:30 AM",
     description: "The flagship mass awareness run happening simultaneously in Jaipur and all 41 Rajasthan Police Districts and Commissionerates.",
     perks: ["Finisher Commemorative Medal", "Event T-Shirt", "Participation Certificate", "Women's Safety Awareness Kit", "Post-Run Refreshments"],
@@ -50,6 +53,7 @@ export const RACE_CATEGORIES = [
     distance: "2.0 KM",
     minAge: 6,
     flagOff: "07:15 AM",
+    cutOffTime: "45 मिनट (सुबह 08:00 AM)",
     reporting: "06:00 AM",
     description: "A joyful, celebratory walk/jog welcoming children, families, elders, and citizens pledging for women's dignity.",
     perks: ["Participation Ribbon/Medal", "Official 'Run for Her' Cap/Badge", "Digital Certificate", "Refreshments & Celebration"],
@@ -472,4 +476,19 @@ export const INITIAL_TRACKING_PROFILES = [
       { checkpointId: "finish", name: "Albert Hall Finish Line", distanceKm: 5.0, timestamp: "07:12:45 AM", splitTime: "00:13:55", pace: "5:34", status: "completed" }
     ]
   }
+];
+
+export const PROHIBITED_ITEMS = [
+  { item: "ईयरफोन / हेडफोन (Earphones/Headphones)", reason: "यातायात सुरक्षा एवं पुलिस उद्घोषणाएं सुनने हेतु दौड़ मार्ग पर ईयरफोन पूर्णतः प्रतिबंधित हैं।" },
+  { item: "साइकिल, स्केटबोर्ड या रोलर स्केट्स", reason: "धावकों की सुरक्षा की दृष्टि से केवल अधिकृत पुलिस पायलट वाहन ही कोर्स पर मान्य होंगे।" },
+  { item: "पालतू जानवर (Pets)", reason: "दौड़ मार्ग पर किसी भी प्रकार के पालतू जानवर लाने की अनुमति नहीं है।" },
+  { item: "कांच की बोतलें / नुकीली वस्तुएं", reason: "केवल रिसाइकिल-योग्य डिस्पोजेबल कप व पेपर फ्लास्क ही उपयोग करें।" },
+  { item: "राजनैतिक या वाणिज्यिक बैनर", reason: "यह केवल नारी सुरक्षा और खेल भावना को समर्पित आधिकारिक गैर-व्यावसायिक आयोजन है।" }
+];
+
+export const NODAL_OFFICIALS = [
+  { designation: "अतिरिक्त पुलिस महानिदेशक (ADGP)", role: "राज्य नोडल प्रभारी, कम्युनिटी पुलिसिंग", office: "पुलिस मुख्यालय, जयपुर", contact: "0141-2600000" },
+  { designation: "पुलिस उपायुक्त (DCP Traffic)", role: "रूट, ट्रैफिक डायवर्जन एवं कॉरिडोर सुरक्षा", office: "जयपुर पुलिस कमिश्नरेट", contact: "0141-2565656" },
+  { designation: "मुख्य चिकित्सा एवं स्वास्थ्य अधिकारी (CMHO)", role: "आपातकालीन चिकित्सा एवं एम्बुलेंस ग्रिड", office: "स्वास्थ्य विभाग, जयपुर", contact: "108 / 102" },
+  { designation: "महिला सुरक्षा नोडल कमान (निर्भया स्क्वाड)", role: "महिला धावक सुरक्षा एवं गरिमा हेल्पलाइन", office: "गरिमा डेस्क, राजस्थान पुलिस", contact: "1090 / 112" }
 ];

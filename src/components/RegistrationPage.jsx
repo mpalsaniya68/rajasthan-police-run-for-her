@@ -1583,24 +1583,39 @@ export function RegistrationPage({
                 </div>
               </div>
 
-              {/* SECTION 4: महिला सुरक्षा महा-संकल्प (WOMEN SAFETY PLEDGE) */}
+              {/* SECTION 4: आधिकारिक कानूनी एवं चिकित्सा फिटनेस घोषणा (LEGAL & MEDICAL INDEMNITY DECLARATION) */}
               <div style={{
-                background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)',
-                border: '1.5px solid #fdba74',
-                borderRadius: '12px',
+                background: 'var(--police-navy-50)',
+                border: '1.5px solid var(--border-medium)',
+                borderRadius: '10px',
                 padding: '18px 20px',
-                marginBottom: '28px'
+                marginBottom: '24px'
               }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '14px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
+                  <input
+                    type="checkbox"
+                    id="fitness-indemnity-check"
+                    required
+                    checked={formData.acceptedFitness}
+                    onChange={(e) => setFormData({ ...formData, acceptedFitness: e.target.checked })}
+                    style={{ marginTop: '3px', cursor: 'pointer', width: '18px', height: '18px' }}
+                  />
+                  <label htmlFor="fitness-indemnity-check" style={{ fontSize: '0.83rem', color: 'var(--police-navy-950)', lineHeight: 1.55, cursor: 'pointer' }}>
+                    <strong>शारीरिक स्वास्थ्य एवं कानूनी क्षतिपूर्ति घोषणा (Athlete Medical Indemnity) *:</strong> मैं प्रमाणित करता/करती हूँ कि मैं शारीरिक रूप से पूर्णतः स्वस्थ हूँ और इस मैराथन में भाग लेने हेतु चिकित्सकीय रूप से सक्षम हूँ। दौड़ के दौरान स्वास्थ्य कारणों से होने वाली किसी भी अप्रिय स्थिति के लिए मैं स्वयं उत्तरदायी रहूँगा/रहूँगी। मैं समझता/समझती हूँ कि निर्धारित कट-ऑफ समय के बाद रूट पर सामान्य यातायात बहाल कर दिया जाएगा।
+                  </label>
+                </div>
+
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                   <input
                     type="checkbox"
                     id="pledge-check"
+                    required
                     checked={formData.acceptedPledge}
                     onChange={(e) => setFormData({ ...formData, acceptedPledge: e.target.checked })}
-                    style={{ marginTop: '4px', cursor: 'pointer', width: '18px', height: '18px' }}
+                    style={{ marginTop: '3px', cursor: 'pointer', width: '18px', height: '18px' }}
                   />
-                  <label htmlFor="pledge-check" style={{ fontSize: '0.88rem', color: '#7c2d12', lineHeight: 1.6, cursor: 'pointer' }}>
-                    <strong>महिला सुरक्षा व सम्मान महा-संकल्प:</strong> मैं राजस्थान पुलिस के 'Run for Her' अभियान से जुड़कर यह संकल्प लेता/लेती हूँ कि मैं समाज में प्रत्येक महिला, बेटी और बहन के सम्मान, गरिमा एवं भयमुक्त वातावरण के निर्माण के लिए सदैव तत्पर रहूँगा/रहूँगी।
+                  <label htmlFor="pledge-check" style={{ fontSize: '0.83rem', color: '#7c2d12', lineHeight: 1.55, cursor: 'pointer' }}>
+                    <strong>महिला सुरक्षा व सम्मान संकल्प (Run for Her Pledge) *:</strong> मैं राजस्थान पुलिस के राज्यव्यापी 'Run for Her' अभियान से जुड़कर यह दृढ़ संकल्प लेता/लेती हूँ कि मैं समाज में प्रत्येक महिला, बेटी एवं बहन के सम्मान, गरिमा तथा भयमुक्त परिवेश के निर्माण में सदैव सक्रिय योगदान दूंगा/दूंगी।
                   </label>
                 </div>
               </div>
@@ -1624,7 +1639,7 @@ export function RegistrationPage({
                   {isSubmitting ? (
                     <span>पंजीकरण दर्ज हो रहा है... कृपया प्रतीक्षा करें</span>
                   ) : (
-                    <span>🚀 निःशुल्क पंजीकरण पूर्ण करें एवं ई-पास प्राप्त करें &rarr;</span>
+                    <span>आधिकारिक पंजीकरण पूर्ण करें एवं ई-पास प्राप्त करें &rarr;</span>
                   )}
                 </button>
                 <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '10px' }}>

@@ -100,6 +100,26 @@ export function Footer({ onNavigate }) {
               </div>
             </div>
           </div>
+
+          <div>
+            <h4 style={{ fontSize: '0.85rem', color: '#fef08a', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
+              आधिकारिक नोडल प्रकोष्ठ
+            </h4>
+            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6 }}>
+              <div style={{ marginBottom: '6px' }}>
+                <strong style={{ color: '#ffffff' }}>राज्य नोडल अधिकारी:</strong> एडीजीपी (कम्युनिटी पुलिसिंग)
+              </div>
+              <div style={{ marginBottom: '6px' }}>
+                <strong style={{ color: '#ffffff' }}>ट्रैफिक समन्वय:</strong> डीसीपी (ट्रैफिक), जयपुर
+              </div>
+              <div style={{ marginBottom: '6px' }}>
+                <strong style={{ color: '#ffffff' }}>आधिकारिक ईमेल:</strong> rpm.nodal@rajasthanpolice.gov.in
+              </div>
+              <div style={{ marginTop: '8px', fontSize: '0.74rem', color: '#94a3b8' }}>
+                कंट्रोल रूम एवं आपात स्थिति: 112 / 1090 (24x7)
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Bottom Bar */}

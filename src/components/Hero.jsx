@@ -113,8 +113,8 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             boxShadow: '4px 0 12px rgba(0, 0, 0, 0.4)'
           }}>
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fef08a', display: 'inline-block', boxShadow: '0 0 8px #fef08a' }}></span>
-            <Bell size={13} color="#fef08a" />
-            <span style={{ color: '#ffffff' }}>लाइव सूचना / NOTICE</span>
+            <Bell size={14} color="#fef08a" />
+            <span style={{ color: '#ffffff', letterSpacing: '0.04em' }}>आधिकारिक बुलेटिन (BULLETIN)</span>
           </div>
 
           {/* Marquee Track */}
@@ -124,37 +124,20 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
           }}>
             <div className="notice-ticker-track">
               {notices.map((n, i) => (
-                <div key={`n1-${i}`} className="notice-item" style={{ color: '#ffffff' }}>
+                <div key={`n-${i}`} className="notice-item" style={{ color: '#ffffff' }}>
                   <span style={{
-                    background: 'rgba(212, 175, 55, 0.22)',
+                    background: 'rgba(212, 175, 55, 0.25)',
                     color: '#fef08a',
-                    padding: '3px 10px',
+                    padding: '2px 8px',
                     borderRadius: '4px',
-                    fontSize: '0.72rem',
+                    fontSize: '0.74rem',
                     fontWeight: 800,
-                    border: '1px solid rgba(212, 175, 55, 0.4)'
+                    border: '1px solid rgba(212, 175, 55, 0.5)'
                   }}>
                     {n.tag}
                   </span>
-                  <span style={{ color: '#f8fafc', fontWeight: 600 }}>{n.text}</span>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444', display: 'inline-block', opacity: 0.85 }}></span>
-                </div>
-              ))}
-              {notices.map((n, i) => (
-                <div key={`n2-${i}`} className="notice-item" style={{ color: '#ffffff' }}>
-                  <span style={{
-                    background: 'rgba(212, 175, 55, 0.22)',
-                    color: '#fef08a',
-                    padding: '3px 10px',
-                    borderRadius: '4px',
-                    fontSize: '0.72rem',
-                    fontWeight: 800,
-                    border: '1px solid rgba(212, 175, 55, 0.4)'
-                  }}>
-                    {n.tag}
-                  </span>
-                  <span style={{ color: '#f8fafc', fontWeight: 600 }}>{n.text}</span>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444', display: 'inline-block', opacity: 0.85 }}></span>
+                  <span style={{ color: '#ffffff', fontWeight: 600 }}>{n.text}</span>
+                  <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }}></span>
                 </div>
               ))}
             </div>
@@ -389,9 +372,9 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             gap: '14px'
           }}>
             <div style={{
-              background: 'rgba(10, 28, 61, 0.75)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              background: '#0a1c3d',
+              border: '1.5px solid rgba(212, 175, 55, 0.4)',
+              boxShadow: 'var(--shadow-sm)',
               borderRadius: '8px',
               padding: '14px 18px',
               display: 'flex',
@@ -409,9 +392,9 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             </div>
 
             <div style={{
-              background: 'rgba(10, 28, 61, 0.75)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              background: '#0a1c3d',
+              border: '1.5px solid rgba(212, 175, 55, 0.4)',
+              boxShadow: 'var(--shadow-sm)',
               borderRadius: '8px',
               padding: '14px 18px',
               display: 'flex',
@@ -429,9 +412,9 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             </div>
 
             <div style={{
-              background: 'rgba(10, 28, 61, 0.75)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              background: '#0a1c3d',
+              border: '1.5px solid rgba(212, 175, 55, 0.4)',
+              boxShadow: 'var(--shadow-sm)',
               borderRadius: '8px',
               padding: '14px 18px',
               display: 'flex',

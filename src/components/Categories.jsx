@@ -1,6 +1,6 @@
 import React from 'react';
 import { RACE_CATEGORIES } from '../data/mockData';
-import { Zap, Flame, Users, HeartHandshake, Sparkles, Check, Clock, ArrowRight } from 'lucide-react';
+import { Zap, Flame, Users, HeartHandshake, Sparkles, Check, Clock, ArrowRight, Timer } from 'lucide-react';
 
 export function Categories({ onSelectCategory, onOpenBulkRegister }) {
   const getIcon = (name, color) => {
@@ -75,24 +75,32 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
                   {cat.description}
                 </p>
 
-                {/* Timing & Age Details */}
+                {/* Timing, Age & Official Cut-Off Details */}
                 <div style={{
                   background: 'var(--police-navy-50)',
                   padding: '10px 12px',
                   borderRadius: '6px',
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
+                  flexDirection: 'column',
+                  gap: '6px',
                   marginBottom: '18px',
                   border: '1px solid var(--border-subtle)'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-body)' }}>
-                    <Clock size={14} color="var(--police-navy-800)" />
-                    <span>फ्लैग-ऑफ: <strong>{cat.flagOff}</strong></span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-body)' }}>
+                      <Clock size={14} color="var(--police-navy-800)" />
+                      <span>फ्लैग-ऑफ: <strong>{cat.flagOff}</strong></span>
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      आयु: <strong>{cat.minAge}+ वर्ष</strong>
+                    </div>
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    आयु: <strong>{cat.minAge}+ वर्ष</strong>
-                  </div>
+                  {cat.cutOffTime && (
+                    <div style={{ fontSize: '0.76rem', color: 'var(--crimson-700)', fontWeight: 700, borderTop: '1px dashed var(--border-medium)', paddingTop: '6px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <Timer size={13} color="var(--crimson-600)" />
+                      <span>कट-ऑफ समय: <strong>{cat.cutOffTime}</strong></span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Participant Perks */}

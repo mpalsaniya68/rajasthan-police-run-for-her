@@ -48,15 +48,15 @@ export default function App() {
       return null;
     }
   });
-  const [hotkeyToast, setHotkeyToast] = useState(null);
+
 
   // Global Keyboard Shortcut: [Ctrl + Shift + A] / [Cmd + Shift + A]
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'a' || e.key === 'A')) {
         e.preventDefault();
-        setHotkeyToast("[Ctrl + Shift + A] पुलिस नोडल कमान सक्रिय");
-        setTimeout(() => setHotkeyToast(null), 3000);
+
+
 
         if (sessionStorage.getItem('rajpol_admin_auth') === 'true') {
           navigateToPage('admin');
@@ -140,31 +140,6 @@ export default function App() {
         totalRegistered={registrations.length + 18450}
         isAdminAuthenticated={isAdminAuthenticated}
       />
-
-      {/* Secret Hotkey Notification Toast */}
-      {hotkeyToast && (
-        <div style={{
-          position: 'fixed',
-          top: '70px',
-          right: '20px',
-          zIndex: 9999,
-          background: 'var(--police-navy-950)',
-          color: '#fef08a',
-          border: '1.5px solid var(--police-gold-500)',
-          borderRadius: '8px',
-          padding: '10px 18px',
-          fontSize: '0.85rem',
-          fontWeight: 800,
-          boxShadow: 'var(--shadow-lg)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          animation: 'fadeIn 0.2s ease-in'
-        }}>
-          <Shield size={18} color="var(--police-gold-400)" />
-          <span>{hotkeyToast}</span>
-        </div>
-      )}
 
       {/* Main Content View Container */}
       <main id="main-content" tabIndex="-1" style={{ flex: 1 }}>
