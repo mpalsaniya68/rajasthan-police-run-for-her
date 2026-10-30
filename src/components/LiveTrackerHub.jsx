@@ -145,7 +145,7 @@ export function LiveTrackerHub({ onNavigate }) {
   // Share on WhatsApp User can share there data to the parents and friends and family with live tracking server 
   const handleShareWhatsApp = () => {
     const text = encodeURIComponent(
-      `🏃‍♂️ राजस्थान पुलिस मैराथन 2026: मैं ${currentRunner.fullName} (Bib: ${currentRunner.bibNumber}) को लाइव ट्रैक कर रहा हूँ!\n` +
+      `🏃‍♂️ राजस्थान पुलिस मैराथन 2027: मैं ${currentRunner.fullName} (Bib: ${currentRunner.bibNumber}) को लाइव ट्रैक कर रहा हूँ!\n` +
       `📍 वर्तमान स्थिति: ${currentRunner.lastCheckpointName} (${currentRunner.currentKm} KM)\n` +
       `⏱️ पेस: ${currentRunner.currentPace} | स्टेटस: ${currentRunner.status === 'FINISHED' ? 'मैराथन पूर्ण 🏆' : 'दौड़ जारी 🟢'}\n` +
       `🔗 आप भी लाइव ट्रैक करें: https://police.rajasthan.gov.in/marathon2026/track`

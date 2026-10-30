@@ -324,12 +324,12 @@ export function RegistrationPage({
   const handleShareWhatsApp = () => {
     if (!registeredParticipant) return;
     const text = encodeURIComponent(
-      `🏃‍♀️ मैंने राजस्थान पुलिस मैराथन 2026 'RUN FOR HER' में आधिकारिक पंजीकरण कर लिया है!\n\n` +
+      `🏃‍♀️ मैंने राजस्थान पुलिस मैराथन 2027 'RUN FOR HER' में आधिकारिक पंजीकरण कर लिया है!\n\n` +
       `🏅 धावक: ${registeredParticipant.fullName}\n` +
       `🎽 बिब नंबर: ${registeredParticipant.bibNumber}\n` +
       `🎯 श्रेणी: ${registeredParticipant.categoryName}\n` +
       `📍 स्थान: ${registeredParticipant.districtName}\n` +
-      `📅 तिथि: 20 दिसंबर 2026, प्रातः 06:00 बजे\n\n` +
+      `📅 तिथि: 3 जनवरी 2027, प्रातः 06:00 बजे\n\n` +
       `हर कदम नारी सुरक्षा और सम्मान के लिए! आप भी निःशुल्क रजिस्टर करें:\nhttps://police.rajasthan.gov.in/marathon2026`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
@@ -486,7 +486,7 @@ export function RegistrationPage({
                 पंजीकरण सफलतापूर्वक पूर्ण हुआ!
               </h2>
               <div style={{ fontSize: '0.94rem', color: '#e2e8f0' }}>
-                राजस्थान पुलिस मैराथन 2026 • <strong>Run for Her</strong> में आपका आधिकारिक ई-पास जारी किया गया है।
+                राजस्थान पुलिस मैराथन 2027 • <strong>Run for Her</strong> में आपका आधिकारिक ई-पास जारी किया गया है।
               </div>
             </div>
 
@@ -635,7 +635,7 @@ export function RegistrationPage({
                     <strong>प्रमाण पत्र आईडी:</strong> {registeredParticipant.certificateId}
                   </div>
                   <div>
-                    <strong>रिपोर्टिंग समय:</strong> 20 दिसंबर 2026, प्रातः 05:00 बजे
+                    <strong>रिपोर्टिंग समय:</strong> 3 जनवरी 2027, प्रातः 05:00 बजे
                   </div>
                   <div style={{ color: 'var(--police-gold-700)', fontWeight: 800 }}>
                     ★ सेवार्थ कटिबद्धता ★
@@ -912,8 +912,8 @@ export function RegistrationPage({
                 <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '4px' }}>
                   ℹ️ महत्वपूर्ण सूचना (Official Advisory):
                 </div>
-                • यह ई-पास 18 व 19 दिसंबर 2026 को बिब व टी-शर्ट किट प्राप्त करने हेतु अनिवार्य है।<br />
-                • 20 दिसंबर 2026 को दौड़ स्थल (अल्बर्ट हॉल / जिला केंद्र) पर प्रवेश इसी ई-पास के डिजिटल अथवा प्रिंटेड रूप में दिखाने पर दिया जाएगा।
+                • यह ई-पास 1 व 2 जनवरी 2027 को बिब व टी-शर्ट किट प्राप्त करने हेतु अनिवार्य है।<br />
+                • 3 जनवरी 2027 को दौड़ स्थल (अल्बर्ट हॉल / जिला केंद्र) पर प्रवेश इसी ई-पास के डिजिटल अथवा प्रिंटेड रूप में दिखाने पर दिया जाएगा।
               </div>
             </div>
           </div>
@@ -943,7 +943,7 @@ export function RegistrationPage({
                 <PoliceEmblem size={52} />
                 <div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--police-gold-400)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    राजस्थान पुलिस स्थापना दिवस विशेष महा-आयोजन • 20 दिसंबर 2026
+                    राजस्थान पुलिस स्थापना दिवस विशेष महा-आयोजन • 3 जनवरी 2027
                   </div>
                   <h1 style={{ fontSize: 'clamp(1.35rem, 2.6vw, 1.85rem)', margin: '4px 0', color: '#ffffff', fontWeight: 900 }}>
                     ऑनलाइन धावक पंजीकरण पोर्टल (Run for Her)

@@ -21,10 +21,10 @@ export function ScheduleExpo() {
     <section id="schedule" className="section-padding" style={{ position: 'relative', background: '#ffffff', borderTop: '1px solid var(--border-subtle)' }}>
       <div className="container">
         <div className="section-header">
-          <span className="badge-gov">Official Event Program • 20 Dec 2026</span>
+          <span className="badge-gov">Official Event Program • 03 Jan 2027</span>
           <h2>कार्यक्रम समय-सारणी, बिब एक्सपो एवं रेस नियम (Schedule, Expo & Rules)</h2>
           <p>
-            राजस्थान पुलिस मुख्यालय द्वारा अनुमोदित आधिकारिक कार्यक्रम — 20 दिसंबर 2026, सुबह 5:00 बजे रिपोर्टिंग से लेकर सायं पुरस्कार वितरण तक।
+            राजस्थान पुलिस मुख्यालय द्वारा अनुमोदित आधिकारिक कार्यक्रम — 3 जनवरी 2027, सुबह 5:00 बजे रिपोर्टिंग से लेकर सायं पुरस्कार वितरण तक।
           </p>
         </div>
 
@@ -35,7 +35,7 @@ export function ScheduleExpo() {
           <div className="gov-card" style={{ padding: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '18px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px' }}>
               <Clock size={20} color="var(--police-navy-800)" />
-              <h3 style={{ fontSize: '1.15rem', color: 'var(--police-navy-900)' }}>रेस दिवस कार्यक्रम — 20 दिसंबर 2026 (जयपुर फ्लैगशिप)</h3>
+              <h3 style={{ fontSize: '1.15rem', color: 'var(--police-navy-900)' }}>रेस दिवस कार्यक्रम — 3 जनवरी 2027 (जयपुर फ्लैगशिप)</h3>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', paddingLeft: '20px' }}>
@@ -95,7 +95,7 @@ export function ScheduleExpo() {
             <div style={{ marginBottom: '16px' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>एक्सपो स्थल</div>
               <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>पुलिस मेमोरियल ग्राउंड / एसएमएस इंडोर कॉम्प्लेक्स</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-body)' }}>जेएलएन मार्ग, जयपुर (18-19 दिसंबर 2026, सुबह 10:00 से सायं 07:00 बजे तक)</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-body)' }}>जेएलएन मार्ग, जयपुर (1-2 जनवरी 2027, सुबह 10:00 से सायं 07:00 बजे तक)</div>
               <div style={{ fontSize: '0.75rem', color: 'var(--police-navy-700)', marginTop: '4px', fontWeight: 600 }}>* जिलों में संबंधित जिला पुलिस अधीक्षक (SP) कार्यालय प्रांगण में एक्सपो आयोजित होगा।</div>
             </div>
 
@@ -130,7 +130,7 @@ export function ScheduleExpo() {
             }}>
               <AlertCircle size={18} color="#dc2626" style={{ flexShrink: 0, marginTop: '2px' }} />
               <div style={{ fontSize: '0.8rem', color: '#991b1b', lineHeight: 1.45 }}>
-                <strong>अनिवार्य नियम:</strong> किट प्राप्त करने हेतु डिजिटल ई-पास एवं एक मान्य सरकारी फोटो पहचान पत्र (आधार / वोटर आईडी / कॉलेज आईडी) साथ लाएं। <em>दौड़ वाले दिन सुबह 20 दिसंबर को कोई बिब वितरण नहीं होगा।</em>
+                <strong>अनिवार्य नियम:</strong> किट प्राप्त करने हेतु डिजिटल ई-पास एवं एक मान्य सरकारी फोटो पहचान पत्र (आधार / वोटर आईडी / कॉलेज आईडी) साथ लाएं। <em>दौड़ वाले दिन सुबह 3 जनवरी को कोई बिब वितरण नहीं होगा।</em>
               </div>
             </div>
           </div>
@@ -184,7 +184,7 @@ export function ScheduleExpo() {
         </div>
 
         {/* ROW 3: Baggage Policy + Prohibited Items + Official Downloads */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
           
           {/* Baggage Counter Policy */}
           <div className="gov-card" style={{ padding: '22px', border: '1px solid var(--border-medium)' }}>

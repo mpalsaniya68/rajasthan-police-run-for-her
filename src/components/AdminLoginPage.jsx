@@ -165,7 +165,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                 राजस्थान सरकार | GOVERNMENT OF RAJASTHAN
               </div>
               <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                राजस्थान पुलिस मैराथन 2026 — प्रशासनिक नियंत्रण एवं कमान पोर्टल
+                राजस्थान पुलिस मैराथन 2027 — प्रशासनिक नियंत्रण एवं कमान पोर्टल
               </div>
             </div>
           </div>

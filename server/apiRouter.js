@@ -406,7 +406,7 @@ export async function handleApiRequest(req, res) {
           genderRank: r.gender_rank || "Finisher",
           certificateId: r.certificate_id,
           status: r.status,
-          issueDate: "20 December 2026",
+          issueDate: "03 January 2027",
           authority: "महानिदेशक पुलिस, राजस्थान (DGP) एवं नोडल समिति"
         }
       });

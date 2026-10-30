@@ -207,7 +207,7 @@ export default function App() {
                   <span>/</span>
                   <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>रूट मैप, कार्यक्रम समय-सारणी एवं एक्सपो किट</span>
                 </div>
-                <span className="badge-gold">फ्लैग-ऑफ: 20 दिसंबर, सुबह 06:00 बजे</span>
+                <span className="badge-gold">फ्लैग-ऑफ: 3 जनवरी 2027, सुबह 06:00 बजे</span>
               </div>
             </div>
             <ScheduleExpo />

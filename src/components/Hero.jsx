@@ -3,8 +3,8 @@ import { Shield, Calendar, MapPin, Users, Award, Heart, Bell, CheckCircle2, Arro
 import { RunForHerBadge, PoliceEmblem } from './Emblems';
 
 export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegistered = 18450 }) {
-  // Live Countdown logic targeted to 20 December 2026, 06:00:00 AM
-  const TARGET_DATE = new Date('2026-12-20T06:00:00');
+  // Live Countdown logic targeted to 3 January 2027, 06:00:00 AM
+  const TARGET_DATE = new Date('2027-01-03T06:00:00');
 
   const calculateTimeLeft = () => {
     const diff = TARGET_DATE.getTime() - Date.now();
@@ -29,7 +29,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
   }, []);
 
   const notices = [
-    { text: "राजस्थान पुलिस मैराथन 'RUN FOR HER' — रेस दिवस: 20 दिसंबर 2026", tag: "इवेंट तिथि" },
+    { text: "राजस्थान पुलिस मैराथन 'RUN FOR HER' — रेस दिवस: 3 जनवरी 2027", tag: "इवेंट तिथि" },
     { text: "अल्बर्ट हॉल, जयपुर एवं प्रदेश के समस्त पुलिस जिलों में एक साथ भव्य आयोजन", tag: "वेन्यू" },
     { text: "प्रातः 06:00 बजे फ्लैग-ऑफ पुलिस महानिदेशक (DGP) राजीव शर्मा (IPS) द्वारा", tag: "फ्लैग-ऑफ" },
     { text: "21K, 10K, 5K एवं 2K श्रेणियों हेतु निःशुल्क ऑनलाइन पंजीकरण जारी है", tag: "रजिस्ट्रेशन" },
@@ -43,18 +43,10 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
   };
 
   return (
-    <section id="hero" style={{
-      position: 'relative',
-      overflow: 'hidden',
-      backgroundImage: `url('/images/marathon_hero_jaipur.jpg')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center 25%',
-      backgroundRepeat: 'no-repeat',
-      color: '#ffffff',
-      borderBottom: '1px solid var(--border-subtle)',
-      paddingTop: '20px',
-      paddingBottom: '60px'
-    }}>
+    <section id="hero" className="hero-section">
+      {/* 0. Background Photo Layer (Crisply framed and responsive on mobile & desktop) */}
+      <div className="hero-bg-photo" />
+
       {/* 1. Base Subtle Dark Tint (Keeps the background photo clearly visible) */}
       <div className="hero-base-tint" />
 
@@ -64,445 +56,544 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
       {/* 3. Rajasthan Police Navy Blue Half Overlay (50% on both Desktop & Mobile) */}
       <div className="hero-overlay-blue" />
 
-      {/* 4. Sleek Golden Dividing Accent Line */}
+      {/* 4. Sleek Golden Dividing Accent Line (Diagonal Corner-to-Corner 50/50 Split) */}
       <svg className="hero-golden-divider" viewBox="0 0 100 100" preserveAspectRatio="none">
         <defs>
           <linearGradient id="heroGoldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#fef08a" stopOpacity="0.4" />
-            <stop offset="50%" stopColor="#fde68a" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="#d4af37" stopOpacity="0.45" />
+            <stop offset="0%" stopColor="#fef08a" stopOpacity="0.5" />
+            <stop offset="50%" stopColor="#d4af37" stopOpacity="1" />
+            <stop offset="100%" stopColor="#fef08a" stopOpacity="0.5" />
           </linearGradient>
         </defs>
-        {/* Desktop diagonal line (0 0 -> 100 100) */}
-        <line className="hero-line-desktop" x1="0" y1="0" x2="100" y2="100" stroke="url(#heroGoldGlow)" strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
-        {/* Mobile dynamic center diagonal line (0 46 -> 100 54) */}
-        <line className="hero-line-mobile" x1="0" y1="46" x2="100" y2="54" stroke="url(#heroGoldGlow)" strokeWidth="1.8" vectorEffect="non-scaling-stroke" />
+        <line x1="0" y1="0" x2="100" y2="100" stroke="url(#heroGoldGlow)" strokeWidth="1.6" vectorEffect="non-scaling-stroke" />
       </svg>
 
       {/* Hero Content Wrapper */}
       <div style={{ position: 'relative', zIndex: 2 }}>
         {/* Official State Notice Ticker (Dark Theme - High Contrast) */}
-        <div className="container" style={{ marginBottom: '28px' }}>
-        <div style={{
-          background: 'rgba(5, 17, 38, 0.96)',
-          backdropFilter: 'blur(12px)',
-          border: '1.5px solid rgba(212, 175, 55, 0.5)',
-          borderRadius: '10px',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
-          display: 'flex',
-          alignItems: 'center',
-          overflow: 'hidden',
-          position: 'relative',
-          height: '46px'
-        }}>
-          {/* Badge */}
-          <div style={{
-            background: 'linear-gradient(135deg, #b91c1c 0%, #991b1b 100%)',
-            color: '#ffffff',
-            padding: '0 16px',
-            height: '100%',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontWeight: 900,
-            fontSize: '0.78rem',
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-            flexShrink: 0,
-            zIndex: 3,
-            boxShadow: '4px 0 12px rgba(0, 0, 0, 0.4)'
-          }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fef08a', display: 'inline-block', boxShadow: '0 0 8px #fef08a' }}></span>
-            <Bell size={14} color="#fef08a" />
-            <span style={{ color: '#ffffff', letterSpacing: '0.04em' }}>आधिकारिक बुलेटिन (BULLETIN)</span>
-          </div>
-
-          {/* Marquee Track */}
-          <div className="notice-ticker-track-container" style={{
-            maskImage: 'linear-gradient(90deg, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%)'
-          }}>
-            <div className="notice-ticker-track">
-              {notices.map((n, i) => (
-                <div key={`n-${i}`} className="notice-item" style={{ color: '#ffffff' }}>
-                  <span style={{
-                    background: 'rgba(212, 175, 55, 0.25)',
-                    color: '#fef08a',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.74rem',
-                    fontWeight: 800,
-                    border: '1px solid rgba(212, 175, 55, 0.5)'
-                  }}>
-                    {n.tag}
-                  </span>
-                  <span style={{ color: '#ffffff', fontWeight: 600 }}>{n.text}</span>
-                  <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }}></span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="container">
-        {/* Official Organizing Body Crest Badge */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '18px' }}>
-          <div style={{
-            background: 'rgba(5, 17, 38, 0.88)',
-            backdropFilter: 'blur(10px)',
-            color: '#fde68a',
-            padding: '7px 22px',
-            borderRadius: '6px',
-            fontSize: '0.82rem',
-            fontWeight: 800,
-            border: '1.5px solid rgba(212, 175, 55, 0.45)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.35)',
-            letterSpacing: '0.03em'
-          }}>
-            <Shield size={15} color="#fde68a" />
-            <span>राजस्थान पुलिस मुख्यालय, जयपुर | राज्यव्यापी जन-अभियान • नारी सुरक्षा, गरिमा एवं सशक्तिकरण</span>
-          </div>
-        </div>
-
-        {/* Hero Headings - Majestic, Authoritative & Grounded */}
-        <div style={{ textAlign: 'center', maxWidth: '960px', margin: '0 auto' }}>
-          
-          <div style={{
-            fontSize: 'clamp(0.9rem, 2vw, 1.15rem)',
-            fontWeight: 800,
-            color: '#fde68a',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            marginBottom: '8px',
-            textShadow: '0 2px 8px rgba(0,0,0,0.5)'
-          }}>
-            ★ RAJASTHAN POLICE STATEWIDE MARATHON 2026 ★
-          </div>
-
-          <h1 style={{
-            fontSize: 'clamp(2.4rem, 6vw, 4.6rem)',
-            fontWeight: 900,
-            lineHeight: 1.08,
-            letterSpacing: '-0.02em',
-            color: '#ffffff',
-            textTransform: 'uppercase',
-            margin: '0 0 14px 0',
-            textShadow: '0 4px 20px rgba(0, 0, 0, 0.7)'
-          }}>
-            RUN FOR HER
-          </h1>
-
-          {/* Slogan Banner */}
-          <div style={{ width: '100%', marginBottom: '22px' }}>
-            <div style={{
-              background: 'rgba(201, 24, 74, 0.85)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              display: 'inline-block',
-              padding: '10px 28px',
-              borderRadius: '100px',
-              boxShadow: '0 4px 15px rgba(201, 24, 74, 0.4)'
-            }}>
-              <span style={{
-                fontSize: 'clamp(1rem, 2.2vw, 1.35rem)',
-                fontWeight: 900,
-                color: '#ffffff',
-                letterSpacing: '0.02em'
-              }}>
-                "हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के नाम"
-              </span>
-            </div>
-          </div>
-
-          {/* Core Descriptive Text */}
-          <p style={{
-            fontSize: 'clamp(0.98rem, 1.9vw, 1.15rem)',
-            color: '#f1f5f9',
-            maxWidth: '820px',
-            margin: '0 auto 32px auto',
-            lineHeight: 1.65,
-            textShadow: '0 2px 10px rgba(0,0,0,0.6)'
-          }}>
-            <strong>20 दिसंबर 2026</strong> को पुलिस महानिदेशक (DGP) <strong>राजीव शर्मा (IPS)</strong> के नेतृत्व में जयपुर के ऐतिहासिक अल्बर्ट हॉल से 10,000+ नागरिकों का फ्लैगशिप रन एवं प्रदेश के सभी 41 पुलिस जिलों व कमिश्नरेट में एक साथ 5KM/10KM कम्युनिटी रन।
-          </p>
-
-          {/* Action CTAs - Human, Tactile & High-Contrast */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '14px', flexWrap: 'wrap', marginBottom: '38px' }}>
-            <button 
-              onClick={onOpenRegister} 
-              style={{
-                background: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
-                color: '#ffffff',
-                border: '1.5px solid rgba(255, 255, 255, 0.4)',
-                padding: '15px 32px',
-                borderRadius: '8px',
-                fontSize: '1.02rem',
-                fontWeight: 800,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                boxShadow: '0 8px 24px rgba(225, 29, 72, 0.45)',
-                transition: 'transform 0.2s, box-shadow 0.2s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-              title="निःशुल्क इंडिविजुअल रजिस्ट्रेशन"
-            >
-              <span>इंडिविजुअल रजिस्ट्रेशन (निःशुल्क)</span>
-              <ArrowRight size={18} />
-            </button>
-
-            <button 
-              onClick={onOpenBulkRegister} 
-              style={{
-                background: 'rgba(255, 255, 255, 0.15)',
-                backdropFilter: 'blur(10px)',
-                color: '#ffffff',
-                border: '1.5px solid rgba(255, 255, 255, 0.35)',
-                padding: '15px 24px',
-                borderRadius: '8px',
-                fontSize: '0.96rem',
-                fontWeight: 800,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-              title="ग्रुप व बल्क रजिस्ट्रेशन"
-            >
-              <Shield size={18} color="var(--police-gold-400)" />
-              <span>ग्रुप व संस्थागत रजिस्ट्रेशन (RPA / कॉलेज)</span>
-            </button>
-
-            <button 
-              onClick={() => onNavigate ? onNavigate('live-tracker') : scrollTo('live-tracker')} 
-              style={{
-                background: 'rgba(220, 38, 38, 0.2)',
-                border: '1.5px solid #f87171',
-                color: '#fecaca',
-                padding: '15px 22px',
-                borderRadius: '8px',
-                fontSize: '0.94rem',
-                fontWeight: 800,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-            >
-              <Radio size={16} color="#ef4444" />
-              <span>लाइव रनर ट्रैकर (RFID Radar)</span>
-            </button>
-          </div>
-
-          {/* Official Countdown Card (Glassmorphic Dignified White Surface) */}
-          <div style={{
-            maxWidth: '720px',
-            margin: '0 auto 36px auto',
-            padding: '24px 28px',
-            borderRadius: '12px',
-            background: 'rgba(255, 255, 255, 0.96)',
+        <div className="container" style={{ marginBottom: '20px' }}>
+          <div className="hero-ticker-container" style={{
+            background: 'rgba(5, 17, 38, 0.96)',
             backdropFilter: 'blur(12px)',
-            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.35)',
-            border: '2px solid rgba(212, 175, 55, 0.5)',
-            color: 'var(--police-navy-950)'
+            border: '1.5px solid rgba(212, 175, 55, 0.5)',
+            borderRadius: '10px',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden',
+            position: 'relative',
+            height: '44px'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--police-navy-900)', fontWeight: 800, fontSize: '0.92rem' }}>
-                <Calendar size={18} color="var(--police-navy-900)" />
-                <span>RACE DAY COUNTDOWN • 20 DEC 2026</span>
-              </div>
-              <div style={{ fontSize: '0.84rem', color: 'var(--crimson-600)', fontWeight: 800 }}>
-                फ्लैग-ऑफ: 20 दिसंबर 2026, सुबह 06:00 AM • अल्बर्ट हॉल, जयपुर
-              </div>
+            {/* Badge */}
+            <div className="hero-ticker-badge" style={{
+              background: 'linear-gradient(135deg, #b91c1c 0%, #991b1b 100%)',
+              color: '#ffffff',
+              padding: '0 16px',
+              height: '100%',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontWeight: 900,
+              fontSize: '0.78rem',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              flexShrink: 0,
+              zIndex: 3,
+              boxShadow: '4px 0 12px rgba(0, 0, 0, 0.4)'
+            }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fef08a', display: 'inline-block', boxShadow: '0 0 8px #fef08a' }}></span>
+              <Bell size={14} color="#fef08a" />
+              <span style={{ color: '#ffffff', letterSpacing: '0.04em' }}>आधिकारिक बुलेटिन</span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', textAlign: 'center' }}>
-              {[
-                { label: 'दिन (DAYS)', val: timeLeft.days },
-                { label: 'घंटे (HOURS)', val: String(timeLeft.hours).padStart(2, '0') },
-                { label: 'मिनट (MINS)', val: String(timeLeft.minutes).padStart(2, '0') },
-                { label: 'सेकंड (SECS)', val: String(timeLeft.seconds).padStart(2, '0') }
-              ].map((item, idx) => (
-                <div key={idx} style={{
-                  background: '#0a1c3d',
-                  borderRadius: '10px',
-                  padding: '14px 6px',
-                  border: '1.5px solid #d4af37',
-                  boxShadow: '0 4px 14px rgba(10, 28, 61, 0.25)'
+            {/* Marquee Track */}
+            <div className="notice-ticker-track-container" style={{
+              maskImage: 'linear-gradient(90deg, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%)'
+            }}>
+              <div className="notice-ticker-track">
+                {notices.map((n, i) => (
+                  <div key={`n-${i}`} className="notice-item" style={{ color: '#ffffff' }}>
+                    <span style={{
+                      background: 'rgba(212, 175, 55, 0.25)',
+                      color: '#fef08a',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      fontSize: '0.74rem',
+                      fontWeight: 800,
+                      border: '1px solid rgba(212, 175, 55, 0.5)'
+                    }}>
+                      {n.tag}
+                    </span>
+                    <span style={{ color: '#ffffff', fontWeight: 600 }}>{n.text}</span>
+                    <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }}></span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="container">
+          {/* Official Organizing Body Crest Badge */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '14px' }}>
+            <div className="hero-crest-badge" style={{
+              background: 'rgba(5, 17, 38, 0.88)',
+              backdropFilter: 'blur(10px)',
+              color: '#fde68a',
+              padding: '6px 20px',
+              borderRadius: '6px',
+              fontSize: '0.82rem',
+              fontWeight: 800,
+              border: '1.5px solid rgba(212, 175, 55, 0.45)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.35)',
+              letterSpacing: '0.03em',
+              textAlign: 'center'
+            }}>
+              <Shield size={15} color="#fde68a" />
+              <span>राजस्थान पुलिस मुख्यालय, जयपुर | राज्यव्यापी जन-अभियान • 3 जनवरी 2027</span>
+            </div>
+          </div>
+
+          {/* Hero Headings - Majestic, Authoritative & Grounded */}
+          <div style={{ textAlign: 'center', maxWidth: '960px', margin: '0 auto' }}>
+            
+            <div style={{
+              fontSize: 'clamp(0.85rem, 2vw, 1.15rem)',
+              fontWeight: 800,
+              color: '#fde68a',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              marginBottom: '6px',
+              textShadow: '0 2px 8px rgba(0,0,0,0.5)'
+            }}>
+              ★ RAJASTHAN POLICE STATEWIDE MARATHON 2027 ★
+            </div>
+
+            <h1 style={{
+              fontSize: 'clamp(2.3rem, 6.5vw, 4.6rem)',
+              fontWeight: 900,
+              lineHeight: 1.08,
+              letterSpacing: '-0.02em',
+              color: '#ffffff',
+              textTransform: 'uppercase',
+              margin: '0 0 12px 0',
+              textShadow: '0 4px 20px rgba(0, 0, 0, 0.7)'
+            }}>
+              RUN FOR HER
+            </h1>
+
+            {/* Slogan Banner */}
+            <div style={{ width: '100%', marginBottom: '16px' }}>
+              <div className="hero-slogan-wrap" style={{
+                background: 'rgba(201, 24, 74, 0.88)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.35)',
+                display: 'inline-block',
+                padding: '8px 24px',
+                borderRadius: '100px',
+                boxShadow: '0 4px 15px rgba(201, 24, 74, 0.4)'
+              }}>
+                <span style={{
+                  fontSize: 'clamp(0.92rem, 2.2vw, 1.35rem)',
+                  fontWeight: 900,
+                  color: '#ffffff',
+                  letterSpacing: '0.02em'
                 }}>
-                  <div style={{
-                    fontSize: 'clamp(1.8rem, 3.8vw, 2.6rem)',
-                    fontWeight: 900,
-                    color: '#fde68a',
-                    lineHeight: 1,
-                    textShadow: '0 2px 4px rgba(0,0,0,0.5)'
-                  }}>
-                    {item.val}
-                  </div>
-                  <div style={{ fontSize: '0.74rem', color: '#f1f5f9', fontWeight: 800, letterSpacing: '0.04em', marginTop: '6px' }}>
-                    {item.label}
-                  </div>
+                  "हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के नाम"
+                </span>
+              </div>
+            </div>
+
+            {/* Core Descriptive Text */}
+            <p className="hero-desc-text" style={{
+              fontSize: 'clamp(0.94rem, 1.8vw, 1.15rem)',
+              color: '#f1f5f9',
+              maxWidth: '820px',
+              margin: '0 auto 26px auto',
+              lineHeight: 1.6,
+              textShadow: '0 2px 10px rgba(0,0,0,0.6)'
+            }}>
+              <strong>3 जनवरी 2027</strong> को पुलिस महानिदेशक (DGP) <strong>राजीव शर्मा (IPS)</strong> के नेतृत्व में जयपुर के ऐतिहासिक अल्बर्ट हॉल से 10,000+ नागरिकों का फ्लैगशिप रन एवं प्रदेश के सभी 41 पुलिस जिलों व कमिश्नरेट में एक साथ 5KM/10KM कम्युनिटी रन।
+            </p>
+
+            {/* Action CTAs - Responsive Full-Width on Mobile, Thumb Reachable */}
+            <div className="hero-cta-group">
+              <button 
+                onClick={onOpenRegister} 
+                style={{
+                  background: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
+                  color: '#ffffff',
+                  border: '1.5px solid rgba(255, 255, 255, 0.4)',
+                  padding: '14px 30px',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 24px rgba(225, 29, 72, 0.45)',
+                  transition: 'transform 0.2s, box-shadow 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                title="निःशुल्क इंडिविजुअल रजिस्ट्रेशन"
+              >
+                <span>इंडिविजुअल रजिस्ट्रेशन (निःशुल्क)</span>
+                <ArrowRight size={18} />
+              </button>
+
+              <button 
+                onClick={onOpenBulkRegister} 
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  color: '#ffffff',
+                  border: '1.5px solid rgba(255, 255, 255, 0.35)',
+                  padding: '14px 22px',
+                  borderRadius: '8px',
+                  fontSize: '0.95rem',
+                  fontWeight: 800,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                title="ग्रुप व बल्क रजिस्ट्रेशन"
+              >
+                <Shield size={18} color="var(--police-gold-400)" />
+                <span>ग्रुप / बल्क रजिस्ट्रेशन (RPA / कॉलेज)</span>
+              </button>
+
+              <button 
+                onClick={() => onNavigate ? onNavigate('live-tracker') : scrollTo('live-tracker')} 
+                style={{
+                  background: 'rgba(220, 38, 38, 0.2)',
+                  border: '1.5px solid #f87171',
+                  color: '#fecaca',
+                  padding: '14px 20px',
+                  borderRadius: '8px',
+                  fontSize: '0.94rem',
+                  fontWeight: 800,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                <Radio size={16} color="#ef4444" />
+                <span>लाइव रनर ट्रैकर (RFID Radar)</span>
+              </button>
+            </div>
+
+            {/* Official Countdown Card (Glassmorphic Dignified White Surface) */}
+            <div className="hero-countdown-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '14px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--police-navy-900)', fontWeight: 800, fontSize: '0.9rem' }}>
+                  <Calendar size={18} color="var(--police-navy-900)" />
+                  <span>RACE DAY COUNTDOWN • 03 JAN 2027</span>
                 </div>
-              ))}
+                <div style={{ fontSize: '0.82rem', color: 'var(--crimson-600)', fontWeight: 800 }}>
+                  फ्लैग-ऑफ: 3 जनवरी 2027, सुबह 06:00 AM • अल्बर्ट हॉल, जयपुर
+                </div>
+              </div>
+
+              <div className="hero-countdown-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', textAlign: 'center' }}>
+                {[
+                  { label: 'दिन (DAYS)', val: timeLeft.days },
+                  { label: 'घंटे (HOURS)', val: String(timeLeft.hours).padStart(2, '0') },
+                  { label: 'मिनट (MINS)', val: String(timeLeft.minutes).padStart(2, '0') },
+                  { label: 'सेकंड (SECS)', val: String(timeLeft.seconds).padStart(2, '0') }
+                ].map((item, idx) => (
+                  <div key={idx} className="hero-countdown-box" style={{
+                    background: '#0a1c3d',
+                    borderRadius: '10px',
+                    padding: '12px 6px',
+                    border: '1.5px solid #d4af37',
+                    boxShadow: '0 4px 14px rgba(10, 28, 61, 0.25)'
+                  }}>
+                    <div className="hero-countdown-val" style={{
+                      fontSize: 'clamp(1.7rem, 3.8vw, 2.6rem)',
+                      fontWeight: 900,
+                      color: '#fde68a',
+                      lineHeight: 1,
+                      textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                    }}>
+                      {item.val}
+                    </div>
+                    <div className="hero-countdown-lbl" style={{ fontSize: '0.72rem', color: '#f1f5f9', fontWeight: 800, letterSpacing: '0.04em', marginTop: '6px' }}>
+                      {item.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
+
+            {/* Key Administrative Facts Strip */}
+            <div className="hero-facts-grid">
+              <div className="hero-fact-card" style={{
+                background: '#0a1c3d',
+                border: '1.5px solid rgba(212, 175, 55, 0.4)',
+                boxShadow: 'var(--shadow-sm)',
+                borderRadius: '8px',
+                padding: '14px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                textAlign: 'left'
+              }}>
+                <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Users size={20} color="#fef08a" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#fde68a' }}>{totalRegistered.toLocaleString()}+</div>
+                  <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>पंजीकृत नागरिक व पुलिस धावक</div>
+                </div>
+              </div>
+
+              <div className="hero-fact-card" style={{
+                background: '#0a1c3d',
+                border: '1.5px solid rgba(212, 175, 55, 0.4)',
+                boxShadow: 'var(--shadow-sm)',
+                borderRadius: '8px',
+                padding: '14px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                textAlign: 'left'
+              }}>
+                <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <MapPin size={20} color="#fca5a5" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff' }}>समस्त पुलिस जिले</div>
+                  <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>एक साथ 5K/10K का राज्यव्यापी आयोजन</div>
+                </div>
+              </div>
+
+              <div className="hero-fact-card" style={{
+                background: '#0a1c3d',
+                border: '1.5px solid rgba(212, 175, 55, 0.4)',
+                boxShadow: 'var(--shadow-sm)',
+                borderRadius: '8px',
+                padding: '14px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                textAlign: 'left'
+              }}>
+                <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Award size={20} color="#86efac" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#86efac' }}>माननीय मुख्यमंत्री</div>
+                  <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>शाम 06:00 बजे पदक वितरण समारोह</div>
+                </div>
+              </div>
+            </div>
+
           </div>
-
-          {/* Key Administrative Facts Strip */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-            gap: '14px'
-          }}>
-            <div style={{
-              background: '#0a1c3d',
-              border: '1.5px solid rgba(212, 175, 55, 0.4)',
-              boxShadow: 'var(--shadow-sm)',
-              borderRadius: '8px',
-              padding: '14px 18px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              textAlign: 'left'
-            }}>
-              <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Users size={20} color="#fef08a" />
-              </div>
-              <div>
-                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#fde68a' }}>{totalRegistered.toLocaleString()}+</div>
-                <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>पंजीकृत नागरिक व पुलिस धावक</div>
-              </div>
-            </div>
-
-            <div style={{
-              background: '#0a1c3d',
-              border: '1.5px solid rgba(212, 175, 55, 0.4)',
-              boxShadow: 'var(--shadow-sm)',
-              borderRadius: '8px',
-              padding: '14px 18px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              textAlign: 'left'
-            }}>
-              <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <MapPin size={20} color="#fca5a5" />
-              </div>
-              <div>
-                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff' }}>समस्त पुलिस जिले</div>
-                <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>एक साथ 5K/10K का राज्यव्यापी आयोजन</div>
-              </div>
-            </div>
-
-            <div style={{
-              background: '#0a1c3d',
-              border: '1.5px solid rgba(212, 175, 55, 0.4)',
-              boxShadow: 'var(--shadow-sm)',
-              borderRadius: '8px',
-              padding: '14px 18px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              textAlign: 'left'
-            }}>
-              <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Award size={20} color="#86efac" />
-              </div>
-              <div>
-                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#86efac' }}>माननीय मुख्यमंत्री</div>
-                <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>शाम 06:00 बजे पदक वितरण समारोह</div>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
-    </div>
 
-    {/* Responsive 50/50 Dual-Tone Police Banner Styles */}
-    <style>{`
-      .hero-base-tint {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(5, 17, 38, 0.42) 0%, rgba(10, 28, 61, 0.52) 100%);
-        z-index: 1;
-        pointer-events: none;
-      }
+      {/* Responsive 50/50 Dual-Tone Police Banner Styles */}
+      <style>{`
+        .hero-section {
+          position: relative;
+          overflow: hidden;
+          color: #ffffff;
+          border-bottom: 1px solid var(--border-subtle);
+          padding-top: 20px;
+          padding-bottom: 56px;
+        }
 
-      .hero-overlay-red {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        pointer-events: none;
-        background: linear-gradient(135deg, rgba(220, 38, 38, 0.52) 0%, rgba(185, 28, 28, 0.42) 50%, rgba(153, 27, 27, 0.35) 100%);
-      }
+        .hero-bg-photo {
+          position: absolute;
+          inset: 0;
+          background-image: url('/images/marathon_hero_jaipur.jpg');
+          background-size: cover;
+          background-position: center 25%;
+          background-repeat: no-repeat;
+          z-index: 0;
+          pointer-events: none;
+        }
 
-      .hero-overlay-blue {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        pointer-events: none;
-        background: linear-gradient(135deg, rgba(10, 28, 61, 0.65) 0%, rgba(15, 23, 42, 0.55) 50%, rgba(10, 28, 61, 0.68) 100%);
-      }
+        .hero-base-tint {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(5, 17, 38, 0.42) 0%, rgba(10, 28, 61, 0.52) 100%);
+          z-index: 1;
+          pointer-events: none;
+        }
 
-      .hero-golden-divider {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        pointer-events: none;
-      }
-
-      /* Mobile & Small Screens (< 768px): Exact 50/50 Area Split Across the Center */
-      @media (max-width: 767px) {
+        /* 50/50 Dual Tone: Top-Right Crimson Red Half & Bottom-Left Navy Blue Half */
         .hero-overlay-red {
-          clip-path: polygon(0 0, 100% 0, 100% 54%, 0 46%);
-        }
-        .hero-overlay-blue {
-          clip-path: polygon(0 46%, 100% 54%, 100% 100%, 0 100%);
-        }
-        .hero-line-desktop {
-          display: none !important;
-        }
-        .hero-line-mobile {
-          display: block !important;
-        }
-      }
-
-      /* Desktop & Large Screens (>= 768px): Corner-to-Corner 50/50 Split */
-      @media (min-width: 768px) {
-        .hero-overlay-red {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          pointer-events: none;
+          background: linear-gradient(135deg, rgba(220, 38, 38, 0.52) 0%, rgba(185, 28, 28, 0.42) 50%, rgba(153, 27, 27, 0.35) 100%);
           clip-path: polygon(0 0, 100% 0, 100% 100%);
         }
+
         .hero-overlay-blue {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          pointer-events: none;
+          background: linear-gradient(135deg, rgba(10, 28, 61, 0.65) 0%, rgba(15, 23, 42, 0.55) 50%, rgba(10, 28, 61, 0.68) 100%);
           clip-path: polygon(0 0, 0 100%, 100% 100%);
         }
-        .hero-line-desktop {
-          display: block !important;
+
+        .hero-golden-divider {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+          pointer-events: none;
         }
-        .hero-line-mobile {
-          display: none !important;
+
+        .hero-cta-group {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: wrap;
+          margin-bottom: 34px;
         }
-      }
-    `}</style>
-  </section>
-);
+
+        .hero-countdown-card {
+          max-width: 720px;
+          margin: 0 auto 34px auto;
+          padding: 22px 28px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.96);
+          backdrop-filter: blur(12px);
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+          border: 2px solid rgba(212, 175, 55, 0.5);
+          color: var(--police-navy-950);
+        }
+
+        .hero-facts-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+          gap: 14px;
+        }
+
+        /* Mobile Specific Responsive Optimization (< 768px) */
+        @media (max-width: 767px) {
+          .hero-section {
+            padding-top: 12px !important;
+            padding-bottom: 36px !important;
+          }
+
+          .hero-bg-photo {
+            background-position: center top !important;
+            background-size: cover !important;
+          }
+
+          /* Equal 50/50 Dual-Tone split stays prominently visible across the whole mobile screen */
+          .hero-overlay-red {
+            clip-path: polygon(0 0, 100% 0, 100% 100%) !important;
+          }
+          .hero-overlay-blue {
+            clip-path: polygon(0 0, 0 100%, 100% 100%) !important;
+          }
+
+          .hero-ticker-container {
+            height: 38px !important;
+            margin-bottom: 12px !important;
+          }
+
+          .hero-ticker-badge {
+            padding: 0 10px !important;
+            font-size: 0.72rem !important;
+          }
+
+          .hero-crest-badge {
+            padding: 4px 12px !important;
+            font-size: 0.74rem !important;
+            margin-bottom: 10px !important;
+          }
+
+          .hero-slogan-wrap {
+            padding: 6px 16px !important;
+          }
+
+          .hero-desc-text {
+            margin-bottom: 20px !important;
+            line-height: 1.5 !important;
+          }
+
+          /* Stack buttons neatly on mobile for thumb reachability */
+          .hero-cta-group {
+            flex-direction: column !important;
+            width: 100% !important;
+            max-width: 360px !important;
+            margin: 0 auto 22px auto !important;
+            gap: 10px !important;
+          }
+
+          .hero-cta-group button {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 13px 18px !important;
+            font-size: 0.94rem !important;
+            min-height: 48px !important;
+          }
+
+          /* Compact 4-cell countdown for mobile screens */
+          .hero-countdown-card {
+            padding: 14px 10px !important;
+            margin-bottom: 20px !important;
+          }
+
+          .hero-countdown-grid {
+            gap: 6px !important;
+          }
+
+          .hero-countdown-box {
+            padding: 8px 3px !important;
+            border-radius: 8px !important;
+          }
+
+          .hero-countdown-val {
+            font-size: 1.45rem !important;
+          }
+
+          .hero-countdown-lbl {
+            font-size: 0.64rem !important;
+            margin-top: 4px !important;
+          }
+
+          /* Compact 1-column facts on mobile */
+          .hero-facts-grid {
+            grid-template-columns: 1fr !important;
+            gap: 8px !important;
+          }
+
+          .hero-fact-card {
+            padding: 10px 14px !important;
+          }
+        }
+      `}</style>
+    </section>
+  );
 }

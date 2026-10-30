@@ -120,7 +120,7 @@ export function Navbar({
                 lineHeight: 1.1,
                 letterSpacing: '0.01em'
               }}>
-                राजस्थान पुलिस मैराथन 2026
+                राजस्थान पुलिस मैराथन 2027
               </div>
 
               {/* English Sub-Heading & Tagline */}
