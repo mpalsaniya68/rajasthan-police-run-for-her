@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiVerifyCertificate, apiDispatchCertificate } from '../services/api';
 import { Award, Search, Download, Share2, Send, CheckCircle2, Shield, Calendar, MapPin, Clock, ExternalLink } from 'lucide-react';
 import { PoliceEmblem, OfficialGoldSeal, RunForHerBadge } from './Emblems';
 import QRCode from 'qrcode';
@@ -8,6 +9,30 @@ export function CertificateHub({ registrations = [] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [showDispatchNotice, setShowDispatchNotice] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchFeedback, setSearchFeedback] = useState(null);
+  const [isVerifiedFromBackend, setIsVerifiedFromBackend] = useState(false);
+
+  // Check URL hash for direct QR verification: #verify?certId=RJ-POL-2026-XXXX
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('certId=')) {
+      const match = hash.match(/certId=([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        const cId = match[1];
+        setSearchQuery(cId);
+        setIsSearching(true);
+        apiVerifyCertificate(cId).then(res => {
+          setIsSearching(false);
+          if (res && res.success && res.certificate) {
+            setSelectedRunner(res.certificate);
+            setIsVerifiedFromBackend(true);
+            setSearchFeedback({ type: 'success', message: `✅ डिजिटल QR कोड द्वारा आधिकारिक प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
+          }
+        }).catch(() => setIsSearching(false));
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (registrations.length > 0 && !selectedRunner) {
@@ -24,24 +49,58 @@ export function CertificateHub({ registrations = [] }) {
     }
   }, [selectedRunner]);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    const q = searchQuery.trim().toLowerCase();
-    const found = registrations.find(r => 
-      r.bibNumber.toLowerCase().includes(q) || 
-      r.mobile.includes(q) || 
-      r.fullName.toLowerCase().includes(q) ||
-      r.certificateId.toLowerCase().includes(q)
+    const rawQ = searchQuery.trim();
+    if (!rawQ) return;
+    const q = rawQ.toLowerCase();
+    setSearchFeedback(null);
+
+    // 1. Check in local loaded registrations
+    const foundLocal = registrations.find(r => 
+      (r.bibNumber && r.bibNumber.toLowerCase() === q) || 
+      (r.certificateId && r.certificateId.toLowerCase() === q) ||
+      (r.mobile && r.mobile.includes(q)) || 
+      (r.fullName && r.fullName.toLowerCase().includes(q))
     );
-    if (found) {
-      setSelectedRunner(found);
-    } else {
-      alert("कोई रिकॉर्ड नहीं मिला: " + searchQuery);
+
+    if (foundLocal) {
+      setSelectedRunner(foundLocal);
+      setIsVerifiedFromBackend(true);
+      setSearchFeedback({ type: 'success', message: `धावक रिकॉर्ड प्राप्त हुआ: ${foundLocal.fullName} (Bib: ${foundLocal.bibNumber})` });
+      return;
+    }
+
+    // 2. Query Central Police Edge Database
+    setIsSearching(true);
+    try {
+      const res = await apiVerifyCertificate(rawQ);
+      setIsSearching(false);
+      if (res && res.success && res.certificate) {
+        setSelectedRunner(res.certificate);
+        setIsVerifiedFromBackend(true);
+        setSearchFeedback({ type: 'success', message: `✅ राजस्थान पुलिस डेटाबेस से आधिकारिक प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
+      } else {
+        setIsVerifiedFromBackend(false);
+        setSearchFeedback({ type: 'error', message: res.error || `कोई रिकॉर्ड नहीं मिला: "${rawQ}"। कृपया वैध बिब नंबर, मोबाइल अथवा सर्टिफिकेट ID दर्ज करें।` });
+      }
+    } catch (err) {
+      setIsSearching(false);
+      setSearchFeedback({ type: 'error', message: "सर्वर से कनेक्ट करने में त्रुटि। कृपया पुनः प्रयास करें।" });
     }
   };
 
-  const handleAutoDispatch = () => {
+  const handleAutoDispatch = async () => {
+    if (!selectedRunner) return;
     setShowDispatchNotice(true);
+    try {
+      await apiDispatchCertificate({
+        certificateId: selectedRunner.certificateId,
+        mobile: selectedRunner.mobile
+      });
+    } catch (e) {
+      console.error("Dispatch notice error:", e);
+    }
     setTimeout(() => setShowDispatchNotice(false), 5000);
   };
 
@@ -113,11 +172,44 @@ export function CertificateHub({ registrations = [] }) {
                 minWidth: '180px'
               }}
             />
-            <button type="submit" className="btn-navy" style={{ padding: '7px 14px', fontSize: '0.82rem' }}>
-              <Search size={14} /> खोजें
+            <button type="submit" disabled={isSearching} className="btn-navy" style={{ padding: '7px 14px', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <Search size={14} /> {isSearching ? "सत्यापित हो रहा है..." : "सत्यापित करें"}
             </button>
           </form>
         </div>
+
+        {/* Real-time Police Database Verification Feedback */}
+        {searchFeedback && (
+          <div style={{
+            background: searchFeedback.type === 'success' ? '#f0fdf4' : '#fef2f2',
+            border: searchFeedback.type === 'success' ? '1.5px solid #22c55e' : '1.5px solid #f87171',
+            borderLeftWidth: '5px',
+            borderRadius: '6px',
+            padding: '12px 18px',
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              {searchFeedback.type === 'success' ? (
+                <Shield size={20} color="#16a34a" />
+              ) : (
+                <Award size={20} color="#dc2626" />
+              )}
+              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: searchFeedback.type === 'success' ? '#166534' : '#991b1b' }}>
+                {searchFeedback.message}
+              </span>
+            </div>
+            <button
+              onClick={() => setSearchFeedback(null)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', fontSize: '0.85rem' }}
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {/* Automated Dispatch Notification Alert */}
         {showDispatchNotice && (

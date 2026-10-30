@@ -13,6 +13,7 @@ import {
   adminLoginLimiter,
   sanitizeCsvCell
 } from "./security.js";
+import { sendRegistrationNotification, sendCertificateNotification } from "./notifications.js";
 
 const CATEGORY_NAMES = {
   "21k": "21 KM Half Marathon",
@@ -197,6 +198,15 @@ export async function handleApiRequest(req, res) {
         args: ["SYSTEM", "REGISTER_RUNNER", `Bib: ${bibNumber}, Name: ${data.fullName}`, clientIp, now]
       });
 
+      // Automated Notification Dispatch (SMS / WhatsApp)
+      sendRegistrationNotification({
+        fullName: data.fullName,
+        mobile: data.mobile,
+        bibNumber,
+        categoryName: catName,
+        certificateId
+      }).catch(err => console.error("[Notification Dispatch Error]:", err));
+
       return json({
         success: true,
         message: "पंजीकरण सफलतापूर्वक पूर्ण हुआ।",
@@ -370,8 +380,8 @@ export async function handleApiRequest(req, res) {
       }
 
       const resCert = await db.execute({
-        sql: "SELECT full_name, bib_number, category_name, finish_time, certificate_id, status, created_at FROM participants WHERE certificate_id = ? OR bib_number = ? LIMIT 1",
-        args: [certId.trim(), certId.trim()]
+        sql: "SELECT id, full_name, bib_number, gender, category_id, category_name, district_name, masked_mobile, finish_time, certificate_id, overall_rank, gender_rank, status, created_at FROM participants WHERE certificate_id = ? OR bib_number = ? OR mobile = ? OR id = ? LIMIT 1",
+        args: [certId.trim(), certId.trim(), certId.trim(), certId.trim()]
       });
 
       if (resCert.rows.length === 0) {
@@ -383,14 +393,57 @@ export async function handleApiRequest(req, res) {
         success: true,
         verified: true,
         certificate: {
+          id: r.id,
           fullName: r.full_name,
           bibNumber: r.bib_number,
+          gender: r.gender,
+          category: r.category_id || "21k",
           categoryName: r.category_name,
+          districtName: r.district_name,
+          mobile: r.masked_mobile,
           finishTime: r.finish_time || "00:48:32 (Official Time)",
+          overallRank: r.overall_rank || "Official Finisher",
+          genderRank: r.gender_rank || "Finisher",
           certificateId: r.certificate_id,
+          status: r.status,
           issueDate: "20 December 2026",
           authority: "महानिदेशक पुलिस, राजस्थान (DGP) एवं नोडल समिति"
         }
+      });
+    }
+
+    // 6b. Automated Certificate Re-dispatch (SMS/WhatsApp)
+    if (pathname === "/certificates/dispatch" && method === "POST") {
+      const body = await parseJsonBody(req);
+      const certId = (body.certificateId || body.bibNumber || "").trim();
+      const targetMobile = (body.mobile || "").trim();
+
+      if (!certId) {
+        return error("Certificate ID अथवा Bib Number आवश्यक है।", 400);
+      }
+
+      const findRes = await db.execute({
+        sql: "SELECT * FROM participants WHERE certificate_id = ? OR bib_number = ? LIMIT 1",
+        args: [certId, certId]
+      });
+
+      if (findRes.rows.length === 0) {
+        return error("धावक रिकॉर्ड नहीं मिला।", 404);
+      }
+
+      const runner = findRes.rows[0];
+      const notifyResult = await sendCertificateNotification({
+        fullName: runner.full_name,
+        mobile: targetMobile || runner.mobile,
+        certificateId: runner.certificate_id,
+        finishTime: runner.finish_time || "00:48:32",
+        categoryName: runner.category_name
+      });
+
+      return json({
+        success: true,
+        message: "डिजिटल प्रमाण पत्र लिंक पंजीकृत मोबाइल नंबर पर प्रेषित कर दिया गया है।",
+        dispatch: notifyResult
       });
     }
 

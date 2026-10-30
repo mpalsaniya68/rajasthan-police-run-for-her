@@ -68,6 +68,20 @@ export async function apiVerifyCertificate(certId) {
   }
 }
 
+export async function apiDispatchCertificate(payload) {
+  try {
+    const res = await fetch(`${API_BASE}/certificates/dispatch`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiDispatchCertificate error:", err);
+    return { success: false, error: "प्रमाण पत्र प्रेषण में त्रुटि।" };
+  }
+}
+
 export async function apiAdminLogin(username, password) {
   try {
     const res = await fetch(`${API_BASE}/admin/login`, {
