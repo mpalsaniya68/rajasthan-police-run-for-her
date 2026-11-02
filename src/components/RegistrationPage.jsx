@@ -286,10 +286,48 @@ export function RegistrationPage({
       tshirtSize: formData.tshirtSize || "M",
       idType: formData.idType,
       idNumber: cleanId,
-      idLast4: cleanId.slice(-4)
+      idLast4: cleanId.slice(-4),
+      cleanId: cleanId,
+      cleanEmergency: cleanEmergency
     };
 
-    const res = await apiRegister(payload);
+    setPendingPayload(payload);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handlePaymentSuccess = async (paymentData) => {
+    if (!pendingPayload) return;
+    setIsPaymentModalOpen(false);
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    const feeAmount = category === "21k" ? 499 : category === "10k" ? 399 : 199;
+    const finalPayload = {
+      fullName: pendingPayload.fullName,
+      gender: pendingPayload.gender,
+      dob: pendingPayload.dob,
+      mobile: pendingPayload.mobile,
+      email: pendingPayload.email,
+      emergencyContact: pendingPayload.emergencyContact,
+      emergencyRelation: pendingPayload.emergencyRelation,
+      bloodGroup: pendingPayload.bloodGroup,
+      hasMedicalIssue: pendingPayload.hasMedicalIssue,
+      medicalCondition: pendingPayload.medicalCondition,
+      medicalNotes: pendingPayload.medicalNotes,
+      categoryId: pendingPayload.categoryId,
+      districtId: pendingPayload.districtId,
+      tshirtSize: pendingPayload.tshirtSize,
+      idType: pendingPayload.idType,
+      idNumber: pendingPayload.idNumber,
+      idLast4: pendingPayload.idLast4,
+      feeAmount: paymentData?.feeAmount || paymentData?.amount || feeAmount,
+      orderId: paymentData?.orderId || `ORD2027-${Date.now().toString().slice(-6)}`,
+      transactionId: paymentData?.transactionId || `TXN-RAJPOL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+      paymentMethod: paymentData?.paymentMethod || "UPI_QR",
+      paymentStatus: "PAID"
+    };
+
+    const res = await apiRegister(finalPayload);
     setIsSubmitting(false);
 
     if (!res.success) {
@@ -299,6 +337,7 @@ export function RegistrationPage({
     }
 
     const p = res.participant;
+    const cleanId = pendingPayload.cleanId;
     const maskedIdVal = p.idMasked || getMaskedId(formData.idType, cleanId);
     const fullRecord = {
       id: p.id,
@@ -321,11 +360,16 @@ export function RegistrationPage({
       districtName: p.districtName || (venueType === "jaipur" ? "जयपुर पुलिस कमिश्नरेट (Albert Hall Flagship)" : currentDistrictObj.name),
       runnerType: runnerType,
       tshirtSize: formData.tshirtSize,
-      emergencyContact: `${formData.emergencyContactName || 'Family'} (${formData.emergencyRelation || 'Kin'}: ${cleanEmergency})`,
+      emergencyContact: `${formData.emergencyContactName || 'Family'} (${formData.emergencyRelation || 'Kin'}: ${pendingPayload.cleanEmergency})`,
       registeredAt: new Date().toLocaleString(),
       bibCollected: false,
       isCompleted: false,
-      pledgeTaken: true
+      pledgeTaken: true,
+      feeAmount: finalPayload.feeAmount,
+      orderId: finalPayload.orderId,
+      transactionId: finalPayload.transactionId,
+      paymentMethod: finalPayload.paymentMethod,
+      paymentStatus: "PAID"
     };
 
     try {
@@ -1741,7 +1785,7 @@ export function RegistrationPage({
         onPaymentSuccess={handlePaymentSuccess}
         runnerData={formData}
         category={category}
-        categoryName={catObj?.name || "राजस्थान पुलिस मैराथन 2027"}
+        categoryName={currentCatObj?.name || "राजस्थान पुलिस मैराथन 2027"}
         feeAmount={category === "21k" ? 499 : category === "10k" ? 399 : 199}
       />
     </div>

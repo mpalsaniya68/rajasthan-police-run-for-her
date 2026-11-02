@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Shield, Lock, ArrowLeft, CheckCircle2, QrCode, Smartphone, 
-  Building2, CreditCard, AlertCircle, RefreshCw, X 
+  Lock, CheckCircle2, QrCode, 
+  Building2, CreditCard, RefreshCw, X 
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
@@ -517,3 +517,4 @@ export function GovPaymentModal({
     </div>
   );
 }
+
