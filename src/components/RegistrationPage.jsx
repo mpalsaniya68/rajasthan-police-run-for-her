@@ -762,7 +762,7 @@ export function RegistrationPage({
                       <div>
                         <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>रक्त समूह (Blood Group)</div>
                         <div style={{ fontSize: '0.95rem', fontWeight: 900, color: 'var(--crimson-600)' }}>
-                          🩸 {registeredParticipant.bloodGroup || 'B+'}
+                          {registeredParticipant.bloodGroup || 'B+'}
                         </div>
                       </div>
                       <div>
@@ -1708,7 +1708,7 @@ export function RegistrationPage({
                     <option value="">-- रक्त समूह चुनें (Select Blood Group) --</option>
                     {bloodGroupOptions.map(bg => (
                       <option key={bg} value={bg}>
-                        🩸 {bg}
+                        {bg}
                       </option>
                     ))}
                   </select>
