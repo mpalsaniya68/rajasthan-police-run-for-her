@@ -684,10 +684,8 @@ export function RegistrationPage({
           </div>
           </div>
         ) : (
-          <div className="registration-desktop-grid">
-            <div className="registration-main-col">
-              
-              {/* Navigation Tabs: New Registration vs Find My E-Pass */}
+          <div>
+            {/* Navigation Tabs: New Registration vs Find My E-Pass */}
               <div style={{
                 display: 'flex',
                 gap: '10px',
@@ -1673,105 +1671,7 @@ export function RegistrationPage({
             </div>
 
             
-            {/* Desktop Information & Assistance Desk Sidebar */}
-            <aside className="registration-sidebar-col">
-              {/* Card 1: Official Race Day Summary */}
-              <div className="gov-card" style={{ padding: '22px', border: '1.5px solid var(--border-medium)', background: '#ffffff', borderRadius: '12px', boxShadow: 'var(--shadow-sm)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px' }}>
-                  <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: 'var(--police-navy-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-subtle)', flexShrink: 0 }}>
-                    <Calendar size={18} color="var(--police-navy-900)" />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--crimson-600)', fontWeight: 800, textTransform: 'uppercase' }}>Race Day Schedule</div>
-                    <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>3 जनवरी 2027 (रविवार)</h4>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.83rem', color: 'var(--text-body)', lineHeight: 1.5 }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                    <Clock size={16} color="var(--police-navy-800)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <div>
-                      <strong>05:00 AM</strong> — रिपोर्टिंग व होल्डिंग ज़ोन प्रवेश<br />
-                      <strong>06:00 AM</strong> — डीजीपी राजस्थान द्वारा फ्लैग-ऑफ
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                    <MapPin size={16} color="var(--crimson-600)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <div>
-                      <strong>अल्बर्ट हॉल, रामनिवास बाग, जयपुर</strong><br />
-                      <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>एवं प्रदेश के समस्त 41 पुलिस जिलों में एक साथ</span>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                    <Award size={16} color="var(--police-gold-700)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <div>
-                      <strong>शाम 06:00 बजे:</strong> माननीय मुख्यमंत्री, राजस्थान द्वारा भव्य पदक वितरण समारोह
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 2: Runner Kit Perks */}
-              <div className="gov-card" style={{ padding: '22px', border: '1.5px solid rgba(212, 175, 55, 0.55)', background: 'linear-gradient(180deg, #ffffff 0%, #fffdfa 100%)', borderRadius: '12px', boxShadow: 'var(--shadow-sm)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', borderBottom: '1px solid rgba(212, 175, 55, 0.3)', paddingBottom: '10px' }}>
-                  <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: 'var(--police-gold-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--police-gold-400)', flexShrink: 0 }}>
-                    <Package size={18} color="var(--police-gold-700)" />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--police-gold-700)', fontWeight: 800, textTransform: 'uppercase' }}>Official Participant Kit</div>
-                    <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>निःशुल्क आधिकारिक किट सामग्री</h4>
-                  </div>
-                </div>
-
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {[
-                    "आधिकारिक ड्राई-फिट 'Run for Her' टी-शर्ट",
-                    "RFID टाइमिंग चिप युक्त आधिकारिक रेस बिब",
-                    "आधिकारिक फिनिशर मेडल (Finisher Medal)",
-                    "DGP राजस्थान अधिकृत डिजिटल ई-सर्टिफिकेट",
-                    "महिला सुरक्षा रिबन एवं सम्मान बैज",
-                    "पोस्ट-रन एनर्जेटिक अल्पाहार व रिफ्रेशमेंट"
-                  ].map((perk, i) => (
-                    <li key={i} style={{ fontSize: '0.82rem', color: 'var(--text-body)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ color: '#059669', fontWeight: 900 }}>✓</span>
-                      <span>{perk}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Card 3: Bib Expo Instructions */}
-              <div className="gov-card" style={{ padding: '20px', border: '1px solid var(--border-medium)', background: 'var(--police-navy-50)', borderRadius: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', color: 'var(--police-navy-900)', fontWeight: 800 }}>
-                  <Shield size={16} color="var(--police-navy-800)" />
-                  <span style={{ fontSize: '0.92rem' }}>बिब एक्सपो एवं किट वितरण निर्देश</span>
-                </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-body)', lineHeight: 1.55 }}>
-                  • <strong>तारीख:</strong> 1 व 2 जनवरी 2027 (सुबह 10 AM से 07 PM)<br />
-                  • <strong>स्थान:</strong> अल्बर्ट हॉल आर्ट गैलरी / जिला पुलिस लाइन<br />
-                  • <strong>अनिवार्य:</strong> रजिस्ट्रेशन के बाद प्राप्त ई-पास व मान्य सरकारी फोटो ID साथ लाएं।<br />
-                  <span style={{ color: '#991b1b', fontWeight: 700, display: 'block', marginTop: '6px' }}>
-                    ⚠️ 3 जनवरी 2027 को दौड़ वाले दिन सुबह कोई नया बिब वितरित नहीं होगा।
-                  </span>
-                </div>
-              </div>
-
-              {/* Card 4: Official Helpline */}
-              <div className="gov-card" style={{ padding: '18px 20px', border: '1px solid #fecaca', background: '#fff5f5', borderRadius: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: '#991b1b', fontWeight: 800 }}>
-                  <Phone size={16} color="#dc2626" />
-                  <span style={{ fontSize: '0.9rem' }}>24x7 आधिकारिक सहायता हेल्पलाइन</span>
-                </div>
-                <div style={{ fontSize: '0.8rem', color: '#7f1d1d', lineHeight: 1.5 }}>
-                  • महिला सुरक्षा गरिमा हेल्पलाइन: <strong>1090</strong><br />
-                  • पुलिस आपातकालीन सेवा: <strong>112</strong><br />
-                  • 100% निःशुल्क सार्वजनिक पोर्टल • राजस्थान पुलिस मुख्यालय
-                </div>
-              </div>
-            </aside>
-          </div>
+            
         )}
       </div>
 
@@ -1780,44 +1680,13 @@ export function RegistrationPage({
       <style>{`
         .registration-page-container {
           width: 100%;
-          max-width: 1360px;
-          margin: 28px auto 0 auto;
+          max-width: 1120px;
+          margin: 24px auto 48px auto;
           padding: 0 16px;
         }
         @media (min-width: 640px) {
           .registration-page-container {
             padding: 0 24px;
-          }
-        }
-        @media (min-width: 1024px) {
-          .registration-desktop-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 380px;
-            gap: 28px;
-            align-items: start;
-          }
-          .registration-sidebar-col {
-            position: sticky;
-            top: 86px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-          }
-        }
-        @media (min-width: 1280px) {
-          .registration-desktop-grid {
-            grid-template-columns: minmax(0, 1fr) 400px;
-            gap: 32px;
-          }
-        }
-        @media (max-width: 1023px) {
-          .registration-desktop-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-          }
-          .registration-sidebar-col {
-            margin-top: 8px;
           }
         }
       `}</style>
