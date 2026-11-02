@@ -16,10 +16,11 @@ export function Navbar({
 
   const handleNav = (pageId) => {
     setMobileMenuOpen(false);
+    const targetPage = (pageId === 'admin-login' && isAdminAuthenticated) ? 'admin' : pageId;
     if (onNavigate) {
-      onNavigate(pageId);
+      onNavigate(targetPage);
     } else {
-      const element = document.getElementById(pageId);
+      const element = document.getElementById(targetPage);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
@@ -178,7 +179,7 @@ export function Navbar({
       </div>
 
       {/* 4. Tier 3: Sticky Interactive Navigation Menu Bar */}
-      <div style={{
+      <div className="navbar-tier3-bar" style={{
         background: '#0a1c3d',
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         padding: '0'
@@ -294,7 +295,6 @@ export function Navbar({
           {[
             { id: 'home', label: 'मुख्य पृष्ठ (Home)' },
             { id: 'register', label: 'ऑनलाइन रजिस्ट्रेशन (e-Pass Form)', color: 'var(--police-gold-700)' },
-            { id: 'admin-login', label: 'प्रशासनिक लॉगिन (Admin Portal)', color: '#d97706' },
             { id: 'categories', label: 'दौड़ श्रेणियां व दूरी (Categories)' },
             { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी (Route & Schedule)' },
             { id: 'live-tracker', label: 'लाइव रनर ट्रैकर (Live Tracker)', isLive: true, color: '#dc2626' },
@@ -380,6 +380,9 @@ export function Navbar({
         .d-desktop-block {
           display: none !important;
         }
+        .navbar-tier3-bar {
+          display: none !important;
+        }
         .desktop-nav-items {
           display: none !important;
         }
@@ -412,6 +415,9 @@ export function Navbar({
         /* Desktop (>= 1024px) */
         @media (min-width: 1024px) {
           .d-desktop-block {
+            display: block !important;
+          }
+          .navbar-tier3-bar {
             display: block !important;
           }
           .desktop-nav-items {

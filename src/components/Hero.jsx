@@ -67,10 +67,8 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             <stop offset="100%" stopColor="#fef08a" stopOpacity="0.5" />
           </linearGradient>
         </defs>
-        {/* Desktop diagonal divider (0,0 -> 100,100) */}
-        <line className="hero-line-desktop" x1="0" y1="0" x2="100" y2="100" stroke="url(#heroGoldGlow)" strokeWidth="1.6" vectorEffect="non-scaling-stroke" />
-        {/* Mobile vertical 50/50 divider (52,0 -> 48,100) */}
-        <line className="hero-line-mobile" x1="52" y1="0" x2="48" y2="100" stroke="url(#heroGoldGlow)" strokeWidth="2.2" vectorEffect="non-scaling-stroke" />
+        {/* Triangle diagonal divider (0,0 -> 100,100) for both desktop and mobile */}
+        <line x1="0" y1="0" x2="100" y2="100" stroke="url(#heroGoldGlow)" strokeWidth="1.8" vectorEffect="non-scaling-stroke" />
       </svg>
 
       {/* Hero Content Wrapper */}
@@ -480,13 +478,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
           pointer-events: none;
         }
 
-        .hero-line-desktop {
-          display: block;
-        }
 
-        .hero-line-mobile {
-          display: none;
-        }
 
         .hero-cta-group {
           display: flex;
@@ -527,22 +519,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             opacity: 0.42 !important;
           }
 
-          /* Equal 50/50 Dual-Tone split stays prominently visible across the whole mobile screen */
-          .hero-overlay-red {
-            clip-path: polygon(0 0, 52% 0, 48% 100%, 0 100%) !important;
-            background: linear-gradient(180deg, rgba(220, 38, 38, 0.6) 0%, rgba(185, 28, 28, 0.52) 100%) !important;
-          }
-          .hero-overlay-blue {
-            clip-path: polygon(52% 0, 100% 0, 100% 100%, 48% 100%) !important;
-            background: linear-gradient(180deg, rgba(10, 28, 61, 0.72) 0%, rgba(15, 23, 42, 0.65) 100%) !important;
-          }
-
-          .hero-line-desktop {
-            display: none !important;
-          }
-          .hero-line-mobile {
-            display: block !important;
-          }
+          /* Maintain true triangle dual-tone on mobile as well */
 
           .hero-ticker-container {
             height: 38px !important;
