@@ -23,7 +23,11 @@ export const registrationSchema = z.object({
   tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL"]),
   idType: z.enum(["Aadhaar", "PAN", "Voter ID"]).default("Aadhaar"),
   idNumber: z.string().min(5, "पहचान पत्र संख्या आवश्यक है").max(30).trim(),
-  idLast4: z.string().optional()
+  idLast4: z.string().optional(),
+  orderId: z.string().optional().default(""),
+  transactionId: z.string().optional().default(""),
+  paymentMethod: z.string().optional().default("UPI"),
+  feeAmount: z.number().optional()
 });
 
 export const bulkRegistrationSchema = z.object({

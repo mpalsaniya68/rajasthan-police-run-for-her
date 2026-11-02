@@ -3,10 +3,10 @@ import React from 'react';
 // Official Rajasthan Police Emblem (Uses the authentic official circular crest with Red & Blue half, Vijay Stambh, and Sevārth Katibaddhatā)
 export function PoliceEmblem({ size = 56, className = "" }) {
   return (
-    <img 
-      src="/rajasthan-police-logo.png?v=2" 
-      alt="Official Rajasthan Police Crest" 
-      width={size} 
+    <img
+      src="/rajasthan-police-logo.png?v=2"
+      alt="Official Rajasthan Police Crest"
+      width={size}
       height={size}
       className={className}
       style={{
@@ -23,12 +23,12 @@ export function PoliceEmblem({ size = 56, className = "" }) {
 // Official State Emblem of India (Ashoka Lion Capital with Satyameva Jayate)
 export function StateEmblemOfIndia({ size = 48, className = "" }) {
   return (
-    <svg 
-      width={size} 
-      height={size} 
-      viewBox="0 0 100 120" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg" 
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-label="State Emblem of India"
     >
@@ -43,7 +43,7 @@ export function StateEmblemOfIndia({ size = 48, className = "" }) {
       {/* Central Lion Head */}
       <path d="M 44,22 Q 50,14 56,22 Q 62,32 58,44 L 42,44 Q 38,32 44,22 Z" fill="url(#ashokaGold)" />
       <circle cx="50" cy="24" r="5" fill="#FEF3C7" />
-      
+
       {/* Left & Right Lion Profiles */}
       <path d="M 38,26 Q 30,22 28,30 Q 26,40 38,44 Z" fill="url(#ashokaGold)" />
       <path d="M 62,26 Q 70,22 72,30 Q 74,40 62,44 Z" fill="url(#ashokaGold)" />
@@ -51,7 +51,7 @@ export function StateEmblemOfIndia({ size = 48, className = "" }) {
       {/* Mane & Platform */}
       <path d="M 32,44 L 68,44 L 64,68 L 36,68 Z" fill="url(#ashokaGold)" />
       <rect x="22" y="68" width="56" height="10" fill="url(#ashokaGold)" rx="2" />
-      
+
       {/* Ashoka Chakra */}
       <circle cx="50" cy="73" r="4" fill="#0A1C3D" />
       <circle cx="50" cy="73" r="3.2" fill="#FFFFFF" />
@@ -83,9 +83,9 @@ export function RunForHerBadge({ size = 48, className = "" }) {
       <circle cx="50" cy="50" r="44" stroke="#FFE4E6" strokeWidth="1.5" strokeDasharray="4 2" />
 
       {/* Dynamic Runner Silhouette */}
-      <path 
-        d="M52 22 A 6 6 0 1 0 52 34 A 6 6 0 1 0 52 22 Z M46 36 L58 35 L52 49 L62 57 L58 64 L46 53 L45 68 L36 67 L41 48 L34 46 L37 39 L47 38 Z M53 51 L59 66 L67 76 L61 80 L52 70 L48 55 Z" 
-        fill="#FFFFFF" 
+      <path
+        d="M52 22 A 6 6 0 1 0 52 34 A 6 6 0 1 0 52 22 Z M46 36 L58 35 L52 49 L62 57 L58 64 L46 53 L45 68 L36 67 L41 48 L34 46 L37 39 L47 38 Z M53 51 L59 66 L67 76 L61 80 L52 70 L48 55 Z"
+        fill="#FFFFFF"
       />
       {/* Speed Lines */}
       <path d="M22 52 L34 50 M18 60 L30 58 M24 68 L34 66" stroke="#FEF08A" strokeWidth="2.5" strokeLinecap="round" />
@@ -97,9 +97,9 @@ export function RunForHerBadge({ size = 48, className = "" }) {
 export function OfficialGoldSeal({ size = 80 }) {
   return (
     <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-      <img 
-        src="/rajasthan-police-logo.png?v=2" 
-        alt="Rajasthan Police Seal" 
+      <img
+        src="/rajasthan-police-logo.png?v=2"
+        alt="Rajasthan Police Seal"
         style={{
           width: `${size}px`,
           height: `${size}px`,

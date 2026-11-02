@@ -22,6 +22,13 @@ const CATEGORY_NAMES = {
   "2k": "2 KM Family & Senior Run"
 };
 
+export const CATEGORY_FEES = {
+  "21k": 499,
+  "10k": 399,
+  "5k": 199,
+  "2k": 199
+};
+
 const DISTRICT_NAMES = {
   "jaipur_comm": "जयपुर पुलिस कमिश्नरेट (Jaipur)",
   "jodhpur_comm": "जोधपुर पुलिस कमिश्नरेट (Jodhpur)",
@@ -156,13 +163,20 @@ export async function handleApiRequest(req, res) {
       const maskedId = maskIdNumber(data.idType, data.idNumber);
       const maskedMob = maskMobile(data.mobile);
 
+            const feeAmount = data.feeAmount || CATEGORY_FEES[data.categoryId] || 199;
+      const orderId = data.orderId || `ORD2027-${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+      const transactionId = data.transactionId || `TXN-RAJPOL-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+      const paymentMethod = data.paymentMethod || "UPI_QR";
+      const paymentStatus = "PAID";
+
       await db.execute({
         sql: `INSERT INTO participants (
           id, bib_number, full_name, gender, dob, mobile, masked_mobile, email, emergency_contact, emergency_relation, blood_group,
           medical_condition, medical_notes,
           category_id, category_name, district_id, district_name, tshirt_size, id_type, id_last4, id_masked, id_raw, certificate_id, qr_token,
+          fee_amount, payment_status, order_id, transaction_id, payment_method, paid_at,
           status, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
         args: [
           participantId,
           bibNumber,
@@ -188,11 +202,43 @@ export async function handleApiRequest(req, res) {
           data.idNumber || "",
           certificateId,
           qrToken,
+          feeAmount,
+          paymentStatus,
+          orderId,
+          transactionId,
+          paymentMethod,
+          now,
           now
         ]
       });
 
-      // Log Audit Trail
+      // Insert into Payments Ledger Table
+      try {
+        await db.execute({
+          sql: `INSERT INTO payments (
+            id, order_id, participant_id, bib_number, category_id, category_name,
+            amount, status, payment_method, transaction_ref, payer_name, payer_mobile, client_ip, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          args: [
+            `PAY-${crypto.randomBytes(4).toString("hex")}`,
+            orderId,
+            participantId,
+            bibNumber,
+            data.categoryId,
+            catName,
+            feeAmount,
+            paymentStatus,
+            paymentMethod,
+            transactionId,
+            data.fullName,
+            data.mobile,
+            clientIp,
+            now
+          ]
+        });
+      } catch (payErr) {
+        console.error("[Payments Ledger Error]:", payErr);
+      }    // Log Audit Trail
       await db.execute({
         sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
         args: ["SYSTEM", "REGISTER_RUNNER", `Bib: ${bibNumber}, Name: ${data.fullName}`, clientIp, now]
@@ -230,6 +276,36 @@ export async function handleApiRequest(req, res) {
           createdAt: now
         }
       }, 201);
+    }
+
+    
+    // 2b. Create Payment Order (₹499 for 21K, ₹399 for 10K, ₹199 for 5K/2K)
+    if (pathname === "/payment/create-order" && method === "POST") {
+      const body = await parseJsonBody(req);
+      const categoryId = body.categoryId || "21k";
+      const feeAmount = CATEGORY_FEES[categoryId] || 199;
+      const orderId = `ORD2027-${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+      const catName = CATEGORY_NAMES[categoryId] || "Rajasthan Police Marathon";
+
+      const upiPayload = `upi://pay?pa=rajasthanpolice.marathon@sbi&pn=Rajasthan%20Police%20Marathon%202027&am=${feeAmount}&cu=INR&tn=RPM2027-${orderId}`;
+
+      return json({
+        success: true,
+        orderId,
+        amount: feeAmount,
+        categoryId,
+        categoryName: catName,
+        upiPayload
+      });
+    }
+
+    // 2c. Get Pricing Matrix
+    if (pathname === "/payment/pricing" && method === "GET") {
+      return json({
+        success: true,
+        fees: CATEGORY_FEES,
+        categories: CATEGORY_NAMES
+      });
     }
 
     // 3. Bulk / Institutional Registration

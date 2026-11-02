@@ -105,6 +105,46 @@ export async function initDatabase() {
     try {
       await db.execute("ALTER TABLE participants ADD COLUMN id_raw TEXT DEFAULT '';");
     } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN fee_amount INTEGER DEFAULT 0;");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN payment_status TEXT DEFAULT 'PAID';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN order_id TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN transaction_id TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN payment_method TEXT DEFAULT 'UPI';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN paid_at TEXT DEFAULT '';");
+    } catch (e) {}
+
+    // Payments Table for Government Revenue & Treasury Audit Trail
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS payments (
+        id TEXT PRIMARY KEY,
+        order_id TEXT UNIQUE NOT NULL,
+        participant_id TEXT,
+        bib_number TEXT,
+        category_id TEXT NOT NULL,
+        category_name TEXT NOT NULL,
+        amount INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        payment_method TEXT,
+        transaction_ref TEXT,
+        payer_name TEXT,
+        payer_mobile TEXT,
+        client_ip TEXT,
+        created_at TEXT NOT NULL
+      );
+    `);
+    await db.execute(`CREATE INDEX IF NOT EXISTS idx_payments_order ON payments(order_id);`);
+    await db.execute(`CREATE INDEX IF NOT EXISTS idx_payments_txn ON payments(transaction_ref);`);
 
     // High-performance B-tree indexes for fast lookups
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_bib ON participants(bib_number);`);
