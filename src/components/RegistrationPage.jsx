@@ -66,6 +66,7 @@ export function RegistrationPage({
   const [isSuccess, setIsSuccess] = useState(false);
   const [registeredParticipant, setRegisteredParticipant] = useState(null);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const [isDownloadingPass, setIsDownloadingPass] = useState(false);
 
   // Tab State: "register" (New Registration) or "find" (Find/Re-print Existing E-Pass)
   const [activeTab, setActiveTab] = useState("register");
@@ -382,6 +383,225 @@ export function RegistrationPage({
     }
     setIsSuccess(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDownloadEPassPNG = async () => {
+    if (!registeredParticipant) return;
+    setIsDownloadingPass(true);
+
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1200;
+      canvas.height = 760;
+      const ctx = canvas.getContext("2d");
+
+      // 1. Background fill
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, 1200, 760);
+
+      // Security outer frame
+      ctx.strokeStyle = "#0a1c3d";
+      ctx.lineWidth = 10;
+      ctx.strokeRect(5, 5, 1190, 750);
+
+      ctx.strokeStyle = "#d4af37";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(16, 16, 1168, 728);
+
+      // 2. Header Band (Deep Police Navy)
+      ctx.fillStyle = "#0a1c3d";
+      ctx.fillRect(20, 20, 1160, 120);
+
+      // Header Golden Line
+      ctx.fillStyle = "#d4af37";
+      ctx.fillRect(20, 137, 1160, 4);
+
+      // Load Official Police Emblem
+      const logoImg = new Image();
+      logoImg.crossOrigin = "anonymous";
+      logoImg.src = "/rajasthan-police-logo.png";
+      await new Promise((resolve) => {
+        logoImg.onload = resolve;
+        logoImg.onerror = resolve;
+      });
+
+      if (logoImg.complete && logoImg.naturalWidth > 0) {
+        ctx.drawImage(logoImg, 42, 34, 92, 92);
+      }
+
+      // Header Texts
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 32px sans-serif";
+      ctx.fillText("RAJASTHAN POLICE MARATHON 2027", 154, 68);
+
+      ctx.fillStyle = "#fef08a";
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText("★ RUN FOR HER • OFFICIAL DIGITAL ENTRY PASS & ADMIT CARD ★", 154, 102);
+
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "14px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText("गृह विभाग, राजस्थान सरकार", 1150, 64);
+      ctx.fillText("प्रमाण पत्र आईडी: " + (registeredParticipant.certificateId || "RJ-POL-2027"), 1150, 96);
+      ctx.textAlign = "left";
+
+      // 3. Left Section: Bib Box
+      ctx.fillStyle = "#f8fafc";
+      ctx.strokeStyle = "#0a1c3d";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(40, 165, 300, 380, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 15px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("आधिकारिक छाती बिब संख्या", 190, 205);
+      ctx.fillText("(BIB NUMBER)", 190, 226);
+
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "900 52px sans-serif";
+      ctx.fillText(registeredParticipant.bibNumber || "RJ-21K-1001", 190, 300);
+
+      // Category Pill
+      ctx.fillStyle = "#b91c1c";
+      ctx.beginPath();
+      ctx.roundRect(60, 330, 260, 48, 8);
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText(registeredParticipant.categoryName || "21 KM Half Marathon", 190, 362);
+
+      // Blood Group & T-shirt in Bib box
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "bold 16px sans-serif";
+      ctx.fillText(`रक्त समूह: ${registeredParticipant.bloodGroup || 'B+'}  |  Size: ${registeredParticipant.tshirtSize || 'M'}`, 190, 425);
+
+      // Entry Status
+      ctx.fillStyle = "#059669";
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText("✓ प्रवेश अधिकृत (Entry Approved)", 190, 480);
+      ctx.fillText("रिपोर्टिंग: 3 जन 2027, 05:00 AM", 190, 508);
+      ctx.textAlign = "left";
+
+      // 4. Middle Section: Runner Details
+      const detailsX = 370;
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("धावक का पूरा नाम (RUNNER FULL NAME):", detailsX, 195);
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "bold 26px sans-serif";
+      ctx.fillText(registeredParticipant.fullName || "पंजीकृत धावक", detailsX, 230);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("आयोजन स्थल (REPORTING VENUE):", detailsX, 275);
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText("📍 " + (registeredParticipant.districtName || "जयपुर पुलिस कमिश्नरेट"), detailsX, 305);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("पहचान पत्र (GOVT ID TYPE & NUMBER):", detailsX, 350);
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "bold 19px sans-serif";
+      ctx.fillText(`${registeredParticipant.idType || 'Aadhaar'}: ${registeredParticipant.idMasked || 'XXXX-XXXX-1234'}`, detailsX, 378);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("पंजीकृत मोबाइल एवं ईमेल:", detailsX, 420);
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "18px sans-serif";
+      ctx.fillText(`📞 ${registeredParticipant.mobile || ''}   ✉️ ${registeredParticipant.email || ''}`, detailsX, 448);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("आपातकालीन संपर्क (EMERGENCY CONTACT):", detailsX, 490);
+      ctx.fillStyle = "#991b1b";
+      ctx.font = "bold 17px sans-serif";
+      ctx.fillText(registeredParticipant.emergencyContact || "पुलिस सहायता केंद्र 112", detailsX, 518);
+
+      // 5. Right Section: Security QR Code
+      const qrBoxX = 910;
+      ctx.fillStyle = "#f8fafc";
+      ctx.strokeStyle = "#d4af37";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(qrBoxX, 165, 250, 380, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      if (qrCodeDataUrl) {
+        const qrImg = new Image();
+        qrImg.src = qrCodeDataUrl;
+        await new Promise((resolve) => {
+          qrImg.onload = resolve;
+          qrImg.onerror = resolve;
+        });
+        if (qrImg.complete && qrImg.naturalWidth > 0) {
+          ctx.drawImage(qrImg, qrBoxX + 25, 200, 200, 200);
+        }
+      }
+
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "bold 15px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("गेट नंबर 2 पर स्कैन हेतु", qrBoxX + 125, 435);
+      ctx.fillStyle = "#64748b";
+      ctx.font = "13px sans-serif";
+      ctx.fillText("सुरक्षा सत्यापन टोकन", qrBoxX + 125, 460);
+      ctx.fillText("RFID चिप युक्त", qrBoxX + 125, 482);
+      ctx.textAlign = "left";
+
+      // 6. Payment Receipt Status Strip (Official e-Gras / Challan Receipt)
+      ctx.fillStyle = "#ecfdf5";
+      ctx.strokeStyle = "#10b981";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(40, 565, 1120, 75, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#065f46";
+      ctx.font = "bold 18px sans-serif";
+      ctx.fillText("✓ ई-चालान एवं शासकीय शुल्क रसीद (PAYMENT CONFIRMED)", 60, 598);
+
+      ctx.fillStyle = "#047857";
+      ctx.font = "15px sans-serif";
+      const feeText = `शुल्क राशि: ₹${registeredParticipant.feeAmount || 199}  |  ऑर्डर आईडी: ${registeredParticipant.orderId || 'ORD2027'}  |  ट्रांजैक्शन: ${registeredParticipant.transactionId || 'TXN-RAJPOL-PAID'}  |  माध्यम: ${registeredParticipant.paymentMethod || 'UPI_QR'}`;
+      ctx.fillText(feeText, 60, 624);
+
+      // 7. Official Bottom Footer
+      ctx.fillStyle = "#0a1c3d";
+      ctx.fillRect(20, 660, 1160, 70);
+
+      ctx.fillStyle = "#fef08a";
+      ctx.font = "bold 17px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("★ सेवार्थ कटिबद्धता • राजस्थान पुलिस मुख्यालय, जयपुर ★", 600, 692);
+
+      ctx.fillStyle = "#e2e8f0";
+      ctx.font = "13px sans-serif";
+      ctx.fillText("24×7 महिला गरिमा हेल्पलाइन: 1090  |  आपातकालीन सेवा: 112  |  आधिकारिक पोर्टल: police.rajasthan.gov.in", 600, 715);
+      ctx.textAlign = "left";
+
+      // 8. Download directly as PNG file into user's device/local storage
+      const pngUrl = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      const safeBib = (registeredParticipant.bibNumber || "RUNNER").replace(/[^a-zA-Z0-9_-]/g, "_");
+      downloadLink.download = `RJ-POLICE-MARATHON-EPASS-${safeBib}.png`;
+      downloadLink.href = pngUrl;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } catch (err) {
+      console.error("Pass download error:", err);
+      alert("ई-पास डाउनलोड करने में त्रुटि। कृपया पुनः प्रयास करें।");
+    } finally {
+      setIsDownloadingPass(false);
+    }
   };
 
   const handleShareWhatsApp = () => {

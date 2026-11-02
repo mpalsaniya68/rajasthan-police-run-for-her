@@ -1002,3 +1002,52 @@ textarea[aria-invalid="true"] {
 
 
 
+
+
+/* ========================================================
+   OFFICIAL SINGLE-PAGE A4 PRINT STYLESHEET
+   Ensures ONLY the admit pass card is printed on a single A4 page
+   ======================================================== */
+@media print {
+  /* Hide all website chrome, navbars, footers, buttons */
+  body, html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  header, nav, footer, .navbar-container, .hero-ticker-container,
+  .action-buttons-row, button, .scroll-progress-bar,
+  .registration-breadcrumb, .badge-gold, .badge-gov,
+  .btn-glass-primary, .btn-glass-navy, .btn-glass-gold,
+  .btn-primary, .btn-navy, .btn-gold {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Make sure container and pass card print cleanly on a single A4 page */
+  .registration-page-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-pass-card {
+    border: 2px solid #0a1c3d !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    padding: 20px !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 820px !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+}
