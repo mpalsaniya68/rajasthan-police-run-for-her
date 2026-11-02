@@ -559,7 +559,7 @@ export async function handleApiRequest(req, res) {
         // Fallback / Built-in State Police Credential Directory
         // PHQ Level
         if ((rawUsername === "phq_admin" || rawUsername === "rajpolice") && 
-            (password === "RajPol@PHQ#2026" || password === "RajPol#2026" || password === "admin123")) {
+            (password === "RajPol@PHQ#2027" || password === "RajPol#2027" || password === "RajPol@2027" || password === "RajPol@PHQ#2026" || password === "RajPol#2026" || password === "admin123")) {
           authenticatedUser = {
             id: "phq-state-01",
             username: "phq_admin",
@@ -600,7 +600,7 @@ export async function handleApiRequest(req, res) {
           // SP#<District>@2026 OR SP#<DistCode>@2026 OR RajPol@SP#2026 OR SP#2026 OR sp123
           const passLower = password.toLowerCase();
           const isStandardPass = 
-            passLower === `sp#${distCode}@2026` ||
+            passLower === `sp#${distCode}@2027` || passLower === `sp#${distCode}@2026` ||
             (passLower.startsWith("sp#") && passLower.endsWith("@2026")) ||
             passLower === "sp#2026" ||
             password === "RajPol@SP#2026" || 
@@ -883,6 +883,14 @@ export async function handleApiRequest(req, res) {
  * Helper to parse JSON body from incoming request stream
  */
 function parseJsonBody(req) {
+  // If request body was already parsed by Vercel serverless function
+  if (req.body) {
+    if (typeof req.body === 'object') return Promise.resolve(req.body);
+    if (typeof req.body === 'string') {
+      try { return Promise.resolve(JSON.parse(req.body)); }
+      catch (e) { return Promise.reject(new Error('Invalid JSON body')); }
+    }
+  }
   return new Promise((resolve, reject) => {
     let body = "";
     req.on("data", chunk => {

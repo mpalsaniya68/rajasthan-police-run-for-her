@@ -3,10 +3,14 @@ import fs from "fs";
 import path from "path";
 import { hashPassword } from "./security.js";
 
-// Ensure data directory exists for local development
-const dataDir = path.resolve("./data");
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+// Ensure data directory exists safely (handles read-only serverless environments like Vercel)
+try {
+  const dataDir = path.resolve("./data");
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+} catch (e) {
+  // Read-only serverless filesystem fallback (Vercel / AWS Lambda)
 }
 
 // Auto-load .env or .env.local file if present
@@ -22,9 +26,13 @@ try {
   // Ignore if not present
 }
 
-// Check for Turso Database URL; fallback to local persistent SQLite
+// Check for Turso Database URL; fallback to local persistent SQLite or writable /tmp on Vercel
 const isProductionTurso = Boolean(process.env.TURSO_DATABASE_URL);
-const dbUrl = process.env.TURSO_DATABASE_URL || "file:data/rajasthan_police_marathon.db";
+let fallbackUrl = "file:data/rajasthan_police_marathon.db";
+if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  fallbackUrl = "file:/tmp/rajasthan_police_marathon.db";
+}
+const dbUrl = process.env.TURSO_DATABASE_URL || fallbackUrl;
 const dbAuthToken = process.env.TURSO_AUTH_TOKEN || undefined;
 
 export const db = createClient({
