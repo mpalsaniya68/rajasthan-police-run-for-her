@@ -1384,7 +1384,7 @@ export function RegistrationPage({
                 <PoliceEmblem size={52} />
                 <div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--police-gold-400)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    राजस्थान पुलिस स्थापना दिवस विशेष महा-आयोजन • 3 जनवरी 2027
+                    राजस्थान पुलिस मुख्यालय, जयपुर | राज्यव्यापी जन-अभियान • 3 जनवरी 2027
                   </div>
                   <h1 style={{ fontSize: 'clamp(1.35rem, 2.6vw, 1.85rem)', margin: '4px 0', color: '#ffffff', fontWeight: 900 }}>
                     ऑनलाइन धावक पंजीकरण पोर्टल (Run for Her)
