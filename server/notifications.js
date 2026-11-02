@@ -15,7 +15,7 @@ const SMS_SENDER_ID = process.env.SMS_SENDER_ID || "RAJPOL";
 export async function sendRegistrationNotification(participant) {
   const { fullName, mobile, bibNumber, categoryName, certificateId } = participant;
 
-  const smsText = `राजस्थान पुलिस मैराथन 2026 'RUN FOR HER': प्रिय ${fullName}, आपका पंजीकरण सफल रहा! बिब नंबर: ${bibNumber}, श्रेणी: ${categoryName}। ई-पास: https://police.rajasthan.gov.in/epass/${certificateId} | सहायता: 112/1090`;
+  const smsText = `राजस्थान पुलिस मैराथन 2027 'RUN FOR HER': प्रिय ${fullName}, आपका पंजीकरण सफल रहा! बिब नंबर: ${bibNumber}, श्रेणी: ${categoryName}। ई-पास: https://police.rajasthan.gov.in/epass/${certificateId} | सहायता: 112/1090`;
 
   let delivered = false;
   let gatewayResponse = "SIMULATED_LOCAL_DEV";

@@ -233,7 +233,7 @@ export function ScheduleExpo() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
-                onClick={() => handleSimulateDownload("Athlete-Handbook-2026.pdf")}
+                onClick={() => handleSimulateDownload("Athlete-Handbook-2027.pdf")}
                 style={{
                   background: '#ffffff',
                   border: '1.5px solid var(--police-navy-800)',

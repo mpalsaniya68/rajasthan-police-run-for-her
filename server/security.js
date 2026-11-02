@@ -95,7 +95,7 @@ export function generateBibNumber(categoryId, counter) {
  */
 export function generateCertificateId() {
   const hex = crypto.randomBytes(3).toString("hex").toUpperCase();
-  return `RJ-POL-2026-${hex}`;
+  return `RJ-POL-2027-${hex}`;
 }
 
 export function generateSecureQrToken(bibNumber, certId) {

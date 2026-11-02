@@ -107,7 +107,7 @@ export function RegistrationPage({
         apiMatches.push({
           id: r.id || r.bibNumber,
           bibNumber: r.bibNumber,
-          certificateId: r.certificateId || `RPM-2026-${r.bibNumber}`,
+          certificateId: r.certificateId || `RPM-2027-${r.bibNumber}`,
           fullName: r.fullName,
           gender: r.gender,
           age: r.age || 25,
@@ -346,7 +346,7 @@ export function RegistrationPage({
       `🎯 श्रेणी: ${registeredParticipant.categoryName}\n` +
       `📍 स्थान: ${registeredParticipant.districtName}\n` +
       `📅 तिथि: 3 जनवरी 2027, प्रातः 06:00 बजे\n\n` +
-      `हर कदम नारी सुरक्षा और सम्मान के लिए! आप भी निःशुल्क रजिस्टर करें:\nhttps://police.rajasthan.gov.in/marathon2026`
+      `हर कदम नारी सुरक्षा और सम्मान के लिए! आप भी निःशुल्क रजिस्टर करें:\nhttps://police.rajasthan.gov.in/marathon2027`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };

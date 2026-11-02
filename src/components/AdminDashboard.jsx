@@ -353,7 +353,7 @@ export function AdminDashboard({
     ];
 
     const rows = records.map(r => [
-      `"${r.bibNumber || 'RJ-2026-N/A'}"`,
+      `"${r.bibNumber || 'RJ-2027-N/A'}"`,
       `"${(r.fullName || '').replace(/"/g, '""')}"`,
       r.gender || "Citizen",
       r.age || "N/A",
@@ -369,7 +369,7 @@ export function AdminDashboard({
       `"${r.finishTime || 'Pending / In Progress'}"`,
       `"${r.chipTime || 'N/A'}"`,
       `"${r.overallRank || 'N/A'}"`,
-      `"${r.certificateId || 'RPM-2026-RAJ-CERT'}"`,
+      `"${r.certificateId || 'RPM-2027-RAJ-CERT'}"`,
       r.pledgeTaken ? "Yes" : "No",
       `"${r.registeredAt || '2026-10-26'}"`
     ]);
@@ -423,7 +423,7 @@ export function AdminDashboard({
           finishTime: "00:46:12",
           chipTime: "00:45:50",
           overallRank: "01 / 450",
-          certificateId: `RPM-2026-${distInfo.id || 'DIST'}-001`,
+          certificateId: `RPM-2027-${distInfo.id || 'DIST'}-001`,
           pledgeTaken: true,
           registeredAt: "2026-10-25 09:00 AM"
         },
@@ -445,7 +445,7 @@ export function AdminDashboard({
           finishTime: "00:26:15",
           chipTime: "00:26:00",
           overallRank: "02 / 450",
-          certificateId: `RPM-2026-${distInfo.id || 'DIST'}-002`,
+          certificateId: `RPM-2027-${distInfo.id || 'DIST'}-002`,
           pledgeTaken: true,
           registeredAt: "2026-10-25 10:30 AM"
         },
@@ -467,7 +467,7 @@ export function AdminDashboard({
           finishTime: "00:24:50",
           chipTime: "00:24:35",
           overallRank: "03 / 450",
-          certificateId: `RPM-2026-${distInfo.id || 'DIST'}-003`,
+          certificateId: `RPM-2027-${distInfo.id || 'DIST'}-003`,
           pledgeTaken: true,
           registeredAt: "2026-10-25 11:15 AM"
         }
@@ -2295,7 +2295,7 @@ export function AdminDashboard({
                     </td>
                     <td style={{ padding: '12px 14px' }}>
                       <span style={{ fontFamily: 'monospace', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-                        {row.certificateId || `RJ-POL-2026-${(row.id || 'CERT').slice(0, 6)}`}
+                        {row.certificateId || `RJ-POL-2027-${(row.id || 'CERT').slice(0, 6)}`}
                       </span>
                     </td>
                     <td style={{ padding: '12px 14px' }}>

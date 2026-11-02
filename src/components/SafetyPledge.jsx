@@ -129,7 +129,7 @@ export function SafetyPledge() {
                 <PoliceEmblem size={32} />
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>OFFICIAL SUPPORTER</div>
-                  <div style={{ fontSize: '0.62rem', color: 'var(--crimson-600)', fontWeight: 700 }}>RUN FOR HER 2026</div>
+                  <div style={{ fontSize: '0.62rem', color: 'var(--crimson-600)', fontWeight: 700 }}>RUN FOR HER 2027</div>
                 </div>
               </div>
 

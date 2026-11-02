@@ -165,7 +165,7 @@ export const INITIAL_REGISTRATIONS = [
   {
     id: "REG-101",
     bibNumber: "RJ-21K-1048",
-    certificateId: "RPM-2026-RAJ-1048",
+    certificateId: "RPM-2027-RAJ-1048",
     fullName: "Pooja Choudhary",
     gender: "Female",
     age: 26,
@@ -195,7 +195,7 @@ export const INITIAL_REGISTRATIONS = [
   {
     id: "REG-102",
     bibNumber: "RJ-10K-3419",
-    certificateId: "RPM-2026-RAJ-3419",
+    certificateId: "RPM-2027-RAJ-3419",
     fullName: "Sub-Inspector Vikram Singh Shekhawat",
     gender: "Male",
     age: 31,
@@ -225,7 +225,7 @@ export const INITIAL_REGISTRATIONS = [
   {
     id: "REG-103",
     bibNumber: "RJ-05K-8012",
-    certificateId: "RPM-2026-RAJ-8012",
+    certificateId: "RPM-2027-RAJ-8012",
     fullName: "Ananya Sharma",
     gender: "Female",
     age: 20,
@@ -255,7 +255,7 @@ export const INITIAL_REGISTRATIONS = [
   {
     id: "REG-104",
     bibNumber: "RJ-02K-9510",
-    certificateId: "RPM-2026-RAJ-9510",
+    certificateId: "RPM-2027-RAJ-9510",
     fullName: "Col. Ratan Rathore (Retd.)",
     gender: "Male",
     age: 64,

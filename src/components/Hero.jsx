@@ -3,25 +3,27 @@ import { Shield, Calendar, MapPin, Users, Award, Heart, Bell, CheckCircle2, Arro
 import { RunForHerBadge, PoliceEmblem } from './Emblems';
 
 export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegistered = 18450 }) {
-  // Live Countdown logic targeted to 3 January 2027, 06:00:00 AM
-  const TARGET_DATE = new Date('2027-01-03T06:00:00');
+  // Live Countdown logic strictly targeted to 3 January 2027, 06:00:00 AM IST
+  const TARGET_DATE = new Date(2027, 0, 3, 6, 0, 0); // 3 January 2027, 06:00:00 local IST
 
   const calculateTimeLeft = () => {
     const diff = TARGET_DATE.getTime() - Date.now();
     if (diff <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      return { days: 0, hours: 0, minutes: 0, seconds: 0, isPassed: true };
     }
     return {
       days: Math.floor(diff / (1000 * 60 * 60 * 24)),
       hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((diff / 1000 / 60) % 60),
-      seconds: Math.floor((diff / 1000) % 60)
+      minutes: Math.floor((diff / (1000 * 60)) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+      isPassed: false
     };
   };
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft);
 
   useEffect(() => {
+    setTimeLeft(calculateTimeLeft());
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
@@ -56,7 +58,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
       {/* 3. Rajasthan Police Navy Blue Half Overlay (50% on both Desktop & Mobile) */}
       <div className="hero-overlay-blue" />
 
-      {/* 4. Sleek Golden Dividing Accent Line (Diagonal Corner-to-Corner 50/50 Split) */}
+      {/* 4. Sleek Golden Dividing Accent Line */}
       <svg className="hero-golden-divider" viewBox="0 0 100 100" preserveAspectRatio="none">
         <defs>
           <linearGradient id="heroGoldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -65,7 +67,10 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             <stop offset="100%" stopColor="#fef08a" stopOpacity="0.5" />
           </linearGradient>
         </defs>
-        <line x1="0" y1="0" x2="100" y2="100" stroke="url(#heroGoldGlow)" strokeWidth="1.6" vectorEffect="non-scaling-stroke" />
+        {/* Desktop diagonal divider (0,0 -> 100,100) */}
+        <line className="hero-line-desktop" x1="0" y1="0" x2="100" y2="100" stroke="url(#heroGoldGlow)" strokeWidth="1.6" vectorEffect="non-scaling-stroke" />
+        {/* Mobile vertical 50/50 divider (52,0 -> 48,100) */}
+        <line className="hero-line-mobile" x1="52" y1="0" x2="48" y2="100" stroke="url(#heroGoldGlow)" strokeWidth="2.2" vectorEffect="non-scaling-stroke" />
       </svg>
 
       {/* Hero Content Wrapper */}
@@ -309,14 +314,20 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                   <Calendar size={18} color="var(--police-navy-900)" />
                   <span>RACE DAY COUNTDOWN • 03 JAN 2027</span>
                 </div>
-                <div style={{ fontSize: '0.82rem', color: 'var(--crimson-600)', fontWeight: 800 }}>
-                  फ्लैग-ऑफ: 3 जनवरी 2027, सुबह 06:00 AM • अल्बर्ट हॉल, जयपुर
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#dcfce7', border: '1px solid #86efac', color: '#166534', padding: '2px 8px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 800 }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' }}></span>
+                    लाइव उल्टी गिनती सक्रिय
+                  </span>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--crimson-600)', fontWeight: 800 }}>
+                    3 जनवरी 2027, प्रातः 06:00 बजे IST
+                  </div>
                 </div>
               </div>
 
               <div className="hero-countdown-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', textAlign: 'center' }}>
                 {[
-                  { label: 'दिन (DAYS)', val: timeLeft.days },
+                  { label: 'दिन (DAYS)', val: String(timeLeft.days).padStart(2, '0') },
                   { label: 'घंटे (HOURS)', val: String(timeLeft.hours).padStart(2, '0') },
                   { label: 'मिनट (MINS)', val: String(timeLeft.minutes).padStart(2, '0') },
                   { label: 'सेकंड (SECS)', val: String(timeLeft.seconds).padStart(2, '0') }
@@ -470,6 +481,14 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
           pointer-events: none;
         }
 
+        .hero-line-desktop {
+          display: block;
+        }
+
+        .hero-line-mobile {
+          display: none;
+        }
+
         .hero-cta-group {
           display: flex;
           justify-content: center;
@@ -505,16 +524,26 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
           }
 
           .hero-bg-photo {
-            background-position: center top !important;
+            background-position: center center !important;
             background-size: cover !important;
+            opacity: 0.42 !important;
           }
 
           /* Equal 50/50 Dual-Tone split stays prominently visible across the whole mobile screen */
           .hero-overlay-red {
-            clip-path: polygon(0 0, 100% 0, 100% 100%) !important;
+            clip-path: polygon(0 0, 52% 0, 48% 100%, 0 100%) !important;
+            background: linear-gradient(180deg, rgba(220, 38, 38, 0.6) 0%, rgba(185, 28, 28, 0.52) 100%) !important;
           }
           .hero-overlay-blue {
-            clip-path: polygon(0 0, 0 100%, 100% 100%) !important;
+            clip-path: polygon(52% 0, 100% 0, 100% 100%, 48% 100%) !important;
+            background: linear-gradient(180deg, rgba(10, 28, 61, 0.72) 0%, rgba(15, 23, 42, 0.65) 100%) !important;
+          }
+
+          .hero-line-desktop {
+            display: none !important;
+          }
+          .hero-line-mobile {
+            display: block !important;
           }
 
           .hero-ticker-container {

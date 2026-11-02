@@ -63,7 +63,7 @@ export function Footer({ onNavigate }) {
               <PoliceEmblem size={40} />
               <div>
                 <div style={{ fontWeight: 800, color: '#ffffff', fontSize: '1.05rem' }}>RAJASTHAN POLICE</div>
-                <div style={{ color: '#ff7597', fontWeight: 700, fontSize: '0.8rem' }}>RUN FOR HER 2026</div>
+                <div style={{ color: '#ff7597', fontWeight: 700, fontSize: '0.8rem' }}>RUN FOR HER 2027</div>
               </div>
             </div>
             <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6 }}>
@@ -125,7 +125,7 @@ export function Footer({ onNavigate }) {
         {/* Bottom Bar */}
         <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', fontSize: '0.75rem', color: '#94a3b8' }}>
           <div>
-            © 2026 राजस्थान पुलिस, राजस्थान सरकार। सर्वाधिकार सुरक्षित।
+            © 2027 राजस्थान पुलिस, राजस्थान सरकार। सर्वाधिकार सुरक्षित।
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
             <span>"Every Step for Her Safety"</span>
