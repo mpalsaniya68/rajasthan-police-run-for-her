@@ -24,6 +24,7 @@ import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
 import confetti from 'canvas-confetti';
 import QRCode from 'qrcode';
 import { apiRegister, apiTrackRunner } from '../services/api';
+import { GovPaymentModal } from './GovPaymentModal';
 
 export function RegistrationPage({
   initialCategory = "21k",
@@ -32,6 +33,8 @@ export function RegistrationPage({
   onRegisterSuccess,
   registrations = []
 }) {
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [pendingPayload, setPendingPayload] = useState(null);
   const [venueType, setVenueType] = useState(() => (initialDistrict && initialDistrict !== "JPR-COMM" && initialDistrict !== "jaipur_comm") ? "district" : "jaipur");
   const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict || "JPR-COMM");
   const [category, setCategory] = useState(initialCategory);
@@ -384,7 +387,7 @@ export function RegistrationPage({
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span className="badge-gold">
-              ★ 100% निःशुल्क सार्वजनिक पंजीकरण ★
+              ★ आधिकारिक राजस्थान पुलिस पोर्टल ★
             </span>
             <span className="badge-gov d-tablet-inline">
               🔒 SSL 256-Bit एनक्रिप्टेड
@@ -847,7 +850,7 @@ export function RegistrationPage({
                     कोई पंजीकरण रिकॉर्ड नहीं मिला
                   </div>
                   <p style={{ fontSize: '0.84rem', color: '#7f1d1d', margin: '0 0 14px 0' }}>
-                    दर्ज किए गए विवरण <strong>"{findQuery}"</strong> से संबंधित कोई ई-पास नहीं मिला। कृपया नंबर की जांच करें या अभी नया निःशुल्क पंजीकरण करें।
+                    दर्ज किए गए विवरण <strong>"{findQuery}"</strong> से संबंधित कोई ई-पास नहीं मिला। कृपया नंबर की जांच करें या अभी नया पंजीकरण करें।
                   </p>
                   <button
                     onClick={() => setActiveTab('register')}
@@ -967,14 +970,14 @@ export function RegistrationPage({
                     ऑनलाइन धावक पंजीकरण पोर्टल (Run for Her)
                   </h1>
                   <div style={{ fontSize: '0.88rem', color: '#cbd5e1' }}>
-                    हर कदम नारी सुरक्षा, सम्मान व सशक्तिकरण के लिए • निःशुल्क ई-पास एवं आरएफआईडी बिब
+                    हर कदम नारी सुरक्षा, सम्मान व सशक्तिकरण के लिए • अधिकृत ई-पास एवं आरएफआईडी बिब
                   </div>
                 </div>
               </div>
 
               <div style={{ textAlign: 'right' }} className="d-tablet-block">
                 <span className="badge-gold">
-                  ★ निःशुल्क सहभागिता ★
+                  ★ अधिकृत सहभागिता पोर्टल ★
                 </span>
                 <div style={{ fontSize: '0.72rem', color: '#fef08a', marginTop: '4px', fontWeight: 700 }}>
                   10,000+ नागरिक धावक जयपुर में
@@ -1185,6 +1188,19 @@ export function RegistrationPage({
                             display: 'inline-block'
                           }}>
                             {cat.timingChip ? '⏱️ RFID टाइमिंग चिप युक्त' : '🎗️ कम्युनिटी रन'}
+                          </div>
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginTop: '8px',
+                            borderTop: '1px solid #e2e8f0',
+                            paddingTop: '6px'
+                          }}>
+                            <span style={{ fontSize: '0.74rem', color: '#64748b' }}>निर्धारित शुल्क:</span>
+                            <span style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0a1c3d' }}>
+                              {cat.id === '21k' ? '₹499' : cat.id === '10k' ? '₹399' : '₹199'}
+                            </span>
                           </div>
                         </div>
                       );
@@ -1638,28 +1654,56 @@ export function RegistrationPage({
                 </div>
               </div>
 
-              {/* Submit CTA Bar */}
-              <div style={{ textAlign: 'center' }}>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="btn-glass-primary"
-                  style={{
-                    padding: '16px 36px',
-                    fontSize: '1.1rem',
-                    fontWeight: 900,
-                    width: '100%',
-                    maxWidth: '480px',
-                    borderRadius: '10px',
-                    boxShadow: 'var(--shadow-lg)'
-                  }}
-                >
-                  {isSubmitting ? (
-                    <span>पंजीकरण दर्ज हो रहा है... कृपया प्रतीक्षा करें</span>
-                  ) : (
-                    <span>आधिकारिक पंजीकरण पूर्ण करें एवं ई-पास प्राप्त करें &rarr;</span>
-                  )}
-                </button>
+              {/* Government Official Fee Summary Row */}
+                <div style={{
+                  background: '#f8fafc',
+                  border: '1.5px solid #cbd5e1',
+                  borderRadius: '8px',
+                  padding: '16px 20px',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '12px',
+                  textAlign: 'left'
+                }}>
+                  <div>
+                    <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 600 }}>
+                      निर्धारित शासकीय पंजीकरण शुल्क (Payable Application Fee):
+                    </div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0a1c3d', marginTop: '2px' }}>
+                      {category === '21k' ? '₹499.00' : category === '10k' ? '₹399.00' : '₹199.00'}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '0.76rem', color: '#475569', textAlign: 'right' }}>
+                    <div>स्वीकृत माध्यम: <strong>UPI / Bharat QR / NetBanking / Cards</strong></div>
+                    <div style={{ color: '#059669', fontWeight: 700, marginTop: '2px' }}>✓ e-Gras / SBI ePay शासकीय गेटवे (0% अतिरिक्त शुल्क)</div>
+                  </div>
+                </div>
+
+                {/* Submit CTA Bar */}
+                <div style={{ textAlign: 'center' }}>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="btn-glass-primary"
+                    style={{
+                      padding: '16px 36px',
+                      fontSize: '1.08rem',
+                      fontWeight: 900,
+                      width: '100%',
+                      maxWidth: '480px',
+                      borderRadius: '8px',
+                      boxShadow: 'var(--shadow-lg)'
+                    }}
+                  >
+                    {isSubmitting ? (
+                      <span>प्रक्रियाधीन है... कृपया प्रतीक्षा करें</span>
+                    ) : (
+                      <span>पंजीकरण एवं ऑनलाइन शुल्क भुगतान करें (Pay Fee & Register) &rarr;</span>
+                    )}
+                  </button>
                 <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '10px' }}>
                   क्लिक करते ही राजस्थान पुलिस सर्वर द्वारा आपको अद्वितीय बिब नंबर और डिजिटल ई-पास आवंटित किया जाएगा।
                 </div>
@@ -1690,6 +1734,16 @@ export function RegistrationPage({
           }
         }
       `}</style>
+      {/* Official Government Electronic Payment Gateway Modal */}
+      <GovPaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        onPaymentSuccess={handlePaymentSuccess}
+        runnerData={formData}
+        category={category}
+        categoryName={catObj?.name || "राजस्थान पुलिस मैराथन 2027"}
+        feeAmount={category === "21k" ? 499 : category === "10k" ? 399 : 199}
+      />
     </div>
   );
 }

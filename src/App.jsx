@@ -187,7 +187,7 @@ export default function App() {
                   <span>/</span>
                   <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>दौड़ श्रेणियां एवं रजिस्ट्रेशन</span>
                 </div>
-                <span className="badge-gov">निःशुल्क पंजीकरण खुला है</span>
+                <span className="badge-gov">आधिकारिक पंजीकरण खुला है</span>
               </div>
             </div>
             <Categories 

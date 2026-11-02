@@ -12,7 +12,7 @@ export const RACE_CATEGORIES = [
     reporting: "05:00 AM",
     description: "The premier competitive endurance run for seasoned marathoners, police personnel, and serious athletes.",
     perks: ["RFID Timing Chip", "Official Finisher Medal", "Dry-Fit Running T-Shirt", "DGP Signed Timing Certificate", "Hot Breakfast & Energy Hydration"],
-    fee: "Free Entry (Govt. Initiative)",
+    fee: "₹499",
     color: "#ff2e63",
     iconName: "Zap"
   },
@@ -27,7 +27,7 @@ export const RACE_CATEGORIES = [
     reporting: "05:15 AM",
     description: "High-energy timed course designed for intermediate runners, university athletes, and enthusiastic youth.",
     perks: ["RFID Timing Chip", "Finisher Medal", "Official Event T-Shirt", "E-Certificate with Net Time", "Hydration & Energy Fuel"],
-    fee: "Free Entry (Govt. Initiative)",
+    fee: "₹399",
     color: "#d4af37",
     iconName: "Flame"
   },
@@ -42,7 +42,7 @@ export const RACE_CATEGORIES = [
     reporting: "05:30 AM",
     description: "The flagship mass awareness run happening simultaneously in Jaipur and all 41 Rajasthan Police Districts and Commissionerates.",
     perks: ["Finisher Commemorative Medal", "Event T-Shirt", "Participation Certificate", "Women's Safety Awareness Kit", "Post-Run Refreshments"],
-    fee: "Free Entry (Govt. Initiative)",
+    fee: "₹199",
     color: "#00d2d3",
     iconName: "Users"
   },
@@ -57,7 +57,7 @@ export const RACE_CATEGORIES = [
     reporting: "06:00 AM",
     description: "A joyful, celebratory walk/jog welcoming children, families, elders, and citizens pledging for women's dignity.",
     perks: ["Participation Ribbon/Medal", "Official 'Run for Her' Cap/Badge", "Digital Certificate", "Refreshments & Celebration"],
-    fee: "Free Entry (Govt. Initiative)",
+    fee: "₹199",
     color: "#10ac84",
     iconName: "HeartHandshake"
   },
@@ -71,7 +71,7 @@ export const RACE_CATEGORIES = [
     reporting: "05:45 AM",
     description: "Specially dedicated adapted category for differently-abled athletes and senior citizens with volunteer escort support.",
     perks: ["Special Finisher Trophy/Medal", "Custom Assisted Care", "T-Shirt & Goodie Bag", "Official Recognition Certificate"],
-    fee: "Free Entry (Govt. Initiative)",
+    fee: "₹199",
     color: "#a55eea",
     iconName: "Sparkles"
   }

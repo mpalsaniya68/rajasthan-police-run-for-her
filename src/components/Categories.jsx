@@ -122,8 +122,8 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
               {/* Action Button */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', borderTop: '1px solid var(--border-subtle)', paddingTop: '10px' }}>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>शुल्क (Fee):</span>
-                  <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#047857' }}>{cat.fee}</span>
+                  <span style={{ fontSize: '0.82rem', color: '#475569', fontWeight: 600 }}>पंजीकरण शुल्क (Registration Fee):</span>
+                  <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>{cat.fee}</span>
                 </div>
                 <button 
                   onClick={() => onSelectCategory(cat.id)}

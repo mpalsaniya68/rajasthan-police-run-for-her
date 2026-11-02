@@ -34,7 +34,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
     { text: "राजस्थान पुलिस मैराथन 'RUN FOR HER' — रेस दिवस: 3 जनवरी 2027", tag: "इवेंट तिथि" },
     { text: "अल्बर्ट हॉल, जयपुर एवं प्रदेश के समस्त पुलिस जिलों में एक साथ भव्य आयोजन", tag: "वेन्यू" },
     { text: "प्रातः 06:00 बजे फ्लैग-ऑफ पुलिस महानिदेशक (DGP) राजीव शर्मा (IPS) द्वारा", tag: "फ्लैग-ऑफ" },
-    { text: "21K, 10K, 5K एवं 2K श्रेणियों हेतु निःशुल्क ऑनलाइन पंजीकरण जारी है", tag: "रजिस्ट्रेशन" },
+    { text: "21K, 10K, 5K एवं 2K श्रेणियों हेतु आधिकारिक ऑनलाइन पंजीकरण जारी है", tag: "पंजीकरण" },
     { text: "संस्थाओं, कॉलेजों व RPA बटालियनों हेतु बल्क / ग्रुप रजिस्ट्रेशन उपलब्ध", tag: "ग्रुप पोर्टल" },
     { text: "महिला सुरक्षा हेल्पलाइन 1090 (गरिमा) एवं 112 चौबीसों घंटे आपकी सेवा में तत्पर", tag: "सुरक्षा" }
   ];
@@ -246,9 +246,9 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                 }}
                 onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                 onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                title="निःशुल्क इंडिविजुअल रजिस्ट्रेशन"
+                title="ऑनलाइन पंजीकरण पोर्टल"
               >
-                <span>इंडिविजुअल रजिस्ट्रेशन (निःशुल्क)</span>
+                <span>इंडिविजुअल पंजीकरण (Register Now)</span>
                 <ArrowRight size={18} />
               </button>
 
