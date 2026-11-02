@@ -385,8 +385,9 @@ export function RegistrationPage({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDownloadEPassPNG = async () => {
-    if (!registeredParticipant) return;
+  const handleDownloadEPassPNG = async (participantParam) => {
+    const p = participantParam || registeredParticipant;
+    if (!p) return;
     setIsDownloadingPass(true);
 
     try {
@@ -442,7 +443,7 @@ export function RegistrationPage({
       ctx.font = "14px sans-serif";
       ctx.textAlign = "right";
       ctx.fillText("गृह विभाग, राजस्थान सरकार", 1150, 64);
-      ctx.fillText("प्रमाण पत्र आईडी: " + (registeredParticipant.certificateId || "RJ-POL-2027"), 1150, 96);
+      ctx.fillText("प्रमाण पत्र आईडी: " + (p.certificateId || "RJ-POL-2027"), 1150, 96);
       ctx.textAlign = "left";
 
       // 3. Left Section: Bib Box
@@ -462,7 +463,7 @@ export function RegistrationPage({
 
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "900 52px sans-serif";
-      ctx.fillText(registeredParticipant.bibNumber || "RJ-21K-1001", 190, 300);
+      ctx.fillText(p.bibNumber || "RJ-21K-1001", 190, 300);
 
       // Category Pill
       ctx.fillStyle = "#b91c1c";
@@ -472,12 +473,12 @@ export function RegistrationPage({
 
       ctx.fillStyle = "#ffffff";
       ctx.font = "bold 20px sans-serif";
-      ctx.fillText(registeredParticipant.categoryName || "21 KM Half Marathon", 190, 362);
+      ctx.fillText(p.categoryName || "21 KM Half Marathon", 190, 362);
 
       // Blood Group & T-shirt in Bib box
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 16px sans-serif";
-      ctx.fillText(`रक्त समूह: ${registeredParticipant.bloodGroup || 'B+'}  |  Size: ${registeredParticipant.tshirtSize || 'M'}`, 190, 425);
+      ctx.fillText(`रक्त समूह: ${p.bloodGroup || 'B+'}  |  Size: ${p.tshirtSize || 'M'}`, 190, 425);
 
       // Entry Status
       ctx.fillStyle = "#059669";
@@ -493,35 +494,35 @@ export function RegistrationPage({
       ctx.fillText("धावक का पूरा नाम (RUNNER FULL NAME):", detailsX, 195);
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 26px sans-serif";
-      ctx.fillText(registeredParticipant.fullName || "पंजीकृत धावक", detailsX, 230);
+      ctx.fillText(p.fullName || "पंजीकृत धावक", detailsX, 230);
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
       ctx.fillText("आयोजन स्थल (REPORTING VENUE):", detailsX, 275);
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 20px sans-serif";
-      ctx.fillText("📍 " + (registeredParticipant.districtName || "जयपुर पुलिस कमिश्नरेट"), detailsX, 305);
+      ctx.fillText("📍 " + (p.districtName || "जयपुर पुलिस कमिश्नरेट"), detailsX, 305);
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
       ctx.fillText("पहचान पत्र (GOVT ID TYPE & NUMBER):", detailsX, 350);
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 19px sans-serif";
-      ctx.fillText(`${registeredParticipant.idType || 'Aadhaar'}: ${registeredParticipant.idMasked || 'XXXX-XXXX-1234'}`, detailsX, 378);
+      ctx.fillText(`${p.idType || 'Aadhaar'}: ${p.idMasked || 'XXXX-XXXX-1234'}`, detailsX, 378);
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
       ctx.fillText("पंजीकृत मोबाइल एवं ईमेल:", detailsX, 420);
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "18px sans-serif";
-      ctx.fillText(`📞 ${registeredParticipant.mobile || ''}   ✉️ ${registeredParticipant.email || ''}`, detailsX, 448);
+      ctx.fillText(`📞 ${p.mobile || ''}   ✉️ ${p.email || ''}`, detailsX, 448);
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
       ctx.fillText("आपातकालीन संपर्क (EMERGENCY CONTACT):", detailsX, 490);
       ctx.fillStyle = "#991b1b";
       ctx.font = "bold 17px sans-serif";
-      ctx.fillText(registeredParticipant.emergencyContact || "पुलिस सहायता केंद्र 112", detailsX, 518);
+      ctx.fillText(p.emergencyContact || "पुलिस सहायता केंद्र 112", detailsX, 518);
 
       // 5. Right Section: Security QR Code
       const qrBoxX = 910;
@@ -570,7 +571,7 @@ export function RegistrationPage({
 
       ctx.fillStyle = "#047857";
       ctx.font = "15px sans-serif";
-      const feeText = `शुल्क राशि: ₹${registeredParticipant.feeAmount || 199}  |  ऑर्डर आईडी: ${registeredParticipant.orderId || 'ORD2027'}  |  ट्रांजैक्शन: ${registeredParticipant.transactionId || 'TXN-RAJPOL-PAID'}  |  माध्यम: ${registeredParticipant.paymentMethod || 'UPI_QR'}`;
+      const feeText = `शुल्क राशि: ₹${p.feeAmount || 199}  |  ऑर्डर आईडी: ${p.orderId || 'ORD2027'}  |  ट्रांजैक्शन: ${p.transactionId || 'TXN-RAJPOL-PAID'}  |  माध्यम: ${p.paymentMethod || 'UPI_QR'}`;
       ctx.fillText(feeText, 60, 624);
 
       // 7. Official Bottom Footer
@@ -590,7 +591,7 @@ export function RegistrationPage({
       // 8. Download directly as PNG file into user's device/local storage
       const pngUrl = canvas.toDataURL("image/png");
       const downloadLink = document.createElement("a");
-      const safeBib = (registeredParticipant.bibNumber || "RUNNER").replace(/[^a-zA-Z0-9_-]/g, "_");
+      const safeBib = (p.bibNumber || "RUNNER").replace(/[^a-zA-Z0-9_-]/g, "_");
       downloadLink.download = `RJ-POLICE-MARATHON-EPASS-${safeBib}.png`;
       downloadLink.href = pngUrl;
       document.body.appendChild(downloadLink);
@@ -604,6 +605,35 @@ export function RegistrationPage({
     }
   };
 
+  const handleSendToMyWhatsApp = () => {
+    if (!registeredParticipant) return;
+    const rawMobile = (registeredParticipant.mobile || '').replace(/\D/g, '');
+    const phoneTarget = rawMobile.length === 10 ? `91${rawMobile}` : rawMobile;
+
+    const message = 
+      `🏛️ *राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'*\n` +
+      `★ आधिकारिक डिजिटल ई-पास व प्रवेश पत्र ★\n\n` +
+      `आदरणीय *${registeredParticipant.fullName}* जी,\n` +
+      `राजस्थान पुलिस मैराथन 2027 में आपका पंजीकरण सफलतापूर्वक पूर्ण हो चुका है।\n\n` +
+      `📋 *प्रवेश विवरण (Entry Details):*\n` +
+      `🎽 *छाती बिब संख्या (BIB No.):* ${registeredParticipant.bibNumber}\n` +
+      `🎯 *दौड़ श्रेणी:* ${registeredParticipant.categoryName}\n` +
+      `📍 *स्थान:* ${registeredParticipant.districtName}\n` +
+      `📅 *तारीख:* 3 जनवरी 2027, प्रातः 05:00 बजे रिपोर्टिंग\n` +
+      `👕 *टी-शर्ट साइज़:* Size ${registeredParticipant.tshirtSize}\n` +
+      `🩸 *रक्त समूह:* ${registeredParticipant.bloodGroup || 'B+'}\n` +
+      `🆔 *प्रमाण पत्र टोकन:* ${registeredParticipant.certificateId}\n\n` +
+      `⚠️ *महत्वपूर्ण:* एक्सपो केंद्र व मैराथन प्रवेश द्वार पर यह बिब नंबर एवं पहचान पत्र दिखाना अनिवार्य है।\n\n` +
+      `ई-पास डाउनलोड व सत्यापन पोर्टल:\n${window.location.origin}/#register\n\n` +
+      `_राजस्थान पुलिस — सेवार्थ कटिबद्धता_`;
+
+    const encoded = encodeURIComponent(message);
+    const waUrl = phoneTarget 
+      ? `https://api.whatsapp.com/send?phone=${phoneTarget}&text=${encoded}` 
+      : `https://api.whatsapp.com/send?text=${encoded}`;
+    window.open(waUrl, '_blank');
+  };
+
   const handleShareWhatsApp = () => {
     if (!registeredParticipant) return;
     const text = encodeURIComponent(
@@ -613,7 +643,7 @@ export function RegistrationPage({
       `🎯 श्रेणी: ${registeredParticipant.categoryName}\n` +
       `📍 स्थान: ${registeredParticipant.districtName}\n` +
       `📅 तिथि: 3 जनवरी 2027, प्रातः 06:00 बजे\n\n` +
-      `हर कदम नारी सुरक्षा और सम्मान के लिए! आप भी निःशुल्क रजिस्टर करें:\nhttps://police.rajasthan.gov.in/marathon2027`
+      `हर कदम नारी सुरक्षा और सम्मान के लिए! आप भी निःशुल्क रजिस्टर करें:\n${window.location.origin}/#register`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
@@ -850,34 +880,104 @@ export function RegistrationPage({
                 </div>
               </div>
 
-              {/* Action Buttons Row */}
-              <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '14px' }}>
-                <button
-                  onClick={() => window.print()}
-                  className="btn-primary"
-                  style={{ padding: '12px 24px', fontSize: '0.94rem' }}
-                >
-                  <Printer size={18} /> ई-पास प्रिंट / डाउनलोड करें
-                </button>
+              {/* Direct WhatsApp Notice Banner */}
+              <div style={{
+                background: '#f0fdf4',
+                border: '1.5px solid #86efac',
+                borderRadius: '10px',
+                padding: '14px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '12px',
+                flexWrap: 'wrap',
+                marginBottom: '22px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '1.5rem' }}>📲</span>
+                  <div>
+                    <div style={{ fontWeight: 800, color: '#166534', fontSize: '0.92rem' }}>
+                      ई-पास आपकी डिवाइस (Downloads) में स्वतः सुरक्षित किया जा रहा है!
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#15803d' }}>
+                      अपने पंजीकृत मोबाइल <strong>+91 {registeredParticipant.mobile}</strong> के व्हाट्सएप पर 1-क्लिक में रसीद सुरक्षित करें:
+                    </div>
+                  </div>
+                </div>
 
                 <button
-                  onClick={handleShareWhatsApp}
+                  onClick={handleSendToMyWhatsApp}
                   style={{
                     background: '#25D366',
                     color: '#ffffff',
                     border: 'none',
-                    borderRadius: '8px',
-                    padding: '12px 24px',
-                    fontSize: '0.94rem',
-                    fontWeight: 700,
+                    borderRadius: '6px',
+                    padding: '10px 18px',
+                    fontSize: '0.88rem',
+                    fontWeight: 800,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px rgba(37, 211, 102, 0.35)'
+                  }}
+                  title="सीधे अपने व्हाट्सएप पर ई-पास प्राप्त करें"
+                >
+                  <Share2 size={16} /> अपने व्हाट्सएप पर ई-पास भेजें
+                </button>
+              </div>
+
+              {/* Action Buttons Row */}
+              <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                <button
+                  onClick={() => handleDownloadEPassPNG()}
+                  disabled={isDownloadingPass}
+                  className="btn-primary"
+                  style={{
+                    padding: '12px 22px',
+                    fontSize: '0.92rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Download size={18} /> {isDownloadingPass ? "डाउनलोड हो रहा है..." : "ई-पास डाउनलोड करें (PNG)"}
+                </button>
+
+                <button
+                  onClick={handleSendToMyWhatsApp}
+                  style={{
+                    background: '#16a34a',
+                    color: '#ffffff',
+                    border: '1.5px solid #15803d',
+                    borderRadius: '6px',
+                    padding: '12px 22px',
+                    fontSize: '0.92rem',
+                    fontWeight: 800,
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '8px',
                     cursor: 'pointer',
-                    boxShadow: 'var(--shadow-sm)'
+                    boxShadow: '0 2px 6px rgba(22, 163, 74, 0.2)'
                   }}
                 >
-                  <Share2 size={18} /> व्हाट्सएप पर शेयर करें
+                  <Share2 size={18} /> अपने व्हाट्सएप पर भेजें
+                </button>
+
+                <button
+                  onClick={() => window.print()}
+                  className="btn-navy"
+                  style={{
+                    padding: '12px 20px',
+                    fontSize: '0.92rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Printer size={18} /> A4 प्रिंट / सेव करें
                 </button>
 
                 <button
