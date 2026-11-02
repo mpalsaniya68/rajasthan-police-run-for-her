@@ -10,8 +10,8 @@ import { apiAdminLogin } from '../services/api';
 export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
   const [accessType, setAccessType] = useState('phq'); // 'phq' | 'district'
   const [selectedDistrictId, setSelectedDistrictId] = useState('KTA-CITY');
-  const [username, setUsername] = useState('phq_admin');
-  const [password, setPassword] = useState('RajPol@PHQ#2026');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -355,9 +355,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     </option>
                   ))}
                 </select>
-                <div style={{ fontSize: '0.72rem', color: '#b91c1c', marginTop: '6px' }}>
-                  ℹ️ जिला एसपी लॉगिन पर केवल उस जिले के आंकड़े, धावक सूची एवं ई-सर्टिफिकेट प्रदर्शित होंगे।
-                </div>
+                
               </div>
             )}
 
@@ -503,133 +501,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
               </button>
             </form>
 
-            {/* Quick Demo Credentials Guide for testing */}
-            <div style={{
-              marginTop: '22px',
-              padding: '12px',
-              background: '#f8fafc',
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px'
-            }}>
-              <div style={{ fontSize: '0.74rem', fontWeight: 700, color: '#475569', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <CheckCircle2 size={13} color="#15803d" /> अधिकृत टेस्ट क्रेडेंशियल्स (Quick Test Sign-In):
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAccessType('phq');
-                    setUsername('phq_admin');
-                    setPassword('RajPol@PHQ#2026');
-                    setErrorMessage('');
-                  }}
-                  style={{
-                    background: '#ffffff',
-                    border: '1px solid #cbd5e1',
-                    color: '#0a1c3d',
-                    padding: '6px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#eff6ff'}
-                  onMouseOut={(e) => e.currentTarget.style.background = '#ffffff'}
-                >
-                  🏛️ PHQ Admin
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAccessType('district');
-                    setSelectedDistrictId('KTA-CITY');
-                    setUsername('sp_kta_city');
-                    setPassword('SP#Kota@2026');
-                    setErrorMessage('');
-                  }}
-                  style={{
-                    background: '#ffffff',
-                    border: '1px solid #fecaca',
-                    color: '#991b1b',
-                    padding: '6px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
-                  onMouseOut={(e) => e.currentTarget.style.background = '#ffffff'}
-                >
-                  🚔 SP Kota City
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAccessType('district');
-                    setSelectedDistrictId('JDH-COMM');
-                    setUsername('sp_jdh_comm');
-                    setPassword('SP#Jodhpur@2026');
-                    setErrorMessage('');
-                  }}
-                  style={{
-                    background: '#ffffff',
-                    border: '1px solid #fecaca',
-                    color: '#991b1b',
-                    padding: '6px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
-                  onMouseOut={(e) => e.currentTarget.style.background = '#ffffff'}
-                >
-                  🚔 SP Jodhpur
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAccessType('district');
-                    setSelectedDistrictId('UDR');
-                    setUsername('sp_udr');
-                    setPassword('SP#Udaipur@2026');
-                    setErrorMessage('');
-                  }}
-                  style={{
-                    background: '#ffffff',
-                    border: '1px solid #fecaca',
-                    color: '#991b1b',
-                    padding: '6px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
-                  onMouseOut={(e) => e.currentTarget.style.background = '#ffffff'}
-                >
-                  🚔 SP Udaipur
-                </button>
-              </div>
-            </div>
-
-            {/* Official Security Warning Notice */}
-            <div style={{
-              marginTop: '16px',
-              textAlign: 'center',
-              fontSize: '0.7rem',
-              color: '#64748b',
-              lineHeight: 1.4
-            }}>
-              🔒 यह राजस्थान पुलिस का गोपनीय व सुरक्षित आंतरिक पोर्टल है। अनाधिकृत प्रवेश आईटी अधिनियम की धारा 66/70 के तहत दंडनीय अपराध है।
-            </div>
+            
           </div>
         </div>
       </main>
