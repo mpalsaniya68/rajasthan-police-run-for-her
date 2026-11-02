@@ -1630,7 +1630,7 @@ export function RegistrationPage({
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     >
                       <option value="Citizen Runner">सामान्य नागरिक धावक (Citizen)</option>
-                      <option value="Police Officer / Personnel">राजस्थान पुलिस कर्मी / अधिकारी (Police Personnel)</option>
+                      <option value="Police Officer / Personnel">पुलिस कर्मी / अधिकारी (Police Personnel)</option>
                       <option value="College / School Student">छात्र / युवा धावक (Student)</option>
                       <option value="NCC / NSS / Scouts Cadet">NCC / NSS / स्काउट्स कैडेट</option>
                       <option value="Corporate / NGO Runner">संस्थागत / कॉर्पोरेट धावक</option>
@@ -1682,36 +1682,36 @@ export function RegistrationPage({
                   </div>
                 </div>
 
-                {/* Blood Group Selection */}
+                {/* Blood Group Selection - Dropdown Menu */}
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
                     रक्त समूह (Blood Group) <span style={{ color: '#ef4444' }}>*</span>:
                   </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  <select
+                    value={formData.bloodGroup}
+                    onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value })}
+                    required
+                    style={{
+                      width: '100%',
+                      maxWidth: '360px',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: '1.5px solid var(--border-medium)',
+                      fontSize: '0.94rem',
+                      fontWeight: 700,
+                      color: 'var(--police-navy-900)',
+                      background: '#ffffff',
+                      outline: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="">-- रक्त समूह चुनें (Select Blood Group) --</option>
                     {bloodGroupOptions.map(bg => (
-                      <button
-                        type="button"
-                        key={bg}
-                        onClick={() => setFormData({ ...formData, bloodGroup: bg })}
-                        style={{
-                          padding: '8px 16px',
-                          borderRadius: '8px',
-                          border: formData.bloodGroup === bg ? '2px solid #dc2626' : '1px solid var(--border-medium)',
-                          background: formData.bloodGroup === bg ? '#fef2f2' : '#ffffff',
-                          color: formData.bloodGroup === bg ? '#991b1b' : 'var(--text-body)',
-                          fontWeight: 800,
-                          fontSize: '0.95rem',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          transition: 'all 0.15s'
-                        }}
-                      >
-                        <span style={{ color: '#dc2626' }}>🩸</span> {bg}
-                      </button>
+                      <option key={bg} value={bg}>
+                        🩸 {bg}
+                      </option>
                     ))}
-                  </div>
+                  </select>
                   <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '6px' }}>
                     * यह जानकारी आपातकालीन स्थिति में 108 एम्बुलेंस और ऑन-ट्रैक मेडिकल टीम के लिए अनिवार्य है।
                   </div>
