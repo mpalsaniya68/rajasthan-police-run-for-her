@@ -252,11 +252,10 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
               <button 
                 onClick={onOpenBulkRegister} 
                 style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  backdropFilter: 'blur(10px)',
+                  background: 'linear-gradient(135deg, #0a1c3d 0%, #152e5a 100%)',
                   color: '#ffffff',
-                  border: '1.5px solid rgba(255, 255, 255, 0.35)',
-                  padding: '14px 22px',
+                  border: '1.5px solid var(--police-gold-500)',
+                  padding: '14px 24px',
                   borderRadius: '8px',
                   fontSize: '0.95rem',
                   fontWeight: 800,
@@ -264,29 +263,32 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                   alignItems: 'center',
                   gap: '8px',
                   cursor: 'pointer',
+                  boxShadow: '0 6px 20px rgba(10, 28, 61, 0.45)',
                   transition: 'all 0.2s'
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+                  e.currentTarget.style.background = '#1e3a8a';
                   e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(10, 28, 61, 0.6)';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.background = 'linear-gradient(135deg, #0a1c3d 0%, #152e5a 100%)';
                   e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(10, 28, 61, 0.45)';
                 }}
                 title="ग्रुप व बल्क रजिस्ट्रेशन"
               >
-                <Shield size={18} color="var(--police-gold-400)" />
+                <Shield size={18} color="#fde68a" />
                 <span>ग्रुप / संस्थागत पंजीकरण (Bulk Entry)</span>
               </button>
 
               <button 
                 onClick={() => onNavigate ? onNavigate('live-tracker') : scrollTo('live-tracker')} 
                 style={{
-                  background: 'rgba(220, 38, 38, 0.2)',
-                  border: '1.5px solid #f87171',
-                  color: '#fecaca',
-                  padding: '14px 20px',
+                  background: 'linear-gradient(135deg, #881337 0%, #5b0d24 100%)',
+                  border: '1.5px solid #f43f5e',
+                  color: '#ffffff',
+                  padding: '14px 22px',
                   borderRadius: '8px',
                   fontSize: '0.94rem',
                   fontWeight: 800,
@@ -294,13 +296,30 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                   alignItems: 'center',
                   gap: '8px',
                   cursor: 'pointer',
+                  boxShadow: '0 6px 20px rgba(136, 19, 55, 0.45)',
                   transition: 'all 0.2s'
                 }}
-                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = '#9f1239';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(136, 19, 55, 0.6)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(135deg, #881337 0%, #5b0d24 100%)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(136, 19, 55, 0.45)';
+                }}
               >
-                <Radio size={16} color="#ef4444" />
+                <Radio size={16} color="#fecdd3" />
                 <span>लाइव रनर ट्रैकर (Live Tracker)</span>
+                <span style={{
+                  width: '7px',
+                  height: '7px',
+                  borderRadius: '50%',
+                  background: '#22c55e',
+                  boxShadow: '0 0 6px #22c55e',
+                  display: 'inline-block'
+                }}></span>
               </button>
             </div>
 
