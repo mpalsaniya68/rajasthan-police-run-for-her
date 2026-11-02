@@ -649,14 +649,7 @@ export function RegistrationPage({
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="badge-gold">
-              ★ आधिकारिक राजस्थान पुलिस पोर्टल ★
-            </span>
-            <span className="badge-gov d-tablet-inline">
-              🔒 SSL 256-Bit एनक्रिप्टेड
-            </span>
-          </div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 600 }}>आधिकारिक पोर्टल • राजस्थान पुलिस</div>
         </div>
       </div>
 
@@ -1239,14 +1232,7 @@ export function RegistrationPage({
                 </div>
               </div>
 
-              <div style={{ textAlign: 'right' }} className="d-tablet-block">
-                <span className="badge-gold">
-                  ★ अधिकृत सहभागिता पोर्टल ★
-                </span>
-                <div style={{ fontSize: '0.72rem', color: '#fef08a', marginTop: '4px', fontWeight: 700 }}>
-                  10,000+ नागरिक धावक जयपुर में
-                </div>
-              </div>
+              <div style={{ textAlign: 'right' }} className="d-tablet-block"><div style={{ fontSize: '0.82rem', color: '#fef08a', fontWeight: 700 }}>इवेंट तिथि: 3 जनवरी 2027</div></div>
             </div>
 
             {/* Error Callout if any (Accessible WCAG Alert) */}
@@ -1631,10 +1617,7 @@ export function RegistrationPage({
                       }}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem', fontFamily: 'monospace' }}
                     />
-                    <div style={{ fontSize: '0.72rem', color: '#047857', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <span>🔒</span>
-                      <span>संवेदनशील डेटा सुरक्षा: डेटाबेस में केवल मास्क प्रारूप ({formData.idType === 'Aadhaar' ? 'XXXX-XXXX-1234' : 'XXXXXX1234'}) सुरक्षित रहेगा।</span>
-                    </div>
+                    
                   </div>
 
                   <div>
@@ -1969,7 +1952,7 @@ export function RegistrationPage({
                     )}
                   </button>
                 <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '10px' }}>
-                  क्लिक करते ही राजस्थान पुलिस सर्वर द्वारा आपको अद्वितीय बिब नंबर और डिजिटल ई-पास आवंटित किया जाएगा।
+                  पंजीकरण उपरांत आधिकारिक डिजिटल ई-पास व रसीद जारी की जाएगी।
                 </div>
               </div>
 

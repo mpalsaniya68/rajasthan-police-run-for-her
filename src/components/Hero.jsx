@@ -194,13 +194,12 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             {/* Slogan Banner */}
             <div style={{ width: '100%', marginBottom: '16px' }}>
               <div className="hero-slogan-wrap" style={{
-                background: 'rgba(201, 24, 74, 0.88)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.35)',
+                background: '#b91c1c',
+                border: '1px solid #991b1b',
                 display: 'inline-block',
-                padding: '8px 24px',
-                borderRadius: '100px',
-                boxShadow: '0 4px 15px rgba(201, 24, 74, 0.4)'
+                padding: '6px 20px',
+                borderRadius: '6px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)'
               }}>
                 <span style={{
                   fontSize: 'clamp(0.92rem, 2.2vw, 1.35rem)',
@@ -280,7 +279,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                 title="ग्रुप व बल्क रजिस्ट्रेशन"
               >
                 <Shield size={18} color="var(--police-gold-400)" />
-                <span>ग्रुप / बल्क रजिस्ट्रेशन (RPA / कॉलेज)</span>
+                <span>ग्रुप / संस्थागत पंजीकरण (Bulk Entry)</span>
               </button>
 
               <button 
@@ -303,7 +302,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                 onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
                 <Radio size={16} color="#ef4444" />
-                <span>लाइव रनर ट्रैकर (RFID Radar)</span>
+                <span>लाइव रनर ट्रैकर (Live Tracker)</span>
               </button>
             </div>
 
@@ -315,11 +314,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                   <span>RACE DAY COUNTDOWN • 03 JAN 2027</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#dcfce7', border: '1px solid #86efac', color: '#166534', padding: '2px 8px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 800 }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' }}></span>
-                    लाइव उल्टी गिनती सक्रिय
-                  </span>
-                  <div style={{ fontSize: '0.82rem', color: 'var(--crimson-600)', fontWeight: 800 }}>
+                  <div style={{ fontSize: '0.86rem', color: 'var(--crimson-600)', fontWeight: 800 }}>
                     3 जनवरी 2027, प्रातः 06:00 बजे IST
                   </div>
                 </div>

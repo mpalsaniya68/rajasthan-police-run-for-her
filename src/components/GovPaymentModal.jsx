@@ -505,7 +505,7 @@ export function GovPaymentModal({
             color: '#64748b'
           }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Lock size={12} color="#059669" /> 256-Bit SSL Encrpyted
+              <Lock size={12} color="#059669" /> सुरक्षित पेमेंट गेटवे
             </span>
             <span>•</span>
             <span>RBI / NPCI मान्यता प्राप्त शासकीय गेटवे</span>

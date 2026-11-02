@@ -297,7 +297,7 @@ export function Navbar({
             { id: 'admin-login', label: 'प्रशासनिक लॉगिन (Admin Portal)', color: '#d97706' },
             { id: 'categories', label: 'दौड़ श्रेणियां व दूरी (Categories)' },
             { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी (Route & Schedule)' },
-            { id: 'live-tracker', label: 'लाइव रनर ट्रैकर (Live RFID Course Radar)', isLive: true, color: '#dc2626' },
+            { id: 'live-tracker', label: 'लाइव रनर ट्रैकर (Live Tracker)', isLive: true, color: '#dc2626' },
             { id: 'certificates', label: 'फिनिशर सर्टिफिकेट व सत्यापन (Certificates)', color: 'var(--police-gold-700)' },
             { id: 'pledge-safety', label: 'महिला सुरक्षा संकल्प (Safety Protocol)', color: 'var(--crimson-600)' }
           ].map(tab => {

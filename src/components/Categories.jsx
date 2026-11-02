@@ -17,7 +17,7 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
     <section id="categories" className="section-padding" style={{ position: 'relative', background: '#ffffff' }}>
       <div className="container">
         <div className="section-header">
-          <span className="badge-gold">Official Rajasthan Police Marathon Standard</span>
+          <span className="badge-gold">दौड़ श्रेणियां (Race Categories)</span>
           <h2>रेस कैटेगरीज एवं दूरी (Race Categories)</h2>
           <p>
             अपनी क्षमता अनुसार दूरी चुनें। अनुभवी मैराथन धावकों के लिए RFID टाइमिंग चिप युक्त 21K/10K से लेकर महिलाओं, परिवारों व युवाओं के लिए 5K/2K कम्युनिटी रन।
@@ -130,7 +130,7 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
                   className="btn-navy"
                   style={{ width: '100%', padding: '12px', fontSize: '0.92rem', justifyContent: 'center' }}
                 >
-                  <span>Select & Register</span>
+                  <span>पंजीकरण करें (Register Now)</span>
                   <ArrowRight size={15} />
                 </button>
               </div>
