@@ -148,7 +148,7 @@ export function Navbar({
             {/* Quick Register CTA */}
             <button 
               onClick={onOpenRegister} 
-              className="btn-glass-primary btn-glass-register" 
+              className="btn-primary" 
               style={{ padding: '8px 18px', fontSize: '0.88rem', whiteSpace: 'nowrap' }}
             >
               <UserPlus size={15} /> रजिस्ट्रेशन
@@ -331,7 +331,7 @@ export function Navbar({
 
           <button
             onClick={() => { setMobileMenuOpen(false); onOpenBulkRegister(); }}
-            className="btn-glass-gold"
+            className="btn-gold"
             style={{
               padding: '11px',
               textAlign: 'center',
@@ -393,7 +393,7 @@ export function Navbar({
             width: 40px !important;
             height: 40px !important;
           }
-          .btn-glass-register {
+          .btn-primary {
             padding: 6px 12px !important;
             font-size: 0.8rem !important;
           }

@@ -127,7 +127,7 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
                 </div>
                 <button 
                   onClick={() => onSelectCategory(cat.id)}
-                  className="btn-glass-navy"
+                  className="btn-navy"
                   style={{ width: '100%', padding: '12px', fontSize: '0.92rem', justifyContent: 'center' }}
                 >
                   <span>Select & Register</span>
@@ -166,7 +166,7 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
           </div>
           <button 
             onClick={onOpenBulkRegister}
-            className="btn-glass-gold"
+            className="btn-gold"
             style={{ padding: '12px 24px', fontSize: '0.92rem', whiteSpace: 'nowrap' }}
           >
             बल्क रजिस्ट्रेशन पोर्टल खोलें &rarr;

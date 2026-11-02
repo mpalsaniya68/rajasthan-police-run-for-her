@@ -507,8 +507,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
           margin: 0 auto 34px auto;
           padding: 22px 28px;
           border-radius: 12px;
-          background: rgba(255, 255, 255, 0.96);
-          backdrop-filter: blur(12px);
+          background: #ffffff;
           box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
           border: 2px solid rgba(212, 175, 55, 0.5);
           color: var(--police-navy-950);

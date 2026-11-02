@@ -436,7 +436,7 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
               {/* Submit Button */}
               <button
                 type="submit"
-                className="btn-glass-primary btn-glass-register"
+                className="btn-primary"
                 style={{ width: '100%', padding: '13px', fontSize: '1rem', justifyContent: 'center' }}
               >
                 <CheckCircle2 size={18} /> बैच रजिस्ट्रेशन पूरा करें ({runners.length} बिब तुरंत अलॉट करें)

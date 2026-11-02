@@ -861,7 +861,7 @@ export function RegistrationPage({
               <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '14px' }}>
                 <button
                   onClick={() => window.print()}
-                  className="btn-glass-primary"
+                  className="btn-primary"
                   style={{ padding: '12px 24px', fontSize: '0.94rem' }}
                 >
                   <Printer size={18} /> ई-पास प्रिंट / डाउनलोड करें
@@ -889,7 +889,7 @@ export function RegistrationPage({
 
                 <button
                   onClick={() => onNavigate && onNavigate('live-tracker')}
-                  className="btn-glass-navy"
+                  className="btn-navy"
                   style={{ padding: '12px 24px', fontSize: '0.94rem' }}
                 >
                   लाइव कोर्स ट्रैकर देखें &rarr;
@@ -1172,7 +1172,7 @@ export function RegistrationPage({
                             setIsSuccess(true);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }}
-                          className="btn-glass-primary"
+                          className="btn-primary"
                           style={{ marginTop: '14px', width: '100%', padding: '8px', fontSize: '0.84rem', justifyContent: 'center' }}
                         >
                           ई-पास देखें व प्रिंट करें &rarr;
@@ -1951,7 +1951,7 @@ export function RegistrationPage({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="btn-glass-primary"
+                    className="btn-primary"
                     style={{
                       padding: '16px 36px',
                       fontSize: '1.08rem',
