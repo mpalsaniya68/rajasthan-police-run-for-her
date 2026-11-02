@@ -428,6 +428,10 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
         .hero-section {
           position: relative;
           overflow: hidden;
+          background-image: url('/images/marathon_hero_jaipur.jpg');
+          background-size: cover;
+          background-position: center 25%;
+          background-repeat: no-repeat;
           color: #ffffff;
           border-bottom: 1px solid var(--border-subtle);
           padding-top: 20px;
@@ -448,7 +452,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
         .hero-base-tint {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(5, 17, 38, 0.42) 0%, rgba(10, 28, 61, 0.52) 100%);
+          background: rgba(5, 17, 38, 0.22);
           z-index: 1;
           pointer-events: none;
         }
@@ -459,7 +463,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
           inset: 0;
           z-index: 1;
           pointer-events: none;
-          background: linear-gradient(135deg, rgba(220, 38, 38, 0.52) 0%, rgba(185, 28, 28, 0.42) 50%, rgba(153, 27, 27, 0.35) 100%);
+          background: linear-gradient(135deg, rgba(220, 38, 38, 0.42) 0%, rgba(185, 28, 28, 0.34) 50%, rgba(153, 27, 27, 0.26) 100%);
           clip-path: polygon(0 0, 100% 0, 100% 100%);
         }
 
@@ -468,7 +472,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
           inset: 0;
           z-index: 1;
           pointer-events: none;
-          background: linear-gradient(135deg, rgba(10, 28, 61, 0.65) 0%, rgba(15, 23, 42, 0.55) 50%, rgba(10, 28, 61, 0.68) 100%);
+          background: linear-gradient(135deg, rgba(10, 28, 61, 0.52) 0%, rgba(15, 23, 42, 0.44) 50%, rgba(10, 28, 61, 0.55) 100%);
           clip-path: polygon(0 0, 0 100%, 100% 100%);
         }
 

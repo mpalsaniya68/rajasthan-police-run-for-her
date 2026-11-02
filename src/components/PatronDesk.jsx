@@ -45,26 +45,26 @@ export function PatronDesk({ onOpenRegister, onOpenBulkRegister, onNavigate }) {
               <div style={{
                 position: 'relative',
                 display: 'inline-block',
+                width: '100%',
+                maxWidth: '280px',
+                height: '352px',
                 borderRadius: '16px',
                 padding: '6px',
                 background: 'linear-gradient(135deg, var(--police-gold-500), var(--police-navy-800))',
-                boxShadow: 'var(--shadow-lg)'
+                boxShadow: 'var(--shadow-lg)',
+                overflow: 'hidden'
               }}>
                 <img
                   src="/images/dgp_rajeev_sharma.jpg"
                   alt="DGP Rajeev Sharma, IPS"
+                  loading="eager"
                   style={{
                     width: '100%',
-                    maxWidth: '280px',
                     height: '340px',
                     objectFit: 'cover',
                     objectPosition: 'top center',
                     borderRadius: '12px',
                     display: 'block'
-                  }}
-                  onError={(e) => {
-                    // Fallback placeholder if image not rendered
-                    e.currentTarget.style.display = 'none';
                   }}
                 />
                 <div style={{
@@ -72,15 +72,17 @@ export function PatronDesk({ onOpenRegister, onOpenBulkRegister, onNavigate }) {
                   bottom: '16px',
                   left: '16px',
                   right: '16px',
-                  background: 'rgba(10, 28, 61, 0.92)',
+                  background: 'rgba(10, 28, 61, 0.95)',
                   backdropFilter: 'blur(8px)',
                   color: '#ffffff',
                   padding: '8px 12px',
                   borderRadius: '6px',
-                  border: '1px solid rgba(212, 175, 55, 0.4)'
+                  border: '1px solid rgba(212, 175, 55, 0.5)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                  zIndex: 2
                 }}>
                   <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#fef08a' }}>राजीव शर्मा, भा.पु.से. (IPS)</div>
-                  <div style={{ fontSize: '0.72rem', color: '#e2e8f0' }}>महानिदेशक पुलिस, राजस्थान (DGP)</div>
+                  <div style={{ fontSize: '0.72rem', color: '#e2e8f0', marginTop: '2px' }}>महानिदेशक पुलिस, राजस्थान (DGP)</div>
                 </div>
               </div>
             </div>
