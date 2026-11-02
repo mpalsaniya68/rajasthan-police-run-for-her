@@ -230,8 +230,8 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                   background: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
                   color: '#ffffff',
                   border: '1.5px solid rgba(255, 255, 255, 0.4)',
-                  padding: '14px 30px',
-                  borderRadius: '8px',
+                  padding: '14px 32px',
+                  borderRadius: '50px',
                   fontSize: '1rem',
                   fontWeight: 800,
                   display: 'inline-flex',
@@ -245,7 +245,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                 onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 title="ऑनलाइन पंजीकरण पोर्टल"
               >
-                <span>इंडिविजुअल पंजीकरण (Register Now)</span>
+                <span>रजिस्ट्रेशन (Register Now)</span>
                 <ArrowRight size={18} />
               </button>
 
@@ -255,8 +255,8 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                   background: 'linear-gradient(135deg, #0a1c3d 0%, #152e5a 100%)',
                   color: '#ffffff',
                   border: '1.5px solid var(--police-gold-500)',
-                  padding: '14px 24px',
-                  borderRadius: '8px',
+                  padding: '14px 26px',
+                  borderRadius: '50px',
                   fontSize: '0.95rem',
                   fontWeight: 800,
                   display: 'inline-flex',
@@ -288,8 +288,8 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
                   background: 'linear-gradient(135deg, #881337 0%, #5b0d24 100%)',
                   border: '1.5px solid #f43f5e',
                   color: '#ffffff',
-                  padding: '14px 22px',
-                  borderRadius: '8px',
+                  padding: '14px 24px',
+                  borderRadius: '50px',
                   fontSize: '0.94rem',
                   fontWeight: 800,
                   display: 'inline-flex',
@@ -580,6 +580,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
             padding: 13px 18px !important;
             font-size: 0.94rem !important;
             min-height: 48px !important;
+            border-radius: 50px !important;
           }
 
           /* Compact 4-cell countdown for mobile screens */
