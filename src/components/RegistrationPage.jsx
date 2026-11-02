@@ -36,6 +36,23 @@ export function RegistrationPage({
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [pendingPayload, setPendingPayload] = useState(null);
   const [venueType, setVenueType] = useState(() => (initialDistrict && initialDistrict !== "JPR-COMM" && initialDistrict !== "jaipur_comm") ? "district" : "jaipur");
+
+  const handleSelectVenueType = (type) => {
+    setVenueType(type);
+    if (type === "district") {
+      // Districts only have 10K, 5K, 2K (No 21K in districts)
+      if (category === "21k") {
+        setCategory("10k");
+      }
+      setFormData(prev => ({ ...prev, tshirtSize: "N/A" }));
+    } else {
+      setFormData(prev => ({ ...prev, tshirtSize: prev.tshirtSize === "N/A" ? "M" : prev.tshirtSize }));
+    }
+  };
+
+  const availableCategories = venueType === "district"
+    ? RACE_CATEGORIES.filter(c => c.id === "10k" || c.id === "5k" || c.id === "2k")
+    : RACE_CATEGORIES;
   const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict || "JPR-COMM");
   const [category, setCategory] = useState(initialCategory);
   const [runnerType, setRunnerType] = useState("Citizen Runner");
@@ -541,7 +558,8 @@ export function RegistrationPage({
       // Blood Group & T-shirt in Bib box
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 16px sans-serif";
-      ctx.fillText(`रक्त समूह: ${p.bloodGroup || 'B+'}  |  Size: ${p.tshirtSize || 'M'}`, 190, 425);
+      const eventModeStr = (p.tshirtSize && p.tshirtSize !== 'N/A') ? `Size: ${p.tshirtSize}` : 'कम्युनिटी रन';
+      ctx.fillText(`रक्त समूह: ${p.bloodGroup || 'B+'}  |  ${eventModeStr}`, 190, 425);
 
       // Entry Status
       ctx.fillStyle = "#059669";
@@ -683,7 +701,7 @@ export function RegistrationPage({
       `🎯 *दौड़ श्रेणी:* ${registeredParticipant.categoryName}\n` +
       `📍 *स्थान:* ${registeredParticipant.districtName}\n` +
       `📅 *तारीख:* 3 जनवरी 2027, प्रातः 05:00 बजे रिपोर्टिंग\n` +
-      `👕 *टी-शर्ट साइज़:* Size ${registeredParticipant.tshirtSize}\n` +
+      (registeredParticipant.tshirtSize && registeredParticipant.tshirtSize !== 'N/A' ? `👕 *टी-शर्ट साइज़:* Size ${registeredParticipant.tshirtSize}\n` : '') +
       `🩸 *रक्त समूह:* ${registeredParticipant.bloodGroup || 'B+'}\n` +
       `🆔 *प्रमाण पत्र टोकन:* ${registeredParticipant.certificateId}\n\n` +
       `⚠️ *महत्वपूर्ण:* एक्सपो केंद्र व मैराथन प्रवेश द्वार पर यह बिब नंबर एवं पहचान पत्र दिखाना अनिवार्य है।\n\n` +
@@ -859,10 +877,21 @@ export function RegistrationPage({
                         </div>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>टी-शर्ट साइज़</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-                          Size {registeredParticipant.tshirtSize}
-                        </div>
+                        {registeredParticipant.tshirtSize && registeredParticipant.tshirtSize !== 'N/A' ? (
+                          <>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>टी-शर्ट साइज़</div>
+                            <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
+                              Size {registeredParticipant.tshirtSize}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>इवेंट प्रकार</div>
+                            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
+                              कम्युनिटी रन
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
 
@@ -1454,7 +1483,7 @@ export function RegistrationPage({
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
                     <div
-                      onClick={() => setVenueType("jaipur")}
+                      onClick={() => handleSelectVenueType("jaipur")}
                       style={{
                         padding: '14px',
                         borderRadius: '10px',
@@ -1471,7 +1500,7 @@ export function RegistrationPage({
                         type="radio"
                         name="venueType"
                         checked={venueType === "jaipur"}
-                        onChange={() => setVenueType("jaipur")}
+                        onChange={() => handleSelectVenueType("jaipur")}
                         style={{ cursor: 'pointer' }}
                       />
                       <div>
@@ -1485,7 +1514,7 @@ export function RegistrationPage({
                     </div>
 
                     <div
-                      onClick={() => setVenueType("district")}
+                      onClick={() => handleSelectVenueType("district")}
                       style={{
                         padding: '14px',
                         borderRadius: '10px',
@@ -1502,7 +1531,7 @@ export function RegistrationPage({
                         type="radio"
                         name="venueType"
                         checked={venueType === "district"}
-                        onChange={() => setVenueType("district")}
+                        onChange={() => handleSelectVenueType("district")}
                         style={{ cursor: 'pointer' }}
                       />
                       <div>
@@ -1543,7 +1572,7 @@ export function RegistrationPage({
                     दौड़ श्रेणी चुनें (Select Race Distance):
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-                    {RACE_CATEGORIES.map(cat => {
+                    {availableCategories.map(cat => {
                       const isSelected = category === cat.id;
                       return (
                         <div
@@ -1973,23 +2002,25 @@ export function RegistrationPage({
                     </select>
                   </div>
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      टी-शर्ट साइज़ (Official Dry-Fit Tee) <span style={{ color: '#ef4444' }}>*</span>:
-                    </label>
-                    <select
-                      value={formData.tshirtSize}
-                      onChange={(e) => setFormData({ ...formData, tshirtSize: e.target.value })}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
-                    >
-                      <option value="XS">XS (Chest 34")</option>
-                      <option value="S">S (Chest 36")</option>
-                      <option value="M">M (Chest 38" - Standard)</option>
-                      <option value="L">L (Chest 40")</option>
-                      <option value="XL">XL (Chest 42")</option>
-                      <option value="XXL">XXL (Chest 44")</option>
-                    </select>
-                  </div>
+                  {venueType === "jaipur" && (
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                        टी-शर्ट साइज़ (Official Dry-Fit Tee) <span style={{ color: '#ef4444' }}>*</span>:
+                      </label>
+                      <select
+                        value={formData.tshirtSize}
+                        onChange={(e) => setFormData({ ...formData, tshirtSize: e.target.value })}
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
+                      >
+                        <option value="XS">XS (Chest 34")</option>
+                        <option value="S">S (Chest 36")</option>
+                        <option value="M">M (Chest 38" - Standard)</option>
+                        <option value="L">L (Chest 40")</option>
+                        <option value="XL">XL (Chest 42")</option>
+                        <option value="XXL">XXL (Chest 44")</option>
+                      </select>
+                    </div>
+                  )}
                 </div>
               </div>
 

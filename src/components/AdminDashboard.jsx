@@ -1230,7 +1230,7 @@ export function AdminDashboard({
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{row.districtName}</div>
                     </td>
                     <td style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-                      {row.tshirtSize}
+                      {row.tshirtSize && row.tshirtSize !== 'N/A' ? row.tshirtSize : <span style={{ color: '#94a3b8', fontSize: '0.78rem' }}>N/A (कम्युनिटी)</span>}
                     </td>
                     <td style={{ padding: '10px 12px' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
