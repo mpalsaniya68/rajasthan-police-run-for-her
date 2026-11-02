@@ -4,7 +4,7 @@ import React from 'react';
 export function PoliceEmblem({ size = 56, className = "" }) {
   return (
     <img 
-      src="/rajasthan-police-logo.png" 
+      src="/rajasthan-police-logo.png?v=2" 
       alt="Official Rajasthan Police Crest" 
       width={size} 
       height={size}
@@ -98,7 +98,7 @@ export function OfficialGoldSeal({ size = 80 }) {
   return (
     <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
       <img 
-        src="/rajasthan-police-logo.png" 
+        src="/rajasthan-police-logo.png?v=2" 
         alt="Rajasthan Police Seal" 
         style={{
           width: `${size}px`,
