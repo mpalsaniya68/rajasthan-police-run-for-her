@@ -23,7 +23,7 @@ import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS, INITIAL_REGISTRATIONS } fr
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
 import confetti from 'canvas-confetti';
 import QRCode from 'qrcode';
-import { apiRegister, apiTrackRunner } from '../services/api';
+import { apiRegister, apiTrackRunner, apiSendOtp, apiVerifyOtp } from '../services/api';
 import { GovPaymentModal } from './GovPaymentModal';
 
 const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
@@ -103,6 +103,7 @@ export function RegistrationPage({
   const [otpTimer, setOtpTimer] = useState(0);
   const [otpError, setOtpError] = useState('');
   const [otpToast, setOtpToast] = useState(null);
+  const [otpVerificationToken, setOtpVerificationToken] = useState('');
 
   // Tab State: "register" (New Registration) or "find" (Find/Re-print Existing E-Pass)
   const [activeTab, setActiveTab] = useState("register");
@@ -265,37 +266,78 @@ export function RegistrationPage({
     return () => clearInterval(timerInterval);
   }, [otpTimer]);
 
-  const handleSendOtp = () => {
+  const handleSendOtp = async () => {
     const clean = formData.mobile.replace(/\D/g, "");
     if (!/^[6-9]\d{9}$/.test(clean)) {
       alert("कृपया पहले 10-अंकीय वैध भारतीय मोबाइल नंबर दर्ज करें (6, 7, 8 या 9 से शुरू)।");
       return;
     }
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    setServerOtp(code);
-    setOtpSent(true);
-    setOtpTimer(45);
     setOtpError('');
-    setEnteredOtp('');
-    setOtpToast({
-      mobile: clean,
-      otp: code
-    });
+    setOtpTimer(45);
+    setOtpSent(true);
+
+    try {
+      const res = await apiSendOtp(clean);
+      if (res && res.success) {
+        setServerOtp(res.code || '');
+        setEnteredOtp('');
+        setOtpToast({
+          mobile: clean,
+          otp: res.code || '123456'
+        });
+      } else {
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        setServerOtp(code);
+        setOtpToast({ mobile: clean, otp: code });
+        if (res?.error) {
+          setOtpError(res.error);
+        }
+      }
+    } catch (err) {
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      setServerOtp(code);
+      setOtpToast({ mobile: clean, otp: code });
+    }
   };
 
-  const handleVerifyOtp = () => {
+  const handleVerifyOtp = async () => {
     if (!enteredOtp || enteredOtp.trim().length !== 6) {
       setOtpError("कृपया 6-अंकों का पूरा ओटीपी दर्ज करें।");
       return;
     }
-    if (enteredOtp.trim() === serverOtp || enteredOtp.trim() === '123456') {
-      setIsMobileVerified(true);
-      setOtpSent(false);
-      setOtpError('');
-      setOtpToast(null);
-    } else {
-      setOtpError("❌ अमान्य ओटीपी! कृपया सही 6-अंकों का सुरक्षा कोड दर्ज करें।");
+
+    try {
+      const clean = formData.mobile.replace(/\D/g, "");
+      const res = await apiVerifyOtp(clean, enteredOtp.trim());
+      if (res && res.success) {
+        setIsMobileVerified(true);
+        if (res.verificationToken) {
+          setOtpVerificationToken(res.verificationToken);
+        }
+        setOtpSent(false);
+        setOtpError('');
+        setOtpToast(null);
+        return;
+      } else {
+        if (enteredOtp.trim() === serverOtp || enteredOtp.trim() === '123456') {
+          setIsMobileVerified(true);
+          setOtpSent(false);
+          setOtpError('');
+          setOtpToast(null);
+          return;
+        }
+        setOtpError(res?.error || "❌ अमान्य ओटीपी! कृपया सही 6-अंकों का सुरक्षा कोड दर्ज करें।");
+      }
+    } catch (err) {
+      if (enteredOtp.trim() === serverOtp || enteredOtp.trim() === '123456') {
+        setIsMobileVerified(true);
+        setOtpSent(false);
+        setOtpError('');
+        setOtpToast(null);
+      } else {
+        setOtpError("❌ अमान्य ओटीपी! कृपया सही 6-अंकों का सुरक्षा कोड दर्ज करें।");
+      }
     }
   };
 
@@ -381,7 +423,9 @@ export function RegistrationPage({
       idNumber: cleanId,
       idLast4: cleanId.slice(-4),
       cleanId: cleanId,
-      cleanEmergency: cleanEmergency
+      cleanEmergency: cleanEmergency,
+      otpVerificationToken: otpVerificationToken || undefined,
+      botTrap: formData.botTrap || ""
     };
 
     setPendingPayload(payload);
@@ -1467,6 +1511,8 @@ export function RegistrationPage({
             )}
 
             <form onSubmit={handleSubmit} style={{ padding: 'clamp(20px, 3.5vw, 36px)' }}>
+              {/* Anti-Bot Invisible Honeypot Field */}
+              <input type="text" name="botTrap" value={formData.botTrap || ""} onChange={(e) => setFormData(prev => ({ ...prev, botTrap: e.target.value }))} style={{ display: 'none', position: 'absolute', left: '-9999px', opacity: 0 }} tabIndex={-1} autoComplete="off" />
 
               {/* SECTION 1: दौड़ श्रेणी एवं स्थान चयन (CATEGORY & VENUE) */}
               <div style={{ marginBottom: '32px' }}>

@@ -1,9 +1,46 @@
 /**
- * Rajasthan Police Marathon 2026 - Centralized Frontend API Service
- * Handles registration, live tracking, certificate verification, and admin portal.
+ * Rajasthan Police Marathon 2027 - Centralized Frontend API Service
+ * Handles registration, live tracking, certificate verification, OTP, and admin portal.
  */
 
 const API_BASE = "/api";
+
+function getAdminAuthHeaders() {
+  const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
+  const headers = { "Content-Type": "application/json" };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+export async function apiSendOtp(mobile) {
+  try {
+    const res = await fetch(`${API_BASE}/otp/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mobile })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiSendOtp error:", err);
+    return { success: false, error: "OTP सर्वर से कनेक्ट नहीं हो सका।" };
+  }
+}
+
+export async function apiVerifyOtp(mobile, otp) {
+  try {
+    const res = await fetch(`${API_BASE}/otp/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mobile, otp })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiVerifyOtp error:", err);
+    return { success: false, error: "OTP सत्यापन में त्रुटि हुई।" };
+  }
+}
 
 export async function apiRegister(payload) {
   try {
@@ -99,7 +136,9 @@ export async function apiAdminLogin(username, password) {
 export async function apiGetAdminParticipants(filters = {}) {
   try {
     const params = new URLSearchParams(filters);
-    const res = await fetch(`${API_BASE}/admin/participants?${params.toString()}`);
+    const res = await fetch(`${API_BASE}/admin/participants?${params.toString()}`, {
+      headers: getAdminAuthHeaders()
+    });
     return await res.json();
   } catch (err) {
     console.error("apiGetAdminParticipants error:", err);
@@ -108,9 +147,12 @@ export async function apiGetAdminParticipants(filters = {}) {
 }
 
 export function apiGetExportUrl(district = "") {
-  return district && district !== "all" && district !== "ALL"
-    ? `${API_BASE}/admin/export?district=${encodeURIComponent(district)}`
-    : `${API_BASE}/admin/export`;
+  const token = typeof sessionStorage !== "undefined" ? (sessionStorage.getItem("rajpol_admin_token") || "") : "";
+  const tokenParam = token ? `token=${encodeURIComponent(token)}` : "";
+  if (district && district !== "all" && district !== "ALL") {
+    return `${API_BASE}/admin/export?district=${encodeURIComponent(district)}${tokenParam ? `&${tokenParam}` : ""}`;
+  }
+  return tokenParam ? `${API_BASE}/admin/export?${tokenParam}` : `${API_BASE}/admin/export`;
 }
 
 export async function apiGetAdminStats(district = "") {
@@ -118,7 +160,9 @@ export async function apiGetAdminStats(district = "") {
     const url = district && district !== "all" && district !== "ALL"
       ? `${API_BASE}/admin/stats?district=${encodeURIComponent(district)}`
       : `${API_BASE}/admin/stats`;
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      headers: getAdminAuthHeaders()
+    });
     return await res.json();
   } catch (err) {
     console.error("apiGetAdminStats error:", err);
@@ -130,7 +174,7 @@ export async function apiDistributeKit(payload) {
   try {
     const res = await fetch(`${API_BASE}/admin/kit-distribution`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getAdminAuthHeaders(),
       body: JSON.stringify(payload)
     });
     return await res.json();

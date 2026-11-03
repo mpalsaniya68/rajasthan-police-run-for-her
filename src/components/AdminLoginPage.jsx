@@ -23,12 +23,12 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
     setErrorMessage('');
     if (type === 'phq') {
       setUsername('phq_admin');
-      setPassword('RajPol@PHQ#2026');
+      setPassword('');
     } else {
       const dist = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selectedDistrictId) || RAJASTHAN_POLICE_DISTRICTS[0];
       const cleanId = (dist.id || 'dist').toLowerCase().replace(/-/g, '_');
       setUsername(`sp_${cleanId}`);
-      setPassword(`SP#${dist.name.split(' ')[0]}@2026`);
+      setPassword('');
     }
   };
 
@@ -40,7 +40,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
     if (dist) {
       const cleanId = dist.id.toLowerCase().replace(/-/g, '_');
       setUsername(`sp_${cleanId}`);
-      setPassword(`SP#${dist.name.split(' ')[0]}@2026`);
+      setPassword('');
     }
   };
 
@@ -74,9 +74,9 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
         const rawPass = password.trim();
         const isKnownPhq = (rawUser === 'phq_admin' || rawUser === 'rajpolice') && 
           (rawPass === 'RajPol@PHQ#2027' || rawPass === 'RajPol#2027' || rawPass === 'RajPol@2027' ||
-           rawPass === 'RajPol@PHQ#2026' || rawPass === 'RajPol#2026' || rawPass === 'admin123' || rawPass === 'admin');
+           rawPass === 'RajPol@PHQ#2026' || rawPass === 'RajPol#2026');
         const isKnownSp = rawUser.startsWith('sp_') && 
-          (rawPass.toLowerCase().includes('2027') || rawPass.toLowerCase().includes('2026') || rawPass === 'sp123');
+          (rawPass.toLowerCase().includes('2027') || rawPass.toLowerCase().includes('2026'));
 
         if (isKnownPhq || isKnownSp || res?.error === 'एडमिन लॉगिन विफल।') {
           handleFallbackAuth();

@@ -9,6 +9,11 @@ import {
   generateCertificateId,
   generateSecureQrToken,
   verifyPassword,
+  createAdminToken,
+  verifyAdminToken,
+  otpManager,
+  otpRequestLimiter,
+  verifyOtpVerificationToken,
   registrationLimiter,
   adminLoginLimiter,
   sanitizeCsvCell
@@ -79,6 +84,23 @@ const DISTRICT_NAMES = {
  * Main Centralized API Router
  * Dispatches requests from both Vite Dev Server and Vercel Serverless Function
  */
+
+/**
+ * Helper to extract and cryptographically verify Admin Token from Authorization Header or ?token=
+ */
+function extractAdminUser(req, parsedUrl) {
+  const authHeader = req.headers["authorization"] || req.headers["Authorization"];
+  let token = null;
+  if (authHeader && authHeader.toLowerCase().startsWith("bearer ")) {
+    token = authHeader.slice(7).trim();
+  }
+  if (!token) {
+    token = parsedUrl.searchParams.get("token");
+  }
+  if (!token) return null;
+  return verifyAdminToken(token);
+}
+
 export async function handleApiRequest(req, res) {
   // Extract URL and path
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
@@ -121,6 +143,60 @@ export async function handleApiRequest(req, res) {
       });
     }
 
+    
+    // 1b. Mobile Security OTP Dispatch (SMS / Verification)
+    if (pathname === "/otp/send" && method === "POST") {
+      if (otpRequestLimiter.isRateLimited(clientIp)) {
+        return error("अत्यधिक OTP अनुरोध। कृपया 1 मिनट बाद पुनः प्रयास करें (Rate limit exceeded)।", 429);
+      }
+      const body = await parseJsonBody(req);
+      const mobile = (body.mobile || "").replace(/\D/g, "");
+      if (!/^[6-9]\d{9}$/.test(mobile)) {
+        return error("कृपया वैध 10-अंकीय भारतीय मोबाइल नंबर दर्ज करें (6, 7, 8 या 9 से शुरू)।", 422);
+      }
+
+      const result = otpManager.sendOtp(mobile);
+      if (!result.success) {
+        return error(result.message, 429);
+      }
+
+      try {
+        await db.execute({
+          sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+          args: ["CITIZEN", "SEND_OTP", `Mobile: ${maskMobile(mobile)}`, clientIp, new Date().toISOString()]
+        });
+      } catch (e) {}
+
+      return json({
+        success: true,
+        message: "सुरक्षा OTP सफलतापूर्वक भेजा गया।",
+        expiresIn: result.expiresIn,
+        code: result.code // Provided for instant demo verification & SMS dispatch
+      });
+    }
+
+    // 1c. Mobile Security OTP Verification
+    if (pathname === "/otp/verify" && method === "POST") {
+      const body = await parseJsonBody(req);
+      const mobile = (body.mobile || "").replace(/\D/g, "");
+      const otp = (body.otp || "").trim();
+
+      if (!mobile || !otp) {
+        return error("मोबाइल नंबर एवं OTP दोनों दर्ज करना आवश्यक है।", 400);
+      }
+
+      const result = otpManager.verifyOtp(mobile, otp);
+      if (!result.success) {
+        return error(result.message, 400);
+      }
+
+      return json({
+        success: true,
+        message: "मोबाइल नंबर सफलतापूर्वक सत्यापित हुआ।",
+        verificationToken: result.verificationToken
+      });
+    }
+
     // 2. Individual Runner Registration
     if (pathname === "/register" && method === "POST") {
       if (registrationLimiter.isRateLimited(clientIp)) {
@@ -135,6 +211,19 @@ export async function handleApiRequest(req, res) {
       }
 
       const data = parsed.data;
+
+      // Anti-Bot Honeypot Trap
+      if (data.botTrap && data.botTrap.trim().length > 0) {
+        return error("सुरक्षा चेतावनी: बॉट गतिविधि दर्ज की गई (Bot Detected)।", 400);
+      }
+
+      // Cryptographic OTP verification token check
+      if (data.otpVerificationToken) {
+        const isValidToken = verifyOtpVerificationToken(data.otpVerificationToken, data.mobile);
+        if (!isValidToken) {
+          return error("मोबाइल सत्यापन अमान्य अथवा समाप्त हो चुका है। कृपया पुनः OTP सत्यापित करें।", 403);
+        }
+      }
 
       // Check if mobile already registered in this category
       const existing = await db.execute({
@@ -163,7 +252,8 @@ export async function handleApiRequest(req, res) {
       const maskedId = maskIdNumber(data.idType, data.idNumber);
       const maskedMob = maskMobile(data.mobile);
 
-            const feeAmount = data.feeAmount || CATEGORY_FEES[data.categoryId] || 199;
+            // Server-side strict fee calculation (Tamper-proof)
+      const feeAmount = CATEGORY_FEES[data.categoryId] || 199;
       const orderId = data.orderId || `ORD2027-${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
       const transactionId = data.transactionId || `TXN-RAJPOL-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
       const paymentMethod = data.paymentMethod || "UPI_QR";
@@ -626,7 +716,8 @@ export async function handleApiRequest(req, res) {
         return error("अमान्य क्रेडेंशियल्स! कृपया सही अधिकृत पुलिस आईडी और पासवर्ड दर्ज करें।", 401);
       }
 
-      const token = `RAJPOL_AUTH_${crypto.randomBytes(24).toString("hex")}`;
+      // Cryptographic HMAC token signed with APP_SECRET and 24h expiration
+      const token = createAdminToken(authenticatedUser);
 
       // Audit Log
       try {
@@ -645,9 +736,19 @@ export async function handleApiRequest(req, res) {
 
     // 8. Admin Participants Query (Paginated & Filterable by Role / District)
     if (pathname === "/admin/participants" && method === "GET") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)। कृपया अधिकृत पुलिस एडमिन आईडी से लॉगिन करें।", 401);
+      }
+
       const q = parsedUrl.searchParams.get("q") || "";
       const category = parsedUrl.searchParams.get("category") || "";
-      const district = parsedUrl.searchParams.get("district") || "";
+      let district = parsedUrl.searchParams.get("district") || "";
+
+      // RBAC Enforcement: District SP can strictly ONLY query their assigned district
+      if (adminUser.role === "DISTRICT") {
+        district = adminUser.districtId;
+      }
       const limit = Math.min(Number(parsedUrl.searchParams.get("limit")) || 50, 500);
       const offset = Number(parsedUrl.searchParams.get("offset")) || 0;
 
@@ -673,7 +774,7 @@ export async function handleApiRequest(req, res) {
       const dataSql = `SELECT * FROM participants ${whereClause} ORDER BY created_at DESC LIMIT ? OFFSET ?;`;
       const dataRes = await db.execute({ sql: dataSql, args: [...args, limit, offset] });
 
-      const requesterRole = (parsedUrl.searchParams.get("role") || "").toUpperCase();
+      const requesterRole = adminUser.role;
       // Sensitive PII protection: raw unmasked ID is ONLY disclosed to PHQ State Command
       const safeParticipants = dataRes.rows.map(row => {
         if (requesterRole !== "PHQ") {
@@ -694,7 +795,16 @@ export async function handleApiRequest(req, res) {
 
     // 9. Admin CSV Export (Safe from Excel Formula Injection, Supports District Scope)
     if (pathname === "/admin/export" && method === "GET") {
-      const district = parsedUrl.searchParams.get("district") || "";
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)। डेटा डाउनलोड करने हेतु अधिकृत एडमिन लॉगिन आवश्यक है।", 401);
+      }
+
+      let district = parsedUrl.searchParams.get("district") || "";
+      // RBAC Enforcement: District SP can strictly ONLY export their assigned district
+      if (adminUser.role === "DISTRICT") {
+        district = adminUser.districtId;
+      }
       let whereClause = "";
       const args = [];
 
@@ -743,7 +853,16 @@ export async function handleApiRequest(req, res) {
 
     // 10. Admin Live Statistics (Total, Kits Handed Out, Medical Alerts - Supports District Filter)
     if (pathname === "/admin/stats" && method === "GET") {
-      const district = parsedUrl.searchParams.get("district") || "";
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+
+      let district = parsedUrl.searchParams.get("district") || "";
+      // RBAC Enforcement
+      if (adminUser.role === "DISTRICT") {
+        district = adminUser.districtId;
+      }
       let whereClause = "";
       const args = [];
 
@@ -778,6 +897,11 @@ export async function handleApiRequest(req, res) {
 
     // 11. Expo Desk: RFID Kit & Bib Allotment Counter
     if (pathname === "/admin/kit-distribution" && method === "POST") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)। किट वितरण हेतु अधिकृत लॉगिन आवश्यक है।", 401);
+      }
+
       const body = await parseJsonBody(req);
       const runnerIdentifier = (body.bibNumber || body.query || "").trim();
       const rfidTag = (body.rfidTagId || "").trim();
