@@ -26,6 +26,8 @@ import QRCode from 'qrcode';
 import { apiRegister, apiTrackRunner } from '../services/api';
 import { GovPaymentModal } from './GovPaymentModal';
 
+const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
+
 export function RegistrationPage({
   initialCategory = "21k",
   initialDistrict = "JPR-COMM",
@@ -45,6 +47,9 @@ export function RegistrationPage({
         setCategory("10k");
       }
       setFormData(prev => ({ ...prev, tshirtSize: "N/A" }));
+      if (!selectedDistrict || selectedDistrict === "JPR-COMM" || selectedDistrict === "jaipur_comm") {
+        setSelectedDistrict(OTHER_DISTRICTS[0]?.id || "JDH-COMM");
+      }
     } else {
       setFormData(prev => ({ ...prev, tshirtSize: prev.tshirtSize === "N/A" ? "M" : prev.tshirtSize }));
     }
@@ -53,7 +58,12 @@ export function RegistrationPage({
   const availableCategories = venueType === "district"
     ? RACE_CATEGORIES.filter(c => c.id === "10k" || c.id === "5k" || c.id === "2k")
     : RACE_CATEGORIES;
-  const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict || "JPR-COMM");
+  const [selectedDistrict, setSelectedDistrict] = useState(() => {
+    if (initialDistrict && initialDistrict !== "JPR-COMM" && initialDistrict !== "jaipur_comm") {
+      return initialDistrict;
+    }
+    return OTHER_DISTRICTS[0]?.id || "JDH-COMM";
+  });
   const [category, setCategory] = useState(initialCategory);
   const [runnerType, setRunnerType] = useState("Citizen Runner");
 
@@ -220,7 +230,9 @@ export function RegistrationPage({
   }, [isSuccess, registeredParticipant]);
 
   const currentCatObj = RACE_CATEGORIES.find(c => c.id === category) || RACE_CATEGORIES[0];
-  const currentDistrictObj = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selectedDistrict) || RAJASTHAN_POLICE_DISTRICTS[0];
+  const currentDistrictObj = venueType === "jaipur"
+    ? (RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === "JPR-COMM") || RAJASTHAN_POLICE_DISTRICTS[0])
+    : (OTHER_DISTRICTS.find(d => d.id === selectedDistrict) || OTHER_DISTRICTS[0] || RAJASTHAN_POLICE_DISTRICTS[0]);
 
   const handleConditionToggle = (label) => {
     setFormData(prev => {
@@ -347,7 +359,7 @@ export function RegistrationPage({
     setIsSubmitting(true);
 
     const calculatedDob = formData.dob || `${2026 - (parseInt(formData.age) || 25)}-01-01`;
-    const selectedDistId = venueType === "jaipur" ? "jaipur_comm" : (selectedDistrict || "jaipur_comm").toLowerCase().replace(/-/g, '_');
+    const selectedDistId = venueType === "jaipur" ? "jaipur_comm" : (selectedDistrict || OTHER_DISTRICTS[0]?.id || "jdh_comm").toLowerCase().replace(/-/g, '_');
     const medicalCondSummary = formData.hasMedicalIssue ? formData.medicalConditions.join(", ") : "None / Fully Fit";
 
     const payload = {
@@ -1536,7 +1548,7 @@ export function RegistrationPage({
                       />
                       <div>
                         <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          🚩 अन्य जिला पुलिस लाइन ({RAJASTHAN_POLICE_DISTRICTS.length} जिले)
+                          🚩 अन्य जिला पुलिस लाइन ({OTHER_DISTRICTS.length} जिले)
                         </div>
                         <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                           अपने स्थानीय ज़िला मुख्यालय / पुलिस लाइन में एक साथ रन
@@ -1556,7 +1568,7 @@ export function RegistrationPage({
                         className="form-control"
                         style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                       >
-                        {RAJASTHAN_POLICE_DISTRICTS.map(d => (
+                        {OTHER_DISTRICTS.map(d => (
                           <option key={d.id} value={d.id}>
                             {d.name} • {d.zone} ज़ोन ({d.flagOffVenue})
                           </option>
