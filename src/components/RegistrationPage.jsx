@@ -1769,8 +1769,8 @@ export function RegistrationPage({
                       onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     >
-                      <option value="Female">महिला (Female) - Run for Her Lead</option>
-                      <option value="Male">पुरुष (Male) - He for She Ally</option>
+                      <option value="Female">महिला (Female)</option>
+                      <option value="Male">पुरुष (Male)</option>
                       <option value="Other">अन्य (Other)</option>
                     </select>
                   </div>
@@ -2025,16 +2025,16 @@ export function RegistrationPage({
                       onChange={(e) => setFormData({ ...formData, idType: e.target.value, idNumber: "" })}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     >
-                      <option value="Aadhaar">आधार कार्ड (Aadhaar Card - 12 अंकीय)</option>
-                      <option value="PAN">पैन कार्ड (PAN Card - 10 अंकीय)</option>
-                      <option value="Voter ID">मतदाता पहचान पत्र (Voter ID / EPIC)</option>
+                      <option value="Aadhaar">आधार कार्ड (Aadhaar Card)</option>
+                      <option value="PAN">पैन कार्ड (PAN Card)</option>
+                      <option value="Voter ID">मतदाता पहचान पत्र (Voter ID)</option>
                     </select>
                   </div>
 
                   {/* Photo ID Number */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      {formData.idType === "Aadhaar" ? "12-अंकीय आधार कार्ड संख्या" : formData.idType === "PAN" ? "10-अक्षरीय पैन संख्या (उदा. ABCDE1234F)" : "मतदाता पहचान पत्र संख्या"} <span style={{ color: '#ef4444' }}>*</span>:
+                      {formData.idType === "Aadhaar" ? "आधार कार्ड संख्या" : formData.idType === "PAN" ? "पैन कार्ड संख्या" : "मतदाता पहचान पत्र संख्या"} <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <input
                       type="text"
@@ -2085,7 +2085,7 @@ export function RegistrationPage({
                       >
                         <option value="XS">XS (Chest 34")</option>
                         <option value="S">S (Chest 36")</option>
-                        <option value="M">M (Chest 38" - Standard)</option>
+                        <option value="M">M (Chest 38")</option>
                         <option value="L">L (Chest 40")</option>
                         <option value="XL">XL (Chest 42")</option>
                         <option value="XXL">XXL (Chest 44")</option>
