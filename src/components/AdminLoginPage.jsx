@@ -69,74 +69,15 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
           onLoginSuccess(res.user);
         }
       } else {
-        // If server failed (e.g. Vercel serverless network/cold-start issue) or invalid credentials
-        const rawUser = username.trim().toLowerCase();
-        const rawPass = password.trim();
-        const isKnownPhq = (rawUser === 'phq_admin' || rawUser === 'rajpolice') && 
-          (rawPass === 'RajPol@PHQ#2027' || rawPass === 'RajPol#2027' || rawPass === 'RajPol@2027' ||
-           rawPass === 'RajPol@PHQ#2026' || rawPass === 'RajPol#2026');
-        const isKnownSp = rawUser.startsWith('sp_') && 
-          (rawPass.toLowerCase().includes('2027') || rawPass.toLowerCase().includes('2026'));
-
-        if (isKnownPhq || isKnownSp || res?.error === 'एडमिन लॉगिन विफल।') {
-          handleFallbackAuth();
-        } else {
-          setAttempts(prev => prev + 1);
-          const errMsg = res?.error || 'अमान्य क्रेडेंशियल्स! कृपया सही अधिकृत पुलिस आईडी और पासवर्ड दर्ज करें।';
-          setErrorMessage(errMsg);
-        }
+        setAttempts(prev => prev + 1);
+        const errMsg = res?.error || 'अमान्य क्रेडेंशियल्स! कृपया सही अधिकृत पुलिस आईडी और पासवर्ड दर्ज करें।';
+        setErrorMessage(errMsg);
       }
     } catch (err) {
       setIsLoading(false);
       console.error('Login error:', err);
-      handleFallbackAuth();
+      setErrorMessage('सर्वर से कनेक्ट करने में असमर्थ। कृपया पुनः प्रयास करें।');
     }
-  };
-
-  // Resilient fallback authentication for offline or static deployments
-  const handleFallbackAuth = () => {
-    const rawUser = username.trim().toLowerCase();
-    const rawPass = password.trim();
-
-    if ((rawUser === 'phq_admin' || rawUser === 'rajpolice') && 
-        (rawPass === 'RajPol@PHQ#2027' || rawPass === 'RajPol#2027' || rawPass === 'RajPol@2027' ||
-         rawPass === 'RajPol@PHQ#2026' || rawPass === 'RajPol#2026' || rawPass === 'RajPol@2026' ||
-         rawPass === 'admin123' || rawPass === 'admin')) {
-      const phqUser = {
-        id: 'phq-01',
-        username: 'phq_admin',
-        role: 'PHQ',
-        districtId: 'ALL',
-        districtName: 'समस्त राजस्थान (PHQ)',
-        fullName: 'राज्य पुलिस मुख्यालय कमान अधिकारी (PHQ)'
-      };
-      sessionStorage.setItem('rajpol_admin_auth', 'true');
-      sessionStorage.setItem('rajpol_admin_user', JSON.stringify(phqUser));
-      if (onLoginSuccess) onLoginSuccess(phqUser);
-      return;
-    }
-
-    if (rawUser.startsWith('sp_')) {
-      const dist = RAJASTHAN_POLICE_DISTRICTS.find(d => 
-        rawUser.includes(d.id.toLowerCase().replace(/-/g, '_')) ||
-        rawUser.includes(d.name.toLowerCase().split(' ')[0])
-      ) || RAJASTHAN_POLICE_DISTRICTS[0];
-
-      const spUser = {
-        id: `sp-${dist.id}`,
-        username: rawUser,
-        role: 'DISTRICT',
-        districtId: dist.id,
-        districtName: dist.name,
-        fullName: `पुलिस अधीक्षक (${dist.name.split(' ')[0]})`
-      };
-      sessionStorage.setItem('rajpol_admin_auth', 'true');
-      sessionStorage.setItem('rajpol_admin_user', JSON.stringify(spUser));
-      if (onLoginSuccess) onLoginSuccess(spUser);
-      return;
-    }
-
-    setErrorMessage('अमान्य आईडी अथवा पासवर्ड। कृपया पुनः जांचें।');
   };
 
   return (

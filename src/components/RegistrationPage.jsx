@@ -282,22 +282,19 @@ export function RegistrationPage({
       if (res && res.success) {
         setServerOtp(res.code || '');
         setEnteredOtp('');
-        setOtpToast({
-          mobile: clean,
-          otp: res.code || '123456'
-        });
-      } else {
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        setServerOtp(code);
-        setOtpToast({ mobile: clean, otp: code });
-        if (res?.error) {
-          setOtpError(res.error);
+        if (res.code) {
+          setOtpToast({
+            mobile: clean,
+            otp: res.code
+          });
         }
+      } else {
+        setOtpError(res?.error || "OTP भेजने में असमर्थ। कृपया कुछ समय बाद पुनः प्रयास करें।");
+        setOtpSent(false);
       }
     } catch (err) {
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      setServerOtp(code);
-      setOtpToast({ mobile: clean, otp: code });
+      setOtpError("सर्वर कनेक्शन विफल। कृपया पुनः प्रयास करें।");
+      setOtpSent(false);
     }
   };
 
@@ -319,25 +316,10 @@ export function RegistrationPage({
         setOtpError('');
         setOtpToast(null);
         return;
-      } else {
-        if (enteredOtp.trim() === serverOtp || enteredOtp.trim() === '123456') {
-          setIsMobileVerified(true);
-          setOtpSent(false);
-          setOtpError('');
-          setOtpToast(null);
-          return;
-        }
-        setOtpError(res?.error || "❌ अमान्य ओटीपी! कृपया सही 6-अंकों का सुरक्षा कोड दर्ज करें।");
+        setOtpError(res?.error || "अमान्य ओटीपी कोड! कृपया सही 6-अंकों का सुरक्षा कोड दर्ज करें।");
       }
     } catch (err) {
-      if (enteredOtp.trim() === serverOtp || enteredOtp.trim() === '123456') {
-        setIsMobileVerified(true);
-        setOtpSent(false);
-        setOtpError('');
-        setOtpToast(null);
-      } else {
-        setOtpError("❌ अमान्य ओटीपी! कृपया सही 6-अंकों का सुरक्षा कोड दर्ज करें।");
-      }
+      setOtpError("ओटीपी सत्यापन में त्रुटि हुई। कृपया पुनः प्रयास करें।");
     }
   };
 

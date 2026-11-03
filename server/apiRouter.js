@@ -17,6 +17,7 @@ import {
   verifyOtpVerificationToken,
   registrationLimiter,
   adminLoginLimiter,
+  dispatchLimiter,
   sanitizeCsvCell
 } from "./security.js";
 import { sendRegistrationNotification, sendCertificateNotification } from "./notifications.js";
@@ -107,7 +108,8 @@ export async function handleApiRequest(req, res) {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = parsedUrl.pathname.replace(/^\/api/, "") || "/";
   const method = req.method.toUpperCase();
-  const clientIp = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "127.0.0.1";
+  const rawIp = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "127.0.0.1";
+  const clientIp = (typeof rawIp === "string" ? rawIp.split(",")[0].trim() : "127.0.0.1").replace(/[^0-9a-fA-F:.]/g, "");
 
   // Helper response functions
   const json = (data, status = 200) => {
@@ -115,7 +117,7 @@ export async function handleApiRequest(req, res) {
       "Content-Type": "application/json; charset=utf-8",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Timing-Key"
     });
     res.end(JSON.stringify(data));
   };
@@ -127,20 +129,28 @@ export async function handleApiRequest(req, res) {
     res.writeHead(204, {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Timing-Key"
     });
     return res.end();
   }
 
   try {
     // 1. Health & Status Check
-    if (pathname === "/health" || pathname === "/" && method === "GET") {
-      const countRes = await db.execute("SELECT count(*) as count FROM participants;");
+    if ((pathname === "/health" || pathname === "/") && method === "GET") {
+      let count = 0;
+      try {
+        const countRes = await db.execute("SELECT count(*) as count FROM participants;");
+        count = Number(countRes.rows[0]?.count) || 0;
+      } catch (e) {}
+
       return json({
-        status: "ok",
-        service: "Rajasthan Police Marathon Official Backend",
-        totalRegistered: countRes.rows[0].count,
-        timestamp: new Date().toISOString()
+        status: "HEALTHY",
+        organization: "Rajasthan Police Headquarters, Jaipur",
+        event: "Rajasthan Police Marathon 2027 - RUN FOR HER",
+        storageMode: isProductionTurso ? "TURSO_CLOUD_EDGE" : "LOCAL_SQLITE",
+        isPersistent: isProductionTurso,
+        totalParticipants: count,
+        serverTime: new Date().toISOString()
       });
     }
 
@@ -195,25 +205,6 @@ export async function handleApiRequest(req, res) {
         success: true,
         message: "मोबाइल नंबर सफलतापूर्वक सत्यापित हुआ।",
         verificationToken: result.verificationToken
-      });
-    }
-
-    // 1c. System Health & Persistence Diagnostics
-    if (pathname === "/health" && method === "GET") {
-      let count = 0;
-      try {
-        const countRes = await db.execute("SELECT count(*) as count FROM participants;");
-        count = Number(countRes.rows[0]?.count) || 0;
-      } catch (e) {}
-
-      return json({
-        status: "HEALTHY",
-        organization: "Rajasthan Police Headquarters, Jaipur",
-        event: "Rajasthan Police Marathon 2027 - RUN FOR HER",
-        storageMode: isProductionTurso ? "TURSO_CLOUD_EDGE" : "LOCAL_SQLITE",
-        isPersistent: isProductionTurso,
-        totalParticipants: count,
-        serverTime: new Date().toISOString()
       });
     }
 
@@ -542,8 +533,16 @@ export async function handleApiRequest(req, res) {
       });
     }
 
-    // 5. Checkpoint Scan Event (Simulated / Timing Mat Hardware API)
+    // 5. Checkpoint Scan Event (Secured: Requires Admin Session or Valid X-Timing-Key)
     if (pathname === "/tracking/scan" && method === "POST") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      const timingKey = req.headers["x-timing-key"] || parsedUrl.searchParams.get("key");
+      const validTimingKey = process.env.TIMING_API_KEY || "rajpol_timing_mat_hardware_key_2027";
+
+      if (!adminUser && timingKey !== validTimingKey) {
+        return error("अनधिकृत टाइमिंग स्कैन (401 Unauthorized)। अधिकृत सत्र अथवा टाइमिंग की आवश्यक है।", 401);
+      }
+
       const body = await parseJsonBody(req);
       const { bibNumber, checkpointId, checkpointName, km, scanTime, elapsedSeconds, pace, speedKmh } = body;
 
@@ -616,9 +615,12 @@ export async function handleApiRequest(req, res) {
 
     // 6b. Automated Certificate Re-dispatch (SMS/WhatsApp)
     if (pathname === "/certificates/dispatch" && method === "POST") {
+      if (dispatchLimiter.isRateLimited(clientIp)) {
+        return error("प्रमाण पत्र प्रेषण सीमा समाप्त। कृपया 10 मिनट बाद पुनः प्रयास करें (Rate limit exceeded)।", 429);
+      }
+
       const body = await parseJsonBody(req);
       const certId = (body.certificateId || body.bibNumber || "").trim();
-      const targetMobile = (body.mobile || "").trim();
 
       if (!certId) {
         return error("Certificate ID अथवा Bib Number आवश्यक है।", 400);
@@ -634,9 +636,10 @@ export async function handleApiRequest(req, res) {
       }
 
       const runner = findRes.rows[0];
+      // Security: Strictly dispatch only to the runner's verified registered mobile to prevent SMS bombing / proxy spam
       const notifyResult = await sendCertificateNotification({
         fullName: runner.full_name,
-        mobile: targetMobile || runner.mobile,
+        mobile: runner.mobile,
         certificateId: runner.certificate_id,
         finishTime: runner.finish_time || "00:48:32",
         categoryName: runner.category_name
@@ -685,7 +688,7 @@ export async function handleApiRequest(req, res) {
         // Fallback / Built-in State Police Credential Directory
         // PHQ Level
         if ((rawUsername === "phq_admin" || rawUsername === "rajpolice") && 
-            (password === "RajPol@PHQ#2027" || password === "RajPol#2027" || password === "RajPol@2027" || password === "RajPol@PHQ#2026" || password === "RajPol#2026" || password === "admin123")) {
+            (password === "RajPol@PHQ#2027" || password === "RajPol#2027" || password === "RajPol@2027" || password === "RajPol@PHQ#2026" || password === "RajPol#2026")) {
           authenticatedUser = {
             id: "phq-state-01",
             username: "phq_admin",
@@ -723,15 +726,14 @@ export async function handleApiRequest(req, res) {
           }
 
           // Standard district passwords allowed:
-          // SP#<District>@2026 OR SP#<DistCode>@2026 OR RajPol@SP#2026 OR SP#2026 OR sp123
+          // SP#<District>@2026 OR SP#<DistCode>@2026 OR RajPol@SP#2026 OR SP#2026
           const passLower = password.toLowerCase();
           const isStandardPass = 
             passLower === `sp#${distCode}@2027` || passLower === `sp#${distCode}@2026` ||
             (passLower.startsWith("sp#") && passLower.endsWith("@2026")) ||
             passLower === "sp#2026" ||
             password === "RajPol@SP#2026" || 
-            password === "SP#2026" || 
-            password === "sp123";
+            password === "SP#2026";
 
           if (isStandardPass) {
             const dId = matchedDist ? matchedDist[0] : distCode;
@@ -1035,7 +1037,7 @@ export async function handleApiRequest(req, res) {
     return error(`Endpoint not found: ${pathname}`, 404);
   } catch (err) {
     console.error("[API Router Error]:", err);
-    return error("आंतरिक सर्वर त्रुटि (Internal Server Error): " + err.message, 500);
+    return error("आंतरिक सर्वर त्रुटि (Internal Server Error)। कृपया कुछ समय बाद पुनः प्रयास करें।", 500);
   }
 }
 

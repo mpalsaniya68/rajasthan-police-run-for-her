@@ -41,7 +41,14 @@ function serveStaticFile(req, res, pathname) {
     safePath = "/index.html";
   }
 
-  let filePath = path.join(distDir, safePath);
+  let filePath = path.resolve(distDir, "." + safePath);
+
+  // Security: Prevent Path / Directory Traversal attacks outside dist directory
+  if (!filePath.startsWith(distDir)) {
+    res.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("403: Forbidden");
+    return;
+  }
 
   // If file doesn't exist, fallback to dist/index.html (SPA client-side routing)
   if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
@@ -59,7 +66,11 @@ function serveStaticFile(req, res, pathname) {
 
   res.writeHead(200, {
     "Content-Type": contentType,
-    "Cache-Control": ext === ".html" ? "no-cache" : "public, max-age=31536000, immutable"
+    "Cache-Control": ext === ".html" ? "no-cache" : "public, max-age=31536000, immutable",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-XSS-Protection": "1; mode=block",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
   });
 
   const stream = fs.createReadStream(filePath);

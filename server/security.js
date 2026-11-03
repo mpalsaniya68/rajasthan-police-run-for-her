@@ -124,24 +124,39 @@ export function generateSecureQrToken(bibNumber, certId) {
 }
 
 /**
- * 5. Password Hashing with SHA-256 + Salt
+ * 5. Password Hashing with PBKDF2-SHA512 + Salt (100,000 Rounds)
+ * Provides state-grade protection against brute-force & GPU attacks.
+ * Includes backwards compatibility verification for legacy hashes.
  */
 export function hashPassword(password) {
-  return crypto
-    .createHash("sha256")
-    .update(`${password}:${APP_SECRET}`)
-    .digest("hex");
+  return crypto.pbkdf2Sync(password, APP_SECRET, 100000, 32, "sha512").toString("hex");
 }
 
 export function verifyPassword(password, storedHash) {
   if (!password || !storedHash) return false;
-  const computed = hashPassword(password);
-  if (computed.length !== storedHash.length) return false;
-  try {
-    return crypto.timingSafeEqual(Buffer.from(computed), Buffer.from(storedHash));
-  } catch (e) {
-    return false;
+
+  // 1. Primary check: PBKDF2-SHA512 (64 hex characters)
+  const computedPbkdf2 = hashPassword(password);
+  if (computedPbkdf2.length === storedHash.length) {
+    try {
+      if (crypto.timingSafeEqual(Buffer.from(computedPbkdf2), Buffer.from(storedHash))) {
+        return true;
+      }
+    } catch (e) {}
   }
+
+  // 2. Compatibility check: legacy salted SHA-256
+  const legacySha256 = crypto
+    .createHash("sha256")
+    .update(`${password}:${APP_SECRET}`)
+    .digest("hex");
+  if (legacySha256.length === storedHash.length) {
+    try {
+      return crypto.timingSafeEqual(Buffer.from(legacySha256), Buffer.from(storedHash));
+    } catch (e) {}
+  }
+
+  return false;
 }
 
 /**
@@ -288,7 +303,7 @@ class OtpManager {
     }
 
     const trimmedInput = (enteredCode || "").trim();
-    if (record.code !== trimmedInput && trimmedInput !== "123456") {
+    if (record.code !== trimmedInput) {
       record.attempts += 1;
       return { success: false, message: `अमान्य OTP कोड! शेष प्रयास: ${3 - record.attempts}` };
     }
@@ -330,6 +345,7 @@ class SlidingRateLimiter {
 export const registrationLimiter = new SlidingRateLimiter(20, 60000); // 20 regs/min per IP
 export const adminLoginLimiter = new SlidingRateLimiter(5, 60000); // 5 login attempts/min per IP
 export const otpRequestLimiter = new SlidingRateLimiter(5, 60000); // 5 OTP sends/min per IP
+export const dispatchLimiter = new SlidingRateLimiter(5, 600000); // 5 SMS certificate dispatches/10min per IP
 
 /**
  * 10. CSV Injection Prevention
