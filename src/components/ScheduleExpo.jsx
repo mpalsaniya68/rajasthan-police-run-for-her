@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RACE_DAY_TIMELINE, PROHIBITED_ITEMS } from '../data/mockData';
-import { Clock, Package, AlertCircle, Timer, ShieldAlert, Download, FileText, CheckCircle2, Shield, Luggage } from 'lucide-react';
+import { Clock, Package, AlertCircle, ShieldAlert, Download, FileText, CheckCircle2, Shield, Luggage } from 'lucide-react';
 
 export function ScheduleExpo() {
   const [downloadMsg, setDownloadMsg] = useState(null);
@@ -9,13 +9,6 @@ export function ScheduleExpo() {
     setDownloadMsg(`${docName} डाउनलोड प्रारंभ हो गया है...`);
     setTimeout(() => setDownloadMsg(null), 3500);
   };
-
-  const cutOffSchedule = [
-    { cat: "21.097 KM Half Marathon", flag: "06:00 AM", cutoff: "09:30 AM", limit: "3 घंटे 30 मिनट", sweep: "09:35 AM" },
-    { cat: "10 KM Speed Run", flag: "06:15 AM", cutoff: "08:00 AM", limit: "1 घंटा 45 मिनट", sweep: "08:05 AM" },
-    { cat: "5 KM Community Run", flag: "06:45 AM", cutoff: "07:45 AM", limit: "1 घंटा 00 मिनट", sweep: "07:50 AM" },
-    { cat: "2 KM Family & Youth Run", flag: "07:15 AM", cutoff: "08:00 AM", limit: "45 मिनट", sweep: "08:05 AM" }
-  ];
 
   return (
     <section id="schedule" className="section-padding" style={{ position: 'relative', background: '#ffffff', borderTop: '1px solid var(--border-subtle)' }}>
@@ -154,54 +147,7 @@ export function ScheduleExpo() {
           </div>
         </div>
 
-        {/* ROW 2: Official Race Cut-Off Schedule Table */}
-        <div className="gov-card" style={{ padding: '28px', marginBottom: '36px', border: '1.5px solid var(--border-medium)', borderRadius: '12px', background: '#ffffff' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Timer size={24} color="var(--police-navy-900)" />
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
-                  आधिकारिक रेस कट-ऑफ समय एवं यातायात पुनर्बहाली (Cut-Off Schedule)
-                </h3>
-                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>
-                  राजस्थान पुलिस यातायात शाखा एवं धावक सुरक्षा प्रोटोकॉल
-                </span>
-              </div>
-            </div>
-            <span className="badge-gold" style={{ fontSize: '0.85rem' }}>समय-सीमा के बाद यातायात बहाल</span>
-          </div>
-
-          <div style={{ overflowX: 'auto', marginBottom: '20px' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.96rem', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ background: 'var(--police-navy-50)', borderBottom: '2px solid var(--border-medium)', color: 'var(--police-navy-950)' }}>
-                  <th style={{ padding: '12px 16px', fontWeight: 800 }}>दौड़ श्रेणी (Category)</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 800 }}>फ्लैग-ऑफ समय</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 800 }}>अधिकतम समय-सीमा</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 800 }}>कट-ऑफ समय (Cut-Off)</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 800 }}>स्वीपर बस प्रस्थान</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cutOffSchedule.map((row, idx) => (
-                  <tr key={idx} style={{ borderBottom: '1px solid var(--border-subtle)', background: idx % 2 === 0 ? '#ffffff' : '#f8fafc' }}>
-                    <td style={{ padding: '14px 16px', fontWeight: 800, color: 'var(--police-navy-950)' }}>{row.cat}</td>
-                    <td style={{ padding: '14px 16px', color: '#334155', fontWeight: 600 }}>{row.flag}</td>
-                    <td style={{ padding: '14px 16px', fontWeight: 800, color: '#047857' }}>{row.limit}</td>
-                    <td style={{ padding: '14px 16px', fontWeight: 800, color: 'var(--police-navy-950)' }}>{row.cutoff}</td>
-                    <td style={{ padding: '14px 16px', color: '#64748b', fontWeight: 600 }}>{row.sweep}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div style={{ background: 'var(--police-navy-50)', padding: '14px 18px', borderRadius: '8px', fontSize: '0.92rem', color: 'var(--police-navy-950)', lineHeight: 1.6, borderLeft: '5px solid var(--police-navy-900)' }}>
-            <strong>प्रशासनिक दिशा-निर्देश:</strong> JLN मार्ग एवं संबंधित जिला मार्गों पर निर्धारित कट-ऑफ समय के तुरंत बाद सामान्य यातायात बहाल कर दिया जाएगा। सुरक्षा कारणों से कट-ऑफ के बाद किसी भी धावक को सड़क पर पैदल या दौड़ने की अनुमति नहीं होगी। पुलिस स्वीपर बस शेष धावकों को सम्मानपूर्वक फिनिश लाउंज में पहुँचाएगी।
-          </div>
-        </div>
-
-        {/* ROW 3: Baggage Policy + Prohibited Items + Official Downloads */}
+        {/* ROW 2: Baggage Policy + Prohibited Items + Official Downloads */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px' }}>
           
           {/* Baggage Counter Policy */}
