@@ -1570,7 +1570,7 @@ export function RegistrationPage({
                       >
                         {OTHER_DISTRICTS.map(d => (
                           <option key={d.id} value={d.id}>
-                            {d.name} • {d.zone} ज़ोन ({d.flagOffVenue})
+                            {d.name}
                           </option>
                         ))}
                       </select>
