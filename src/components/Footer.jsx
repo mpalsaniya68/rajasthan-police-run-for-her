@@ -33,7 +33,7 @@ export function Footer({ onNavigate }) {
           marginBottom: '40px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <PhoneCall size={20} color="#ff7597" />
+            <PhoneCall size={20} color="var(--police-gold-400)" />
             <h3 style={{ fontSize: '1.15rem', color: '#ffffff' }}>
               राजस्थान पुलिस 24x7 महिला सुरक्षा एवं सहायता तंत्र (Women's Safety Network)
             </h3>
