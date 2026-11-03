@@ -75,6 +75,16 @@ export function maskIdNumber(idType, idNumber) {
 }
 
 /**
+ * 2b. Cryptographic One-Way Salted Hash for Govt Photo IDs (DPDP Act Compliance)
+ * Ensures duplicate check without storing raw Aadhaar in plaintext.
+ */
+export function hashIdNumber(idType, idNumber) {
+  if (!idNumber || typeof idNumber !== "string") return "";
+  const clean = idNumber.replace(/\s+/g, "").toUpperCase();
+  return crypto.createHmac("sha256", APP_SECRET).update(`${idType}:${clean}`).digest("hex");
+}
+
+/**
  * 3. Secure Bib Generation
  * Generates official high-authority Bib numbers based on category
  */

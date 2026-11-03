@@ -643,7 +643,7 @@ export function LiveTrackerHub({ onNavigate }) {
                   }}
                   title="डेमो: अगले चेकपॉइंट पर RFID स्कैन सिमुलेट करें"
                 >
-                  <RefreshCw size={14} /> ⚡ टेस्ट: अगला चेकपॉइंट क्रॉस कराएं
+                  <RefreshCw size={14} /> टेस्ट: अगला चेकपॉइंट क्रॉस कराएं
                 </button>
               </div>
             </div>

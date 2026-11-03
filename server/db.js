@@ -27,7 +27,7 @@ try {
 }
 
 // Check for Turso Database URL; fallback to local persistent SQLite or writable /tmp on Vercel
-const isProductionTurso = Boolean(process.env.TURSO_DATABASE_URL);
+export const isProductionTurso = Boolean(process.env.TURSO_DATABASE_URL);
 let fallbackUrl = "file:data/rajasthan_police_marathon.db";
 if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
   fallbackUrl = "file:/tmp/rajasthan_police_marathon.db";
@@ -131,6 +131,9 @@ export async function initDatabase() {
     try {
       await db.execute("ALTER TABLE participants ADD COLUMN paid_at TEXT DEFAULT '';");
     } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN id_hash TEXT DEFAULT '';");
+    } catch (e) {}
 
     // Payments Table for Government Revenue & Treasury Audit Trail
     await db.execute(`
@@ -203,6 +206,34 @@ export async function initDatabase() {
         created_at TEXT NOT NULL
       );
     `);
+
+    // 5. Category Sequences Table for Zero-Collision Atomic Bib Generation
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS category_sequences (
+        category_id TEXT PRIMARY KEY,
+        last_seq INTEGER NOT NULL
+      );
+    `);
+
+    // Ensure sequences exist for all race categories
+    const categories = ['21k', '10k', '5k', '2k'];
+    for (const catId of categories) {
+      const seqCheck = await db.execute({
+        sql: "SELECT last_seq FROM category_sequences WHERE category_id = ?",
+        args: [catId]
+      });
+      if (seqCheck.rows.length === 0) {
+        const pCountRes = await db.execute({
+          sql: "SELECT count(*) as count FROM participants WHERE category_id = ?",
+          args: [catId]
+        });
+        const startSeq = (Number(pCountRes.rows[0].count) || 0) + 1000;
+        await db.execute({
+          sql: "INSERT INTO category_sequences (category_id, last_seq) VALUES (?, ?)",
+          args: [catId, startSeq]
+        });
+      }
+    }
 
     // Seed default admin if missing (default admin: rajpolice / RajPol#2026)
     const adminHash = hashPassword('RajPol#2026');

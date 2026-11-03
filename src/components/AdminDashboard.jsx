@@ -671,7 +671,7 @@ export function AdminDashboard({
                 }}
               >
                 <PackageCheck size={16} color={adminTab === "kit_counter" ? "var(--police-gold-400)" : "#94a3b8"} />
-                <span>📦 RFID किट व बिब आवंटन (Expo Desk)</span>
+                <span>RFID किट व बिब आवंटन (Expo Desk)</span>
                 <span style={{
                   background: 'rgba(234, 179, 8, 0.2)',
                   color: '#fef08a',
@@ -760,7 +760,7 @@ export function AdminDashboard({
                 }}
               >
                 <QrCode size={15} color={adminTab === "district_certificates" ? "var(--police-gold-400)" : "#94a3b8"} />
-                <span>📜 ई-प्रमाण पत्र एवं सत्यापन</span>
+                <span>ई-प्रमाण पत्र एवं सत्यापन</span>
               </button>
 
               <button

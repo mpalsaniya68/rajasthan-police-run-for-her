@@ -415,7 +415,7 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                     style={{ padding: '6px 10px', fontSize: '0.72rem' }}
                     title="त्वरित परीक्षण हेतु 8 कैडेट्स का सैंपल लोड करें"
                   >
-                    ⚡ सैंपल लोड करें
+                    सैंपल डेटा लोड करें
                   </button>
 
                   <button

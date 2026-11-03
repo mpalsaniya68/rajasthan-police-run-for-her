@@ -70,8 +70,8 @@ export function RegistrationPage({
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "Female",
-    age: "24",
-    dob: "2002-05-15",
+    age: "",
+    dob: "",
     mobile: "",
     email: "",
     idType: "Aadhaar",
@@ -82,7 +82,7 @@ export function RegistrationPage({
     medicalNotes: "",
     tshirtSize: "M",
     emergencyContactName: "",
-    emergencyRelation: "पिता (Father)",
+    emergencyRelation: "अभिभावक (Guardian)",
     emergencyContactPhone: "",
     acceptedPledge: true,
     acceptedFitness: true
@@ -350,6 +350,16 @@ export function RegistrationPage({
     setOtpError('');
   };
 
+  const handleDobChange = (e) => {
+    const dobVal = e.target.value;
+    let calculatedAge = "";
+    if (dobVal) {
+      const birthYear = new Date(dobVal).getFullYear();
+      calculatedAge = Math.max(0, 2027 - birthYear).toString();
+    }
+    setFormData(prev => ({ ...prev, dob: dobVal, age: calculatedAge }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.fullName.trim()) {
@@ -358,7 +368,12 @@ export function RegistrationPage({
     }
     const cleanMobile = formData.mobile.replace(/\D/g, "");
     if (!/^[6-9]\d{9}$/.test(cleanMobile)) {
-      alert("कृपया वैध 10-अंकीय भारतीय मोबाइल नंबर दर्ज करें (नंबर 6, 7, 8 या 9 से शुरू होना आवश्यक है)।");
+      alert("कृपया वैध 10-अंकीय मोबाइल नंबर दर्ज करें।");
+      return;
+    }
+
+    if (!formData.dob) {
+      alert("कृपया अपनी जन्म तिथि (Date of Birth) दर्ज करें।");
       return;
     }
 
@@ -393,14 +408,14 @@ export function RegistrationPage({
 
     const cleanEmergency = (formData.emergencyContactPhone || formData.mobile).replace(/\D/g, "");
     if (!/^[6-9]\d{9}$/.test(cleanEmergency)) {
-      alert("कृपया वैध 10-अंकीय आपातकालीन मोबाइल नंबर दर्ज करें (6, 7, 8 या 9 से शुरू)।");
+      alert("कृपया वैध 10-अंकीय आपातकालीन मोबाइल नंबर दर्ज करें।");
       return;
     }
 
     setErrorMessage("");
     setIsSubmitting(true);
 
-    const calculatedDob = formData.dob || `${2026 - (parseInt(formData.age) || 25)}-01-01`;
+    const calculatedDob = formData.dob || `${2027 - (parseInt(formData.age) || 25)}-01-01`;
     const selectedDistId = venueType === "jaipur" ? "jaipur_comm" : (selectedDistrict || OTHER_DISTRICTS[0]?.id || "jdh_comm").toLowerCase().replace(/-/g, '_');
     const medicalCondSummary = formData.hasMedicalIssue ? formData.medicalConditions.join(", ") : "None / Fully Fit";
 
@@ -1563,7 +1578,7 @@ export function RegistrationPage({
                       />
                       <div>
                         <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          🏛️ जयपुर मुख्य फ्लैगशिप रन (Albert Hall)
+                          जयपुर मुख्य फ्लैगशिप रन (Albert Hall)
                         </div>
                         <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                           अल्बर्ट हॉल से जेएलएन मार्ग • डीजीपी राजस्थान द्वारा फ्लैग-ऑफ
@@ -1594,7 +1609,7 @@ export function RegistrationPage({
                       />
                       <div>
                         <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          🚩 अन्य जिला पुलिस लाइन ({OTHER_DISTRICTS.length} जिले)
+                          अन्य जिला पुलिस लाइन ({OTHER_DISTRICTS.length} जिले)
                         </div>
                         <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                           अपने स्थानीय ज़िला मुख्यालय / पुलिस लाइन में एक साथ रन
@@ -1639,15 +1654,15 @@ export function RegistrationPage({
                           style={{
                             padding: '16px',
                             borderRadius: '10px',
-                            border: isSelected ? `2.5px solid ${cat.color}` : '1px solid var(--border-subtle)',
-                            background: isSelected ? 'rgba(10, 28, 61, 0.03)' : '#ffffff',
+                            border: isSelected ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
+                            background: isSelected ? 'var(--police-navy-50)' : '#ffffff',
                             cursor: 'pointer',
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'space-between',
-                            boxShadow: isSelected ? 'var(--shadow-md)' : 'none',
+                            boxShadow: isSelected ? 'var(--shadow-sm)' : 'none',
                             position: 'relative',
-                            transition: 'all 0.2s'
+                            transition: 'all 0.15s'
                           }}
                         >
                           {isSelected && (
@@ -1655,7 +1670,7 @@ export function RegistrationPage({
                               position: 'absolute',
                               top: '10px',
                               right: '10px',
-                              background: cat.color,
+                              background: 'var(--police-navy-900)',
                               color: '#ffffff',
                               borderRadius: '50%',
                               width: '20px',
@@ -1668,37 +1683,38 @@ export function RegistrationPage({
                             </div>
                           )}
                           <div>
-                            <div style={{ fontSize: '0.72rem', fontWeight: 800, color: cat.color, textTransform: 'uppercase' }}>
+                            <div style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--police-navy-800)', textTransform: 'uppercase' }}>
                               {cat.distance}
                             </div>
                             <div style={{ fontWeight: 900, fontSize: '1.02rem', color: 'var(--police-navy-950)', margin: '4px 0' }}>
                               {cat.name}
                             </div>
-                            <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginBottom: '10px' }}>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '10px', lineHeight: 1.4 }}>
                               {cat.desc}
                             </div>
                           </div>
                           <div style={{
-                            fontSize: '0.72rem',
+                            fontSize: '0.74rem',
                             fontWeight: 700,
                             padding: '3px 8px',
                             borderRadius: '4px',
-                            background: cat.timingChip ? '#ecfdf5' : '#f1f5f9',
-                            color: cat.timingChip ? '#065f46' : 'var(--text-muted)',
+                            background: cat.timingChip ? '#f1f5f9' : '#f8fafc',
+                            color: 'var(--police-navy-900)',
+                            border: '1px solid var(--border-subtle)',
                             display: 'inline-block'
                           }}>
-                            {cat.timingChip ? '⏱️ RFID टाइमिंग चिप युक्त' : '🎗️ कम्युनिटी रन'}
+                            {cat.timingChip ? 'RFID टाइमिंग चिप युक्त' : 'कम्युनिटी रन'}
                           </div>
                           <div style={{
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            marginTop: '8px',
+                            marginTop: '10px',
                             borderTop: '1px solid #e2e8f0',
-                            paddingTop: '6px'
+                            paddingTop: '8px'
                           }}>
-                            <span style={{ fontSize: '0.74rem', color: '#64748b' }}>निर्धारित शुल्क:</span>
-                            <span style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0a1c3d' }}>
+                            <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>निर्धारित शुल्क:</span>
+                            <span style={{ fontSize: '1rem', fontWeight: 900, color: '#0a1c3d' }}>
                               {cat.id === '21k' ? '₹499' : cat.id === '10k' ? '₹399' : '₹199'}
                             </span>
                           </div>
@@ -1761,7 +1777,7 @@ export function RegistrationPage({
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      10-अंकीय मोबाइल नंबर (6, 7, 8 या 9 से शुरू) <span style={{ color: '#ef4444' }}>*</span>:
+                      मोबाइल नंबर (Mobile Number) <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <input
@@ -1850,12 +1866,12 @@ export function RegistrationPage({
                     ) : (
                       <>
                         {formData.mobile && !/^[6-9]/.test(formData.mobile) ? (
-                          <div style={{ fontSize: '0.72rem', color: '#dc2626', marginTop: '4px', fontWeight: 700 }}>
-                            ⚠️ भारतीय मोबाइल नंबर केवल 6, 7, 8 या 9 से शुरू होना चाहिए।
+                          <div style={{ fontSize: '0.74rem', color: '#dc2626', marginTop: '4px', fontWeight: 600 }}>
+                            कृपया 10-अंकीय मान्य मोबाइल नंबर दर्ज करें।
                           </div>
                         ) : (
-                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                            पंजीकरण हेतु 6-अंकीय सुरक्षा ओटीपी सत्यापन अनिवार्य है।
+                          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                            पंजीकरण सत्यापन हेतु सुरक्षा ओटीपी दर्ज करें।
                           </div>
                         )}
                       </>
@@ -1964,25 +1980,22 @@ export function RegistrationPage({
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      आयु (वर्ष) / जन्म तिथि:
+                      जन्म तिथि (Date of Birth) <span style={{ color: '#ef4444' }}>*</span>
+                      {formData.age ? (
+                        <span style={{ marginLeft: '8px', color: '#475569', fontWeight: 600, fontSize: '0.82rem' }}>
+                          (आयु: {formData.age} वर्ष)
+                        </span>
+                      ) : null}
                     </label>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <input
-                        type="number"
-                        min={8}
-                        max={85}
-                        placeholder="आयु (उदा. 24)"
-                        value={formData.age}
-                        onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                        style={{ width: '100px', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
-                      />
-                      <input
-                        type="date"
-                        value={formData.dob}
-                        onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-                        style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
-                      />
-                    </div>
+                    <input
+                      type="date"
+                      required
+                      max="2017-01-01"
+                      min="1940-01-01"
+                      value={formData.dob}
+                      onChange={handleDobChange}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
+                    />
                   </div>
 
                   <div>
@@ -2101,9 +2114,6 @@ export function RegistrationPage({
                     <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
                       स्वास्थ्य, रक्त समूह एवं आपातकालीन विवरण (Medical & Emergency Safety)
                     </h3>
-                    <span style={{ background: '#fee2e2', color: '#991b1b', fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: '4px' }}>
-                      चिकित्सा सुरक्षा अनिवार्य
-                    </span>
                   </div>
                 </div>
 
@@ -2150,8 +2160,7 @@ export function RegistrationPage({
                   padding: '18px',
                   marginBottom: '20px'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <HeartPulse size={18} color="var(--crimson-600)" />
+                  <div style={{ marginBottom: '8px' }}>
                     <label style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
                       क्या आपको पूर्व से कोई स्वास्थ्य संबंधी समस्या या बीमारी है? (Pre-existing Health Condition):
                     </label>

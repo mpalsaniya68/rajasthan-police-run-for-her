@@ -1,10 +1,11 @@
 import crypto from "crypto";
-import { db } from "./db.js";
+import { db, isProductionTurso } from "./db.js";
 import {
   registrationSchema,
   bulkRegistrationSchema,
   maskMobile,
   maskIdNumber,
+  hashIdNumber,
   generateBibNumber,
   generateCertificateId,
   generateSecureQrToken,
@@ -197,6 +198,25 @@ export async function handleApiRequest(req, res) {
       });
     }
 
+    // 1c. System Health & Persistence Diagnostics
+    if (pathname === "/health" && method === "GET") {
+      let count = 0;
+      try {
+        const countRes = await db.execute("SELECT count(*) as count FROM participants;");
+        count = Number(countRes.rows[0]?.count) || 0;
+      } catch (e) {}
+
+      return json({
+        status: "HEALTHY",
+        organization: "Rajasthan Police Headquarters, Jaipur",
+        event: "Rajasthan Police Marathon 2027 - RUN FOR HER",
+        storageMode: isProductionTurso ? "TURSO_CLOUD_EDGE" : "LOCAL_SQLITE",
+        isPersistent: isProductionTurso,
+        totalParticipants: count,
+        serverTime: new Date().toISOString()
+      });
+    }
+
     // 2. Individual Runner Registration
     if (pathname === "/register" && method === "POST") {
       if (registrationLimiter.isRateLimited(clientIp)) {
@@ -235,12 +255,28 @@ export async function handleApiRequest(req, res) {
         return error(`यह मोबाइल नंबर पहले से ${CATEGORY_NAMES[data.categoryId]} में पंजीकृत है (Bib: ${existing.rows[0].bib_number})`, 409);
       }
 
-      // Generate Bib
-      const countRes = await db.execute({
-        sql: "SELECT count(*) as count FROM participants WHERE category_id = ?",
+      // Check if Govt Photo ID (Aadhaar/PAN/Voter) already registered in this category (DPDP Compliance)
+      const idHash = hashIdNumber(data.idType, data.idNumber);
+      if (idHash) {
+        const existingId = await db.execute({
+          sql: "SELECT id, bib_number FROM participants WHERE id_hash = ? AND category_id = ?",
+          args: [idHash, data.categoryId]
+        });
+        if (existingId.rows.length > 0) {
+          return error(`यह पहचान पत्र पहले से ${CATEGORY_NAMES[data.categoryId]} में पंजीकृत है (Bib: ${existingId.rows[0].bib_number})`, 409);
+        }
+      }
+
+      // Zero-Collision Atomic Bib Generation using category_sequences
+      await db.execute({
+        sql: "UPDATE category_sequences SET last_seq = last_seq + 1 WHERE category_id = ?",
         args: [data.categoryId]
       });
-      const counter = (Number(countRes.rows[0].count) || 0) + 1001;
+      const seqRes = await db.execute({
+        sql: "SELECT last_seq FROM category_sequences WHERE category_id = ?",
+        args: [data.categoryId]
+      });
+      const counter = Number(seqRes.rows[0]?.last_seq) || (Date.now() % 9000 + 1000);
       const bibNumber = generateBibNumber(data.categoryId, counter);
       const certificateId = generateCertificateId();
       const qrToken = generateSecureQrToken(bibNumber, certificateId);
@@ -252,7 +288,7 @@ export async function handleApiRequest(req, res) {
       const maskedId = maskIdNumber(data.idType, data.idNumber);
       const maskedMob = maskMobile(data.mobile);
 
-            // Server-side strict fee calculation (Tamper-proof)
+      // Server-side strict fee calculation (Tamper-proof)
       const feeAmount = CATEGORY_FEES[data.categoryId] || 199;
       const orderId = data.orderId || `ORD2027-${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
       const transactionId = data.transactionId || `TXN-RAJPOL-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
@@ -263,10 +299,10 @@ export async function handleApiRequest(req, res) {
         sql: `INSERT INTO participants (
           id, bib_number, full_name, gender, dob, mobile, masked_mobile, email, emergency_contact, emergency_relation, blood_group,
           medical_condition, medical_notes,
-          category_id, category_name, district_id, district_name, tshirt_size, id_type, id_last4, id_masked, id_raw, certificate_id, qr_token,
+          category_id, category_name, district_id, district_name, tshirt_size, id_type, id_last4, id_masked, id_raw, id_hash, certificate_id, qr_token,
           fee_amount, payment_status, order_id, transaction_id, payment_method, paid_at,
           status, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
         args: [
           participantId,
           bibNumber,
@@ -289,7 +325,7 @@ export async function handleApiRequest(req, res) {
           data.idType || "Aadhaar",
           data.idNumber ? data.idNumber.slice(-4) : "XXXX",
           maskedId,
-          data.idNumber || "",
+          idHash,
           certificateId,
           qrToken,
           feeAmount,
