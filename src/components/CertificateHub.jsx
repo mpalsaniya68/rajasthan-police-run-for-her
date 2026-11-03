@@ -12,6 +12,7 @@ export function CertificateHub({ registrations = [] }) {
   const [isSearching, setIsSearching] = useState(false);
   const [searchFeedback, setSearchFeedback] = useState(null);
   const [isVerifiedFromBackend, setIsVerifiedFromBackend] = useState(false);
+  const [isDownloadingCert, setIsDownloadingCert] = useState(false);
 
   // Check URL hash for direct QR verification: #verify?certId=RJ-POL-2026-XXXX
   useEffect(() => {
@@ -102,6 +103,228 @@ export function CertificateHub({ registrations = [] }) {
       console.error("Dispatch notice error:", e);
     }
     setTimeout(() => setShowDispatchNotice(false), 5000);
+  };
+
+  const handleDownloadCertificatePNG = async () => {
+    if (!selectedRunner) return;
+    setIsDownloadingCert(true);
+
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1350;
+      canvas.height = 920;
+      const ctx = canvas.getContext("2d");
+
+      // 1. Parchment / Crisp Background
+      ctx.fillStyle = "#fafbfc";
+      ctx.fillRect(0, 0, 1350, 920);
+
+      // 2. High-Authority Borders
+      ctx.strokeStyle = "#0a1c3d";
+      ctx.lineWidth = 14;
+      ctx.strokeRect(7, 7, 1336, 906);
+
+      ctx.strokeStyle = "#d4af37";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(22, 22, 1306, 876);
+
+      ctx.strokeStyle = "rgba(10, 28, 61, 0.25)";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(32, 32, 1286, 856);
+
+      // Corner ornamental squares
+      const drawCorner = (x, y) => {
+        ctx.fillStyle = "#d4af37";
+        ctx.fillRect(x - 6, y - 6, 12, 12);
+        ctx.fillStyle = "#0a1c3d";
+        ctx.fillRect(x - 3, y - 3, 6, 6);
+      };
+      drawCorner(22, 22);
+      drawCorner(1328, 22);
+      drawCorner(22, 898);
+      drawCorner(1328, 898);
+
+      // Load Official Police Logo
+      const logoImg = new Image();
+      logoImg.crossOrigin = "anonymous";
+      logoImg.src = "/rajasthan-police-logo.png";
+      await new Promise(r => {
+        logoImg.onload = r;
+        logoImg.onerror = r;
+      });
+
+      // Background Watermark (Crest)
+      if (logoImg.complete && logoImg.naturalWidth > 0) {
+        ctx.save();
+        ctx.globalAlpha = 0.045;
+        ctx.drawImage(logoImg, 450, 240, 450, 450);
+        ctx.restore();
+      }
+
+      // Top Police Logo
+      if (logoImg.complete && logoImg.naturalWidth > 0) {
+        ctx.drawImage(logoImg, 60, 52, 95, 95);
+      }
+
+      // Header Texts
+      ctx.fillStyle = "#996515";
+      ctx.font = "bold 15px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("GOVERNMENT OF RAJASTHAN • RAJASTHAN POLICE HEADQUARTERS, JAIPUR", 675, 75);
+
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "900 32px sans-serif";
+      ctx.fillText("RAJASTHAN POLICE MARATHON 2027", 675, 115);
+
+      ctx.fillStyle = "#dc2626";
+      ctx.font = "bold 18px sans-serif";
+      ctx.fillText("RUN FOR HER • STATEWIDE WOMEN SAFETY & EMPOWERMENT INITIATIVE", 675, 142);
+
+      // Golden Divider
+      ctx.fillStyle = "#d4af37";
+      ctx.fillRect(150, 162, 1050, 3);
+
+      // Certificate Title
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "800 24px sans-serif";
+      ctx.fillText("OFFICIAL FINISHER CERTIFICATE OF EXCELLENCE", 675, 215);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "italic 16px sans-serif";
+      ctx.fillText("यह गर्वपूर्वक प्रमाणित किया जाता है कि (This is to proudly certify that)", 675, 252);
+
+      // Runner Name
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "900 46px sans-serif";
+      ctx.fillText(selectedRunner.fullName || "Valued Participant", 675, 315);
+
+      // Underline under Name
+      ctx.fillStyle = "#d4af37";
+      ctx.fillRect(400, 332, 550, 3);
+
+      // Description Statement
+      ctx.fillStyle = "#334155";
+      ctx.font = "600 20px sans-serif";
+      const catText = selectedRunner.categoryName || "21 KM Half Marathon";
+      ctx.fillText(`ने राजस्थान पुलिस मैराथन 2027 के अंतर्गत "${catText}" को सफलतापूर्वक पूर्ण किया है।`, 675, 375);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "16px sans-serif";
+      ctx.fillText("Has demonstrated exceptional endurance, community spirit, and support for Women's Dignity & Safety.", 675, 408);
+
+      // Metrics Pillars Box
+      ctx.fillStyle = "#f1f5f9";
+      ctx.fillRect(150, 445, 1050, 105);
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(150, 445, 1050, 105);
+
+      // Pillar 1: Bib Number
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 13px sans-serif";
+      ctx.fillText("OFFICIAL BIB NUMBER", 325, 480);
+      ctx.fillStyle = "#dc2626";
+      ctx.font = "900 28px monospace";
+      ctx.fillText(selectedRunner.bibNumber || "RJ-21K-1001", 325, 520);
+
+      // Divider 1
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.beginPath();
+      ctx.moveTo(500, 455);
+      ctx.lineTo(500, 540);
+      ctx.stroke();
+
+      // Pillar 2: Official Finish Time
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 13px sans-serif";
+      ctx.fillText("OFFICIAL FINISH TIME", 675, 480);
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "900 28px monospace";
+      ctx.fillText(selectedRunner.finishTime || "00:48:32", 675, 520);
+
+      // Divider 2
+      ctx.beginPath();
+      ctx.moveTo(850, 455);
+      ctx.lineTo(850, 540);
+      ctx.stroke();
+
+      // Pillar 3: District / Venue
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 13px sans-serif";
+      ctx.fillText("PARTICIPATION DISTRICT", 1025, 480);
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "800 19px sans-serif";
+      ctx.fillText(selectedRunner.districtName ? selectedRunner.districtName.split(" • ")[0].slice(0, 22) : "Rajasthan Police HQ", 1025, 518);
+
+      // Event Date & Authority
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("आयोजन तिथि: 3 जनवरी 2027 • अधिकृत फिनिशर प्रमाण पत्र", 675, 595);
+
+      // Bottom Signatures & Seal Section
+      ctx.textAlign = "center";
+      ctx.font = "italic bold 28px serif";
+      ctx.fillStyle = "#0a1c3d";
+      ctx.fillText("Rajeev Sharma, IPS", 280, 715);
+      ctx.fillStyle = "#0a1c3d";
+      ctx.fillRect(180, 726, 200, 2);
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText("DIRECTOR GENERAL OF POLICE", 280, 748);
+      ctx.fillStyle = "#64748b";
+      ctx.font = "13px sans-serif";
+      ctx.fillText("Rajasthan Police, Jaipur", 280, 768);
+
+      // Center: Official Seal
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(675, 730, 54, 0, 2 * Math.PI);
+      ctx.fillStyle = "#fef3c7";
+      ctx.fill();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#d4af37";
+      ctx.stroke();
+      if (logoImg.complete && logoImg.naturalWidth > 0) {
+        ctx.drawImage(logoImg, 640, 695, 70, 70);
+      }
+      ctx.restore();
+      ctx.fillStyle = "#996515";
+      ctx.font = "900 11px sans-serif";
+      ctx.fillText("★ OFFICIAL SEAL ★", 675, 805);
+
+      // Right: QR Code
+      if (qrCodeUrl) {
+        const qrImg = new Image();
+        qrImg.src = qrCodeUrl;
+        await new Promise(r => { qrImg.onload = r; qrImg.onerror = r; });
+        if (qrImg.complete) {
+          ctx.drawImage(qrImg, 1020, 665, 100, 100);
+        }
+      }
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "bold 13px monospace";
+      ctx.fillText(selectedRunner.certificateId || "RJ-POL-2027-CERT", 1070, 782);
+      ctx.fillStyle = "#15803d";
+      ctx.font = "bold 12px sans-serif";
+      ctx.fillText("✓ Digitally Verified Record", 1070, 800);
+
+      // Convert Canvas to PNG and Trigger Download
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const link = document.createElement("a");
+        const cleanBib = (selectedRunner.bibNumber || "FINISHER").replace(/[^a-zA-Z0-9_-]/g, "_");
+        link.download = `Rajasthan_Police_Certificate_${cleanBib}.png`;
+        link.href = URL.createObjectURL(blob);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+        setIsDownloadingCert(false);
+      }, "image/png");
+    } catch (err) {
+      console.error("Certificate generation error:", err);
+      setIsDownloadingCert(false);
+      window.print();
+    }
   };
 
   const shareWhatsApp = () => {
@@ -460,6 +683,27 @@ export function CertificateHub({ registrations = [] }) {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <button
+                  onClick={handleDownloadCertificatePNG}
+                  disabled={isDownloadingCert}
+                  className="btn-primary"
+                  style={{
+                    width: '100%',
+                    padding: '11px',
+                    fontSize: '0.88rem',
+                    fontWeight: 800,
+                    justifyContent: 'center',
+                    background: 'var(--police-navy-900)',
+                    color: '#ffffff',
+                    border: '1.5px solid var(--police-gold-500)',
+                    borderRadius: 'var(--radius-sm)',
+                    boxShadow: '0 2px 8px rgba(10, 28, 61, 0.25)',
+                    cursor: isDownloadingCert ? 'wait' : 'pointer'
+                  }}
+                >
+                  <Download size={16} color="var(--police-gold-400)" /> {isDownloadingCert ? "सर्टिफिकेट तैयार हो रहा है..." : "Download HD Certificate (PNG)"}
+                </button>
+
                 <button
                   onClick={() => window.print()}
                   className="btn-gold"

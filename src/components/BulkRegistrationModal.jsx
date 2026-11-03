@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { X, Building2, Download, Upload, Plus, Trash2, CheckCircle2, Shield, Users, FileSpreadsheet, ArrowRight } from 'lucide-react';
 import { PoliceEmblem } from './Emblems';
 import { RAJASTHAN_POLICE_DISTRICTS, RACE_CATEGORIES } from '../data/mockData';
@@ -12,6 +12,8 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
   const [nodalPhone, setNodalPhone] = useState("");
   const [nodalEmail, setNodalEmail] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("JPR-COMM");
+  const fileInputRef = useRef(null);
+  const [uploadFeedback, setUploadFeedback] = useState(null);
 
   // Multi-row runner entry
   const [runners, setRunners] = useState([
@@ -46,6 +48,69 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
 
   const updateRunnerField = (id, field, value) => {
     setRunners(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));
+  };
+
+  // Real CSV File Upload & Parsing
+  const handleRealCsvUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target.result;
+        const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        if (lines.length < 2) {
+          setUploadFeedback({ type: 'error', text: 'CSV फ़ाइल खाली है या उसमें डेटा पंक्तियाँ नहीं हैं।' });
+          return;
+        }
+
+        const parsedRunners = [];
+        const headerLine = lines[0].toLowerCase();
+        const startIndex = (headerLine.includes("name") || headerLine.includes("gender")) ? 1 : 0;
+
+        for (let i = startIndex; i < lines.length; i++) {
+          const parts = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(p => p.replace(/^"|"$/g, '').trim());
+          if (parts.length >= 1 && parts[0]) {
+            const rawName = parts[0];
+            const rawGender = (parts[1] || "Female").toLowerCase();
+            const gender = rawGender.startsWith("m") ? "Male" : (rawGender.startsWith("o") ? "Other" : "Female");
+            const age = parseInt(parts[2]) || 22;
+
+            let rawCategory = (parts[3] || "5k").toLowerCase().replace(/[^0-9k]/g, '');
+            if (!["21k", "10k", "5k", "2k"].includes(rawCategory)) {
+              rawCategory = "5k";
+            }
+
+            let rawSize = (parts[4] || "M").toUpperCase().trim();
+            if (!["XS", "S", "M", "L", "XL", "XXL"].includes(rawSize)) {
+              rawSize = "M";
+            }
+
+            parsedRunners.push({
+              id: Date.now() + i,
+              name: rawName,
+              gender,
+              age,
+              category: rawCategory,
+              size: rawSize
+            });
+          }
+        }
+
+        if (parsedRunners.length === 0) {
+          setUploadFeedback({ type: 'error', text: 'फ़ाइल से कोई वैध धावक रिकॉर्ड नहीं मिला। कृपया टेम्पलेट प्रारूप का उपयोग करें।' });
+          return;
+        }
+
+        setRunners(parsedRunners);
+        setUploadFeedback({ type: 'success', text: `✅ सफलतापूर्वक ${parsedRunners.length} धावकों की सूची फ़ाइल से लोड की गई!` });
+      } catch (err) {
+        setUploadFeedback({ type: 'error', text: 'फ़ाइल पढ़ने में त्रुटि। कृपया मानक CSV फ़ॉर्मेट उपयोग करें।' });
+      }
+    };
+    reader.readAsText(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   // Download Sample CSV Template
@@ -315,23 +380,42 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                     <Download size={13} /> एक्सेल टेम्पलेट डाउनलोड करें
                   </button>
 
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept=".csv, text/csv, .txt"
+                    onChange={handleRealCsvUpload}
+                    style={{ display: 'none' }}
+                  />
+
                   <button
                     type="button"
-                    onClick={handleSimulatedCSVUpload}
+                    onClick={() => fileInputRef.current?.click()}
                     style={{
                       background: '#ecfdf5',
                       color: '#059669',
-                      border: '1px solid #10b981',
+                      border: '1.5px solid #10b981',
                       borderRadius: '4px',
                       padding: '6px 12px',
                       fontSize: '0.75rem',
                       fontWeight: 700,
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '5px'
+                      gap: '5px',
+                      cursor: 'pointer'
                     }}
                   >
-                    <Upload size={13} /> एक्सेल अपलोड सिमुलेट करें (15 कैडेट्स)
+                    <Upload size={13} /> CSV / एक्सेल फ़ाइल अपलोड करें
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleSimulatedCSVUpload}
+                    className="btn-secondary"
+                    style={{ padding: '6px 10px', fontSize: '0.72rem' }}
+                    title="त्वरित परीक्षण हेतु 8 कैडेट्स का सैंपल लोड करें"
+                  >
+                    ⚡ सैंपल लोड करें
                   </button>
 
                   <button
@@ -345,6 +429,24 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                 </div>
               </div>
 
+              {uploadFeedback && (
+                <div style={{
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  background: uploadFeedback.type === 'success' ? '#ecfdf5' : '#fef2f2',
+                  color: uploadFeedback.type === 'success' ? '#065f46' : '#991b1b',
+                  border: `1.5px solid ${uploadFeedback.type === 'success' ? '#10b981' : '#f87171'}`,
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  marginBottom: '12px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <span>{uploadFeedback.text}</span>
+                  <button type="button" onClick={() => setUploadFeedback(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 800, color: 'inherit' }}>✕</button>
+                </div>
+              )}
               {/* Runners Table (Responsive with touch scroll) */}
               <div style={{ overflowX: 'auto', maxHeight: '280px', borderRadius: '6px', border: '1px solid var(--border-medium)', marginBottom: '18px' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
