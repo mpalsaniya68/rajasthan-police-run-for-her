@@ -36,6 +36,39 @@ import { RegistrationPage } from './components/RegistrationPage';
 
 import { FAQSection } from './components/FAQSection';
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '40px 20px', textAlign: 'center', background: '#f8fafc', minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ maxWidth: '480px', width: '100%', background: '#ffffff', padding: '24px', borderRadius: '8px', border: '1px solid #cbd5e1', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+            <h3 style={{ color: '#dc2626', marginBottom: '10px' }}>⚠️ स्क्रीन लोड करने में समस्या आई</h3>
+            <p style={{ color: '#475569', fontSize: '0.88rem', marginBottom: '18px' }}>
+              कृपया पुनः प्रयास करें अथवा मुख्य पृष्ठ पर जाएं।
+            </p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button onClick={() => window.location.reload()} style={{ background: '#0b3a75', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: 700 }}>
+                पेज रिफ्रेश करें
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
 
   // Active Page State ('home', 'register', 'categories', 'route-schedule', 'districts', 'certificates', 'photos', 'pledge-safety')
@@ -286,6 +319,7 @@ export default function App() {
       {/* Main Content View Container */}
 
       <main id="main-content" tabIndex="-1" style={{ flex: 1 }}>
+        <ErrorBoundary>
 
         {/* 0. DEDICATED FULL-PAGE ONLINE RUNNER REGISTRATION */}
 
@@ -593,7 +627,7 @@ export default function App() {
 
           <div id="page-expo-terminal">
 
-            {isAdminAuthenticated && (adminUser?.role === 'EXPO_VOLUNTEER' || adminUser?.role === 'GATE_MARSHAL' || adminUser?.role === 'SUPER_ADMIN' || adminUser?.role === 'SP_OFFICER') ? (
+            {isAdminAuthenticated ? (
 
               <ExpoScannerTerminal
 
@@ -621,6 +655,7 @@ export default function App() {
 
         )}
 
+              </ErrorBoundary>
       </main>
 
       {/* Footer with Helpline Matrix & Quick Page Navigation */}
