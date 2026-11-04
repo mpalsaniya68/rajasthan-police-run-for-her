@@ -303,18 +303,16 @@ export default function App() {
 
       </a>
 
-            {/* Official Top Navbar with Page Tabs (Hidden on dedicated Admin, Expo Terminal and Admin Login pages) */}
-      {activePage !== 'admin' && activePage !== 'expo-terminal' && activePage !== 'admin-login' && (
-        <Navbar
-          onOpenRegister={() => navigateToPage('register')}
-          onOpenBulkRegister={() => setIsBulkModalOpen(true)}
-          onOpenAdmin={handleOpenAdminTrigger}
-          activePage={activePage}
-          onNavigate={navigateToPage}
-          totalRegistered={registrations.length + 18450}
-          isAdminAuthenticated={isAdminAuthenticated}
-        />
-      )}
+            {/* Official Top Navbar with Page Tabs */}
+      <Navbar
+        onOpenRegister={() => navigateToPage('register')}
+        onOpenBulkRegister={() => setIsBulkModalOpen(true)}
+        onOpenAdmin={handleOpenAdminTrigger}
+        activePage={activePage}
+        onNavigate={navigateToPage}
+        totalRegistered={registrations.length + 18450}
+        isAdminAuthenticated={isAdminAuthenticated}
+      />
 
       {/* Main Content View Container */}
 
@@ -660,7 +658,7 @@ export default function App() {
 
       {/* Footer with Helpline Matrix & Quick Page Navigation */}
 
-      {activePage !== 'admin' && activePage !== 'expo-terminal' && <Footer onNavigate={navigateToPage} />}
+      <Footer onNavigate={navigateToPage} />
 
       {/* Top Rec 1: Institutional & Bulk Registration Portal (RPA / Battalion / Colleges) */}
 

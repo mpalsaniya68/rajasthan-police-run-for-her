@@ -4114,69 +4114,37 @@ export function AdminDashboard({
 
           {/* Hardware & IoT Sensor Mats Health Status Matrix */}
 
-          <div className="gov-card" style={{ padding: '16px 20px', background: 'var(--police-navy-950)', color: '#ffffff', borderRadius: '8px' }}>
-
+          <div className="gov-card" style={{ padding: '16px 20px', background: '#ffffff', color: '#0f172a', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
-
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--police-gold-400)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-
-                <Zap size={16} /> ग्राउंड RFID टाइमिंग मैट हार्डवेयर स्वास्थ्य (Timing Readers Health Matrix)
-
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Zap size={16} color="#2563eb" /> ग्राउंड RFID टाइमिंग मैट हार्डवेयर स्वास्थ्य (Timing Readers Health Matrix)
               </span>
-
-              <span style={{ fontSize: '0.72rem', color: '#86efac', fontWeight: 700 }}>सिस्टम लेटेंसी: 8ms • 100% अपटाइम</span>
-
+              <span style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700 }}>सिस्टम लेटेंसी: 8ms • 100% अपटाइम</span>
             </div>
-
-
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
-
               {[
-
                 { name: 'Albert Hall Gantry', ip: '10.24.1.101', status: 'ONLINE', pings: '4ms', battery: 'AC Mains' },
-
                 { name: '5K RU Gate Mat', ip: '10.24.1.102', status: 'ONLINE', pings: '7ms', battery: '98% UPS' },
-
                 { name: '10K WTP Turn Mat', ip: '10.24.1.103', status: 'ONLINE', pings: '9ms', battery: '94% UPS' },
-
                 { name: '15K Patrika Gate Mat', ip: '10.24.1.104', status: 'ONLINE', pings: '11ms', battery: '91% UPS' },
-
                 { name: 'Grand Finish Gantry', ip: '10.24.1.105', status: 'ONLINE', pings: '3ms', battery: 'AC Redundant' }
-
               ].map((hw, idx) => (
-
-                <div key={idx} style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '10px', borderRadius: '5px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', fontWeight: 800 }}>
-
+                <div key={idx} style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', fontWeight: 800, color: '#0f172a' }}>
                     <span>{hw.name}</span>
-
-                    <span style={{ color: '#4ade80', fontSize: '0.65rem' }}>● {hw.status}</span>
-
+                    <span style={{ color: '#16a34a', fontSize: '0.65rem', fontWeight: 700 }}>● {hw.status}</span>
                   </div>
-
-                  <div style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '2px' }}>
-
-                    IP: {hw.ip} | लेटेंसी: {hw.pings}
-
+                  <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '4px' }}>
+                    IP: {hw.ip} • लेटेंसी: {hw.pings}
                   </div>
-
-                  <div style={{ fontSize: '0.65rem', color: 'var(--police-gold-400)', marginTop: '2px' }}>
-
-                    पावर: {hw.battery}
-
+                  <div style={{ fontSize: '0.65rem', color: '#b45309', fontWeight: 700, marginTop: '2px' }}>
+                    पॉवर: {hw.battery}
                   </div>
-
                 </div>
-
               ))}
-
             </div>
-
           </div>
-
-
 
         </div>
 
