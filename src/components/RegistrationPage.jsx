@@ -215,6 +215,7 @@ export function RegistrationPage({
         name: registeredParticipant.fullName,
         category: registeredParticipant.categoryName,
         district: registeredParticipant.districtName,
+        tshirt: registeredParticipant.tshirtSize || "M",
         bloodGroup: registeredParticipant.bloodGroup,
         medicalAlert: registeredParticipant.medicalCondition || "None",
         status: "OFFICIAL_POLICE_EPASS_CONFIRMED"

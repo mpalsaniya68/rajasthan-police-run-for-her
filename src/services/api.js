@@ -133,6 +133,20 @@ export async function apiAdminLogin(username, password) {
   }
 }
 
+export async function apiExpoLogin(operatorName, counterId, counterName, passcode) {
+  try {
+    const res = await fetch(`${API_BASE}/expo/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ operatorName, counterId, counterName, passcode })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiExpoLogin error:", err);
+    return { success: false, error: "एक्सपो काउंटर लॉगिन विफल।" };
+  }
+}
+
 export async function apiGetAdminParticipants(filters = {}) {
   try {
     const params = new URLSearchParams(filters);

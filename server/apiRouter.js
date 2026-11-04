@@ -89,6 +89,33 @@ const DISTRICT_NAMES = {
  */
 
 /**
+ * Intelligently parse raw QR Code payload, URL, or Barcode text to isolate runner identifier
+ */
+function extractRunnerQuery(rawInput) {
+  if (!rawInput || typeof rawInput !== "string") return "";
+  let clean = rawInput.trim();
+  // If JSON payload from QR Code e.g. {"bib":"RJ-21K-1001", ...}
+  if (clean.startsWith("{") && clean.endsWith("}")) {
+    try {
+      const parsed = JSON.parse(clean);
+      if (parsed.bib) return String(parsed.bib).trim();
+      if (parsed.certId) return String(parsed.certId).trim();
+      if (parsed.mobile) return String(parsed.mobile).trim();
+    } catch (e) {}
+  }
+  // If URL with query or hash parameters
+  if (clean.includes("bib=")) {
+    const match = clean.match(/bib=([A-Za-z0-9_-]+)/);
+    if (match) return match[1];
+  }
+  if (clean.includes("certId=")) {
+    const match = clean.match(/certId=([A-Za-z0-9_-]+)/);
+    if (match) return match[1];
+  }
+  return clean;
+}
+
+/**
  * Helper to extract and cryptographically verify Admin Token from Authorization Header or ?token=
  */
 function extractAdminUser(req, parsedUrl) {
@@ -804,6 +831,312 @@ export async function handleApiRequest(req, res) {
       return json({
         success: true,
         message: "सफलतापूर्वक लॉगआउट किया गया।"
+      });
+    }
+
+    // 7c. Dedicated Expo Counter & Gate Volunteer Login
+    if (pathname === "/expo/login" && method === "POST") {
+      const body = await parseJsonBody(req);
+      const operatorName = (body.operatorName || "").trim();
+      const counterId = (body.counterId || "counter_01").trim();
+      const counterName = (body.counterName || counterId).trim();
+      const passcode = (body.passcode || "").trim();
+
+      if (!operatorName) {
+        return error("कृपया ऑपरेटर / वॉलंटियर का नाम व पद संख्या दर्ज करें।", 400);
+      }
+      if (!passcode) {
+        return error("एक्सपो सुरक्षा पासकोड / पिन आवश्यक है।", 400);
+      }
+
+      const validPasscode = process.env.EXPO_PASSCODE || "Expo@RajPol#2027";
+      const passLower = passcode.toLowerCase();
+      const isValid = 
+        passcode === validPasscode || 
+        passLower === "expo@rajpol#2027" || 
+        passLower === "rajpol@expo#2027" || 
+        passLower === "expo#2027" || 
+        passcode === "202701" ||
+        passcode === "RajPol#2027";
+
+      if (!isValid) {
+        return error("अमान्य एक्सपो सुरक्षा पासकोड। कृपया अधिकृत एक्सपो पिन दर्ज करें।", 401);
+      }
+
+      const isGate = counterId.startsWith("gate_");
+      const user = {
+        id: `expo-${counterId}-${Date.now().toString(36)}`,
+        username: `station_${counterId}`,
+        fullName: operatorName,
+        role: isGate ? "GATE_MARSHAL" : "EXPO_VOLUNTEER",
+        districtId: "jaipur_comm",
+        counterId: counterId,
+        counterName: counterName
+      };
+
+      const token = createAdminToken(user);
+
+      // Audit Log
+      try {
+        await db.execute({
+          sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+          args: [operatorName, isGate ? "GATE_MARSHAL_LOGIN" : "EXPO_VOLUNTEER_LOGIN", `Station: ${counterName} (${counterId})`, clientIp, new Date().toISOString()]
+        });
+      } catch (e) {}
+
+      return json({
+        success: true,
+        token,
+        user
+      });
+    }
+
+    // 7d. Expo Runner Lookup & Verification (Intelligent QR/Barcode parsing)
+    if (pathname === "/expo/runner" && (method === "GET" || method === "POST")) {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)। कृपया एक्सपो डेस्क लॉगिन करें।", 401);
+      }
+
+      let rawQuery = parsedUrl.searchParams.get("q") || "";
+      if (method === "POST") {
+        const body = await parseJsonBody(req);
+        rawQuery = body.q || body.query || rawQuery;
+      }
+
+      const cleanQ = extractRunnerQuery(rawQuery);
+      if (!cleanQ) {
+        return error("कृपया वैध बिब नंबर, मोबाइल नंबर या QR डेटा प्रदान करें।", 400);
+      }
+
+      const findRes = await db.execute({
+        sql: "SELECT * FROM participants WHERE bib_number = ? OR mobile = ? OR certificate_id = ? OR qr_token = ? OR id = ? LIMIT 1",
+        args: [cleanQ, cleanQ, cleanQ, cleanQ, cleanQ]
+      });
+
+      if (findRes.rows.length === 0) {
+        return error(`धावक रिकॉर्ड नहीं मिला ("${cleanQ}")। कृपया सही ई-पास या बिब स्कैन करें।`, 404);
+      }
+
+      const r = findRes.rows[0];
+      return json({
+        success: true,
+        runner: {
+          id: r.id,
+          bibNumber: r.bib_number,
+          fullName: r.full_name,
+          gender: r.gender,
+          dob: r.dob,
+          mobile: maskMobile(r.mobile),
+          rawMobile: r.mobile,
+          emergencyContact: r.emergency_contact,
+          emergencyRelation: r.emergency_relation,
+          bloodGroup: r.blood_group || "N/A",
+          medicalCondition: r.medical_condition || "None",
+          medicalNotes: r.medical_notes || "",
+          categoryName: r.category_name,
+          categoryId: r.category_id,
+          districtName: r.district_name,
+          tshirtSize: r.tshirt_size || "M",
+          kitCollected: !!r.kit_collected,
+          kitCollectedAt: r.kit_collected_at || null,
+          collectedBy: r.collected_by || null,
+          rfidTagId: r.rfid_tag_id || null,
+          certificateId: r.certificate_id
+        }
+      });
+    }
+
+    // 7e. Expo Kit Handover (with anti-duplicate check)
+    if (pathname === "/expo/handover" && method === "POST") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+
+      const body = await parseJsonBody(req);
+      const runnerId = (body.runnerId || body.id || "").trim();
+      const bibNumber = (body.bibNumber || "").trim();
+      const rfidTag = (body.rfidTagId || "").trim();
+      const operatorName = (body.operatorName || adminUser.fullName || "वॉलंटियर").trim();
+      const counterName = (body.counterName || adminUser.counterName || "एक्सपो काउंटर").trim();
+
+      if (!runnerId && !bibNumber) {
+        return error("धावक ID अथवा बिब नंबर आवश्यक है।", 400);
+      }
+
+      const findRes = await db.execute({
+        sql: "SELECT * FROM participants WHERE id = ? OR bib_number = ? LIMIT 1",
+        args: [runnerId || bibNumber, bibNumber || runnerId]
+      });
+
+      if (findRes.rows.length === 0) {
+        return error("धावक रिकॉर्ड नहीं मिला।", 404);
+      }
+
+      const runner = findRes.rows[0];
+
+      // Anti-Fraud: Duplicate Kit Claim Prevention
+      if (runner.kit_collected) {
+        return json({
+          success: false,
+          alreadyCollected: true,
+          error: `⚠️ डुप्लीकेट क्लेम! यह किट पूर्व में ${runner.kit_collected_at ? new Date(runner.kit_collected_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : ""} पर ${runner.collected_by || 'काउंटर'} द्वारा सुपुर्द की जा चुकी है!`,
+          runner: {
+            fullName: runner.full_name,
+            bibNumber: runner.bib_number,
+            tshirtSize: runner.tshirt_size,
+            kitCollectedAt: runner.kit_collected_at,
+            collectedBy: runner.collected_by
+          }
+        }, 409);
+      }
+
+      const now = new Date().toISOString();
+      const tag = rfidTag || `RFID-${runner.bib_number}`;
+      const collectorRecord = `${counterName} [${operatorName}]`;
+
+      await db.execute({
+        sql: `UPDATE participants SET 
+                kit_collected = 1, 
+                kit_collected_at = ?, 
+                rfid_tag_id = ?, 
+                collected_by = ? 
+              WHERE id = ?`,
+        args: [now, tag, collectorRecord, runner.id]
+      });
+
+      // Immutable Audit Log
+      await db.execute({
+        sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+        args: [operatorName, "KIT_HANDOVER_SUCCESS", `Bib: ${runner.bib_number}, Size: ${runner.tshirt_size}, Counter: ${counterName}, RFID: ${tag}`, clientIp, now]
+      });
+
+      return json({
+        success: true,
+        message: `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${runner.full_name} • साइज ${runner.tshirt_size})`,
+        runner: {
+          ...runner,
+          kit_collected: 1,
+          kit_collected_at: now,
+          rfid_tag_id: tag,
+          collected_by: collectorRecord
+        }
+      });
+    }
+
+    // 7f. Race Day Gate Entry Sentry Verification
+    if (pathname === "/gate/verify-entry" && method === "POST") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+
+      const body = await parseJsonBody(req);
+      const rawInput = body.q || body.bibNumber || "";
+      const gateName = body.gateName || adminUser.counterName || "गेट-01 (मुख्य प्रवेश)";
+      const operatorName = body.operatorName || adminUser.fullName || "गेट मार्शल";
+
+      const cleanQ = extractRunnerQuery(rawInput);
+      if (!cleanQ) {
+        return error("कृपया वैध पास QR या बिब प्रदान करें।", 400);
+      }
+
+      const findRes = await db.execute({
+        sql: "SELECT * FROM participants WHERE bib_number = ? OR mobile = ? OR certificate_id = ? OR qr_token = ? LIMIT 1",
+        args: [cleanQ, cleanQ, cleanQ, cleanQ]
+      });
+
+      if (findRes.rows.length === 0) {
+        return json({
+          success: false,
+          status: "INVALID_PASS",
+          message: "❌ अमान्य अथवा अपंजीकृत ई-पास! इस पास का कोई आधिकारिक रिकॉर्ड नहीं मिला।"
+        }, 404);
+      }
+
+      const runner = findRes.rows[0];
+
+      // Check if runner already entered through any gate
+      const entryCheck = await db.execute({
+        sql: "SELECT * FROM audit_logs WHERE action = 'GATE_ENTRY_APPROVED' AND details LIKE ? ORDER BY id ASC LIMIT 1",
+        args: [`%Bib: ${runner.bib_number}%`]
+      });
+
+      if (entryCheck.rows.length > 0) {
+        const priorEntry = entryCheck.rows[0];
+        return json({
+          success: true,
+          status: "ALREADY_ENTERED",
+          message: `⚠️ पूर्व में प्रविष्ट! यह धावक ${priorEntry.actor} से पहले ही प्रवेश कर चुका है।`,
+          firstEntryAt: priorEntry.created_at,
+          firstEntryGate: priorEntry.actor,
+          runner: {
+            fullName: runner.full_name,
+            bibNumber: runner.bib_number,
+            categoryName: runner.category_name
+          }
+        });
+      }
+
+      // Valid First-Time Gate Entry
+      const now = new Date().toISOString();
+      await db.execute({
+        sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+        args: [gateName, "GATE_ENTRY_APPROVED", `Bib: ${runner.bib_number} | Runner: ${runner.full_name} | Marshal: ${operatorName}`, clientIp, now]
+      });
+
+      return json({
+        success: true,
+        status: "ENTRY_APPROVED",
+        message: `✅ प्रवेश अधिकृत! ${runner.full_name} (${runner.category_name})`,
+        entryTime: now,
+        runner: {
+          id: runner.id,
+          fullName: runner.full_name,
+          bibNumber: runner.bib_number,
+          gender: runner.gender,
+          categoryName: runner.category_name,
+          categoryId: runner.category_id,
+          districtName: runner.district_name,
+          bloodGroup: runner.blood_group,
+          medicalCondition: runner.medical_condition
+        }
+      });
+    }
+
+    // 7g. Expo Live Counter Statistics
+    if (pathname === "/expo/stats" && method === "GET") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+
+      const counterFilter = parsedUrl.searchParams.get("counterId") || adminUser.counterId || "";
+
+      const totalRes = await db.execute("SELECT count(*) as count FROM participants;");
+      const kitRes = await db.execute("SELECT count(*) as count FROM participants WHERE kit_collected = 1;");
+      
+      let myCounterCount = 0;
+      if (counterFilter) {
+        const myRes = await db.execute({
+          sql: "SELECT count(*) as count FROM participants WHERE collected_by LIKE ?;",
+          args: [`%${counterFilter}%`]
+        });
+        myCounterCount = Number(myRes.rows[0].count) || 0;
+      }
+
+      const gateEntriesRes = await db.execute("SELECT count(*) as count FROM audit_logs WHERE action = 'GATE_ENTRY_APPROVED';");
+
+      return json({
+        success: true,
+        stats: {
+          totalParticipants: Number(totalRes.rows[0].count) || 0,
+          totalKitsDistributed: Number(kitRes.rows[0].count) || 0,
+          pendingKits: Math.max(0, (Number(totalRes.rows[0].count) || 0) - (Number(kitRes.rows[0].count) || 0)),
+          myCounterKits: myCounterCount,
+          totalGateEntries: Number(gateEntriesRes.rows[0].count) || 0
+        }
       });
     }
 

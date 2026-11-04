@@ -167,8 +167,11 @@ export function createAdminToken(user) {
   const payload = {
     id: user.id,
     username: user.username,
-    role: user.role, // "PHQ" or "DISTRICT"
-    districtId: user.districtId,
+    fullName: user.fullName || user.username,
+    role: user.role, // "PHQ" or "DISTRICT" or "EXPO_VOLUNTEER"
+    districtId: user.districtId || "ALL",
+    counterId: user.counterId || "",
+    counterName: user.counterName || "",
     exp: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
   };
   const b64Payload = Buffer.from(JSON.stringify(payload)).toString("base64url");
