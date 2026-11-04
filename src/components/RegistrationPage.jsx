@@ -316,6 +316,7 @@ export function RegistrationPage({
         setOtpError('');
         setOtpToast(null);
         return;
+      } else {
         setOtpError(res?.error || "अमान्य ओटीपी कोड! कृपया सही 6-अंकों का सुरक्षा कोड दर्ज करें।");
       }
     } catch (err) {

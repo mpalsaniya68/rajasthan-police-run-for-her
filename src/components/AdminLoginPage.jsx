@@ -3,7 +3,7 @@ import {
   Shield, Lock, ArrowLeft, KeyRound, UserCheck, AlertTriangle, 
   Eye, EyeOff, Building2, MapPin, CheckCircle2, ChevronRight
 } from 'lucide-react';
-import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
+import { PoliceEmblem } from './Emblems';
 import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 import { apiAdminLogin } from '../services/api';
 
@@ -102,62 +102,45 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
         <PoliceEmblem size={600} />
       </div>
 
-      {/* Top Government Navigation Bar - Clean Light Professional Format */}
-      <header style={{
+      {/* Clean Breadcrumb Bar - Without Duplicate Emblems or Headings */}
+      <div style={{
         background: '#ffffff',
-        borderBottom: '2px solid var(--police-gold-500)',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
-        padding: '12px 24px',
+        borderBottom: '1px solid #e2e8f0',
+        padding: '10px 24px',
         position: 'relative',
         zIndex: 10
       }}>
-        <div className="container-fluid" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <StateEmblemOfIndia size={42} />
-            <div style={{ width: '1px', height: '36px', background: '#e2e8f0' }} className="d-tablet-inline"></div>
-            <PoliceEmblem size={44} />
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0a1c3d', letterSpacing: '0.03em' }}>
-                राजस्थान सरकार | GOVERNMENT OF RAJASTHAN
-              </div>
-              <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                राजस्थान पुलिस मैराथन 2027 — प्रशासनिक नियंत्रण एवं कमान पोर्टल
-              </div>
-            </div>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: '#64748b' }}>
+            <span style={{ cursor: 'pointer', color: 'var(--police-navy-800)', fontWeight: 600 }} onClick={() => onNavigate('home')}>मुख्य पृष्ठ</span>
+            <span>/</span>
+            <span style={{ color: '#0f172a', fontWeight: 700 }}>प्रशासनिक कमान लॉगिन</span>
           </div>
 
-          {/* Back to Portal Button */}
           <button
             onClick={() => onNavigate('home')}
             style={{
               background: '#ffffff',
               color: '#0a1c3d',
-              border: '1.5px solid #cbd5e1',
+              border: '1px solid #cbd5e1',
               borderRadius: '6px',
-              padding: '8px 16px',
-              fontSize: '0.84rem',
-              fontWeight: 700,
+              padding: '6px 14px',
+              fontSize: '0.82rem',
+              fontWeight: 600,
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
+              gap: '6px',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+              transition: 'all 0.15s ease'
             }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = '#f1f5f9';
-              e.currentTarget.style.borderColor = '#94a3b8';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = '#ffffff';
-              e.currentTarget.style.borderColor = '#cbd5e1';
-            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = '#f1f5f9'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = '#ffffff'; }}
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={15} />
             <span>मुख्य वेबसाइट पर वापस जाएं</span>
           </button>
         </div>
-      </header>
+      </div>
 
       {/* Main Content Login Container */}
       <main style={{

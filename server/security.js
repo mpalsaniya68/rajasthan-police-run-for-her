@@ -142,7 +142,7 @@ export function verifyPassword(password, storedHash) {
       if (crypto.timingSafeEqual(Buffer.from(computedPbkdf2), Buffer.from(storedHash))) {
         return true;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // 2. Compatibility check: legacy salted SHA-256
@@ -153,7 +153,7 @@ export function verifyPassword(password, storedHash) {
   if (legacySha256.length === storedHash.length) {
     try {
       return crypto.timingSafeEqual(Buffer.from(legacySha256), Buffer.from(storedHash));
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return false;
