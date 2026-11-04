@@ -49,11 +49,8 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
       {/* 0. Background Photo Layer (Crisply framed and responsive on mobile & desktop) */}
       <div className="hero-bg-photo" />
 
-      {/* 1. Base Subtle Dark Tint (Keeps the background photo clearly visible) */}
+      {/* 1. Neutral Subtle Dark Contrast Tint (Zero Color Cast - Keeps photo 100% natural) */}
       <div className="hero-base-tint" />
-
-      {/* 2. Full Surface Rajasthan Police Crimson Red Overlay */}
-      <div className="hero-overlay-red" />
 
       {/* Hero Content Wrapper */}
       <div style={{ position: 'relative', zIndex: 2 }}>
@@ -448,18 +445,9 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
         .hero-base-tint {
           position: absolute;
           inset: 0;
-          background: rgba(5, 17, 38, 0.22);
+          background: rgba(0, 0, 0, 0.45);
           z-index: 1;
           pointer-events: none;
-        }
-
-        /* Full Surface Rajasthan Police Crimson Red Overlay */
-        .hero-overlay-red {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          pointer-events: none;
-          background: linear-gradient(135deg, rgba(220, 38, 38, 0.52) 0%, rgba(185, 28, 28, 0.58) 50%, rgba(136, 19, 55, 0.68) 100%);
         }
 
 
