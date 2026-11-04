@@ -3,7 +3,6 @@ import {
   Shield, Lock, ArrowLeft, KeyRound, UserCheck, AlertTriangle, 
   Eye, EyeOff, Building2, MapPin, CheckCircle2, ChevronRight
 } from 'lucide-react';
-import { PoliceEmblem } from './Emblems';
 import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 import { apiAdminLogin } from '../services/api';
 
@@ -89,20 +88,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
       flexDirection: 'column',
       position: 'relative'
     }}>
-      {/* Subtle Background Watermark */}
-      <div style={{
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        opacity: 0.03,
-        pointerEvents: 'none',
-        zIndex: 0
-      }}>
-        <PoliceEmblem size={600} />
-      </div>
-
-      {/* Clean Breadcrumb Bar - Without Duplicate Emblems or Headings */}
+      {/* Clean Breadcrumb Bar */}
       <div style={{
         background: '#ffffff',
         borderBottom: '1px solid #e2e8f0',
@@ -142,48 +128,53 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
         </div>
       </div>
 
-      {/* Main Content Login Container */}
+      {/* Main Content Login Container - Positioned higher with clean spacing */}
       <main style={{
         flex: 1,
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'center',
-        padding: '36px 16px',
+        padding: '32px 16px 60px',
         position: 'relative',
         zIndex: 5
       }}>
         <div style={{
           width: '100%',
-          maxWidth: '520px',
+          maxWidth: '480px',
           background: '#ffffff',
           border: '1px solid #cbd5e1',
-          borderRadius: '10px',
-          boxShadow: '0 4px 20px rgba(15, 23, 42, 0.08)',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
           overflow: 'hidden'
         }}>
-          {/* Card Official Police Navy Header */}
+          {/* Official Subtle Top Color Bar */}
+          <div style={{ height: '4px', background: '#0b3a75' }}></div>
+
+          {/* Official Government Card Header - Clean Light Sarkari Style */}
           <div style={{
-            background: 'var(--police-navy-950)',
-            padding: '22px 28px',
-            borderBottom: '3px solid var(--police-gold-500)',
-            textAlign: 'center',
-            color: '#ffffff'
+            background: '#ffffff',
+            padding: '22px 24px 16px',
+            borderBottom: '1px solid #e2e8f0',
+            textAlign: 'center'
           }}>
             <div style={{ 
               display: 'inline-flex', 
-              padding: '10px', 
-              background: 'rgba(255,255,255,0.08)', 
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '48px',
+              height: '48px',
+              background: '#f0f4f8', 
               borderRadius: '50%', 
               marginBottom: '10px', 
-              border: '1px solid rgba(212, 175, 55, 0.4)' 
+              border: '1px solid #cbd5e1'
             }}>
-              <Shield size={36} color="#fde68a" />
+              <Shield size={24} color="#0b3a75" />
             </div>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 900, margin: '0 0 4px', color: '#ffffff', letterSpacing: '0.02em' }}>
-              अधिकृत प्रशासनिक कमान लॉगिन
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 4px', color: '#0f172a' }}>
+              प्रशासनिक कमान लॉगिन
             </h1>
-            <p style={{ margin: 0, fontSize: '0.78rem', color: '#fde68a', fontWeight: 600 }}>
-              Police Headquarters & District SP Command Desk
+            <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748b' }}>
+              राजस्थान पुलिस मुख्यालय एवं जिला कमान डेस्क
             </p>
           </div>
 
@@ -384,42 +375,42 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                 </div>
               </div>
 
-              {/* Submit Button - Official Police Navy */}
+              {/* Submit Button - Standard Official Government Blue */}
               <button
                 type="submit"
                 disabled={isLoading}
                 style={{
                   width: '100%',
-                  padding: '12px',
-                  background: 'var(--police-navy-950)',
+                  padding: '11px 16px',
+                  background: '#0b3a75',
                   color: '#ffffff',
-                  border: '1.5px solid var(--police-gold-500)',
+                  border: 'none',
                   borderRadius: '6px',
-                  fontSize: '0.95rem',
-                  fontWeight: 800,
+                  fontSize: '0.92rem',
+                  fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
                   cursor: isLoading ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 2px 6px rgba(10, 28, 61, 0.2)',
-                  transition: 'background 0.2s ease',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                  transition: 'background 0.15s ease',
                   opacity: isLoading ? 0.7 : 1
                 }}
                 onMouseOver={(e) => {
-                  if (!isLoading) e.currentTarget.style.background = '#1e3a8a';
+                  if (!isLoading) e.currentTarget.style.background = '#082852';
                 }}
                 onMouseOut={(e) => {
-                  if (!isLoading) e.currentTarget.style.background = 'var(--police-navy-950)';
+                  if (!isLoading) e.currentTarget.style.background = '#0b3a75';
                 }}
               >
                 {isLoading ? (
-                  <span>सुरक्षा सत्यापन जारी...</span>
+                  <span>सत्यापन जारी...</span>
                 ) : (
                   <>
-                    <Lock size={16} color="#fde68a" />
-                    <span>कमान पोर्टल में प्रवेश करें (Secure Sign In)</span>
-                    <ChevronRight size={16} />
+                    <Lock size={15} color="#ffffff" />
+                    <span>कमान पोर्टल में प्रवेश करें (Sign In)</span>
+                    <ChevronRight size={15} />
                   </>
                 )}
               </button>
