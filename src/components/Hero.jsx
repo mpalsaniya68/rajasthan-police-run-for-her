@@ -52,24 +52,8 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
       {/* 1. Base Subtle Dark Tint (Keeps the background photo clearly visible) */}
       <div className="hero-base-tint" />
 
-      {/* 2. Rajasthan Police Red Half Overlay (50% on both Desktop & Mobile) */}
+      {/* 2. Full Surface Rajasthan Police Crimson Red Overlay */}
       <div className="hero-overlay-red" />
-
-      {/* 3. Rajasthan Police Navy Blue Half Overlay (50% on both Desktop & Mobile) */}
-      <div className="hero-overlay-blue" />
-
-      {/* 4. Sleek Golden Dividing Accent Line */}
-      <svg className="hero-golden-divider" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="heroGoldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#fef08a" stopOpacity="0.5" />
-            <stop offset="50%" stopColor="#d4af37" stopOpacity="1" />
-            <stop offset="100%" stopColor="#fef08a" stopOpacity="0.5" />
-          </linearGradient>
-        </defs>
-        {/* Triangle diagonal divider (0,0 -> 100,100) for both desktop and mobile */}
-        <line x1="0" y1="0" x2="100" y2="100" stroke="url(#heroGoldGlow)" strokeWidth="1.8" vectorEffect="non-scaling-stroke" />
-      </svg>
 
       {/* Hero Content Wrapper */}
       <div style={{ position: 'relative', zIndex: 2 }}>
@@ -469,32 +453,13 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
           pointer-events: none;
         }
 
-        /* 50/50 Dual Tone: Top-Right Crimson Red Half & Bottom-Left Navy Blue Half */
+        /* Full Surface Rajasthan Police Crimson Red Overlay */
         .hero-overlay-red {
           position: absolute;
           inset: 0;
           z-index: 1;
           pointer-events: none;
-          background: linear-gradient(135deg, rgba(220, 38, 38, 0.42) 0%, rgba(185, 28, 28, 0.34) 50%, rgba(153, 27, 27, 0.26) 100%);
-          clip-path: polygon(0 0, 100% 0, 100% 100%);
-        }
-
-        .hero-overlay-blue {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          pointer-events: none;
-          background: linear-gradient(135deg, rgba(10, 28, 61, 0.52) 0%, rgba(15, 23, 42, 0.44) 50%, rgba(10, 28, 61, 0.55) 100%);
-          clip-path: polygon(0 0, 0 100%, 100% 100%);
-        }
-
-        .hero-golden-divider {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 1;
-          pointer-events: none;
+          background: linear-gradient(135deg, rgba(220, 38, 38, 0.52) 0%, rgba(185, 28, 28, 0.58) 50%, rgba(136, 19, 55, 0.68) 100%);
         }
 
 
