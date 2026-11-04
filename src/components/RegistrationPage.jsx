@@ -783,11 +783,35 @@ export function RegistrationPage({
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
+  const handlePrintPass = () => {
+    let printStyle = document.getElementById('pass-print-page-style');
+    if (!printStyle) {
+      printStyle = document.createElement('style');
+      printStyle.id = 'pass-print-page-style';
+      printStyle.innerHTML = `
+        @page {
+          size: A4 portrait !important;
+          margin: 0 !important;
+        }
+      `;
+      document.head.appendChild(printStyle);
+    }
+
+    const cleanup = () => {
+      const el = document.getElementById('pass-print-page-style');
+      if (el) el.remove();
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+
+    window.print();
+  };
+
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '80px' }}>
 
       {/* 1. Official Government Header Breadcrumb */}
-      <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
+      <div className="no-print" style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.86rem' }}>
             <button
@@ -832,7 +856,7 @@ export function RegistrationPage({
             animation: 'fadeIn 0.3s ease-out'
           }}>
             {/* Success Top Banner */}
-            <div style={{
+            <div className="no-print" style={{
               background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
               color: '#ffffff',
               padding: '28px 24px',
@@ -1074,7 +1098,7 @@ export function RegistrationPage({
               </div>
 
               {/* Action Buttons Row */}
-              <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '12px' }}>
+              <div className="action-buttons-row no-print" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '12px' }}>
                 <button
                   onClick={() => handleDownloadEPassPNG()}
                   disabled={isDownloadingPass}
@@ -1112,7 +1136,7 @@ export function RegistrationPage({
                 </button>
 
                 <button
-                  onClick={() => window.print()}
+                  onClick={handlePrintPass}
                   className="btn-navy"
                   style={{
                     padding: '12px 20px',

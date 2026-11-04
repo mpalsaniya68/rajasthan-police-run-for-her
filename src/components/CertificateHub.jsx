@@ -333,12 +333,69 @@ export function CertificateHub({ registrations = [] }) {
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   };
 
+  // Dedicated A4 Landscape Print Engine for Finisher Certificate
+  const handlePrintCertificate = () => {
+    let printStyle = document.getElementById('cert-print-page-style');
+    if (!printStyle) {
+      printStyle = document.createElement('style');
+      printStyle.id = 'cert-print-page-style';
+      printStyle.innerHTML = `
+        @page {
+          size: A4 landscape !important;
+          margin: 0 !important;
+        }
+      `;
+      document.head.appendChild(printStyle);
+    }
+
+    const cleanup = () => {
+      const el = document.getElementById('cert-print-page-style');
+      if (el) el.remove();
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+
+    window.print();
+  };
+
+  // Ensure browser Ctrl+P also triggers clean A4 landscape
+  useEffect(() => {
+    const handleBeforePrint = () => {
+      let printStyle = document.getElementById('cert-print-page-style');
+      if (!printStyle) {
+        printStyle = document.createElement('style');
+        printStyle.id = 'cert-print-page-style';
+        printStyle.innerHTML = `
+          @page {
+            size: A4 landscape !important;
+            margin: 0 !important;
+          }
+        `;
+        document.head.appendChild(printStyle);
+      }
+    };
+
+    const handleAfterPrint = () => {
+      const el = document.getElementById('cert-print-page-style');
+      if (el) el.remove();
+    };
+
+    window.addEventListener('beforeprint', handleBeforePrint);
+    window.addEventListener('afterprint', handleAfterPrint);
+    return () => {
+      window.removeEventListener('beforeprint', handleBeforePrint);
+      window.removeEventListener('afterprint', handleAfterPrint);
+      const el = document.getElementById('cert-print-page-style');
+      if (el) el.remove();
+    };
+  }, []);
+
   if (!selectedRunner) return null;
 
   return (
     <section id="certificates" className="section-padding" style={{ position: 'relative', background: '#f8fafc', borderTop: '1px solid var(--border-subtle)' }}>
       <div className="container">
-        <div className="section-header">
+        <div className="section-header no-print">
           <span className="badge-gold">Official Finisher Honors</span>
           <h2>डिजिटल फिनिशर सर्टिफिकेट एवं ऑटो-डिस्पैच हब</h2>
           <p>
@@ -347,7 +404,7 @@ export function CertificateHub({ registrations = [] }) {
         </div>
 
         {/* Runner Selector & Quick Search Bar */}
-        <div className="gov-card" style={{
+        <div className="gov-card no-print" style={{
           padding: '16px 20px',
           marginBottom: '28px',
           display: 'flex',
@@ -403,7 +460,7 @@ export function CertificateHub({ registrations = [] }) {
 
         {/* Real-time Police Database Verification Feedback */}
         {searchFeedback && (
-          <div style={{
+          <div className="no-print" style={{
             background: searchFeedback.type === 'success' ? '#f0fdf4' : '#fef2f2',
             border: searchFeedback.type === 'success' ? '1.5px solid #22c55e' : '1.5px solid #f87171',
             borderLeftWidth: '5px',
@@ -436,7 +493,7 @@ export function CertificateHub({ registrations = [] }) {
 
         {/* Automated Dispatch Notification Alert */}
         {showDispatchNotice && (
-          <div style={{
+          <div className="no-print" style={{
             background: '#ecfdf5',
             border: '1px solid #10b981',
             borderRadius: '6px',
@@ -636,7 +693,7 @@ export function CertificateHub({ registrations = [] }) {
           </div>
 
           {/* RIGHT SIDE: DISPATCH CONTROLS */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div className="cert-dispatch-controls no-print" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div className="gov-card" style={{ padding: '18px' }}>
               <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--police-navy-900)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Send size={15} color="var(--police-navy-800)" /> ऑटोमैटिक डिलीवरी स्थिति
@@ -705,7 +762,7 @@ export function CertificateHub({ registrations = [] }) {
                 </button>
 
                 <button
-                  onClick={() => window.print()}
+                  onClick={handlePrintCertificate}
                   className="btn-gold"
                   style={{ width: '100%', padding: '10px', fontSize: '0.85rem', justifyContent: 'center' }}
                 >

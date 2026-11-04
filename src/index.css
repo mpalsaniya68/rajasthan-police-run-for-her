@@ -569,77 +569,220 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(15, 43, 92, 0.12);
 }
 
-/* Standard Government A4 Print Engine for E-Pass & Certificate */
+/* ========================================================
+   OFFICIAL GOVERNMENT MASTER A4 PRINT ENGINE
+   Isolated Single-Document Printing:
+   - Certificate: A4 Landscape, 100% border & seal preservation, ZERO surrounding text/chrome
+   - Registration E-Pass: A4 Portrait, ZERO surrounding text/chrome
+   - Suppresses browser timestamps, URLs, breadcrumbs, footers & buttons
+   ======================================================== */
 @media print {
+  /* Suppress browser default header (date/title) and footer (URL/pages) */
   @page {
-    size: auto;
-    margin: 10mm;
+    margin: 0 !important;
   }
 
-  /* Hide non-printable portal navigation, footers, buttons, and ticker */
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Universal Hide: All portal headers, navbars, banners, footers, forms, buttons */
   header,
   footer,
   nav,
   button,
   input,
   select,
-  .btn-glass-primary,
+  form,
+  .topbar,
+  .navbar-container,
+  .hero-ticker-container,
+  .notice-ticker-wrapper,
+  .scroll-progress-bar,
+  .no-print,
+  .badge-gold,
+  .badge-gov,
+  .badge-pink,
   .btn-primary,
   .btn-secondary,
   .btn-navy,
-  .notice-ticker-wrapper,
-  .no-print,
-  #page-register > div:first-child,
-  .app-root > div:nth-child(2) {
+  .btn-gold,
+  .btn-glass-primary,
+  .btn-glass-navy,
+  .btn-glass-gold,
+  .action-buttons-row {
     display: none !important;
     visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  body, html, .app-root, main {
+  /* Universal Breadcrumb Bar Removal Across All Pages */
+  #page-certificates > div:first-child,
+  #page-register > div:first-child,
+  #page-home > div:first-child,
+  #page-categories > div:first-child,
+  #page-route-schedule > div:first-child,
+  #page-districts > div:first-child,
+  #page-pledge-safety > div:first-child,
+  .registration-breadcrumb {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure app root and main wrappers don't introduce print padding or backgrounds */
+  .app-root,
+  main,
+  #main-content {
     background: #ffffff !important;
-    color: #000000 !important;
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
     box-shadow: none !important;
   }
 
-  /* When printing Registration E-Pass */
-  .print-pass-card {
-    display: block !important;
-    visibility: visible !important;
+  /* ========================================================
+     1. CERTIFICATE PRINT ENGINE (A4 LANDSCAPE)
+     ======================================================== */
+  #page-certificates .section-padding {
+    padding: 0 !important;
+    margin: 0 !important;
     background: #ffffff !important;
-    border: 2px solid #0a1c3d !important;
-    box-shadow: none !important;
-    margin: 0 auto !important;
-    padding: 20px !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
+    border: none !important;
+  }
+
+  #page-certificates .container {
     max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide all non-certificate text and widgets in CertificateHub */
+  #page-certificates .section-header,
+  #page-certificates .section-header *,
+  #page-certificates .gov-card,
+  #page-certificates .gov-card *,
+  #page-certificates .cert-responsive-grid > div:last-child,
+  #page-certificates .cert-dispatch-controls,
+  #page-certificates [style*="border-left-width"],
+  #page-certificates [style*="border-left:"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #page-certificates .cert-responsive-grid {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #page-certificates .cert-responsive-grid > div:first-child {
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
     width: 100% !important;
   }
 
-  .print-pass-card * {
-    visibility: visible !important;
-  }
-
-  /* When printing Official Finisher Certificate */
+  /* The Pure Official Finisher Certificate */
   .printable-certificate {
     display: block !important;
     visibility: visible !important;
+    box-sizing: border-box !important;
+    width: 278mm !important;
+    height: 194mm !important;
+    max-width: 278mm !important;
+    max-height: 194mm !important;
+    margin: 7mm auto !important;
+    padding: 22px 30px 16px 30px !important;
     background: #ffffff !important;
-    border: 6px double #b45309 !important;
+    border: 8px double #b45309 !important;
+    border-radius: 6px !important;
     box-shadow: none !important;
-    margin: 0 auto !important;
-    padding: 24px !important;
+    position: relative !important;
+    overflow: hidden !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    max-width: 100% !important;
-    width: 100% !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .printable-certificate * {
     visibility: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* ========================================================
+     2. REGISTRATION E-PASS PRINT ENGINE (A4 PORTRAIT)
+     ======================================================== */
+  #page-register .section-padding {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    border: none !important;
+  }
+
+  #page-register .container,
+  #page-register .registration-page-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide tabs, forms, success banner, buttons outside pass card */
+  #page-register .section-header,
+  #page-register .gov-card > div:first-child,
+  #page-register .gov-card > div:last-child > div:last-child,
+  #page-register form {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-pass-card {
+    display: block !important;
+    visibility: visible !important;
+    border: 2px solid #0a1c3d !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    padding: 18px 22px !important;
+    margin: 6mm auto !important;
+    width: 100% !important;
+    max-width: 780px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .print-pass-card * {
+    visibility: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
 
@@ -773,50 +916,4 @@ textarea[aria-invalid="true"] {
 
 
 
-/* ========================================================
-   OFFICIAL SINGLE-PAGE A4 PRINT STYLESHEET
-   Ensures ONLY the admit pass card is printed on a single A4 page
-   ======================================================== */
-@media print {
-  /* Hide all website chrome, navbars, footers, buttons */
-  body, html {
-    background: #ffffff !important;
-    color: #000000 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
 
-  header, nav, footer, .navbar-container, .hero-ticker-container,
-  .action-buttons-row, button, .scroll-progress-bar,
-  .registration-breadcrumb, .badge-gold, .badge-gov,
-  .btn-glass-primary, .btn-glass-navy, .btn-glass-gold,
-  .btn-primary, .btn-navy, .btn-gold {
-    display: none !important;
-    visibility: hidden !important;
-  }
-
-  /* Make sure container and pass card print cleanly on a single A4 page */
-  .registration-page-container {
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .print-pass-card {
-    border: 2px solid #0a1c3d !important;
-    border-radius: 8px !important;
-    box-shadow: none !important;
-    background: #ffffff !important;
-    padding: 20px !important;
-    margin: 0 auto !important;
-    width: 100% !important;
-    max-width: 820px !important;
-    page-break-inside: avoid !important;
-    page-break-after: avoid !important;
-  }
-
-  @page {
-    size: A4 portrait;
-    margin: 10mm;
-  }
-}
