@@ -544,10 +544,23 @@ export async function handleApiRequest(req, res) {
       }
 
       const body = await parseJsonBody(req);
-      const { bibNumber, checkpointId, checkpointName, km, scanTime, elapsedSeconds, pace, speedKmh } = body;
+      let bibNumber = (body.bibNumber || "").trim();
+      const rfidTag = (body.rfidTagId || body.tagId || "").trim();
+      const { checkpointId, checkpointName, km, scanTime, elapsedSeconds, pace, speedKmh } = body;
+
+      // Dynamic RFID Resolution: If timing hardware sends raw RFID Tag ID instead of Bib Number
+      if (!bibNumber && rfidTag) {
+        const findRunner = await db.execute({
+          sql: "SELECT bib_number FROM participants WHERE rfid_tag_id = ? LIMIT 1",
+          args: [rfidTag]
+        });
+        if (findRunner.rows.length > 0) {
+          bibNumber = findRunner.rows[0].bib_number;
+        }
+      }
 
       if (!bibNumber || !checkpointId) {
-        return error("bibNumber and checkpointId required", 400);
+        return error("bibNumber (अथवा वैध rfidTagId) एवं checkpointId आवश्यक है।", 400);
       }
 
       const now = new Date().toISOString();
