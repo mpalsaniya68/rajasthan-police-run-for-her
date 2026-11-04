@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { z } from "zod";
 
-const APP_SECRET = process.env.APP_SECRET || "rajpol_marathon_2026_super_secure_salt_jaipur";
+const APP_SECRET = process.env.APP_SECRET || "rajpol_marathon_2027_super_secure_salt_jaipur";
 
 /**
  * 1. Zod Validation Schemas
@@ -343,6 +343,7 @@ class SlidingRateLimiter {
 }
 
 export const registrationLimiter = new SlidingRateLimiter(20, 60000); // 20 regs/min per IP
+export const bulkRegistrationLimiter = new SlidingRateLimiter(5, 60000); // 5 bulk uploads/min per IP
 export const adminLoginLimiter = new SlidingRateLimiter(5, 60000); // 5 login attempts/min per IP
 export const otpRequestLimiter = new SlidingRateLimiter(5, 60000); // 5 OTP sends/min per IP
 export const dispatchLimiter = new SlidingRateLimiter(5, 600000); // 5 SMS certificate dispatches/10min per IP

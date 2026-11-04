@@ -26,7 +26,7 @@ async function runBackup() {
   const backupPayload = {
     metadata: {
       organization: "Rajasthan Police Headquarters, Jaipur",
-      event: "Rajasthan Police Marathon 2026 - RUN FOR HER",
+      event: "Rajasthan Police Marathon 2027 - RUN FOR HER",
       generatedAt: now.toISOString(),
       counts: {
         participants: participants.rows.length,

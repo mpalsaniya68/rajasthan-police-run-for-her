@@ -102,7 +102,7 @@ async function startServer() {
   server.listen(PORT, HOST, () => {
     console.log(`
 ╔════════════════════════════════════════════════════════════════════════╗
-║  🏛️  RAJASTHAN POLICE MARATHON 2026 - PRODUCTION SERVER ONLINE          ║
+║  🏛️  RAJASTHAN POLICE MARATHON 2027 - PRODUCTION SERVER ONLINE          ║
 ╚════════════════════════════════════════════════════════════════════════╝
   ► Portal URL:      http://localhost:${PORT}
   ► API Endpoints:   http://localhost:${PORT}/api/health

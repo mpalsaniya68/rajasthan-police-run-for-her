@@ -13,13 +13,13 @@ import { BulkRegistrationModal } from './components/BulkRegistrationModal';
 import { Footer } from './components/Footer';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginPage } from './components/AdminLoginPage';
-import { LiveTrackerHub } from './components/LiveTrackerHub';
+
 import { PatronDesk } from './components/PatronDesk';
 import { RegistrationPage } from './components/RegistrationPage';
 import { FAQSection } from './components/FAQSection';
 
 export default function App() {
-  // Active Page State ('home', 'register', 'categories', 'route-schedule', 'districts', 'live-tracker', 'certificates', 'photos', 'pledge-safety')
+  // Active Page State ('home', 'register', 'categories', 'route-schedule', 'districts', 'certificates', 'photos', 'pledge-safety')
   const [activePage, setActivePage] = useState('home');
 
   // Persistent registrations state
@@ -84,7 +84,18 @@ export default function App() {
     navigateToPage('admin');
   };
 
-  const handleAdminLogout = () => {
+  const handleAdminLogout = async () => {
+    const token = sessionStorage.getItem('rajpol_admin_token');
+    if (token) {
+      try {
+        await fetch('/api/admin/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      } catch (e) {
+        // Continue logout locally
+      }
+    }
     sessionStorage.removeItem('rajpol_admin_auth');
     sessionStorage.removeItem('rajpol_admin_user');
     sessionStorage.removeItem('rajpol_admin_token');
@@ -266,26 +277,6 @@ export default function App() {
               </div>
             </div>
             <SafetyPledge />
-          </div>
-        )}
-
-        {/* 8. LIVE RUNNER RFID TRACKER & COURSE RADAR PAGE */}
-        {activePage === 'live-tracker' && (
-          <div id="page-live-tracker">
-            <div style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
-              <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>🏠 मुख्य पृष्ठ</button>
-                  <span>/</span>
-                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>लाइव रनर ट्रैकिंग एवं जेएलएन मार्ग कोर्स मॉनिटर</span>
-                </div>
-                <span className="badge-pink" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ef4444' }}></span>
-                  RFID ग्राउंड टाइमिंग सेंसर सक्रिय
-                </span>
-              </div>
-            </div>
-            <LiveTrackerHub onNavigate={navigateToPage} />
           </div>
         )}
 

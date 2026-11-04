@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Calendar, MapPin, Users, Award, Heart, Bell, CheckCircle2, ArrowRight, Sparkles, Radio } from 'lucide-react';
+import { Shield, Calendar, MapPin, Users, Award, Heart, Bell, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
 import { RunForHerBadge, PoliceEmblem } from './Emblems';
 
 export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegistered = 18450 }) {
@@ -261,46 +261,6 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
               >
                 <Shield size={18} color="#fde68a" />
                 <span>ग्रुप / संस्थागत पंजीकरण (Bulk Entry)</span>
-              </button>
-
-              <button 
-                onClick={() => onNavigate ? onNavigate('live-tracker') : scrollTo('live-tracker')} 
-                style={{
-                  background: 'linear-gradient(135deg, #881337 0%, #5b0d24 100%)',
-                  border: '1.5px solid #f43f5e',
-                  color: '#ffffff',
-                  padding: '14px 24px',
-                  borderRadius: '50px',
-                  fontSize: '0.94rem',
-                  fontWeight: 800,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  cursor: 'pointer',
-                  boxShadow: '0 6px 20px rgba(136, 19, 55, 0.45)',
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = '#9f1239';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(136, 19, 55, 0.6)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(135deg, #881337 0%, #5b0d24 100%)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(136, 19, 55, 0.45)';
-                }}
-              >
-                <Radio size={16} color="#fecdd3" />
-                <span>लाइव रनर ट्रैकर (Live Tracker)</span>
-                <span style={{
-                  width: '7px',
-                  height: '7px',
-                  borderRadius: '50%',
-                  background: '#22c55e',
-                  boxShadow: '0 0 6px #22c55e',
-                  display: 'inline-block'
-                }}></span>
               </button>
             </div>
 

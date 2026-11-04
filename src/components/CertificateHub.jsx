@@ -14,7 +14,7 @@ export function CertificateHub({ registrations = [] }) {
   const [isVerifiedFromBackend, setIsVerifiedFromBackend] = useState(false);
   const [isDownloadingCert, setIsDownloadingCert] = useState(false);
 
-  // Check URL hash for direct QR verification: #verify?certId=RJ-POL-2026-XXXX
+  // Check URL hash for direct QR verification: #verify?certId=RJ-POL-2027-XXXX
   useEffect(() => {
     const hash = window.location.hash;
     if (hash && hash.includes('certId=')) {

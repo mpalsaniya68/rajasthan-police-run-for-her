@@ -1,5 +1,5 @@
 /**
- * Rajasthan Police Marathon 2026 - Official Notification Service
+ * Rajasthan Police Marathon 2027 - Official Notification Service
  * Handles SMS, WhatsApp & Email confirmation dispatches for runners.
  * Integrates with National Informatics Centre (NIC) / Indian SMS Gateways (MSG91 / Fast2SMS / Twilio).
  */

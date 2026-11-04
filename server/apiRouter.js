@@ -16,6 +16,7 @@ import {
   otpRequestLimiter,
   verifyOtpVerificationToken,
   registrationLimiter,
+  bulkRegistrationLimiter,
   adminLoginLimiter,
   dispatchLimiter,
   sanitizeCsvCell
@@ -427,6 +428,10 @@ export async function handleApiRequest(req, res) {
 
     // 3. Bulk / Institutional Registration
     if (pathname === "/bulk-register" && method === "POST") {
+      if (bulkRegistrationLimiter.isRateLimited(clientIp)) {
+        return error("अत्यधिक बल्क पंजीकरण अनुरोध। कृपया 1 मिनट बाद पुनः प्रयास करें।", 429);
+      }
+
       const body = await parseJsonBody(req);
       const parsed = bulkRegistrationSchema.safeParse(body);
       if (!parsed.success) {
@@ -782,6 +787,23 @@ export async function handleApiRequest(req, res) {
         success: true,
         token,
         user: authenticatedUser
+      });
+    }
+
+    // 7b. Admin Secure Logout with Immutable Audit Trail
+    if (pathname === "/admin/logout" && method === "POST") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (adminUser) {
+        try {
+          await db.execute({
+            sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+            args: [adminUser.username, "ADMIN_LOGOUT", `Role: ${adminUser.role}, Dist: ${adminUser.districtId}`, clientIp, new Date().toISOString()]
+          });
+        } catch (e) {}
+      }
+      return json({
+        success: true,
+        message: "सफलतापूर्वक लॉगआउट किया गया।"
       });
     }
 

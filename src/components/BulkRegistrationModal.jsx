@@ -175,7 +175,7 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
       runners: runners.map(r => ({
         fullName: r.name.trim(),
         gender: (r.gender || "Female").toLowerCase(),
-        dob: `${2026 - (parseInt(r.age) || 22)}-01-01`,
+        dob: `${2027 - (parseInt(r.age) || 22)}-01-01`,
         mobile: cleanNodalPhone,
         emergencyContact: cleanNodalPhone,
         emergencyRelation: "संस्थान नोडल अधिकारी (Nodal)",

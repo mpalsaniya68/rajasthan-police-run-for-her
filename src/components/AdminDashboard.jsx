@@ -265,7 +265,7 @@ export function AdminDashboard({
     bibNumber: p.bib_number,
     fullName: p.full_name,
     gender: p.gender,
-    age: p.dob ? (2026 - parseInt(p.dob.slice(0, 4)) || 25) : 25,
+    age: p.dob ? (2027 - parseInt(p.dob.slice(0, 4)) || 25) : 25,
     category: p.category_id,
     categoryName: p.category_name,
     venueType: p.district_id === 'jaipur' ? 'jaipur' : 'district',

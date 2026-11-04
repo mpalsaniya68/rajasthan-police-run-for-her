@@ -1127,11 +1127,11 @@ export function RegistrationPage({
                 </button>
 
                 <button
-                  onClick={() => onNavigate && onNavigate('live-tracker')}
+                  onClick={() => onNavigate && onNavigate('route-schedule')}
                   className="btn-navy"
                   style={{ padding: '12px 24px', fontSize: '0.94rem' }}
                 >
-                  लाइव कोर्स ट्रैकर देखें &rarr;
+                  दौड़ रूट एवं समय-सारणी देखें &rarr;
                 </button>
 
                 <button
