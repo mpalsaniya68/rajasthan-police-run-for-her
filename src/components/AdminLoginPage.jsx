@@ -526,6 +526,11 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
+                {accessType === 'expo' && (
+                  <div style={{ marginTop: '6px', fontSize: '0.75rem', color: '#047857', fontWeight: 700 }}>
+                    💡 अधिकृत स्टेशन पासकोड: <strong>Expo@RajPol#2027</strong> या <strong>expo123</strong>
+                  </div>
+                )}
               </div>
 
               {/* Submit Button */}

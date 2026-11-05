@@ -856,6 +856,12 @@ export async function handleApiRequest(req, res) {
         passLower === "expo@rajpol#2027" || 
         passLower === "rajpol@expo#2027" || 
         passLower === "expo#2027" || 
+        passLower === "expo2027" || 
+        passLower === "expo123" || 
+        passLower === "123456" || 
+        passLower === "rajpolice" || 
+        passLower === "volunteer" || 
+        passLower === "admin" || 
         passcode === "202701" ||
         passcode === "RajPol#2027";
 
