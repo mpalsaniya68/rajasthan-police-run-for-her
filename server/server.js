@@ -36,7 +36,7 @@ const MIME_TYPES = {
  * Static file server for production build (dist directory)
  */
 function serveStaticFile(req, res, pathname) {
-  let safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, "");
+  let safePath = path.normalize(pathname).replace(/^(\.\.[/\\])+/, "");
   if (safePath === "/" || safePath === "") {
     safePath = "/index.html";
   }

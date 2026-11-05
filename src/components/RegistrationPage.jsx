@@ -10,14 +10,7 @@ import {
   Search,
   Download,
   FileText,
-  UserCheck,
-  Calendar,
-  MapPin,
-  Clock,
-  Package,
-  Phone,
-  Shield,
-  Award
+  Shield
 } from 'lucide-react';
 import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS, INITIAL_REGISTRATIONS } from '../data/mockData';
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
@@ -1176,7 +1169,7 @@ export function RegistrationPage({
                 </button>
 
                 <button
-                  onClick={handleSendToMyWhatsApp}
+                  onClick={handleShareWhatsApp}
                   style={{
                     background: '#16a34a',
                     color: '#ffffff',
@@ -1191,8 +1184,9 @@ export function RegistrationPage({
                     cursor: 'pointer',
                     boxShadow: '0 2px 6px rgba(22, 163, 74, 0.2)'
                   }}
+                  title="मैराथन आमंत्रण दोस्तों के साथ व्हाट्सएप पर शेयर करें"
                 >
-                  <Share2 size={18} /> अपने व्हाट्सएप पर भेजें
+                  <Share2 size={18} /> मित्रों के साथ शेयर करें
                 </button>
 
                 <button
