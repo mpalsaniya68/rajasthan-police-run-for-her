@@ -127,18 +127,51 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         if (scanner.isScanning) {
           await scanner.stop();
         }
-        scanner.clear();
+        try {
+          scanner.clear();
+        } catch (e) {}
       } catch (e) {
         console.warn('Scanner stop note:', e);
       }
     }
+    const el = document.getElementById('interactive-qr-scanner');
+    if (el) {
+      el.innerHTML = '';
+    }
   };
 
-  // Robust multi-device camera starter
+  // Enumerate cameras in background once camera stream is active or permitted
+  const populateAvailableCameras = () => {
+    if (typeof navigator !== 'undefined' && navigator.mediaDevices?.enumerateDevices) {
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        const videoDevs = (devices || []).filter(d => d.kind === 'videoinput');
+        if (videoDevs.length > 0) {
+          setAvailableCameras(videoDevs.map((d, idx) => ({
+            id: d.deviceId,
+            label: d.label || `कैमरा ${idx + 1}`
+          })));
+        }
+      }).catch(() => {});
+    }
+  };
+
+  // Robust multi-device camera starter (Windows, Mac, Android, iOS)
   const startCamera = async (targetCameraId = null) => {
     setIsCameraStarting(true);
     setCameraError('');
     await stopScannerInstance();
+
+    // Check mediaDevices support in current browser context
+    if (typeof window === 'undefined' || !navigator?.mediaDevices?.getUserMedia) {
+      setIsCameraStarting(false);
+      const isSec = window.isSecureContext || window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      if (!isSec) {
+        setCameraError('ब्राउज़र सुरक्षा प्रतिबंध: कैमरा केवल सुरक्षित HTTPS अथवा localhost पर ही कार्य करता है। [Error: Insecure Context]');
+      } else {
+        setCameraError('आपका ब्राउज़र वेबकैम API का समर्थन नहीं करता है। कृपया Google Chrome या MS Edge का प्रयोग करें। [Error: mediaDevices not supported]');
+      }
+      return;
+    }
 
     const el = document.getElementById('interactive-qr-scanner');
     if (!el) {
@@ -170,82 +203,91 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       return freshScanner;
     };
 
+    const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || '');
+    const primaryFacing = isMobile ? 'environment' : 'user';
+    const secondaryFacing = isMobile ? 'user' : 'environment';
+
     try {
-      // Step 1: Detect available cameras
-      let devices = availableCameras;
-      if (!devices || devices.length === 0) {
+      // Attempt 1: If specific camera ID was selected from dropdown, try that ID
+      const specificCam = targetCameraId || selectedCameraId;
+      if (specificCam) {
         try {
-          devices = await Html5Qrcode.getCameras();
-          if (devices && devices.length > 0) {
-            setAvailableCameras(devices);
-          }
-        } catch (camListErr) {
-          console.warn('Camera enumeration note:', camListErr);
-        }
-      }
-
-      // Step 2: Choose Camera ID
-      let cameraIdToUse = targetCameraId || selectedCameraId;
-      if (!cameraIdToUse && devices && devices.length > 0) {
-        const rearCam = devices.find(d => 
-          (d.label || '').toLowerCase().includes('back') || 
-          (d.label || '').toLowerCase().includes('rear') || 
-          (d.label || '').toLowerCase().includes('environment')
-        );
-        cameraIdToUse = rearCam ? rearCam.id : devices[0].id;
-        setSelectedCameraId(cameraIdToUse);
-      }
-
-      // Attempt 1: Try with specific camera ID if available
-      if (cameraIdToUse) {
-        try {
-          await tryStartWith(cameraIdToUse);
+          await tryStartWith(specificCam);
           setIsCameraStarting(false);
+          populateAvailableCameras();
           return;
-        } catch (deviceStartErr) {
-          console.warn('Specific camera ID failed, trying facingMode:', deviceStartErr);
+        } catch (specErr) {
+          console.warn('Specific camera ID failed, proceeding to platform default:', specErr);
+          await stopScannerInstance();
+          await new Promise(r => setTimeout(r, 350));
         }
       }
 
-      // Attempt 2: Try mobile rear/environment camera
+      // Attempt 2: Platform-aware facing mode (PC/Laptop = 'user' webcam; Mobile = 'environment' rear cam)
       try {
-        await tryStartWith({ facingMode: 'environment' });
+        await tryStartWith({ facingMode: primaryFacing });
         setIsCameraStarting(false);
-        Html5Qrcode.getCameras().then(devs => {
-          if (devs && devs.length > 0) setAvailableCameras(devs);
-        }).catch(() => {});
+        populateAvailableCameras();
         return;
-      } catch (envErr) {
-        console.warn('Environment camera failed (expected on laptops), trying user camera:', envErr);
+      } catch (primaryErr) {
+        console.warn(`Primary camera (${primaryFacing}) failed, testing fallback (${secondaryFacing}):`, primaryErr);
+        await stopScannerInstance();
+        await new Promise(r => setTimeout(r, 400));
       }
 
-      // Attempt 3: Try user/front camera (standard on laptops and PCs)
+      // Attempt 3: Secondary facing mode fallback
       try {
-        await tryStartWith({ facingMode: 'user' });
+        await tryStartWith({ facingMode: secondaryFacing });
         setIsCameraStarting(false);
-        Html5Qrcode.getCameras().then(devs => {
-          if (devs && devs.length > 0) setAvailableCameras(devs);
-        }).catch(() => {});
+        populateAvailableCameras();
         return;
-      } catch (userErr) {
-        console.warn('User camera failed:', userErr);
-        throw userErr;
+      } catch (secondaryErr) {
+        console.warn('Secondary facingMode failed, checking direct device enumeration fallback:', secondaryErr);
+        await stopScannerInstance();
+        await new Promise(r => setTimeout(r, 400));
       }
+
+      // Attempt 4: Fallback to first enumerated video input device if available
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevs = (devices || []).filter(d => d.kind === 'videoinput');
+        if (videoDevs.length > 0 && videoDevs[0].deviceId) {
+          await tryStartWith(videoDevs[0].deviceId);
+          setIsCameraStarting(false);
+          populateAvailableCameras();
+          return;
+        }
+      } catch (enumErr) {
+        console.warn('Device enumeration fallback failed:', enumErr);
+      }
+
+      throw new Error('No working camera stream could be established.');
 
     } catch (finalErr) {
       setIsCameraStarting(false);
-      console.error('Camera start failed:', finalErr);
-      let msg = 'कैमरा चालू नहीं हो सका। ';
-      if (finalErr?.name === 'NotAllowedError' || finalErr?.name === 'PermissionDeniedError') {
-        msg += 'ब्राउज़र में कैमरा अनुमति ब्लॉक है। कृपया एड्रेस बार में लॉक 🔒 आइकन पर क्लिक कर कैमरा Allow करें।';
-      } else if (finalErr?.name === 'NotFoundError' || finalErr?.name === 'DevicesNotFoundError') {
-        msg += 'कोई कैमरा नहीं मिला। कृपया USB वेबकैम जोड़ें अथवा नीचे दिए गए बटन से फोटो / इमेज चुनें।';
-      } else if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        msg += 'ब्राउज़र सुरक्षा नियमों के अनुसार कैमरा केवल HTTPS या localhost पर ही कार्य करता है।';
-      } else {
-        msg += 'कृपया कैमरा अनुमति जांचें अथवा नीचे दिए गए बटन से फोटो चुनें या बिब नंबर दर्ज करें।';
+      console.error('Camera startup exception:', finalErr);
+
+      const errStr = String(finalErr?.message || finalErr?.name || finalErr || '');
+      const errLower = errStr.toLowerCase();
+
+      let friendlyMsg = 'कैमरा चालू नहीं हो सका।';
+      let actionHint = 'कृपया कैमरा अनुमति जांचें अथवा नीचे दिए गए "📁 QR फोटो / फाइल चुनें" बटन से सीधे फोटो चुनें या बिब नंबर दर्ज करें।';
+
+      if (errLower.includes('notallowed') || errLower.includes('permission') || errLower.includes('denied') || errLower.includes('dismissed')) {
+        friendlyMsg = 'कैमरा अनुमति (Permission) अवरुद्ध (Blocked) है।';
+        actionHint = 'ब्राउज़र के URL बार में बायीं तरफ ताले 🔒 अथवा कैमरा आइकन पर क्लिक करें, Camera को "Allow" (अनुमति दें) करें, फिर "पुनः प्रयास करें" दबाएं।';
+      } else if (errLower.includes('notreadable') || errLower.includes('could not start video source') || errLower.includes('trackstart') || errLower.includes('busy') || errLower.includes('in use')) {
+        friendlyMsg = 'कैमरा हार्डवेयर किसी अन्य ऍप में व्यस्त है (Device In Use)।';
+        actionHint = 'आपका वेबकैम किसी अन्य प्रोग्राम (उदा. Zoom, Teams, Skype या ब्राउज़र के दूसरे टैब) में खुला है। कृपया अन्य ऍप्स बंद करके "पुनः प्रयास करें"।';
+      } else if (errLower.includes('notfound') || errLower.includes('devicesnotfound') || errLower.includes('overconstrained') || errLower.includes('no functional') || errLower.includes('no working')) {
+        friendlyMsg = 'कोई चालू वेबकैम / कैमरा नहीं मिला।';
+        actionHint = 'कृपया सुनिश्चित करें कि आपका वेबकैम कनेक्टेड है, अथवा नीचे दिए गए "📁 QR फोटो / फाइल चुनें" बटन से सीधे ई-पास की फोटो स्कैन करें।';
+      } else if (!window.isSecureContext && window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        friendlyMsg = 'असुरक्षित HTTP कनेक्शन प्रतिबंध।';
+        actionHint = 'ब्राउज़र सुरक्षा नीतियों के तहत कैमरा केवल HTTPS अथवा localhost पर ही कार्य करता है।';
       }
-      setCameraError(msg);
+
+      setCameraError(`${friendlyMsg} ${actionHint} [तकनीकी विवरण: ${errStr.slice(0, 100)}]`);
     }
   };
 
