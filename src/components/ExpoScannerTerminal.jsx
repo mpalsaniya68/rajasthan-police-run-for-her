@@ -146,25 +146,31 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       return;
     }
 
+    const config = {
+      fps: 15,
+      qrbox: (viewfinderWidth, viewfinderHeight) => {
+        const edge = Math.min(viewfinderWidth, viewfinderHeight);
+        const size = Math.max(180, Math.floor(edge * 0.72));
+        return { width: size, height: size };
+      }
+    };
+
+    const onScanSuccess = (decodedText) => {
+      if (decodedText) {
+        handleVerifyRunner(decodedText);
+      }
+    };
+
+    // Helper to start with fresh scanner instance every attempt
+    const tryStartWith = async (cameraConfig) => {
+      await stopScannerInstance();
+      const freshScanner = new Html5Qrcode('interactive-qr-scanner');
+      html5QrCodeRef.current = freshScanner;
+      await freshScanner.start(cameraConfig, config, onScanSuccess, () => {});
+      return freshScanner;
+    };
+
     try {
-      const scannerInstance = new Html5Qrcode('interactive-qr-scanner');
-      html5QrCodeRef.current = scannerInstance;
-
-      const config = {
-        fps: 15,
-        qrbox: (viewfinderWidth, viewfinderHeight) => {
-          const edge = Math.min(viewfinderWidth, viewfinderHeight);
-          const size = Math.max(180, Math.floor(edge * 0.72));
-          return { width: size, height: size };
-        }
-      };
-
-      const onScanSuccess = (decodedText) => {
-        if (decodedText) {
-          handleVerifyRunner(decodedText);
-        }
-      };
-
       // Step 1: Detect available cameras
       let devices = availableCameras;
       if (!devices || devices.length === 0) {
@@ -190,38 +196,41 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         setSelectedCameraId(cameraIdToUse);
       }
 
-      // Step 3: Attempt start with camera ID
+      // Attempt 1: Try with specific camera ID if available
       if (cameraIdToUse) {
         try {
-          await scannerInstance.start(cameraIdToUse, config, onScanSuccess, () => {});
+          await tryStartWith(cameraIdToUse);
           setIsCameraStarting(false);
           return;
         } catch (deviceStartErr) {
-          console.warn('Specific camera ID failed, trying soft ideal constraint:', deviceStartErr);
+          console.warn('Specific camera ID failed, trying facingMode:', deviceStartErr);
         }
       }
 
-      // Step 4: Fallback to soft ideal constraint
+      // Attempt 2: Try mobile rear/environment camera
       try {
-        await scannerInstance.start({ facingMode: { ideal: 'environment' } }, config, onScanSuccess, () => {});
+        await tryStartWith({ facingMode: 'environment' });
         setIsCameraStarting(false);
+        Html5Qrcode.getCameras().then(devs => {
+          if (devs && devs.length > 0) setAvailableCameras(devs);
+        }).catch(() => {});
         return;
-      } catch (idealErr) {
-        console.warn('Ideal environment failed, falling back to user camera:', idealErr);
+      } catch (envErr) {
+        console.warn('Environment camera failed (expected on laptops), trying user camera:', envErr);
       }
 
-      // Step 5: Fallback to front / user webcam constraint
+      // Attempt 3: Try user/front camera (standard on laptops and PCs)
       try {
-        await scannerInstance.start({ facingMode: 'user' }, config, onScanSuccess, () => {});
+        await tryStartWith({ facingMode: 'user' });
         setIsCameraStarting(false);
+        Html5Qrcode.getCameras().then(devs => {
+          if (devs && devs.length > 0) setAvailableCameras(devs);
+        }).catch(() => {});
         return;
       } catch (userErr) {
-        console.warn('User camera failed, trying unconstrained start:', userErr);
+        console.warn('User camera failed:', userErr);
+        throw userErr;
       }
-
-      // Step 6: Fallback to any video track
-      await scannerInstance.start(true, config, onScanSuccess, () => {});
-      setIsCameraStarting(false);
 
     } catch (finalErr) {
       setIsCameraStarting(false);
