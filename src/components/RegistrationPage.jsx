@@ -581,56 +581,115 @@ export function RegistrationPage({
       ctx.fillText("प्रमाण पत्र आईडी: " + (p.certificateId || "RJ-POL-2027"), 1150, 96);
       ctx.textAlign = "left";
 
-      // 3. Left Section: Bib Box
+      // Helper for rounded rectangle across all canvas contexts
+      const drawRRect = (x, y, w, h, r) => {
+        if (typeof ctx.roundRect === "function") {
+          ctx.roundRect(x, y, w, h, r);
+        } else {
+          ctx.rect(x, y, w, h);
+        }
+      };
+
+      // 3. Left Section: Bib Box (Width: 310, Center: 195)
+      const bibBoxX = 40;
+      const bibBoxW = 310;
+      const bibCenterX = bibBoxX + bibBoxW / 2; // 195
+
       ctx.fillStyle = "#f8fafc";
       ctx.strokeStyle = "#0a1c3d";
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.roundRect(40, 165, 300, 380, 12);
+      drawRRect(bibBoxX, 165, bibBoxW, 380, 12);
       ctx.fill();
       ctx.stroke();
 
+      // Top title bar inside Bib Box
       ctx.fillStyle = "#64748b";
-      ctx.font = "bold 15px sans-serif";
+      ctx.font = "bold 14px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("आधिकारिक छाती बिब संख्या", 190, 205);
-      ctx.fillText("(BIB NUMBER)", 190, 226);
+      ctx.fillText("आधिकारिक छाती बिब संख्या", bibCenterX, 198);
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "bold 11px sans-serif";
+      ctx.fillText("OFFICIAL BIB NUMBER", bibCenterX, 218);
 
+      // Dedicated Inner Card for Bib Number (280px wide, centered)
+      const badgeX = 55;
+      const badgeW = 280;
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      drawRRect(badgeX, 236, badgeW, 68, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      // Dynamic Auto-Scaling for Bib Number (Strictly bounded to 235px max to prevent overflow)
+      const bibText = String(p.bibNumber || "RJ-21K-1001").trim();
+      let bibFontSize = 34; // Proportional and elegant font size
+      ctx.font = `900 ${bibFontSize}px sans-serif`;
+      while (ctx.measureText(bibText).width > 235 && bibFontSize > 18) {
+        bibFontSize -= 1;
+        ctx.font = `900 ${bibFontSize}px sans-serif`;
+      }
       ctx.fillStyle = "#0a1c3d";
-      ctx.font = "900 52px sans-serif";
-      ctx.fillText(p.bibNumber || "RJ-21K-1001", 190, 300);
+      ctx.fillText(bibText, bibCenterX, 282);
 
-      // Category Pill
+      // Category Pill (Crimson, Auto-Scaled)
       ctx.fillStyle = "#b91c1c";
       ctx.beginPath();
-      ctx.roundRect(60, 330, 260, 48, 8);
+      drawRRect(badgeX, 318, badgeW, 44, 8);
       ctx.fill();
 
+      const catText = String(p.categoryName || "21 KM Half Marathon").trim();
+      let catFontSize = 17;
+      ctx.font = `bold ${catFontSize}px sans-serif`;
+      while (ctx.measureText(catText).width > 250 && catFontSize > 12) {
+        catFontSize -= 1;
+        ctx.font = `bold ${catFontSize}px sans-serif`;
+      }
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 20px sans-serif";
-      ctx.fillText(p.categoryName || "21 KM Half Marathon", 190, 362);
+      ctx.fillText(catText, bibCenterX, 346);
 
       // Blood Group & T-shirt in Bib box
       ctx.fillStyle = "#0a1c3d";
-      ctx.font = "bold 16px sans-serif";
+      ctx.font = "bold 15px sans-serif";
       const eventModeStr = (p.tshirtSize && p.tshirtSize !== 'N/A') ? `Size: ${p.tshirtSize}` : 'कम्युनिटी रन';
-      ctx.fillText(`रक्त समूह: ${p.bloodGroup || 'B+'}  |  ${eventModeStr}`, 190, 425);
+      ctx.fillText(`रक्त समूह: ${p.bloodGroup || 'B+'}  |  ${eventModeStr}`, bibCenterX, 396);
 
-      // Entry Status
+      // Divider Line
+      ctx.strokeStyle = "#e2e8f0";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(55, 418);
+      ctx.lineTo(335, 418);
+      ctx.stroke();
+
+      // Entry Status & Reporting
       ctx.fillStyle = "#059669";
       ctx.font = "bold 15px sans-serif";
-      ctx.fillText("✓ प्रवेश अधिकृत (Entry Approved)", 190, 480);
-      ctx.fillText("रिपोर्टिंग: 3 जन 2027, 05:00 AM", 190, 508);
+      ctx.fillText("✓ प्रवेश अधिकृत (Entry Approved)", bibCenterX, 448);
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 13px sans-serif";
+      ctx.fillText("रिपोर्टिंग: 3 जन 2027, 05:00 AM", bibCenterX, 474);
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "12px sans-serif";
+      ctx.fillText("गेट नंबर 2 • अल्बर्ट हॉल", bibCenterX, 498);
       ctx.textAlign = "left";
 
       // 4. Middle Section: Runner Details
-      const detailsX = 370;
+      const detailsX = 380;
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
       ctx.fillText("धावक का पूरा नाम (RUNNER FULL NAME):", detailsX, 195);
+      const nameStr = String(p.fullName || "पंजीकृत धावक").trim();
+      let nameFontSize = 26;
+      ctx.font = `bold ${nameFontSize}px sans-serif`;
+      while (ctx.measureText(nameStr).width > 480 && nameFontSize > 18) {
+        nameFontSize -= 1;
+        ctx.font = `bold ${nameFontSize}px sans-serif`;
+      }
       ctx.fillStyle = "#0a1c3d";
-      ctx.font = "bold 26px sans-serif";
-      ctx.fillText(p.fullName || "पंजीकृत धावक", detailsX, 230);
+      ctx.fillText(nameStr, detailsX, 230);
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
