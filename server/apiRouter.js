@@ -929,9 +929,16 @@ export async function handleApiRequest(req, res) {
         return error("कृपया वैध बिब नंबर, मोबाइल नंबर या QR डेटा प्रदान करें।", 400);
       }
 
+      const upperQ = cleanQ.toUpperCase();
       const findRes = await db.execute({
-        sql: "SELECT * FROM participants WHERE UPPER(bib_number) = UPPER(?) OR mobile = ? OR UPPER(certificate_id) = UPPER(?) OR qr_token = ? OR id = ? LIMIT 1",
-        args: [cleanQ, cleanQ, cleanQ, cleanQ, cleanQ]
+        sql: `SELECT id, bib_number, full_name, gender, dob, mobile, masked_mobile, emergency_contact, emergency_relation,
+                     blood_group, medical_condition, medical_notes, category_id, category_name, district_id,
+                     district_name, tshirt_size, kit_collected, kit_collected_at, collected_by, rfid_tag_id,
+                     certificate_id, qr_token, status
+              FROM participants 
+              WHERE bib_number = ? OR bib_number = ? OR mobile = ? OR certificate_id = ? OR certificate_id = ? OR qr_token = ? OR id = ? 
+              LIMIT 1`,
+        args: [cleanQ, upperQ, cleanQ, cleanQ, upperQ, cleanQ, cleanQ]
       });
 
       if (findRes.rows.length === 0) {
@@ -1064,9 +1071,10 @@ export async function handleApiRequest(req, res) {
         return error("कृपया वैध पास QR या बिब प्रदान करें।", 400);
       }
 
+      const upperQ = cleanQ.toUpperCase();
       const findRes = await db.execute({
-        sql: "SELECT * FROM participants WHERE UPPER(bib_number) = UPPER(?) OR mobile = ? OR UPPER(certificate_id) = UPPER(?) OR qr_token = ? OR id = ? LIMIT 1",
-        args: [cleanQ, cleanQ, cleanQ, cleanQ, cleanQ]
+        sql: "SELECT * FROM participants WHERE bib_number = ? OR bib_number = ? OR mobile = ? OR certificate_id = ? OR certificate_id = ? OR qr_token = ? OR id = ? LIMIT 1",
+        args: [cleanQ, upperQ, cleanQ, cleanQ, upperQ, cleanQ, cleanQ]
       });
 
       if (findRes.rows.length === 0) {

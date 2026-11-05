@@ -173,8 +173,10 @@ export async function initDatabase() {
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_bib ON participants(bib_number);`);
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_mobile ON participants(mobile);`);
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_cert ON participants(certificate_id);`);
+    await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_qr ON participants(qr_token);`);
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_cat ON participants(category_id);`);
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_dist ON participants(district_id);`);
+    await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_kit ON participants(kit_collected);`);
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_status ON participants(status);`);
 
     // 2. Timing Scans Table (RFID checkpoints)

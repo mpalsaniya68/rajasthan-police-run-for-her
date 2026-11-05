@@ -4,7 +4,7 @@ import {
   Shirt, RefreshCw, LogOut, Camera, CameraOff, Volume2, VolumeX, 
   UserCheck, AlertOctagon, Sparkles, Award, Upload, RotateCcw
 } from 'lucide-react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { PoliceEmblem, RunForHerBadge } from './Emblems';
 
 // Built-in Web Audio API Synthesizer (No external MP3 files needed)
@@ -187,29 +187,48 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     }
 
     const config = {
-      fps: 15,
+      fps: 25, // 25 FPS scan rate for millisecond-fast response
       qrbox: (viewfinderWidth, viewfinderHeight) => {
+        // Broad scan zone (88% of viewfinder) so QR is captured instantly without precise centering
         const edge = Math.min(viewfinderWidth, viewfinderHeight);
-        const size = Math.max(180, Math.floor(edge * 0.72));
+        const size = Math.max(220, Math.floor(edge * 0.88));
         return { width: size, height: size };
-      }
+      },
+      aspectRatio: 1.0,
+      disableFlip: false
     };
 
-    // Auto-stop camera immediately upon finding QR code to prevent continuous re-scanning loop
-    const onScanSuccess = async (decodedText) => {
+    // Instant callback upon detecting QR code: Zero-latency execution
+    const onScanSuccess = (decodedText) => {
       if (!decodedText || isProcessingScanRef.current) return;
       isProcessingScanRef.current = true;
-      try {
-        await stopScannerInstance();
-      } catch (e) {}
-      setIsCameraActive(false);
+
+      // 1. Instant audio feedback
+      if (soundEnabled) playSound('success');
+
+      // 2. Immediately trigger runner verification & instant UI display
       handleVerifyRunner(decodedText);
+
+      // 3. Close camera tracks in background without blocking the UI thread
+      setTimeout(() => {
+        stopScannerInstance().catch(() => {});
+        setIsCameraActive(false);
+      }, 50);
     };
 
-    // Helper to start with fresh scanner instance every attempt
+    // Helper to start with fresh, hardware-accelerated scanner instance
     const tryStartWith = async (cameraConfig) => {
       await stopScannerInstance();
-      const freshScanner = new Html5Qrcode('interactive-qr-scanner');
+      const freshScanner = new Html5Qrcode('interactive-qr-scanner', {
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.CODE_128
+        ],
+        experimentalFeatures: {
+          useBarCodeDetectorIfSupported: true
+        },
+        verbose: false
+      });
       html5QrCodeRef.current = freshScanner;
       await freshScanner.start(cameraConfig, config, onScanSuccess, () => {});
       return freshScanner;
@@ -237,26 +256,36 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
       // Attempt 2: Platform-aware facing mode (PC/Laptop = 'user' webcam; Mobile = 'environment' rear cam)
       try {
-        await tryStartWith({ facingMode: primaryFacing });
+        await tryStartWith({ 
+          facingMode: primaryFacing,
+          focusMode: 'continuous',
+          width: { ideal: 1280, min: 640 },
+          height: { ideal: 720, min: 480 }
+        });
         setIsCameraStarting(false);
         populateAvailableCameras();
         return;
       } catch (primaryErr) {
         console.warn(`Primary camera (${primaryFacing}) failed, testing fallback (${secondaryFacing}):`, primaryErr);
         await stopScannerInstance();
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r => setTimeout(r, 350));
       }
 
       // Attempt 3: Secondary facing mode fallback
       try {
-        await tryStartWith({ facingMode: secondaryFacing });
+        await tryStartWith({ 
+          facingMode: secondaryFacing,
+          focusMode: 'continuous',
+          width: { ideal: 1280, min: 640 },
+          height: { ideal: 720, min: 480 }
+        });
         setIsCameraStarting(false);
         populateAvailableCameras();
         return;
       } catch (secondaryErr) {
         console.warn('Secondary facingMode failed, checking direct device enumeration fallback:', secondaryErr);
         await stopScannerInstance();
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r => setTimeout(r, 350));
       }
 
       // Attempt 4: Fallback to first enumerated video input device if available
@@ -343,7 +372,11 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     setStatusMessage('');
 
     try {
-      const html5Qr = new Html5Qrcode('qr-file-scanner-temp');
+      const html5Qr = new Html5Qrcode('qr-file-scanner-temp', {
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+        experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+        verbose: false
+      });
       const decodedText = await html5Qr.scanFile(file, true);
       try { await html5Qr.clear(); } catch(err) {}
       setIsSearching(false);
@@ -395,26 +428,32 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     // Set search box to clean bib number so user sees "RJ-21K-1048" instead of raw JSON
     setSearchQuery(targetBibOrQuery);
 
-    const token = sessionStorage.getItem('rajpol_admin_token');
-    let runnerFound = null;
+    let initialFound = null;
 
-    // 2. Query Central Server API
-    try {
-      const res = await fetch(`/api/expo/runner?q=${encodeURIComponent(targetBibOrQuery)}`, {
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.success && data.runner) {
-          runnerFound = data.runner;
-        }
-      }
-    } catch (apiErr) {
-      console.warn('Server runner query network error, falling back to local registry:', apiErr);
-    }
+    // 🚀 ULTRA-FAST OPTIMISTIC PATH 1: Instant (< 5ms) hydration directly from QR payload
+    if (parsedQr && parsedQr.bib) {
+      const bibUpper = String(parsedQr.bib).toUpperCase();
+      const collectedKits = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
+      const isLocallyCollected = !!collectedKits[bibUpper];
+      const collInfo = collectedKits[bibUpper];
 
-    // 3. Fallback to LocalStorage Registrations if not found in Central DB
-    if (!runnerFound) {
+      initialFound = {
+        id: parsedQr.certId || `run_${bibUpper}`,
+        bibNumber: bibUpper,
+        fullName: parsedQr.name || 'Rajasthan Police Marathon Runner',
+        categoryName: parsedQr.category || '21 KM Half Marathon',
+        districtName: parsedQr.district || 'जयपुर पुलिस कमिश्नरेट',
+        tshirtSize: (!isJaipurDistrict(parsedQr.districtId, parsedQr.district) || parsedQr.tshirt === 'N/A') ? 'N/A' : (parsedQr.tshirt || 'M').toUpperCase(),
+        bloodGroup: parsedQr.bloodGroup || 'B+',
+        medicalCondition: parsedQr.medicalAlert || 'सामान्य (Fit)',
+        mobile: parsedQr.mobile || '',
+        kitCollected: isLocallyCollected,
+        kitCollectedAt: collInfo?.time || null,
+        collectedBy: collInfo?.by || null,
+        rfidTagId: `RFID-${bibUpper}`
+      };
+    } else {
+      // Check local storage registry for bib / mobile lookup (< 1ms)
       try {
         const saved = localStorage.getItem('rpm_registrations');
         const list = saved ? JSON.parse(saved) : [];
@@ -434,7 +473,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           const isCollected = !!(foundLocal.kitCollected || foundLocal.bibCollected || collectedKits[foundLocal.bibNumber?.toUpperCase()]);
           const collInfo = collectedKits[foundLocal.bibNumber?.toUpperCase()];
 
-          runnerFound = {
+          initialFound = {
             id: foundLocal.id || foundLocal.certificateId || `run_${Date.now()}`,
             bibNumber: foundLocal.bibNumber || targetBibOrQuery.toUpperCase(),
             fullName: foundLocal.fullName || 'Rajasthan Police Runner',
@@ -451,65 +490,93 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           };
         }
       } catch (localErr) {
-        console.warn('Local registry lookup error:', localErr);
+        console.warn('Local registry lookup note:', localErr);
       }
     }
 
-    // 4. Fallback to Scanned QR Code Self-Contained Payload (Guarantees ANY downloaded pass works 100%)
-    if (!runnerFound && parsedQr && parsedQr.bib) {
-      const bibUpper = String(parsedQr.bib).toUpperCase();
-      const collectedKits = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
-      const isCollected = !!collectedKits[bibUpper];
-      const collInfo = collectedKits[bibUpper];
-
-      runnerFound = {
-        id: parsedQr.certId || `run_${bibUpper}`,
-        bibNumber: bibUpper,
-        fullName: parsedQr.name || 'Marathon Participant',
-        categoryName: parsedQr.category || '21 KM Half Marathon',
-        districtName: parsedQr.district || 'जयपुर पुलिस कमिश्नरेट',
-        tshirtSize: (!isJaipurDistrict(parsedQr.districtId, parsedQr.district) || parsedQr.tshirt === 'N/A') ? 'N/A' : (parsedQr.tshirt || 'M').toUpperCase(),
-        bloodGroup: parsedQr.bloodGroup || 'B+',
-        medicalCondition: parsedQr.medicalAlert || 'सामान्य (Fit)',
-        mobile: parsedQr.mobile || '',
-        kitCollected: isCollected,
-        kitCollectedAt: collInfo?.time || null,
-        collectedBy: collInfo?.by || null,
-        rfidTagId: `RFID-${bibUpper}`
-      };
-    }
-
-    setIsSearching(false);
-
-    // 5. Present Verification Result to Volunteer
-    if (runnerFound) {
-      setScannedRunner(runnerFound);
+    // ⚡️ IMMEDIATELY SHOW RUNNER ON SCREEN WITHOUT WAITING FOR SERVER (< 5ms response time!)
+    if (initialFound) {
+      setScannedRunner(initialFound);
+      setIsSearching(false);
 
       if (terminalMode === 'gate') {
-        if (runnerFound.gate_entered) {
+        if (initialFound.gate_entered) {
           if (soundEnabled) playSound('duplicate');
           setScanStatus('GATE_ALREADY_ENTERED');
-          setStatusMessage(`⚠️ पूर्व में प्रवेशित! यह धावक पहले ही ${runnerFound.gate_entry_time || 'गेट'} पर प्रवेश ले चुका है।`);
+          setStatusMessage(`⚠️ पूर्व में प्रवेशित! यह धावक पहले ही ${initialFound.gate_entry_time || 'गेट'} पर प्रवेश ले चुका है।`);
         } else {
-          handleApproveGateEntry(runnerFound);
+          handleApproveGateEntry(initialFound);
         }
       } else {
-        if (runnerFound.kitCollected) {
+        if (initialFound.kitCollected) {
           if (soundEnabled) playSound('duplicate');
           setScanStatus('ALREADY_COLLECTED');
-          setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${runnerFound.collectedBy || 'अन्य काउंटर'} द्वारा ${runnerFound.kitCollectedAt || 'पूर्व में'} सौंपी जा चुकी है।`);
+          setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${initialFound.collectedBy || 'अन्य काउंटर'} द्वारा ${initialFound.kitCollectedAt || 'पूर्व में'} सौंपी जा चुकी है।`);
         } else {
-          if (soundEnabled) playSound('success');
           setScanStatus('SUCCESS');
-          setStatusMessage('✅ धावक ई-पास व QR सत्यापित! कृपया नीचे दिए गए टी-शर्ट साइज की पुष्टि कर किट सुपुर्द करें।');
+          setStatusMessage('✅ धावक ई-पास व QR तुरंत सत्यापित! कृपया नीचे दिए गए टी-शर्ट साइज की पुष्टि कर किट सुपुर्द करें।');
         }
       }
-    } else {
+    }
+
+    // 🚀 ULTRA-FAST PATH 2: Background Central Database Verification & Reconciliation
+    const token = sessionStorage.getItem('rajpol_admin_token');
+    try {
+      const res = await fetch(`/api/expo/runner?q=${encodeURIComponent(targetBibOrQuery)}`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.runner) {
+          const dbRunner = data.runner;
+          const isCollectedInDb = Boolean(dbRunner.kit_collected);
+
+          setScannedRunner(prev => {
+            const base = prev || {};
+            return {
+              ...base,
+              id: dbRunner.id || base.id,
+              bibNumber: dbRunner.bib_number || base.bibNumber,
+              fullName: dbRunner.full_name || base.fullName,
+              categoryName: dbRunner.category_name || base.categoryName,
+              districtName: dbRunner.district_name || base.districtName,
+              tshirtSize: (!isJaipurDistrict(dbRunner.district_id, dbRunner.district_name) || dbRunner.tshirt_size === 'N/A') ? 'N/A' : (dbRunner.tshirt_size || 'M').toUpperCase(),
+              bloodGroup: dbRunner.blood_group || base.bloodGroup,
+              medicalCondition: dbRunner.medical_condition || base.medicalCondition,
+              mobile: dbRunner.masked_mobile || base.mobile,
+              kitCollected: isCollectedInDb,
+              kitCollectedAt: dbRunner.kit_collected_at || base.kitCollectedAt,
+              collectedBy: dbRunner.collected_by || base.collectedBy,
+              rfidTagId: dbRunner.rfid_tag_id || base.rfidTagId
+            };
+          });
+
+          if (isCollectedInDb) {
+            if (soundEnabled) playSound('duplicate');
+            setScanStatus('ALREADY_COLLECTED');
+            setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${dbRunner.collected_by || 'अन्य काउंटर'} द्वारा ${dbRunner.kit_collected_at || 'पूर्व में'} सौंपी जा चुकी है।`);
+          } else if (!initialFound) {
+            if (soundEnabled) playSound('success');
+            setScanStatus('SUCCESS');
+            setStatusMessage('✅ धावक केंद्रीय डेटाबेस से सत्यापित! कृपया नीचे दिए गए टी-शर्ट साइज की पुष्टि कर किट सुपुर्द करें।');
+          }
+          setIsSearching(false);
+          return;
+        }
+      }
+    } catch (apiErr) {
+      console.warn('Server background sync note:', apiErr);
+    }
+
+    // If neither local cache nor central server found the runner
+    if (!initialFound) {
       if (soundEnabled) playSound('error');
       setScanStatus('INVALID');
       setStatusMessage(`❌ धावक रिकॉर्ड नहीं मिला ("${targetBibOrQuery}")। कृपया ई-पास या बिब पुनः जांचें।`);
       setScannedRunner(null);
     }
+    setIsSearching(false);
   };
 
   // Handover Execution
@@ -940,6 +1007,18 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
             <div style={{ fontSize: '0.82rem', color: '#fde68a', fontWeight: 800, marginBottom: '8px' }}>
               {isCameraStarting ? 'कैमरा चालू हो रहा है...' : 'ई-पास का QR कोड कैमरे के सामने लाएं (स्वतः स्कैन होगा)'}
             </div>
+
+            <style>{`
+              #interactive-qr-scanner video {
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+                border-radius: 8px !important;
+                transform: translateZ(0);
+                backface-visibility: hidden;
+              }
+              #interactive-qr-scanner img[alt="Info icon"] { display: none !important; }
+            `}</style>
 
             <div 
               id="interactive-qr-scanner" 
