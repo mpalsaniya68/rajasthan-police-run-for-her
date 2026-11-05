@@ -19,7 +19,7 @@ def build_prd():
     doc_id = "RPM-PRD-2027-V1.0"
     doc_type = "Product Requirement Document (PRD)"
     title = "RAJASTHAN POLICE MARATHON 2027: RUN FOR HER"
-    subtitle = "Official Product Requirement Document (PRD) — Statewide Citizen Engagement, Digital E-Pass, Expo Logistics, & Race Day Command System"
+    subtitle = "Official Product Requirement Document (PRD) - Statewide Citizen Engagement, Digital E-Pass, Expo Logistics, & Race Day Command System"
     date_str = "05 November 2026"
 
     # =========================================================================
@@ -115,14 +115,14 @@ def build_prd():
     print(f"Generated DOCX: {docx_path}")
 
     # =========================================================================
-    # 2. GENERATE PDF (Times-Roman, 14pt Body Text)
+    # 2. GENERATE PDF (Times-Roman, 14pt Body Text, 100% ASCII-Safe)
     # =========================================================================
     pdf_path = os.path.join(OUTPUT_DIR, "1_PRD_Rajasthan_Police_Marathon_2027.pdf")
     styles = get_pdf_styles()
     story = []
 
     story.append(Spacer(1, 15))
-    story.append(Paragraph("GOVERNMENT OF RAJASTHAN • POLICE HEADQUARTERS, JAIPUR", styles['emblem']))
+    story.append(Paragraph("GOVERNMENT OF RAJASTHAN | POLICE HEADQUARTERS, JAIPUR", styles['emblem']))
     story.append(Paragraph(title, styles['title']))
     story.append(Paragraph(subtitle, styles['sub']))
     story.append(Spacer(1, 15))
@@ -158,39 +158,39 @@ def build_prd():
     story.append(Paragraph("3.0 Functional Requirements Specification (FRS)", styles['h1']))
     
     story.append(Paragraph("3.1 FR-01: Citizen Self-Registration Engine", styles['h2']))
-    story.append(Paragraph("• <b>Interface:</b> Bilingual Registration Form: Primary Hindi interface with English auxiliary labels for comprehensive accessibility.", styles['bullet']))
-    story.append(Paragraph("• <b>Categories:</b> Distance Categories: 21 KM Half Marathon (Ages 18+), 10 KM City Run (Ages 16+), and 5 KM Community & Family Run (Open for all age brackets).", styles['bullet']))
-    story.append(Paragraph("• <b>Runner Data:</b> Mandatory Citizen Inputs: Full Name, Gender, 10-digit Indian Mobile Number, District, T-shirt Size (XS, S, M, L, XL, XXL), Blood Group, and Emergency Contact Name & Telephone.", styles['bullet']))
-    story.append(Paragraph("• <b>Health Safety:</b> Medical Declaration: Runners declare existing health conditions (e.g., cardiac history, asthma, allergies) with voluntary emergency medical notes.", styles['bullet']))
+    story.append(Paragraph("- <b>Interface:</b> Bilingual Registration Form: Primary Hindi interface with English auxiliary labels for comprehensive accessibility.", styles['bullet']))
+    story.append(Paragraph("- <b>Categories:</b> Distance Categories: 21 KM Half Marathon (Ages 18+), 10 KM City Run (Ages 16+), and 5 KM Community & Family Run (Open for all age brackets).", styles['bullet']))
+    story.append(Paragraph("- <b>Runner Data:</b> Mandatory Citizen Inputs: Full Name, Gender, 10-digit Indian Mobile Number, District, T-shirt Size (XS, S, M, L, XL, XXL), Blood Group, and Emergency Contact Name & Telephone.", styles['bullet']))
+    story.append(Paragraph("- <b>Health Safety:</b> Medical Declaration: Runners declare existing health conditions (e.g., cardiac history, asthma, allergies) with voluntary emergency medical notes.", styles['bullet']))
 
     story.append(Paragraph("3.2 FR-02: Anti-Fraud Mobile OTP Verification Engine", styles['h2']))
-    story.append(Paragraph("• <b>Token Generation:</b> Automated 6-digit cryptographic OTP generation delivered via SMS Gateway API hook.", styles['bullet']))
-    story.append(Paragraph("• <b>Security Control:</b> Sliding-Window Rate Limiting: IP-based and mobile-based rate limiting prevents denial-of-service and SMS bombing attacks (max 3 attempts per minute).", styles['bullet']))
-    story.append(Paragraph("• <b>Session Token:</b> Ephemeral Verification Token: A signed JWT token is issued upon successful OTP validation, valid for 15 minutes to finalize registration.", styles['bullet']))
+    story.append(Paragraph("- <b>Token Generation:</b> Automated 6-digit cryptographic OTP generation delivered via SMS Gateway API hook.", styles['bullet']))
+    story.append(Paragraph("- <b>Security Control:</b> Sliding-Window Rate Limiting: IP-based and mobile-based rate limiting prevents denial-of-service and SMS bombing attacks (max 3 attempts per minute).", styles['bullet']))
+    story.append(Paragraph("- <b>Session Token:</b> Ephemeral Verification Token: A signed JWT token is issued upon successful OTP validation, valid for 15 minutes to finalize registration.", styles['bullet']))
 
     story.append(Paragraph("3.3 FR-03: Official Digital E-Pass & Secure Bib Allocation", styles['h2']))
-    story.append(Paragraph("• <b>Bib Architecture:</b> Algorithmic Bib Assignment: Sequential, collision-free chest bib generation with category prefixes (RJ-21K-XXXX, RJ-10K-XXXX, RJ-05K-XXXX).", styles['bullet']))
-    story.append(Paragraph("• <b>Encrypted QR:</b> Tamper-Proof QR Code: Encodes HMAC-SHA256 encrypted payload verifying runner identity, category, and certificate token.", styles['bullet']))
-    story.append(Paragraph("• <b>Graphics Engine:</b> Client-Side Canvas E-Pass: Pure HTML5 Canvas 2D engine renders official passes with Rajasthan Police emblem, Ashoka Lion Capitol, dynamic text auto-scaling, and instant PNG download.", styles['bullet']))
-    story.append(Paragraph("• <b>WhatsApp Link:</b> Direct WhatsApp Dispatch: 1-click WhatsApp API integration sends official pass text and verification links directly to the runner's registered mobile number.", styles['bullet']))
+    story.append(Paragraph("- <b>Bib Architecture:</b> Algorithmic Bib Assignment: Sequential, collision-free chest bib generation with category prefixes (RJ-21K-XXXX, RJ-10K-XXXX, RJ-05K-XXXX).", styles['bullet']))
+    story.append(Paragraph("- <b>Encrypted QR:</b> Tamper-Proof QR Code: Encodes HMAC-SHA256 encrypted payload verifying runner identity, category, and certificate token.", styles['bullet']))
+    story.append(Paragraph("- <b>Graphics Engine:</b> Client-Side Canvas E-Pass: Pure HTML5 Canvas 2D engine renders official passes with Rajasthan Police emblem, Ashoka Lion Capitol, dynamic text auto-scaling, and instant PNG download.", styles['bullet']))
+    story.append(Paragraph("- <b>WhatsApp Link:</b> Direct WhatsApp Dispatch: 1-click WhatsApp API integration sends official pass text and verification links directly to the runner's registered mobile number.", styles['bullet']))
 
     story.append(Paragraph("3.4 FR-04: Expo Counter Logistics & RFID Kit Handover", styles['h2']))
-    story.append(Paragraph("• <b>Scanner Engine:</b> Multi-Device Camera Scanner: WebRTC engine with platform-aware facing mode (mobile back camera vs PC webcam) and 400ms driver deallocation delay.", styles['bullet']))
-    story.append(Paragraph("• <b>Barcode Gun:</b> Hardware Barcode Gun Support: Native input focus captures USB/Bluetooth 2D barcode scanner keystrokes in under 100 milliseconds.", styles['bullet']))
-    story.append(Paragraph("• <b>Anti-Fraud:</b> Single-Handover Locking: Database atomicity prevents duplicate kit distribution. If a runner's bib was already collected, the terminal sounds an audible fraud alert displaying prior collection timestamp and officer badge ID.", styles['bullet']))
+    story.append(Paragraph("- <b>Scanner Engine:</b> Multi-Device Camera Scanner: WebRTC engine with platform-aware facing mode (mobile back camera vs PC webcam) and 400ms driver deallocation delay.", styles['bullet']))
+    story.append(Paragraph("- <b>Barcode Gun:</b> Hardware Barcode Gun Support: Native input focus captures USB/Bluetooth 2D barcode scanner keystrokes in under 100 milliseconds.", styles['bullet']))
+    story.append(Paragraph("- <b>Anti-Fraud:</b> Single-Handover Locking: Database atomicity prevents duplicate kit distribution. If a runner's bib was already collected, the terminal sounds an audible fraud alert displaying prior collection timestamp and officer badge ID.", styles['bullet']))
 
     story.append(Paragraph("3.5 FR-05: Albert Hall Race Day Gate Security & Gantry Access", styles['h2']))
-    story.append(Paragraph("• <b>Access Control:</b> Albert Hall Entry Verification: Gate marshals scan e-passes at stadium gantries. System logs first entry and instantly flags duplicate gate entries.", styles['bullet']))
-    story.append(Paragraph("• <b>Live Logging:</b> Real-Time Gate Logs: Audit table tracks gate entry timestamps, operator IDs, and sector densities.", styles['bullet']))
+    story.append(Paragraph("- <b>Access Control:</b> Albert Hall Entry Verification: Gate marshals scan e-passes at stadium gantries. System logs first entry and instantly flags duplicate gate entries.", styles['bullet']))
+    story.append(Paragraph("- <b>Live Logging:</b> Real-Time Gate Logs: Audit table tracks gate entry timestamps, operator IDs, and sector densities.", styles['bullet']))
 
     story.append(Paragraph("3.6 FR-06: Finisher Certificate & Timing Mat Hub", styles['h2']))
-    story.append(Paragraph("• <b>Search:</b> Instant Certificate Lookup: Public retrieval by Bib number, Mobile number, or Certificate ID.", styles['bullet']))
-    story.append(Paragraph("• <b>Verification:</b> Tamper-Proof Verification: Cryptographic certificate ID verifies authenticity against the central database, displaying official rank, net finish time, and DGP digital signature.", styles['bullet']))
-    story.append(Paragraph("• <b>Print Engine:</b> Isolated A4 Landscape Print Engine: Dedicated print stylesheets strip away all website UI, headers, and footers, printing only the A4 landscape certificate.", styles['bullet']))
+    story.append(Paragraph("- <b>Search:</b> Instant Certificate Lookup: Public retrieval by Bib number, Mobile number, or Certificate ID.", styles['bullet']))
+    story.append(Paragraph("- <b>Verification:</b> Tamper-Proof Verification: Cryptographic certificate ID verifies authenticity against the central database, displaying official rank, net finish time, and DGP digital signature.", styles['bullet']))
+    story.append(Paragraph("- <b>Print Engine:</b> Isolated A4 Landscape Print Engine: Dedicated print stylesheets strip away all website UI, headers, and footers, printing only the A4 landscape certificate.", styles['bullet']))
 
     story.append(Paragraph("3.7 FR-07: High Command Admin Portal & District SP Desks", styles['h2']))
-    story.append(Paragraph("• <b>RBAC:</b> Role-Based Access Control (RBAC): PHQ State Command has statewide jurisdiction; District SPs access their district data; Expo volunteers access counter desks.", styles['bullet']))
-    story.append(Paragraph("• <b>CSV Engine:</b> Database CSV Export: Instant export of sanitized runner data for law enforcement record-keeping and timing mat synchronization.", styles['bullet']))
+    story.append(Paragraph("- <b>RBAC:</b> Role-Based Access Control (RBAC): PHQ State Command has statewide jurisdiction; District SPs access their district data; Expo volunteers access counter desks.", styles['bullet']))
+    story.append(Paragraph("- <b>CSV Engine:</b> Database CSV Export: Instant export of sanitized runner data for law enforcement record-keeping and timing mat synchronization.", styles['bullet']))
 
     story.append(Paragraph("4.0 Non-Functional Requirements (NFR)", styles['h1']))
     story.append(make_pdf_table(nfr_headers, nfr_data, [110, 160, 210], styles))

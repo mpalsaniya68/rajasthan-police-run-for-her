@@ -30,7 +30,7 @@ def build_handover_report():
 
     docx_h(doc, "1.0 Executive Sign-Off & Official Handover Statement", level=1)
     docx_p(doc, "This document certifies that the complete digital software suite for the Rajasthan Police Marathon 2027 ('Run for Her') has successfully completed full-cycle engineering, security auditing, multi-device driver testing, and production deployment. The system is declared fully operational, production-ready, and officially handed over to the Rajasthan Police Headquarters (PHQ), Jaipur, and designated nodal committee officers.", bold_prefix="Formal Handover: ")
-    docx_p(doc, "All functional capabilities—including citizen registration, anti-fraud OTP verification, digital e-pass canvas rendering, multi-device expo camera scanner, RFID kit handover locking, Albert Hall race gate access control, finisher certificate printing, and high-command administrative oversight—are live and validated with zero defects.", bold_prefix="Operational Scope: ")
+    docx_p(doc, "All functional capabilities - including citizen registration, anti-fraud OTP verification, digital e-pass canvas rendering, multi-device expo camera scanner, RFID kit handover locking, Albert Hall race gate access control, finisher certificate printing, and high-command administrative oversight - are live and validated with zero defects.", bold_prefix="Operational Scope: ")
 
     docx_h(doc, "2.0 Production Deployment & Infrastructure Matrix", level=1)
     docx_p(doc, "The production infrastructure topology is deployed across globally distributed serverless edge networks and distributed cloud databases:", bold_prefix="Deployment Topology: ")
@@ -62,23 +62,23 @@ def build_handover_report():
     docx_h(doc, "4.0 Standard Operating Procedures (SOP) & Operator Runbooks", level=1)
 
     docx_h(doc, "4.1 SOP-01: Citizen Self-Registration & E-Pass Retrieval", level=2)
-    docx_b(doc, "Citizen navigates to the public portal and clicks 'ऑनलाइन पंजीकरण (Register Now)'.", bold_prefix="Step 1: ")
+    docx_b(doc, "Citizen navigates to the public portal and clicks 'Online Registration (Register Now)'.", bold_prefix="Step 1: ")
     docx_b(doc, "Selects race category (21 KM, 10 KM, or 5 KM) and enters verified 10-digit mobile number.", bold_prefix="Step 2: ")
     docx_b(doc, "Enters 6-digit SMS OTP. Upon validation, the registration form activates.", bold_prefix="Step 3: ")
     docx_b(doc, "Fills personal details, T-shirt size, blood group, emergency contact, and medical declarations.", bold_prefix="Step 4: ")
-    docx_b(doc, "Instant official e-pass is rendered on client-side canvas. Citizen can download PNG or click 'व्हाट्सएप पर भेजें' to receive pass details directly on WhatsApp.", bold_prefix="Step 5: ")
+    docx_b(doc, "Instant official e-pass is rendered on client-side canvas. Citizen can download PNG or click 'Send to WhatsApp' to receive pass details directly on WhatsApp.", bold_prefix="Step 5: ")
 
     docx_h(doc, "4.2 SOP-02: Expo Kit Distribution & Anti-Fraud RFID Allocation", level=2)
-    docx_b(doc, "Volunteer logs into Expo Desk using station credentials or clicks 'स्वतः भरें (Fill PIN)' with passcode Expo@RajPol#2027.", bold_prefix="Step 1: ")
+    docx_b(doc, "Volunteer logs into Expo Desk using station credentials or clicks 'Auto-Fill PIN' with passcode Expo@RajPol#2027.", bold_prefix="Step 1: ")
     docx_b(doc, "Volunteer scans runner's e-pass QR code using webcam, mobile camera, or 2D barcode scanner gun.", bold_prefix="Step 2: ")
     docx_b(doc, "System displays runner verification card (Name, Category, Bib Number, T-shirt Size, Blood Group).", bold_prefix="Step 3: ")
-    docx_b(doc, "If kit_collected is 0: Volunteer hands over matching T-shirt and bib, inputs UHF RFID tag ID, and clicks 'किट व बिब वितरण पूर्ण करें'. Database locks kit against duplicate collection.", bold_prefix="Step 4: ")
+    docx_b(doc, "If kit_collected is 0: Volunteer hands over matching T-shirt and bib, inputs UHF RFID tag ID, and clicks 'Complete Kit & Bib Handover'. Database locks kit against duplicate collection.", bold_prefix="Step 4: ")
     docx_b(doc, "If kit_collected is 1: Terminal flashes a red anti-fraud warning displaying previous collection timestamp and counter ID. Volunteer denies duplicate kit and alerts counter supervisor.", bold_prefix="Step 5: ")
 
     docx_h(doc, "4.3 SOP-03: Albert Hall Race Day Gate Security Protocol", level=2)
-    docx_b(doc, "Gate Marshal switches terminal mode to 'अल्बर्ट हॉल गेट स्कैनर'.", bold_prefix="Step 1: ")
+    docx_b(doc, "Gate Marshal switches terminal mode to 'Albert Hall Gate Scanner'.", bold_prefix="Step 1: ")
     docx_b(doc, "Runner presents physical bib or digital e-pass QR at stadium gantry.", bold_prefix="Step 2: ")
-    docx_b(doc, "Scanner validates pass authenticity in < 150ms. If first entry, displays green authorization banner 'प्रवेश अधिकृत'.", bold_prefix="Step 3: ")
+    docx_b(doc, "Scanner validates pass authenticity in < 150ms. If first entry, displays green authorization banner 'Entry Approved'.", bold_prefix="Step 3: ")
     docx_b(doc, "If pass was previously scanned at any gate, displays amber alert with initial entry time, preventing gate re-entry.", bold_prefix="Step 4: ")
 
     docx_h(doc, "4.4 SOP-04: Emergency Medical Alert & PCR Van Protocol", level=2)
@@ -88,8 +88,8 @@ def build_handover_report():
     docx_h(doc, "4.5 SOP-05: Finisher Certificate Verification & CSV Police Record Export", level=2)
     docx_b(doc, "Post-race, citizens search certificates via Bib number, Mobile number, or Name on the Certificate Hub.", bold_prefix="Step 1: ")
     docx_b(doc, "System displays official certificate with DGP Rajasthan digital authorization and official finish time.", bold_prefix="Step 2: ")
-    docx_b(doc, "Clicking 'A4 प्रिंट / सेव करें' invokes print isolation CSS, printing only the A4 landscape certificate with zero web clutter.", bold_prefix="Step 3: ")
-    docx_b(doc, "Command officers click 'CSV एक्सपोर्ट' in Admin Dashboard to download the complete sanitized state runner roster.", bold_prefix="Step 4: ")
+    docx_b(doc, "Clicking 'A4 Print / Save' invokes print isolation CSS, printing only the A4 landscape certificate with zero web clutter.", bold_prefix="Step 3: ")
+    docx_b(doc, "Command officers click 'CSV Export' in Admin Dashboard to download the complete sanitized state runner roster.", bold_prefix="Step 4: ")
 
     docx_h(doc, "5.0 Automated API & Security Verification Matrix", level=1)
     test_headers = ["Test Suite Identifier", "Tested Endpoint / Capability", "Execution Latency", "Verification Result"]
@@ -111,7 +111,7 @@ def build_handover_report():
 
     trouble_headers = ["Observed Issue", "Probable Technical Cause", "Immediate Corrective Action"]
     trouble_data = [
-        ["Camera screen stays black or shows 'Permission Blocked'", "Browser blocked camera access or user clicked Block", "Click Lock 🔒 icon in browser URL bar, set Camera to 'Allow', and click 'पुनः प्रयास करें'."],
+        ["Camera screen stays black or shows 'Permission Blocked'", "Browser blocked camera access or user clicked Block", "Click Lock icon in browser URL bar, set Camera to 'Allow', and click 'Retry'."],
         ["Camera displays 'Device Busy / In Use'", "Webcam in use by Zoom, Teams, Skype, or other browser tab", "Close conflicting video applications or browser tabs, wait 3 seconds, and retry."],
         ["Hardware barcode scanner gun not entering text", "Cursor focus shifted away from input field", "Click inside the search input box or press reset button. Barcode gun will automatically type text and trigger verification."],
         ["Temporary internet connectivity loss at expo tent", "Cellular tower congestion or Wi-Fi disconnection", "Terminal switches seamlessly to offline local cache. Registrations and kit collections remain functional and queue for cloud sync."]
@@ -126,14 +126,14 @@ def build_handover_report():
     print(f"Generated DOCX: {docx_path}")
 
     # =========================================================================
-    # 2. GENERATE PDF (Times-Roman, 14pt Body Text)
+    # 2. GENERATE PDF (Times-Roman, 14pt Body Text, 100% ASCII-Safe)
     # =========================================================================
     pdf_path = os.path.join(OUTPUT_DIR, "3_Production_Submission_Handover_Report_Rajasthan_Police_Marathon_2027.pdf")
     styles = get_pdf_styles()
     story = []
 
     story.append(Spacer(1, 15))
-    story.append(Paragraph("GOVERNMENT OF RAJASTHAN • POLICE HEADQUARTERS, JAIPUR", styles['emblem']))
+    story.append(Paragraph("GOVERNMENT OF RAJASTHAN | POLICE HEADQUARTERS, JAIPUR", styles['emblem']))
     story.append(Paragraph(title, styles['title']))
     story.append(Paragraph(subtitle, styles['sub']))
     story.append(Spacer(1, 15))
@@ -159,7 +159,7 @@ def build_handover_report():
 
     story.append(Paragraph("1.0 Executive Sign-Off & Official Handover Statement", styles['h1']))
     story.append(Paragraph("<b>Formal Handover:</b> This document certifies that the complete digital software suite for the Rajasthan Police Marathon 2027 ('Run for Her') has successfully completed full-cycle engineering, security auditing, multi-device driver testing, and production deployment. The system is declared fully operational, production-ready, and officially handed over to the Rajasthan Police Headquarters (PHQ), Jaipur, and designated nodal committee officers.", styles['body']))
-    story.append(Paragraph("<b>Operational Scope:</b> All functional capabilities—including citizen registration, anti-fraud OTP verification, digital e-pass canvas rendering, multi-device expo camera scanner, RFID kit handover locking, Albert Hall race gate access control, finisher certificate printing, and high-command administrative oversight—are live and validated with zero defects.", styles['body']))
+    story.append(Paragraph("<b>Operational Scope:</b> All functional capabilities - including citizen registration, anti-fraud OTP verification, digital e-pass canvas rendering, multi-device expo camera scanner, RFID kit handover locking, Albert Hall race gate access control, finisher certificate printing, and high-command administrative oversight - are live and validated with zero defects.", styles['body']))
 
     story.append(Paragraph("2.0 Production Deployment & Infrastructure Matrix", styles['h1']))
     story.append(Paragraph("<b>Deployment Topology:</b> The production infrastructure topology is deployed across globally distributed serverless edge networks and distributed cloud databases:", styles['body']))
@@ -174,34 +174,34 @@ def build_handover_report():
     story.append(Paragraph("4.0 Standard Operating Procedures (SOP) & Operator Runbooks", styles['h1']))
 
     story.append(Paragraph("4.1 SOP-01: Citizen Self-Registration & E-Pass Retrieval", styles['h2']))
-    story.append(Paragraph("• <b>Step 1:</b> Citizen navigates to the public portal and clicks 'ऑनलाइन पंजीकरण (Register Now)'.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 2:</b> Selects race category (21 KM, 10 KM, or 5 KM) and enters verified 10-digit mobile number.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 3:</b> Enters 6-digit SMS OTP. Upon validation, the registration form activates.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 4:</b> Fills personal details, T-shirt size, blood group, emergency contact, and medical declarations.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 5:</b> Instant official e-pass is rendered on client-side canvas. Citizen can download PNG or click 'व्हाट्सएप पर भेजें' to receive pass details directly on WhatsApp.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 1:</b> Citizen navigates to the public portal and clicks 'Online Registration (Register Now)'.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 2:</b> Selects race category (21 KM, 10 KM, or 5 KM) and enters verified 10-digit mobile number.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 3:</b> Enters 6-digit SMS OTP. Upon validation, the registration form activates.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 4:</b> Fills personal details, T-shirt size, blood group, emergency contact, and medical declarations.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 5:</b> Instant official e-pass is rendered on client-side canvas. Citizen can download PNG or click 'Send to WhatsApp' to receive pass details directly on WhatsApp.", styles['bullet']))
 
     story.append(Paragraph("4.2 SOP-02: Expo Kit Distribution & Anti-Fraud RFID Allocation", styles['h2']))
-    story.append(Paragraph("• <b>Step 1:</b> Volunteer logs into Expo Desk using station credentials or clicks 'स्वतः भरें (Fill PIN)' with passcode Expo@RajPol#2027.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 2:</b> Volunteer scans runner's e-pass QR code using webcam, mobile camera, or 2D barcode scanner gun.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 3:</b> System displays runner verification card (Name, Category, Bib Number, T-shirt Size, Blood Group).", styles['bullet']))
-    story.append(Paragraph("• <b>Step 4:</b> If kit_collected is 0: Volunteer hands over matching T-shirt and bib, inputs UHF RFID tag ID, and clicks 'किट व बिब वितरण पूर्ण करें'. Database locks kit against duplicate collection.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 5:</b> If kit_collected is 1: Terminal flashes a red anti-fraud warning displaying previous collection timestamp and counter ID. Volunteer denies duplicate kit and alerts counter supervisor.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 1:</b> Volunteer logs into Expo Desk using station credentials or clicks 'Auto-Fill PIN' with passcode Expo@RajPol#2027.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 2:</b> Volunteer scans runner's e-pass QR code using webcam, mobile camera, or 2D barcode scanner gun.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 3:</b> System displays runner verification card (Name, Category, Bib Number, T-shirt Size, Blood Group).", styles['bullet']))
+    story.append(Paragraph("- <b>Step 4:</b> If kit_collected is 0: Volunteer hands over matching T-shirt and bib, inputs UHF RFID tag ID, and clicks 'Complete Kit & Bib Handover'. Database locks kit against duplicate collection.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 5:</b> If kit_collected is 1: Terminal flashes a red anti-fraud warning displaying previous collection timestamp and counter ID. Volunteer denies duplicate kit and alerts counter supervisor.", styles['bullet']))
 
     story.append(Paragraph("4.3 SOP-03: Albert Hall Race Day Gate Security Protocol", styles['h2']))
-    story.append(Paragraph("• <b>Step 1:</b> Gate Marshal switches terminal mode to 'अल्बर्ट हॉल गेट स्कैनर'.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 2:</b> Runner presents physical bib or digital e-pass QR at stadium gantry.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 3:</b> Scanner validates pass authenticity in < 150ms. If first entry, displays green authorization banner 'प्रवेश अधिकृत'.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 4:</b> If pass was previously scanned at any gate, displays amber alert with initial entry time, preventing gate re-entry.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 1:</b> Gate Marshal switches terminal mode to 'Albert Hall Gate Scanner'.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 2:</b> Runner presents physical bib or digital e-pass QR at stadium gantry.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 3:</b> Scanner validates pass authenticity in < 150ms. If first entry, displays green authorization banner 'Entry Approved'.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 4:</b> If pass was previously scanned at any gate, displays amber alert with initial entry time, preventing gate re-entry.", styles['bullet']))
 
     story.append(Paragraph("4.4 SOP-04: Emergency Medical Alert & PCR Van Protocol", styles['h2']))
-    story.append(Paragraph("• <b>Step 1:</b> In the event of runner dehydration, heat exhaustion, or cardiac distress, marshals scan bib to retrieve emergency medical history and emergency contact telephone.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 2:</b> Station logs incident in the live medical queue, which dispatches nearest JLN Marg PCR van and 108 ambulance.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 1:</b> In the event of runner dehydration, heat exhaustion, or cardiac distress, marshals scan bib to retrieve emergency medical history and emergency contact telephone.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 2:</b> Station logs incident in the live medical queue, which dispatches nearest JLN Marg PCR van and 108 ambulance.", styles['bullet']))
 
     story.append(Paragraph("4.5 SOP-05: Finisher Certificate Verification & CSV Police Record Export", styles['h2']))
-    story.append(Paragraph("• <b>Step 1:</b> Post-race, citizens search certificates via Bib number, Mobile number, or Name on the Certificate Hub.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 2:</b> System displays official certificate with DGP Rajasthan digital authorization and official finish time.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 3:</b> Clicking 'A4 प्रिंट / सेव करें' invokes print isolation CSS, printing only the A4 landscape certificate with zero web clutter.", styles['bullet']))
-    story.append(Paragraph("• <b>Step 4:</b> Command officers click 'CSV एक्सपोर्ट' in Admin Dashboard to download the complete sanitized state runner roster.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 1:</b> Post-race, citizens search certificates via Bib number, Mobile number, or Name on the Certificate Hub.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 2:</b> System displays official certificate with DGP Rajasthan digital authorization and official finish time.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 3:</b> Clicking 'A4 Print / Save' invokes print isolation CSS, printing only the A4 landscape certificate with zero web clutter.", styles['bullet']))
+    story.append(Paragraph("- <b>Step 4:</b> Command officers click 'CSV Export' in Admin Dashboard to download the complete sanitized state runner roster.", styles['bullet']))
 
     story.append(Paragraph("5.0 Automated API & Security Verification Matrix", styles['h1']))
     story.append(make_pdf_table(test_headers, test_data, [100, 190, 80, 130], styles))

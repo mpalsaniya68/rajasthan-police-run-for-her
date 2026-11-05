@@ -19,7 +19,7 @@ OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "production_documents")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # ---------------------------------------------------------------------------
-# REPORTLAB CANVAS WITH HEADERS, FOOTERS & PAGE NUMBERS
+# REPORTLAB CANVAS WITH HEADERS, FOOTERS & PAGE NUMBERS (ASCII Safe)
 # ---------------------------------------------------------------------------
 class NumberedCanvas(canvas.Canvas):
     def __init__(self, *args, **kwargs):
@@ -45,7 +45,7 @@ class NumberedCanvas(canvas.Canvas):
         
         # Header (Pages 2+)
         if self._pageNumber > 1:
-            self.drawString(54, 800, "Rajasthan Police Marathon 2027 • Official Technical Documentation")
+            self.drawString(54, 800, "Rajasthan Police Marathon 2027 | Official Technical Documentation")
             self.setStrokeColor(colors.HexColor("#cbd5e1"))
             self.setLineWidth(0.5)
             self.line(54, 792, 541, 792)
@@ -54,7 +54,7 @@ class NumberedCanvas(canvas.Canvas):
         self.setStrokeColor(colors.HexColor("#cbd5e1"))
         self.setLineWidth(0.5)
         self.line(54, 45, 541, 45)
-        self.drawString(54, 32, "Rajasthan Police Headquarters, Jaipur • Government Official Deliverable")
+        self.drawString(54, 32, "Rajasthan Police Headquarters, Jaipur | Government Official Deliverable")
         self.drawRightString(541, 32, f"Page {self._pageNumber} of {page_count}")
         self.restoreState()
 
@@ -74,7 +74,7 @@ def get_pdf_styles():
     }
 
 # ---------------------------------------------------------------------------
-# DOCX BASE STYLES & BUILDERS
+# DOCX BASE STYLES & BUILDERS (ASCII Safe)
 # ---------------------------------------------------------------------------
 def set_cell_background(cell, fill_hex):
     tcPr = cell._tc.get_or_add_tcPr()
@@ -96,7 +96,7 @@ def init_docx(doc_title, doc_id, doc_type):
         
         hp = s.header.paragraphs[0]
         hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        hrun = hp.add_run(f"Rajasthan Police Marathon 2027 • {doc_type}")
+        hrun = hp.add_run(f"Rajasthan Police Marathon 2027 | {doc_type}")
         hrun.font.name = "Times New Roman"
         hrun.font.size = Pt(10)
         hrun.font.color.rgb = RGBColor(0x64, 0x74, 0x8B)
@@ -123,7 +123,7 @@ def add_docx_cover(doc, title, subtitle, doc_id, doc_type, date_str):
     p_title.paragraph_format.space_before = Pt(20)
     p_title.paragraph_format.space_after = Pt(8)
     
-    remb = p_title.add_run("GOVERNMENT OF RAJASTHAN • POLICE HEADQUARTERS, JAIPUR\n")
+    remb = p_title.add_run("GOVERNMENT OF RAJASTHAN | POLICE HEADQUARTERS, JAIPUR\n")
     remb.font.name = "Times New Roman"
     remb.font.size = Pt(12)
     remb.font.bold = True
@@ -281,10 +281,8 @@ def docx_tbl(doc, headers, rows_data, widths=None):
 # ---------------------------------------------------------------------------
 def make_pdf_table(headers, rows_data, col_widths, styles):
     data = []
-    # Header
     hdr_row = [Paragraph(f"<b>{h}</b>", styles['table_head']) for h in headers]
     data.append(hdr_row)
-    # Rows
     for r in rows_data:
         row_cells = [Paragraph(str(v), styles['table_cell']) for v in r]
         data.append(row_cells)
@@ -303,4 +301,4 @@ def make_pdf_table(headers, rows_data, col_widths, styles):
     ]))
     return t
 
-print("Helper core ready.")
+print("Base ASCII-safe helpers ready.")

@@ -76,7 +76,7 @@ def build_tech_report():
     docx_h(doc, "3.0 Cryptography & Verification Algorithms", level=1)
     
     docx_h(doc, "3.1 HMAC-SHA256 QR Tokenization", level=2)
-    docx_p(doc, "To prevent counterfeit pass printing and unauthorized stadium entry, every e-pass QR code embeds a signed cryptographic token. The algorithm concatenates the participant's Bib number, certificate ID, category ID, and a server-side secret key (`TOKEN_SALT`), hashed using HMAC-SHA256:", bold_prefix="Signature Formulation: ")
+    docx_p(doc, "To prevent counterfeit pass printing and unauthorized stadium entry, every e-pass QR code embeds a signed cryptographic token. The algorithm concatenates the participant's Bib number, certificate ID, category ID, and a server-side secret key (TOKEN_SALT), hashed using HMAC-SHA256:", bold_prefix="Signature Formulation: ")
     docx_p(doc, "HMAC_Payload = HMAC_SHA256(bib_number + ':' + certificate_id + ':' + category_id, SERVER_SECRET). The resulting digest is formatted into a secure URI that can be verified in real time either online via edge API or offline via local cryptographic public key validation.", bold_prefix="Verification Logic: ")
 
     docx_h(doc, "3.2 Dynamic Bib Allocation Algorithm", level=2)
@@ -86,7 +86,7 @@ def build_tech_report():
     docx_b(doc, "5 KM Community & Family Run: Prefixed with 'RJ-05K-' followed by sequential integers (1001 - 99999).")
 
     docx_h(doc, "4.0 Hardware WebRTC Scanner & Camera Driver Engineering", level=1)
-    docx_p(doc, "During testing, mobile and desktop webcams previously encountered driver failure (`NotReadableError: Could not start video source`) and permission lockouts. A deep architectural root cause analysis (RCA) led to the implementation of a senior-grade multi-device driver engine:")
+    docx_p(doc, "During testing, mobile and desktop webcams previously encountered driver failure (NotReadableError: Could not start video source) and permission lockouts. A deep architectural root cause analysis (RCA) led to the implementation of a senior-grade multi-device driver engine:")
 
     docx_h(doc, "4.1 Root Cause Analysis (RCA) of Camera Contention", level=2)
     docx_b(doc, "Hardware Lock Conflict: The third-party Html5Qrcode.getCameras() helper opened a dummy media stream and immediately stopped tracks. On Windows (Media Foundation / DirectShow), the camera driver requires ~400ms to release the hardware handle. Immediately calling scanner.start() caused the OS to reject the request as device busy.", bold_prefix="Root Cause 1: ")
@@ -128,14 +128,14 @@ def build_tech_report():
     print(f"Generated DOCX: {docx_path}")
 
     # =========================================================================
-    # 2. GENERATE PDF (Times-Roman, 14pt Body Text)
+    # 2. GENERATE PDF (Times-Roman, 14pt Body Text, 100% ASCII-Safe)
     # =========================================================================
     pdf_path = os.path.join(OUTPUT_DIR, "2_Technical_Architecture_Report_Rajasthan_Police_Marathon_2027.pdf")
     styles = get_pdf_styles()
     story = []
 
     story.append(Spacer(1, 15))
-    story.append(Paragraph("GOVERNMENT OF RAJASTHAN • POLICE HEADQUARTERS, JAIPUR", styles['emblem']))
+    story.append(Paragraph("GOVERNMENT OF RAJASTHAN | POLICE HEADQUARTERS, JAIPUR", styles['emblem']))
     story.append(Paragraph(title, styles['title']))
     story.append(Paragraph(subtitle, styles['sub']))
     story.append(Spacer(1, 15))
@@ -173,8 +173,8 @@ def build_tech_report():
     story.append(Spacer(1, 10))
 
     story.append(Paragraph("2.2 Schema: `audit_logs` & `otp_codes` Tables", styles['h2']))
-    story.append(Paragraph("• <b>Audit Architecture:</b> The system strictly maintains immutable forensic audit logs for every command action, kit distribution, gate entry, and security login. The table records actor name, action type, target bib, client IP address, and cryptographic timestamp.", styles['bullet']))
-    story.append(Paragraph("• <b>OTP Storage:</b> The `otp_codes` table manages short-lived (5-minute) 6-digit verification codes with verification flags and attempt counters, mitigating brute-force OTP interception.", styles['bullet']))
+    story.append(Paragraph("- <b>Audit Architecture:</b> The system strictly maintains immutable forensic audit logs for every command action, kit distribution, gate entry, and security login. The table records actor name, action type, target bib, client IP address, and cryptographic timestamp.", styles['bullet']))
+    story.append(Paragraph("- <b>OTP Storage:</b> The `otp_codes` table manages short-lived (5-minute) 6-digit verification codes with verification flags and attempt counters, mitigating brute-force OTP interception.", styles['bullet']))
 
     story.append(Paragraph("3.0 Cryptography & Verification Algorithms", styles['h1']))
     story.append(Paragraph("3.1 HMAC-SHA256 QR Tokenization", styles['h2']))
@@ -183,23 +183,23 @@ def build_tech_report():
 
     story.append(Paragraph("3.2 Dynamic Bib Allocation Algorithm", styles['h2']))
     story.append(Paragraph("<b>Collision Elimination:</b> Bib assignment employs an atomic database sequence generator. To eliminate concurrency race conditions during traffic spikes, bib numbers are mapped to category prefixes with zero-padded sequences:", styles['body']))
-    story.append(Paragraph("• 21 KM Half Marathon: Prefixed with 'RJ-21K-' followed by sequential integers (1001 - 99999).", styles['bullet']))
-    story.append(Paragraph("• 10 KM City Run: Prefixed with 'RJ-10K-' followed by sequential integers (1001 - 99999).", styles['bullet']))
-    story.append(Paragraph("• 5 KM Community & Family Run: Prefixed with 'RJ-05K-' followed by sequential integers (1001 - 99999).", styles['bullet']))
+    story.append(Paragraph("- 21 KM Half Marathon: Prefixed with 'RJ-21K-' followed by sequential integers (1001 - 99999).", styles['bullet']))
+    story.append(Paragraph("- 10 KM City Run: Prefixed with 'RJ-10K-' followed by sequential integers (1001 - 99999).", styles['bullet']))
+    story.append(Paragraph("- 5 KM Community & Family Run: Prefixed with 'RJ-05K-' followed by sequential integers (1001 - 99999).", styles['bullet']))
 
     story.append(Paragraph("4.0 Hardware WebRTC Scanner & Camera Driver Engineering", styles['h1']))
     story.append(Paragraph("During testing, mobile and desktop webcams previously encountered driver failure (NotReadableError: Could not start video source) and permission lockouts. A deep architectural root cause analysis (RCA) led to the implementation of a senior-grade multi-device driver engine:", styles['body']))
 
     story.append(Paragraph("4.1 Root Cause Analysis (RCA) of Camera Contention", styles['h2']))
-    story.append(Paragraph("• <b>Root Cause 1:</b> Hardware Lock Conflict: The third-party Html5Qrcode.getCameras() helper opened a dummy media stream and immediately stopped tracks. On Windows (Media Foundation / DirectShow), the camera driver requires ~400ms to release the hardware handle. Immediately calling scanner.start() caused the OS to reject the request as device busy.", styles['bullet']))
-    story.append(Paragraph("• <b>Root Cause 2:</b> FacingMode Constraint Incompatibility: Requesting { facingMode: 'environment' } (rear camera) on laptops with only front webcams triggered OverconstrainedError exceptions.", styles['bullet']))
-    story.append(Paragraph("• <b>Root Cause 3:</b> W3C Permissions-Policy Header Block: The deployment server was sending 'Permissions-Policy: camera=()', which strictly prohibited the browser from activating camera hardware.", styles['bullet']))
+    story.append(Paragraph("- <b>Root Cause 1:</b> Hardware Lock Conflict: The third-party Html5Qrcode.getCameras() helper opened a dummy media stream and immediately stopped tracks. On Windows (Media Foundation / DirectShow), the camera driver requires ~400ms to release the hardware handle. Immediately calling scanner.start() caused the OS to reject the request as device busy.", styles['bullet']))
+    story.append(Paragraph("- <b>Root Cause 2:</b> FacingMode Constraint Incompatibility: Requesting { facingMode: 'environment' } (rear camera) on laptops with only front webcams triggered OverconstrainedError exceptions.", styles['bullet']))
+    story.append(Paragraph("- <b>Root Cause 3:</b> W3C Permissions-Policy Header Block: The deployment server was sending 'Permissions-Policy: camera=()', which strictly prohibited the browser from activating camera hardware.", styles['bullet']))
 
     story.append(Paragraph("4.2 Multi-Device Engine Implementation", styles['h2']))
-    story.append(Paragraph("• <b>Solution 1:</b> Platform-Aware Routing: User-Agent heuristics detect device type upfront. Mobile devices prioritize { facingMode: 'environment' } (back camera); desktop/laptop devices prioritize { facingMode: 'user' } (front webcam).", styles['bullet']))
-    story.append(Paragraph("• <b>Solution 2:</b> 400ms Driver Buffer: Between scanner stop and subsequent retries, an asynchronous 400ms pause allows the operating system to completely release hardware capture pins.", styles['bullet']))
-    story.append(Paragraph("• <b>Solution 3:</b> Permissions-Policy Fix: Updated vercel.json to 'camera=(self)', explicitly granting camera access to the marathon domain.", styles['bullet']))
-    story.append(Paragraph("• <b>Solution 4:</b> Triple-Tier Fallback: If live camera fails, operators can use: (a) Image upload scanner, (b) 2D Barcode scanner gun, or (c) Manual keyboard input.", styles['bullet']))
+    story.append(Paragraph("- <b>Solution 1:</b> Platform-Aware Routing: User-Agent heuristics detect device type upfront. Mobile devices prioritize { facingMode: 'environment' } (back camera); desktop/laptop devices prioritize { facingMode: 'user' } (front webcam).", styles['bullet']))
+    story.append(Paragraph("- <b>Solution 2:</b> 400ms Driver Buffer: Between scanner stop and subsequent retries, an asynchronous 400ms pause allows the operating system to completely release hardware capture pins.", styles['bullet']))
+    story.append(Paragraph("- <b>Solution 3:</b> Permissions-Policy Fix: Updated vercel.json to 'camera=(self)', explicitly granting camera access to the marathon domain.", styles['bullet']))
+    story.append(Paragraph("- <b>Solution 4:</b> Triple-Tier Fallback: If live camera fails, operators can use: (a) Image upload scanner, (b) 2D Barcode scanner gun, or (c) Manual keyboard input.", styles['bullet']))
 
     story.append(Paragraph("5.0 Vite 8 Rollup Chunking & Performance Optimization", styles['h1']))
     story.append(Paragraph("<b>Bundle Optimization:</b> To achieve high performance on low-bandwidth rural mobile networks, Vite 8 was configured with custom Rollup manual chunks, isolating heavy dependencies from the main execution thread:", styles['body']))
@@ -207,11 +207,11 @@ def build_tech_report():
     story.append(Spacer(1, 10))
 
     story.append(Paragraph("6.0 Security Architecture & OWASP Compliance", styles['h1']))
-    story.append(Paragraph("• <b>SQLi Defense:</b> SQL Injection Immunity: 100% of database queries use parameterized SQL prepared statements (args: [...]).", styles['bullet']))
-    story.append(Paragraph("• <b>XSS Defense:</b> Cross-Site Scripting (XSS): React 19 automatic JSX string escaping prevents DOM-based injection attacks.", styles['bullet']))
-    story.append(Paragraph("• <b>Rate Limiting:</b> Rate Limiting: IP-based sliding window rate limiter throttles abuse on OTP (max 3/min) and registration (max 10/min).", styles['bullet']))
-    story.append(Paragraph("• <b>HSTS:</b> Transport Security: HTTPS with HSTS max-age=31536000 and includeSubDomains preloading.", styles['bullet']))
-    story.append(Paragraph("• <b>Frame Options:</b> Clickjacking Protection: X-Frame-Options: SAMEORIGIN header prevents iframe embedding.", styles['bullet']))
+    story.append(Paragraph("- <b>SQLi Defense:</b> SQL Injection Immunity: 100% of database queries use parameterized SQL prepared statements (args: [...]).", styles['bullet']))
+    story.append(Paragraph("- <b>XSS Defense:</b> Cross-Site Scripting (XSS): React 19 automatic JSX string escaping prevents DOM-based injection attacks.", styles['bullet']))
+    story.append(Paragraph("- <b>Rate Limiting:</b> Rate Limiting: IP-based sliding window rate limiter throttles abuse on OTP (max 3/min) and registration (max 10/min).", styles['bullet']))
+    story.append(Paragraph("- <b>HSTS:</b> Transport Security: HTTPS with HSTS max-age=31536000 and includeSubDomains preloading.", styles['bullet']))
+    story.append(Paragraph("- <b>Frame Options:</b> Clickjacking Protection: X-Frame-Options: SAMEORIGIN header prevents iframe embedding.", styles['bullet']))
 
     story.append(Paragraph("7.0 Engineering Sign-off", styles['h1']))
     story.append(Paragraph("<b>Certification:</b> The technical architecture and engineering implementation described in this report have undergone full static analysis (oxlint), unit testing, API load testing, and security verification. The system is certified robust, scalable, and production-ready.", styles['body']))
