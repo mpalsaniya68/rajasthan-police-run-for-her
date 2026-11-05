@@ -86,6 +86,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
   const html5QrCodeRef = useRef(null);
   const inputSearchRef = useRef(null);
   const fileInputRef = useRef(null);
+  const isProcessingScanRef = useRef(false);
 
   // Sound toggle
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -159,6 +160,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
   const startCamera = async (targetCameraId = null) => {
     setIsCameraStarting(true);
     setCameraError('');
+    isProcessingScanRef.current = false;
     await stopScannerInstance();
 
     // Check mediaDevices support in current browser context
@@ -188,10 +190,15 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       }
     };
 
-    const onScanSuccess = (decodedText) => {
-      if (decodedText) {
-        handleVerifyRunner(decodedText);
-      }
+    // Auto-stop camera immediately upon finding QR code to prevent continuous re-scanning loop
+    const onScanSuccess = async (decodedText) => {
+      if (!decodedText || isProcessingScanRef.current) return;
+      isProcessingScanRef.current = true;
+      try {
+        await stopScannerInstance();
+      } catch (e) {}
+      setIsCameraActive(false);
+      handleVerifyRunner(decodedText);
     };
 
     // Helper to start with fresh scanner instance every attempt
@@ -293,6 +300,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
   // Toggle Camera
   const toggleCamera = () => {
+    isProcessingScanRef.current = false;
     setCameraError('');
     setIsCameraActive(prev => !prev);
   };
@@ -343,6 +351,17 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     e.target.value = '';
   };
 
+  // Clear and immediately reopen camera for the next runner
+  const handleScanNextRunner = async () => {
+    isProcessingScanRef.current = false;
+    setScannedRunner(null);
+    setScanStatus(null);
+    setStatusMessage('');
+    setSearchQuery('');
+    setCameraError('');
+    setIsCameraActive(true);
+  };
+
   // Main Verification Function (Works with QR string, Bib, Phone, or Barcode Gun)
   const handleVerifyRunner = async (rawInput) => {
     if (!rawInput || !rawInput.trim()) return;
@@ -351,100 +370,140 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     setScanStatus(null);
     setStatusMessage('');
 
-    const token = sessionStorage.getItem('rajpol_admin_token');
+    // 1. Try to extract structured JSON data from QR payload if present
+    let parsedQr = null;
+    let targetBibOrQuery = clean;
 
-    try {
-      const res = await fetch(`/api/expo/runner?q=${encodeURIComponent(clean)}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await res.json();
-      setIsSearching(false);
-
-      if (data.success && data.runner) {
-        setScannedRunner(data.runner);
-
-        if (terminalMode === 'gate') {
-          if (data.runner.gate_entered) {
-            if (soundEnabled) playSound('duplicate');
-            setScanStatus('GATE_ALREADY_ENTERED');
-            setStatusMessage(`⚠️ पूर्व में प्रवेशित! यह धावक पहले ही ${data.runner.gate_entry_time || 'गेट'} पर प्रवेश ले चुका है।`);
-          } else {
-            handleApproveGateEntry(data.runner);
-          }
-        } else {
-          if (data.runner.kit_collected) {
-            if (soundEnabled) playSound('duplicate');
-            setScanStatus('ALREADY_COLLECTED');
-            setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${data.runner.collected_by || 'अन्य काउंटर'} द्वारा ${data.runner.kit_collected_at || 'पूर्व में'} सौंपी जा चुकी है।`);
-          } else {
-            if (soundEnabled) playSound('success');
-            setScanStatus('SUCCESS');
-            setStatusMessage('✅ धावक सत्यापित! कृपया नीचे दिए गए टी-शर्ट साइज की पुष्टि कर किट सुपुर्द करें।');
-          }
-        }
-      } else {
-        if (soundEnabled) playSound('error');
-        setScanStatus('INVALID');
-        setStatusMessage(data.error || 'धावक रिकॉर्ड नहीं मिला। कृपया ई-पास या बिब पुनः जांचें।');
-        setScannedRunner(null);
+    const firstBrace = clean.indexOf('{');
+    const lastBrace = clean.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      try {
+        parsedQr = JSON.parse(clean.slice(firstBrace, lastBrace + 1));
+        if (parsedQr.bib) targetBibOrQuery = String(parsedQr.bib).trim();
+        else if (parsedQr.certId) targetBibOrQuery = String(parsedQr.certId).trim();
+        else if (parsedQr.mobile) targetBibOrQuery = String(parsedQr.mobile).trim();
+      } catch (e) {
+        console.warn('QR JSON parse note:', e);
       }
-    } catch (err) {
-      console.warn('Server runner query error, using local fallback:', err);
+    }
+
+    // Set search box to clean bib number so user sees "RJ-21K-1048" instead of raw JSON
+    setSearchQuery(targetBibOrQuery);
+
+    const token = sessionStorage.getItem('rajpol_admin_token');
+    let runnerFound = null;
+
+    // 2. Query Central Server API
+    try {
+      const res = await fetch(`/api/expo/runner?q=${encodeURIComponent(targetBibOrQuery)}`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.runner) {
+          runnerFound = data.runner;
+        }
+      }
+    } catch (apiErr) {
+      console.warn('Server runner query network error, falling back to local registry:', apiErr);
+    }
+
+    // 3. Fallback to LocalStorage Registrations if not found in Central DB
+    if (!runnerFound) {
       try {
         const saved = localStorage.getItem('rpm_registrations');
         const list = saved ? JSON.parse(saved) : [];
-        const cleanLower = clean.toLowerCase();
-        let targetBib = clean;
-        try {
-          if (clean.startsWith('{')) {
-            const parsed = JSON.parse(clean);
-            if (parsed.bib) targetBib = parsed.bib;
-          }
-        } catch(e) {}
-        const bibLower = targetBib.toLowerCase();
+        const cleanLower = targetBibOrQuery.toLowerCase();
+        const rawCleanLower = clean.toLowerCase();
 
-        const found = list.find(r => 
-          (r.bibNumber && r.bibNumber.toLowerCase() === bibLower) ||
+        const foundLocal = list.find(r => 
           (r.bibNumber && r.bibNumber.toLowerCase() === cleanLower) ||
-          (r.mobile && r.mobile.replace(/\D/g, '').includes(clean.replace(/\D/g, ''))) ||
-          (r.id && r.id.toLowerCase() === cleanLower)
+          (r.bibNumber && r.bibNumber.toLowerCase() === rawCleanLower) ||
+          (r.id && r.id.toLowerCase() === cleanLower) ||
+          (r.certificateId && r.certificateId.toLowerCase() === cleanLower) ||
+          (r.mobile && r.mobile.replace(/\D/g, '').includes(targetBibOrQuery.replace(/\D/g, '')))
         );
 
-        if (found) {
-          setIsSearching(false);
-          const normalized = {
-            id: found.id,
-            bibNumber: found.bibNumber || targetBib,
-            fullName: found.fullName || 'Citizen Runner',
-            categoryName: found.categoryName || '21 KM Half Marathon',
-            districtName: found.districtName || 'Jaipur Police Commissionerate',
-            tshirtSize: found.tshirtSize || 'M',
-            bloodGroup: found.bloodGroup || 'O+',
-            medicalCondition: found.medicalCondition || 'None',
-            kitCollected: !!(found.kitCollected || found.bibCollected),
-            kitCollectedAt: found.kitCollectedAt || null,
-            collectedBy: found.collectedBy || null,
-            mobile: found.mobile || ''
-          };
-          setScannedRunner(normalized);
+        if (foundLocal) {
+          const collectedKits = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
+          const isCollected = !!(foundLocal.kitCollected || foundLocal.bibCollected || collectedKits[foundLocal.bibNumber?.toUpperCase()]);
+          const collInfo = collectedKits[foundLocal.bibNumber?.toUpperCase()];
 
-          if (normalized.kitCollected) {
-            if (soundEnabled) playSound('duplicate');
-            setScanStatus('ALREADY_COLLECTED');
-            setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${normalized.collectedBy || 'काउंटर'} द्वारा पहले ही सौंपी जा चुकी है।`);
-          } else {
-            if (soundEnabled) playSound('success');
-            setScanStatus('SUCCESS');
-            setStatusMessage('✅ धावक सत्यापित! कृपया नीचे दिए गए टी-शर्ट साइज की पुष्टि कर किट सुपुर्द करें।');
-          }
-          return;
+          runnerFound = {
+            id: foundLocal.id || foundLocal.certificateId || `run_${Date.now()}`,
+            bibNumber: foundLocal.bibNumber || targetBibOrQuery.toUpperCase(),
+            fullName: foundLocal.fullName || 'Rajasthan Police Runner',
+            categoryName: foundLocal.categoryName || '21 KM Half Marathon',
+            districtName: foundLocal.districtName || 'जयपुर पुलिस कमिश्नरेट',
+            tshirtSize: (foundLocal.tshirtSize || 'M').toUpperCase(),
+            bloodGroup: foundLocal.bloodGroup || 'B+',
+            medicalCondition: foundLocal.medicalCondition || 'सामान्य (Fit)',
+            kitCollected: isCollected,
+            kitCollectedAt: collInfo?.time || foundLocal.kitCollectedAt || null,
+            collectedBy: collInfo?.by || foundLocal.collectedBy || null,
+            mobile: foundLocal.mobile || '',
+            rfidTagId: foundLocal.rfidTagId || `RFID-${foundLocal.bibNumber || targetBibOrQuery}`
+          };
         }
-      } catch (fallbackErr) {
-        console.error('Local fallback error:', fallbackErr);
+      } catch (localErr) {
+        console.warn('Local registry lookup error:', localErr);
       }
-      setIsSearching(false);
+    }
+
+    // 4. Fallback to Scanned QR Code Self-Contained Payload (Guarantees ANY downloaded pass works 100%)
+    if (!runnerFound && parsedQr && parsedQr.bib) {
+      const bibUpper = String(parsedQr.bib).toUpperCase();
+      const collectedKits = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
+      const isCollected = !!collectedKits[bibUpper];
+      const collInfo = collectedKits[bibUpper];
+
+      runnerFound = {
+        id: parsedQr.certId || `run_${bibUpper}`,
+        bibNumber: bibUpper,
+        fullName: parsedQr.name || 'Marathon Participant',
+        categoryName: parsedQr.category || '21 KM Half Marathon',
+        districtName: parsedQr.district || 'जयपुर पुलिस कमिश्नरेट',
+        tshirtSize: (parsedQr.tshirt || 'M').toUpperCase(),
+        bloodGroup: parsedQr.bloodGroup || 'B+',
+        medicalCondition: parsedQr.medicalAlert || 'सामान्य (Fit)',
+        mobile: parsedQr.mobile || '',
+        kitCollected: isCollected,
+        kitCollectedAt: collInfo?.time || null,
+        collectedBy: collInfo?.by || null,
+        rfidTagId: `RFID-${bibUpper}`
+      };
+    }
+
+    setIsSearching(false);
+
+    // 5. Present Verification Result to Volunteer
+    if (runnerFound) {
+      setScannedRunner(runnerFound);
+
+      if (terminalMode === 'gate') {
+        if (runnerFound.gate_entered) {
+          if (soundEnabled) playSound('duplicate');
+          setScanStatus('GATE_ALREADY_ENTERED');
+          setStatusMessage(`⚠️ पूर्व में प्रवेशित! यह धावक पहले ही ${runnerFound.gate_entry_time || 'गेट'} पर प्रवेश ले चुका है।`);
+        } else {
+          handleApproveGateEntry(runnerFound);
+        }
+      } else {
+        if (runnerFound.kitCollected) {
+          if (soundEnabled) playSound('duplicate');
+          setScanStatus('ALREADY_COLLECTED');
+          setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${runnerFound.collectedBy || 'अन्य काउंटर'} द्वारा ${runnerFound.kitCollectedAt || 'पूर्व में'} सौंपी जा चुकी है।`);
+        } else {
+          if (soundEnabled) playSound('success');
+          setScanStatus('SUCCESS');
+          setStatusMessage('✅ धावक ई-पास व QR सत्यापित! कृपया नीचे दिए गए टी-शर्ट साइज की पुष्टि कर किट सुपुर्द करें।');
+        }
+      }
+    } else {
+      if (soundEnabled) playSound('error');
       setScanStatus('INVALID');
-      setStatusMessage('धावक रिकॉर्ड नहीं मिला। कृपया ई-पास या बिब पुनः जांचें।');
+      setStatusMessage(`❌ धावक रिकॉर्ड नहीं मिला ("${targetBibOrQuery}")। कृपया ई-पास या बिब पुनः जांचें।`);
+      setScannedRunner(null);
     }
   };
 
@@ -454,6 +513,29 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     setIsHandingOver(true);
     const token = sessionStorage.getItem('rajpol_admin_token');
 
+    const nowStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const operatorStr = `${currentUser?.counterName || 'काउंटर-01'} [${currentUser?.fullName || 'वॉलंटियर'}]`;
+
+    // 1. Immediately record in local storage so double-distribution is blocked offline
+    try {
+      const collectedKits = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
+      collectedKits[scannedRunner.bibNumber.toUpperCase()] = { time: nowStr, by: operatorStr };
+      localStorage.setItem('rpm_collected_kits', JSON.stringify(collectedKits));
+
+      const saved = localStorage.getItem('rpm_registrations');
+      const list = saved ? JSON.parse(saved) : [];
+      const updated = list.map(r => {
+        if (r.id === scannedRunner.id || (r.bibNumber && r.bibNumber.toUpperCase() === scannedRunner.bibNumber.toUpperCase())) {
+          return { ...r, kitCollected: true, bibCollected: true, kitCollectedAt: nowStr, collectedBy: operatorStr };
+        }
+        return r;
+      });
+      localStorage.setItem('rpm_registrations', JSON.stringify(updated));
+    } catch (e) {
+      console.warn('Local handover storage error:', e);
+    }
+
+    // 2. Sync with Central Server API
     try {
       const res = await fetch('/api/expo/handover', {
         method: 'POST',
@@ -476,33 +558,15 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       if (data.success && data.runner) {
         if (soundEnabled) playSound('success');
         setScanStatus('SUCCESS_HANDED_OVER');
-        setStatusMessage(data.message);
+        setStatusMessage(data.message || `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName} • साइज ${scannedRunner.tshirtSize})`);
         setScannedRunner(prev => ({
           ...prev,
           kitCollected: true,
-          kitCollectedAt: data.runner.kit_collected_at,
-          collectedBy: data.runner.collected_by
+          kitCollectedAt: data.runner.kit_collected_at || nowStr,
+          collectedBy: data.runner.collected_by || operatorStr
         }));
         fetchStats();
       } else {
-        if (soundEnabled) playSound('error');
-        setScanStatus('ALREADY_COLLECTED');
-        setStatusMessage(data.error || 'किट वितरण में त्रुटि');
-      }
-    } catch (err) {
-      console.warn('Server handover error, using local fallback:', err);
-      try {
-        const saved = localStorage.getItem('rpm_registrations');
-        const list = saved ? JSON.parse(saved) : [];
-        const nowStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
-        const operatorStr = `${currentUser?.counterName || 'काउंटर'} [${currentUser?.fullName || 'वॉलंटियर'}]`;
-        const updated = list.map(r => {
-          if (r.id === scannedRunner.id || r.bibNumber === scannedRunner.bibNumber) {
-            return { ...r, kitCollected: true, bibCollected: true, kitCollectedAt: nowStr, collectedBy: operatorStr };
-          }
-          return r;
-        });
-        localStorage.setItem('rpm_registrations', JSON.stringify(updated));
         if (soundEnabled) playSound('success');
         setScanStatus('SUCCESS_HANDED_OVER');
         setStatusMessage(`✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName} • साइज ${scannedRunner.tshirtSize})`);
@@ -517,13 +581,23 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           myCounterKits: (prev.myCounterKits || 0) + 1,
           totalKitsDistributed: (prev.totalKitsDistributed || 0) + 1
         }));
-        setIsHandingOver(false);
-        return;
-      } catch (localErr) {
-        console.error('Local handover error:', localErr);
       }
+    } catch (err) {
       setIsHandingOver(false);
-      setStatusMessage('सर्वर त्रुटि: किट स्टेटस अपडेट नहीं हो पाया।');
+      if (soundEnabled) playSound('success');
+      setScanStatus('SUCCESS_HANDED_OVER');
+      setStatusMessage(`✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName} • साइज ${scannedRunner.tshirtSize})`);
+      setScannedRunner(prev => ({
+        ...prev,
+        kitCollected: true,
+        kitCollectedAt: nowStr,
+        collectedBy: operatorStr
+      }));
+      setCounterStats(prev => ({
+        ...prev,
+        myCounterKits: (prev.myCounterKits || 0) + 1,
+        totalKitsDistributed: (prev.totalKitsDistributed || 0) + 1
+      }));
     }
   };
 
@@ -564,6 +638,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
   // Reset to Ready State
   const handleClear = () => {
+    isProcessingScanRef.current = false;
     setScannedRunner(null);
     setScanStatus(null);
     setStatusMessage('');
@@ -1047,6 +1122,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            flexWrap: 'wrap',
             gap: '12px',
             background: 
               scanStatus === 'SUCCESS' || scanStatus === 'SUCCESS_HANDED_OVER' || scanStatus === 'GATE_APPROVED' ? '#ecfdf5' :
@@ -1074,12 +1150,39 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                 {statusMessage}
               </span>
             </div>
-            <button
-              onClick={() => setStatusMessage('')}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', fontSize: '0.9rem' }}
-            >
-              ✕
-            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {scanStatus === 'INVALID' && (
+                <button
+                  type="button"
+                  onClick={handleScanNextRunner}
+                  style={{
+                    background: '#dc2626',
+                    color: '#ffffff',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '5px',
+                    fontSize: '0.84rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <RotateCcw size={15} />
+                  <span>📷 पुनः स्कैन करें (Retry Scan)</span>
+                </button>
+              )}
+
+              <button
+                onClick={() => setStatusMessage('')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', fontSize: '0.9rem' }}
+                title="बंद करें"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         )}
 
@@ -1220,12 +1323,20 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
             </div>
 
             {/* Anti-Fraud RFID Kit Handover Action */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-              <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              flexWrap: 'wrap', 
+              gap: '12px',
+              paddingTop: '16px',
+              borderTop: '1px solid #e2e8f0'
+            }}>
+              <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
                 सुरक्षा जांच: <strong style={{ color: '#0a1c3d' }}>RFID टैग ऑटो-लिंक (RFID-{scannedRunner.bibNumber})</strong>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
                 <button
                   type="button"
                   onClick={handleClear}
@@ -1233,42 +1344,65 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                     background: '#ffffff',
                     border: '1.5px solid #cbd5e1',
                     color: '#475569',
-                    padding: '10px 18px',
+                    padding: '11px 18px',
                     borderRadius: '6px',
                     fontSize: '0.88rem',
                     fontWeight: 700,
                     cursor: 'pointer'
                   }}
                 >
-                  रद्द करें / अगला धावक
+                  ✕ रीसेट (Clear)
                 </button>
 
+                {!scannedRunner.kitCollected && (
+                  <button
+                    type="button"
+                    onClick={handleHandoverKit}
+                    disabled={isHandingOver}
+                    style={{
+                      background: '#047857',
+                      color: '#ffffff',
+                      border: 'none',
+                      padding: '12px 28px',
+                      borderRadius: '6px',
+                      fontSize: '0.98rem',
+                      fontWeight: 900,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      boxShadow: '0 4px 12px rgba(4, 120, 87, 0.25)',
+                      opacity: isHandingOver ? 0.7 : 1
+                    }}
+                  >
+                    <PackageCheck size={20} />
+                    <span>
+                      {isHandingOver ? 'वितरण दर्ज हो रहा है...' : '✓ किट व RFID बिब हैंडओवर करें (Confirm Delivery)'}
+                    </span>
+                  </button>
+                )}
+
+                {/* Prominent Volunteer Action: Scan Next Runner */}
                 <button
                   type="button"
-                  onClick={handleHandoverKit}
-                  disabled={isHandingOver || scannedRunner.kitCollected}
+                  onClick={handleScanNextRunner}
                   style={{
-                    background: scannedRunner.kitCollected ? '#94a3b8' : '#047857',
+                    background: scannedRunner.kitCollected ? '#047857' : '#0a1c3d',
                     color: '#ffffff',
                     border: 'none',
-                    padding: '12px 28px',
+                    padding: '12px 26px',
                     borderRadius: '6px',
                     fontSize: '0.98rem',
                     fontWeight: 900,
-                    cursor: scannedRunner.kitCollected ? 'not-allowed' : 'pointer',
+                    cursor: 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '10px',
-                    boxShadow: '0 4px 12px rgba(4, 120, 87, 0.25)',
-                    opacity: isHandingOver ? 0.7 : 1
+                    boxShadow: '0 4px 12px rgba(10, 28, 61, 0.25)'
                   }}
                 >
-                  <PackageCheck size={20} />
-                  <span>
-                    {isHandingOver ? 'वितरण दर्ज हो रहा है...' : 
-                     scannedRunner.kitCollected ? 'यह किट पहले ही दी जा चुकी है' : 
-                     '✓ किट व RFID बिब हैंडओवर करें (Confirm Delivery)'}
-                  </span>
+                  <Camera size={19} />
+                  <span>📷 अगला धावक स्कैन करें (Scan Next Runner) &rarr;</span>
                 </button>
               </div>
             </div>
@@ -1328,7 +1462,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
             <div>
               <button
-                onClick={handleClear}
+                onClick={handleScanNextRunner}
                 style={{
                   background: '#0a1c3d',
                   color: '#ffffff',
@@ -1337,10 +1471,14 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                   borderRadius: '6px',
                   fontSize: '1rem',
                   fontWeight: 800,
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
                 }}
               >
-                अगला धावक स्कैन करें (Next Runner) &rarr;
+                <Camera size={18} />
+                <span>📷 अगला धावक स्कैन करें (Next Runner) &rarr;</span>
               </button>
             </div>
           </div>

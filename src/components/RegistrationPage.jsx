@@ -210,6 +210,7 @@ export function RegistrationPage({
         district: registeredParticipant.districtName,
         tshirt: registeredParticipant.tshirtSize || "M",
         bloodGroup: registeredParticipant.bloodGroup,
+        mobile: registeredParticipant.mobile || "",
         medicalAlert: registeredParticipant.medicalCondition || "None",
         status: "OFFICIAL_POLICE_EPASS_CONFIRMED"
       });
@@ -722,9 +723,37 @@ export function RegistrationPage({
       ctx.fill();
       ctx.stroke();
 
-      if (qrCodeDataUrl) {
+      // Dynamically generate QR code payload specifically for this participant to ensure 100% freshness & readability
+      const passPayload = JSON.stringify({
+        org: "Rajasthan Police Marathon 2027",
+        motto: "Run for Her - Women Safety",
+        bib: p.bibNumber,
+        certId: p.certificateId || p.id || `RPM-2027-${p.bibNumber}`,
+        name: p.fullName,
+        category: p.categoryName,
+        district: p.districtName,
+        tshirt: p.tshirtSize || "M",
+        bloodGroup: p.bloodGroup || "B+",
+        mobile: p.mobile || "",
+        medicalAlert: p.medicalCondition || "None",
+        status: "OFFICIAL_POLICE_EPASS_CONFIRMED"
+      });
+
+      let dynamicQrUrl = null;
+      try {
+        dynamicQrUrl = await QRCode.toDataURL(passPayload, {
+          width: 240,
+          margin: 1,
+          color: { dark: '#0a1c3d', light: '#ffffff' }
+        });
+      } catch (qrGenErr) {
+        console.warn("Dynamic QR generation fallback to state QR:", qrGenErr);
+      }
+
+      const activeQrSrc = dynamicQrUrl || qrCodeDataUrl;
+      if (activeQrSrc) {
         const qrImg = new Image();
-        qrImg.src = qrCodeDataUrl;
+        qrImg.src = activeQrSrc;
         await new Promise((resolve) => {
           qrImg.onload = resolve;
           qrImg.onerror = resolve;

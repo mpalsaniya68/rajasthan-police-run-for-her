@@ -94,22 +94,27 @@ const DISTRICT_NAMES = {
 function extractRunnerQuery(rawInput) {
   if (!rawInput || typeof rawInput !== "string") return "";
   let clean = rawInput.trim();
-  // If JSON payload from QR Code e.g. {"bib":"RJ-21K-1001", ...}
-  if (clean.startsWith("{") && clean.endsWith("}")) {
+  
+  // Robust JSON detection anywhere in the payload (handles outer quotes, spaces, newlines)
+  const firstBrace = clean.indexOf("{");
+  const lastBrace = clean.lastIndexOf("}");
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
     try {
-      const parsed = JSON.parse(clean);
+      const jsonStr = clean.slice(firstBrace, lastBrace + 1);
+      const parsed = JSON.parse(jsonStr);
       if (parsed.bib) return String(parsed.bib).trim();
       if (parsed.certId) return String(parsed.certId).trim();
       if (parsed.mobile) return String(parsed.mobile).trim();
     } catch (e) {}
   }
+  
   // If URL with query or hash parameters
-  if (clean.includes("bib=")) {
-    const match = clean.match(/bib=([A-Za-z0-9_-]+)/);
+  if (/bib=/i.test(clean)) {
+    const match = clean.match(/bib=([A-Za-z0-9_-]+)/i);
     if (match) return match[1];
   }
-  if (clean.includes("certId=")) {
-    const match = clean.match(/certId=([A-Za-z0-9_-]+)/);
+  if (/certId=/i.test(clean)) {
+    const match = clean.match(/certId=([A-Za-z0-9_-]+)/i);
     if (match) return match[1];
   }
   return clean;
@@ -916,7 +921,7 @@ export async function handleApiRequest(req, res) {
       }
 
       const findRes = await db.execute({
-        sql: "SELECT * FROM participants WHERE bib_number = ? OR mobile = ? OR certificate_id = ? OR qr_token = ? OR id = ? LIMIT 1",
+        sql: "SELECT * FROM participants WHERE UPPER(bib_number) = UPPER(?) OR mobile = ? OR UPPER(certificate_id) = UPPER(?) OR qr_token = ? OR id = ? LIMIT 1",
         args: [cleanQ, cleanQ, cleanQ, cleanQ, cleanQ]
       });
 
@@ -1049,8 +1054,8 @@ export async function handleApiRequest(req, res) {
       }
 
       const findRes = await db.execute({
-        sql: "SELECT * FROM participants WHERE bib_number = ? OR mobile = ? OR certificate_id = ? OR qr_token = ? LIMIT 1",
-        args: [cleanQ, cleanQ, cleanQ, cleanQ]
+        sql: "SELECT * FROM participants WHERE UPPER(bib_number) = UPPER(?) OR mobile = ? OR UPPER(certificate_id) = UPPER(?) OR qr_token = ? OR id = ? LIMIT 1",
+        args: [cleanQ, cleanQ, cleanQ, cleanQ, cleanQ]
       });
 
       if (findRes.rows.length === 0) {
