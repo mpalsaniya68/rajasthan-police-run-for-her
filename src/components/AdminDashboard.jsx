@@ -90,6 +90,14 @@ export function AdminDashboard({
 
   const [exportNotice, setExportNotice] = useState(null);
 
+  // Mobile View Mode Switcher ('table' on desktop, 'cards' default on mobile)
+  const [viewMode, setViewMode] = useState(() => {
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      return 'cards';
+    }
+    return 'table';
+  });
+
 
 
   // 250ms Debounce on Search Term for lightning fast table filtering
@@ -1056,24 +1064,13 @@ export function AdminDashboard({
 
       <div style={cardStyle}>
 
-        {/* Clean Light Sarkari Header */}
-        <div style={{
-          background: '#ffffff',
-          padding: '14px 24px',
-          borderBottom: '1px solid #e2e8f0',
-          borderTop: '3px solid #0b3a75',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          color: '#0f172a',
-          flexShrink: 0,
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <PoliceEmblem size={42} />
+        {/* Clean Light Sarkari Header - Mobile Responsive */}
+        <div className="admin-header-responsive">
+          <div className="admin-header-brand">
+            <PoliceEmblem size={40} />
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <span style={{ fontWeight: 800, fontSize: 'clamp(1rem, 1.6vw, 1.18rem)', color: '#0f172a', letterSpacing: '0.01em' }}>
+                <span style={{ fontWeight: 800, fontSize: 'clamp(0.96rem, 2.8vw, 1.18rem)', color: '#0f172a', letterSpacing: '0.01em' }}>
                   {isDistrictRole 
                     ? `जिला पुलिस अधीक्षक कमान डेस्क - ${adminUser.districtName || 'District Desk'}`
                     : 'पुलिस मुख्यालय कमान एवं नोडल डेस्क (PHQ COMMAND)'}
@@ -1090,7 +1087,7 @@ export function AdminDashboard({
                   {isDistrictRole ? 'जिला स्तर अधिकृत • SP Level' : '2FA Verified • State Level (PHQ)'}
                 </span>
               </div>
-              <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>
                 {isDistrictRole 
                   ? `स्थानीय धावक विवरण, आपातकालीन सुरक्षा सूची एवं जिला ई-सर्टिफिकेट प्रबंधन`
                   : 'Statewide Real-time Logistics, Statewide CSV Engine & Certificate Control'}
@@ -1098,7 +1095,7 @@ export function AdminDashboard({
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div className="admin-header-actions">
             {/* Back to Public Portal Button */}
             <button
               onClick={() => {
@@ -1109,13 +1106,13 @@ export function AdminDashboard({
                 background: '#ffffff',
                 border: '1.5px solid #cbd5e1',
                 color: '#334155',
-                padding: '7px 14px',
+                padding: '7px 12px',
                 borderRadius: '6px',
                 fontSize: '0.78rem',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease'
               }}
@@ -1124,7 +1121,7 @@ export function AdminDashboard({
               title="सार्वजनिक वेबसाइट पर लौटें"
             >
               <ArrowLeft size={14} />
-              <span>मुख्य वेबसाइट (Public Site)</span>
+              <span>मुख्य वेबसाइट</span>
             </button>
 
             {/* Launch Dedicated Expo Scanner Terminal */}
@@ -1136,13 +1133,13 @@ export function AdminDashboard({
                 background: '#ecfdf5',
                 border: '1.5px solid #86efac',
                 color: '#065f46',
-                padding: '7px 14px',
+                padding: '7px 12px',
                 borderRadius: '6px',
                 fontSize: '0.78rem',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease'
               }}
@@ -1151,7 +1148,7 @@ export function AdminDashboard({
               title="फुलस्क्रीन एक्सपो किट व गेट स्कैनर टर्मिनल खोलें"
             >
               <PackageCheck size={14} color="#059669" />
-              <span>एक्सपो टर्मिनल (Expo Scanner)</span>
+              <span>एक्सपो स्कैनर</span>
             </button>
 
             {/* Logout / Security Lock Button */}
@@ -1168,13 +1165,13 @@ export function AdminDashboard({
                 background: '#fef2f2',
                 border: '1.5px solid #fecaca',
                 color: '#b91c1c',
-                padding: '7px 14px',
+                padding: '7px 12px',
                 borderRadius: '6px',
                 fontSize: '0.78rem',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease'
               }}
@@ -1183,21 +1180,13 @@ export function AdminDashboard({
               title="सत्र समाप्त करें एवं सुरक्षित लॉगआउट करें"
             >
               <LogOut size={14} />
-              <span>सुरक्षा लॉक (Logout)</span>
+              <span>लॉगआउट</span>
             </button>
           </div>
         </div>
 
-        {/* Sub-Navigation Tabs - Clean Light Style */}
-        <div style={{
-          background: '#ffffff',
-          padding: '0 24px',
-          display: 'flex',
-          gap: '8px',
-          borderBottom: '1px solid #e2e8f0',
-          flexShrink: 0,
-          overflowX: 'auto'
-        }}>
+        {/* Sub-Navigation Tabs{/* Sub-Navigation Tabs - Clean Light Responsive Style */}
+        <div className="admin-tabs-responsive">
           <button
             onClick={() => setAdminTab("registrations")}
             style={{
@@ -1327,9 +1316,9 @@ export function AdminDashboard({
           )}
         </div>
 
-        {/* Admin Body (Scrollable) */}
+        {/* Admin Body (Mobile Responsive Scrollable) */}
 
-        <div style={{ padding: '20px', background: 'var(--bg-surface)', overflowY: 'auto', flex: 1 }}>
+        <div className="admin-body-responsive">
 
           {/* Notification Toast */}
 
@@ -1397,7 +1386,43 @@ export function AdminDashboard({
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div className="admin-filters-actions">
+              {/* Mobile View Toggle Switcher */}
+              <div style={{ display: 'inline-flex', borderRadius: '5px', overflow: 'hidden', border: '1.5px solid #cbd5e1' }}>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('table')}
+                  style={{
+                    padding: '5px 10px',
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    border: 'none',
+                    background: viewMode === 'table' ? '#0f172a' : '#ffffff',
+                    color: viewMode === 'table' ? '#ffffff' : '#64748b',
+                    cursor: 'pointer'
+                  }}
+                  title="डेस्कटॉप टेबल दृश्य"
+                >
+                  📊 टेबल
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('cards')}
+                  style={{
+                    padding: '5px 10px',
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    border: 'none',
+                    borderLeft: '1px solid #cbd5e1',
+                    background: viewMode === 'cards' ? '#0f172a' : '#ffffff',
+                    color: viewMode === 'cards' ? '#ffffff' : '#64748b',
+                    cursor: 'pointer'
+                  }}
+                  title="मोबाइल कार्ड दृश्य"
+                >
+                  📱 कार्ड्स
+                </button>
+              </div>
 
                 <FileSpreadsheet size={20} color="var(--police-navy-900)" />
 
@@ -1511,23 +1536,7 @@ export function AdminDashboard({
 
             ) : (
 
-              <div style={{
-
-                display: 'grid',
-
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-
-                gap: '14px',
-
-                background: '#ffffff',
-
-                padding: '14px',
-
-                borderRadius: '6px',
-
-                border: '1px solid var(--border-subtle)'
-
-              }}>
+              <div className="admin-csv-grid">
 
                 {/* SYSTEM 1: District-wise Individual Export */}
 
@@ -1627,19 +1636,7 @@ export function AdminDashboard({
 
                 {/* SYSTEM 2: Statewide Master All-in-One Export */}
 
-                <div style={{
-
-                  display: 'flex',
-
-                  flexDirection: 'column',
-
-                  gap: '8px',
-
-                  borderLeft: '1px solid var(--border-subtle)',
-
-                  paddingLeft: '14px'
-
-                }}>
+                <div className="admin-csv-master-col">
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 800, color: 'var(--police-navy-800)' }}>
 
@@ -1717,7 +1714,7 @@ export function AdminDashboard({
 
           {isDistrictRole ? (
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '18px' }}>
+            <div className="admin-metrics-grid">
 
               <div className="gov-card" style={{ padding: '14px', background: 'var(--police-navy-50)' }}>
 
@@ -1777,7 +1774,7 @@ export function AdminDashboard({
 
           ) : (
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '18px' }}>
+            <div className="admin-metrics-grid">
 
               <div className="gov-card" style={{ padding: '14px', background: 'var(--police-navy-50)' }}>
 
@@ -1875,9 +1872,9 @@ export function AdminDashboard({
 
           {/* Search & Filters */}
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+          <div className="admin-filters-bar">
 
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flex: 1 }}>
+            <div className="admin-filters-group">
 
               <div style={{ position: 'relative', minWidth: '200px' }}>
 
@@ -2107,11 +2104,111 @@ export function AdminDashboard({
 
 
 
-          {/* Table Container */}
+          {/* Table / Mobile Cards Dynamic Container */}
+          {viewMode === 'cards' ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {filteredList.map((row) => (
+                <div key={row.id} className="admin-runner-card">
+                  {/* Top Bar: Bib Number, Blood Group & Kit Button */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        background: '#dc2626',
+                        color: '#ffffff',
+                        padding: '3px 8px',
+                        borderRadius: '5px',
+                        fontWeight: 900,
+                        fontFamily: 'monospace',
+                        fontSize: '0.88rem'
+                      }}>
+                        {row.bibNumber}
+                      </span>
+                      <span style={{
+                        background: '#fee2e2',
+                        color: '#991b1b',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontWeight: 800,
+                        fontSize: '0.72rem'
+                      }}>
+                        🩸 {row.bloodGroup || 'O+'}
+                      </span>
+                    </div>
 
-          <div style={{ overflowX: 'auto', maxHeight: '360px', borderRadius: '6px', border: '1px solid var(--border-medium)' }}>
+                    <button
+                      type="button"
+                      onClick={() => toggleBibCollection(row.id)}
+                      style={{
+                        padding: '5px 10px',
+                        borderRadius: '5px',
+                        fontSize: '0.74rem',
+                        fontWeight: 800,
+                        background: row.bibCollected ? '#dcfce7' : '#fee2e2',
+                        color: row.bibCollected ? '#15803d' : '#b91c1c',
+                        border: `1.5px solid ${row.bibCollected ? '#86efac' : '#fca5a5'}`,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      {row.bibCollected ? '✓ किट प्राप्त' : '⏳ किट पेंडिंग'}
+                    </button>
+                  </div>
 
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem', color: 'var(--text-body)' }}>
+                  {/* Runner Name & Medical Alerts */}
+                  <div style={{ marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
+                      {row.fullName}
+                    </div>
+                    {row.medicalCondition && row.medicalCondition !== 'None' && (
+                      <div style={{ fontSize: '0.72rem', color: '#b45309', background: '#fef3c7', padding: '2px 6px', borderRadius: '4px', marginTop: '4px', display: 'inline-block', fontWeight: 700 }}>
+                        ⚠️ {row.medicalCondition} {row.medicalNotes ? `(${row.medicalNotes})` : ''}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Detail Chips Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', fontSize: '0.75rem', background: '#f8fafc', padding: '8px 10px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                    <div>
+                      <span style={{ color: '#64748b' }}>श्रेणी:</span> <strong style={{ color: '#0f172a' }}>{row.categoryName}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: '#64748b' }}>जिला:</span> <strong style={{ color: '#0f172a' }}>{row.districtName}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: '#64748b' }}>फोन:</span> <a href={`tel:${row.mobile}`} style={{ color: '#1d4ed8', fontWeight: 700, textDecoration: 'none' }}>📞 {row.mobile}</a>
+                    </div>
+                    <div>
+                      <span style={{ color: '#64748b' }}>टी-शर्ट:</span> <strong style={{ color: '#0f172a' }}>{row.tshirtSize || 'N/A'}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: '#64748b' }}>पहचान:</span> <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{showUnmaskedId && !isDistrictRole && row.idRaw ? row.idRaw : (row.idMasked || 'XXXX-XXXX-1048')}</span>
+                    </div>
+                    <div>
+                      <span style={{ color: '#64748b' }}>RFID:</span> <span style={{ fontFamily: 'monospace', fontWeight: 700, color: row.rfidTagId ? '#059669' : '#94a3b8' }}>{row.rfidTagId ? `#${row.rfidTagId}` : 'लंबित'}</span>
+                    </div>
+                  </div>
+
+                  {/* Footer: Certificate & Race Time */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem', color: '#64748b', paddingTop: '2px' }}>
+                    <span style={{ fontFamily: 'monospace', color: '#0b3a75', fontWeight: 700 }}>
+                      📜 {row.certificateId || 'RJ-POL-2027'}
+                    </span>
+                    <span style={{ color: '#059669', fontWeight: 700 }}>
+                      ⏱️ {row.finishTime || 'Net: ' + (row.chipTime || 'N/A')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              <div className="admin-scroll-hint">
+                <span>↔️ पूरी तालिका देखने के लिए दायें/बायें स्वाइप करें (Swipe table horizontally)</span>
+              </div>
+              <div className="admin-table-scroll">
+<table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem', color: 'var(--text-body)' }}>
 
               <thead style={{ background: '#f8fafc', color: '#475569', textTransform: 'uppercase', fontSize: '0.72rem', position: 'sticky', top: 0, zIndex: 2, borderBottom: '1.5px solid #e2e8f0', fontWeight: 800 }}>
 
@@ -2304,6 +2401,8 @@ export function AdminDashboard({
             </table>
 
           </div>
+            </>
+          )}
 
         </>
 
@@ -2728,7 +2827,7 @@ export function AdminDashboard({
 
               {/* 3 Pillars: T-Shirt Size, Blood Group, Medical Alert */}
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '14px', marginBottom: '20px' }}>
+              <div className="admin-pillars-grid">
 
                 <div style={{ background: 'var(--police-navy-50)', border: '1px solid var(--police-navy-200)', padding: '14px', borderRadius: '6px' }}>
 
@@ -2968,7 +3067,7 @@ export function AdminDashboard({
 
 
 
-                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <div className="admin-rfid-action-row">
 
                       <div style={{ flex: 1, minWidth: '220px' }}>
 
@@ -3090,7 +3189,7 @@ export function AdminDashboard({
 
           {/* Statistics Strip */}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+          <div className="admin-metrics-grid">
 
             <div className="gov-card" style={{ padding: '14px', background: 'var(--police-navy-50)' }}>
 
@@ -3357,8 +3456,10 @@ export function AdminDashboard({
 
 
           {/* Standings Table */}
-
-          <div style={{ overflowX: 'auto', background: '#ffffff', borderRadius: '8px', border: '1px solid var(--border-medium)', boxShadow: 'var(--shadow-sm)' }}>
+          <div className="admin-scroll-hint">
+            <span>↔️ स्टैंडिंग्स और टाइमिंग मैट स्प्लिट्स देखने के लिए स्वाइप करें</span>
+          </div>
+          <div className="admin-table-scroll">
 
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
 
@@ -3752,7 +3853,10 @@ export function AdminDashboard({
 
 
 
-          <div className="gov-card" style={{ padding: '0', background: '#ffffff', borderRadius: '8px', overflow: 'hidden' }}>
+          <div className="admin-scroll-hint">
+            <span>↔️ प्रमाण पत्र क्रमांक व सत्यापन टोकन देखने के लिए स्वाइप करें</span>
+          </div>
+          <div className="admin-table-scroll">
 
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
 
@@ -3902,7 +4006,10 @@ export function AdminDashboard({
 
 
 
-          <div className="gov-card" style={{ padding: '0', background: '#ffffff', borderRadius: '8px', overflow: 'hidden' }}>
+          <div className="admin-scroll-hint">
+            <span>↔️ मेडिकल स्थिति व इमरजेंसी कॉल नंबर देखने के लिए स्वाइप करें</span>
+          </div>
+          <div className="admin-table-scroll">
 
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
 

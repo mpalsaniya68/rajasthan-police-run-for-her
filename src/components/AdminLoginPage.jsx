@@ -155,12 +155,12 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
       <div style={{
         background: '#ffffff',
         borderBottom: '1px solid #e2e8f0',
-        padding: '10px 24px',
+        padding: '10px 16px',
         position: 'relative',
         zIndex: 10
       }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: '#64748b' }}>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: '#64748b' }}>
             <span style={{ cursor: 'pointer', color: 'var(--police-navy-800)', fontWeight: 600 }} onClick={() => onNavigate('home')}>मुख्य पृष्ठ</span>
             <span>/</span>
             <span style={{ color: '#0f172a', fontWeight: 700 }}>प्रशासनिक कमान लॉगिन</span>
@@ -173,20 +173,20 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
               color: '#0a1c3d',
               border: '1px solid #cbd5e1',
               borderRadius: '6px',
-              padding: '6px 14px',
-              fontSize: '0.82rem',
+              padding: '6px 12px',
+              fontSize: '0.78rem',
               fontWeight: 600,
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '5px',
               cursor: 'pointer',
               transition: 'all 0.15s ease'
             }}
             onMouseOver={(e) => { e.currentTarget.style.background = '#f1f5f9'; }}
             onMouseOut={(e) => { e.currentTarget.style.background = '#ffffff'; }}
           >
-            <ArrowLeft size={15} />
-            <span>मुख्य वेबसाइट पर वापस जाएं</span>
+            <ArrowLeft size={14} />
+            <span>वेबसाइट</span>
           </button>
         </div>
       </div>
@@ -197,7 +197,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'center',
-        padding: '32px 16px 60px',
+        padding: '24px 12px 50px',
         position: 'relative',
         zIndex: 5
       }}>
@@ -216,7 +216,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
           {/* Official Government Card Header - Clean Light Sarkari Style */}
           <div style={{
             background: '#ffffff',
-            padding: '22px 24px 16px',
+            padding: '20px 20px 14px',
             borderBottom: '1px solid #e2e8f0',
             textAlign: 'center'
           }}>
@@ -224,8 +224,8 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
               display: 'inline-flex', 
               alignItems: 'center',
               justifyContent: 'center',
-              width: '48px',
-              height: '48px',
+              width: '46px',
+              height: '46px',
               background: '#f0f4f8', 
               borderRadius: '50%', 
               marginBottom: '10px', 
@@ -237,17 +237,17 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                 <Shield size={24} color="#0b3a75" />
               )}
             </div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 4px', color: '#0f172a' }}>
+            <h1 style={{ fontSize: '1.18rem', fontWeight: 800, margin: '0 0 4px', color: '#0f172a' }}>
               {accessType === 'expo' ? 'एक्सपो किट व गेट स्कैनर लॉगिन' : 'प्रशासनिक कमान लॉगिन'}
             </h1>
-            <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748b' }}>
+            <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b' }}>
               {accessType === 'expo' 
                 ? 'टी-शर्ट, चेस्ट बिब आवंटन व गेट एंट्री अधिकृत स्टेशन' 
                 : 'राजस्थान पुलिस मुख्यालय एवं जिला कमान डेस्क'}
             </p>
           </div>
 
-          <div style={{ padding: '24px 28px' }}>
+          <div style={{ padding: '20px 18px' }}>
             {/* 3-Tier Access Level Selection Tabs */}
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
