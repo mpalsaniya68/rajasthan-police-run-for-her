@@ -239,7 +239,7 @@ export const INITIAL_REGISTRATIONS = [
     venueType: "district",
     districtName: "Udaipur",
     runnerType: "College Student / Youth",
-    tshirtSize: "S",
+    tshirtSize: "N/A",
     emergencyContact: "Dr. R.K. Sharma (82901 99887)",
     registeredAt: "2026-10-25 04:15 PM",
     bibCollected: true,

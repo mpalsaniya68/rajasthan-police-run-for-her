@@ -408,7 +408,7 @@ export function AdminDashboard({
 
         districtName: found.district_name || found.districtName || 'Jaipur Police Commissionerate',
 
-        tshirtSize: found.tshirt_size || found.tshirtSize || 'M',
+        tshirtSize: found.tshirt_size || found.tshirtSize || 'N/A',
 
         medicalCondition: found.medical_condition || found.medicalCondition || 'None',
 
@@ -562,7 +562,7 @@ export function AdminDashboard({
 
     idRaw: p.id_raw || null,
 
-    tshirtSize: p.tshirt_size || 'M',
+    tshirtSize: p.tshirt_size || 'N/A',
 
     bloodGroup: p.blood_group || 'O+',
 
@@ -604,9 +604,11 @@ export function AdminDashboard({
 
   const tshirtCounts = combinedRegistrations.reduce((acc, curr) => {
 
-    const size = curr.tshirtSize || "M";
+    const size = curr.tshirtSize;
 
-    acc[size] = (acc[size] || 0) + 1;
+    if (size && size !== 'N/A' && acc[size] !== undefined) {
+      acc[size] = (acc[size] || 0) + 1;
+    }
 
     return acc;
 
@@ -738,7 +740,7 @@ export function AdminDashboard({
 
       `"${r.email || ''}"`,
 
-      r.tshirtSize || "M",
+      r.tshirtSize || "N/A",
 
       r.bibCollected ? "Yes" : "No",
 
@@ -846,7 +848,7 @@ export function AdminDashboard({
 
           email: `sp.${(distInfo.id || 'district').toLowerCase()}@rajasthanpolice.gov.in`,
 
-          tshirtSize: "L",
+          tshirtSize: "N/A",
 
           bibCollected: true,
 
@@ -890,7 +892,7 @@ export function AdminDashboard({
 
           email: "seema.run@example.com",
 
-          tshirtSize: "M",
+          tshirtSize: "N/A",
 
           bibCollected: true,
 
@@ -934,7 +936,7 @@ export function AdminDashboard({
 
           email: "rahul.police@rajasthan.gov.in",
 
-          tshirtSize: "XL",
+          tshirtSize: "N/A",
 
           bibCollected: true,
 
@@ -2841,7 +2843,7 @@ export function AdminDashboard({
 
                   <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-950)', marginTop: '4px' }}>
 
-                    साइज़: {scannedRunner.tshirtSize}
+                    {scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A' ? `साइज़: ${scannedRunner.tshirtSize}` : 'N/A (केवल जयपुर फ्लैगशिप)'}
 
                   </div>
 

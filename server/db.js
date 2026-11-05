@@ -135,6 +135,18 @@ export async function initDatabase() {
       await db.execute("ALTER TABLE participants ADD COLUMN id_hash TEXT DEFAULT '';");
     } catch (e) {}
 
+    // Enforce T-shirt size = 'N/A' for all non-Jaipur districts in database
+    try {
+      await db.execute(`
+        UPDATE participants 
+        SET tshirt_size = 'N/A' 
+        WHERE lower(district_id) NOT LIKE '%jaipur%' 
+          AND lower(district_id) != 'jpr-comm' 
+          AND lower(district_id) != 'jaipur_comm' 
+          AND (district_name IS NULL OR lower(district_name) NOT LIKE '%jaipur%');
+      `);
+    } catch (e) {}
+
     // Payments Table for Government Revenue & Treasury Audit Trail
     await db.execute(`
       CREATE TABLE IF NOT EXISTS payments (
@@ -310,7 +322,7 @@ async function seedInitialParticipants() {
       catName: "10 KM Speed Challenge",
       distId: "jodhpur_comm",
       distName: "जोधपुर पुलिस कमिश्नरेट",
-      tshirt: "L",
+      tshirt: "N/A",
       certId: "RJ-POL-2027-5120",
       status: "FINISHED",
       overallRank: 8,
@@ -332,7 +344,7 @@ async function seedInitialParticipants() {
       catName: "21 KM Half Marathon",
       distId: "kota_city",
       distName: "कोटा शहर पुलिस",
-      tshirt: "S",
+      tshirt: "N/A",
       certId: "RJ-POL-2027-8814",
       status: "ON_TRACK",
       overallRank: 32,
@@ -354,7 +366,7 @@ async function seedInitialParticipants() {
       catName: "5 KM Community Run",
       distId: "udaipur",
       distName: "उदयपुर पुलिस",
-      tshirt: "XL",
+      tshirt: "N/A",
       certId: "RJ-POL-2027-7714",
       status: "FINISHED",
       overallRank: 24,

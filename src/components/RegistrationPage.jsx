@@ -411,7 +411,7 @@ export function RegistrationPage({
       medicalNotes: formData.medicalNotes?.trim() || "",
       categoryId: category,
       districtId: selectedDistId,
-      tshirtSize: formData.tshirtSize || "M",
+      tshirtSize: venueType === "jaipur" ? (formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M") : "N/A",
       idType: formData.idType,
       idNumber: cleanId,
       idLast4: cleanId.slice(-4),
@@ -489,7 +489,7 @@ export function RegistrationPage({
       venueType: venueType,
       districtName: p.districtName || (venueType === "jaipur" ? "जयपुर पुलिस कमिश्नरेट (Albert Hall Flagship)" : currentDistrictObj.name),
       runnerType: runnerType,
-      tshirtSize: formData.tshirtSize,
+      tshirtSize: venueType === "jaipur" ? (formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M") : "N/A",
       emergencyContact: `${formData.emergencyContactName || 'Family'} (${formData.emergencyRelation || 'Kin'}: ${pendingPayload.cleanEmergency})`,
       registeredAt: new Date().toLocaleString(),
       bibCollected: false,
@@ -2163,7 +2163,7 @@ export function RegistrationPage({
                     </select>
                   </div>
 
-                  {venueType === "jaipur" && (
+                  {venueType === "jaipur" ? (
                     <div>
                       <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
                         टी-शर्ट साइज़ (Official Dry-Fit Tee) <span style={{ color: '#ef4444' }}>*</span>:
@@ -2180,6 +2180,27 @@ export function RegistrationPage({
                         <option value="XL">XL (Chest 42")</option>
                         <option value="XXL">XXL (Chest 44")</option>
                       </select>
+                    </div>
+                  ) : (
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                        टी-शर्ट उपलब्धता सूचना (T-Shirt Availability):
+                      </label>
+                      <div style={{
+                        padding: '10px 12px',
+                        background: '#f8fafc',
+                        border: '1.5px solid #cbd5e1',
+                        borderRadius: '8px',
+                        fontSize: '0.82rem',
+                        color: '#475569',
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        <span>ℹ️</span>
+                        <span>ड्राई-फिट टी-शर्ट केवल <strong>जयपुर मुख्य फ्लैगशिप</strong> हेतु है (जिला रन में मेडल + बिब किट शामिल)।</span>
+                      </div>
                     </div>
                   )}
                 </div>

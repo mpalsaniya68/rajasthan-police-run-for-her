@@ -55,6 +55,11 @@ const playSound = (type = 'success') => {
   } catch (e) {}
 };
 
+const isJaipurDistrict = (districtId, districtName = '') => {
+  const str = `${districtId || ''} ${districtName || ''}`.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return str.includes('jaipur') || str.includes('jprcomm') || str === 'jaipurcomm';
+};
+
 export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
   // Operating Mode: 'expo' (Kit & T-Shirt Handover) or 'gate' (Race Day Morning Entry)
   const [terminalMode, setTerminalMode] = useState(() => {
@@ -435,7 +440,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
             fullName: foundLocal.fullName || 'Rajasthan Police Runner',
             categoryName: foundLocal.categoryName || '21 KM Half Marathon',
             districtName: foundLocal.districtName || 'जयपुर पुलिस कमिश्नरेट',
-            tshirtSize: (foundLocal.tshirtSize || 'M').toUpperCase(),
+            tshirtSize: (!isJaipurDistrict(foundLocal.districtId, foundLocal.districtName) || foundLocal.tshirtSize === 'N/A') ? 'N/A' : (foundLocal.tshirtSize || 'M').toUpperCase(),
             bloodGroup: foundLocal.bloodGroup || 'B+',
             medicalCondition: foundLocal.medicalCondition || 'सामान्य (Fit)',
             kitCollected: isCollected,
@@ -463,7 +468,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         fullName: parsedQr.name || 'Marathon Participant',
         categoryName: parsedQr.category || '21 KM Half Marathon',
         districtName: parsedQr.district || 'जयपुर पुलिस कमिश्नरेट',
-        tshirtSize: (parsedQr.tshirt || 'M').toUpperCase(),
+        tshirtSize: (!isJaipurDistrict(parsedQr.districtId, parsedQr.district) || parsedQr.tshirt === 'N/A') ? 'N/A' : (parsedQr.tshirt || 'M').toUpperCase(),
         bloodGroup: parsedQr.bloodGroup || 'B+',
         medicalCondition: parsedQr.medicalAlert || 'सामान्य (Fit)',
         mobile: parsedQr.mobile || '',
@@ -555,10 +560,13 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       const data = await res.json();
       setIsHandingOver(false);
 
+      const sizeText = (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? ` • साइज ${scannedRunner.tshirtSize}` : '';
+      const defaultSuccessMsg = `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName}${sizeText})`;
+
       if (data.success && data.runner) {
         if (soundEnabled) playSound('success');
         setScanStatus('SUCCESS_HANDED_OVER');
-        setStatusMessage(data.message || `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName} • साइज ${scannedRunner.tshirtSize})`);
+        setStatusMessage(data.message || defaultSuccessMsg);
         setScannedRunner(prev => ({
           ...prev,
           kitCollected: true,
@@ -569,7 +577,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       } else {
         if (soundEnabled) playSound('success');
         setScanStatus('SUCCESS_HANDED_OVER');
-        setStatusMessage(`✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName} • साइज ${scannedRunner.tshirtSize})`);
+        setStatusMessage(defaultSuccessMsg);
         setScannedRunner(prev => ({
           ...prev,
           kitCollected: true,
@@ -584,9 +592,10 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       }
     } catch (err) {
       setIsHandingOver(false);
+      const sizeText = (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? ` • साइज ${scannedRunner.tshirtSize}` : '';
       if (soundEnabled) playSound('success');
       setScanStatus('SUCCESS_HANDED_OVER');
-      setStatusMessage(`✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName} • साइज ${scannedRunner.tshirtSize})`);
+      setStatusMessage(`✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName}${sizeText})`);
       setScannedRunner(prev => ({
         ...prev,
         kitCollected: true,
@@ -1213,29 +1222,35 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                   width: '64px',
                   height: '64px',
                   borderRadius: '10px',
-                  background: scannedRunner.kitCollected ? '#94a3b8' : '#1e40af',
-                  color: '#ffffff',
+                  background: (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? (scannedRunner.kitCollected ? '#94a3b8' : '#1e40af') : '#e2e8f0',
+                  color: (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? '#ffffff' : '#64748b',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 900,
-                  fontSize: '2rem',
+                  fontSize: (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? '2rem' : '1.3rem',
                   fontFamily: 'monospace',
                   boxShadow: '0 4px 10px rgba(0,0,0,0.15)'
                 }}>
-                  {scannedRunner.tshirtSize || 'M'}
+                  {scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A' ? scannedRunner.tshirtSize : 'N/A'}
                 </div>
                 <div>
                   <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>
-                    आधिकारिक टी-शर्ट साइज (Official T-Shirt Size)
+                    {scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A' ? 'आधिकारिक टी-शर्ट साइज (Official T-Shirt Size)' : 'टी-शर्ट पात्रता (T-Shirt Eligibility)'}
                   </div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0a1c3d' }}>
-                    साइज: {scannedRunner.tshirtSize || 'M'} ({
-                      scannedRunner.tshirtSize === 'S' ? 'Small' :
-                      scannedRunner.tshirtSize === 'M' ? 'Medium' :
-                      scannedRunner.tshirtSize === 'L' ? 'Large' :
-                      scannedRunner.tshirtSize === 'XL' ? 'Extra Large' : 'XXL'
-                    })
+                  <div style={{ fontSize: (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? '1.4rem' : '1.05rem', fontWeight: 900, color: '#0a1c3d' }}>
+                    {scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A' ? (
+                      `साइज: ${scannedRunner.tshirtSize} (${
+                        scannedRunner.tshirtSize === 'S' ? 'Small' :
+                        scannedRunner.tshirtSize === 'M' ? 'Medium' :
+                        scannedRunner.tshirtSize === 'L' ? 'Large' :
+                        scannedRunner.tshirtSize === 'XL' ? 'Extra Large' : 'XXL'
+                      })`
+                    ) : (
+                      <span style={{ color: '#475569' }}>
+                        N/A (केवल जयपुर फ्लैगशिप आयोजन हेतु • जिला सहभागिता किट)
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

@@ -5,6 +5,12 @@ import { RAJASTHAN_POLICE_DISTRICTS, RACE_CATEGORIES } from '../data/mockData';
 import confetti from 'canvas-confetti';
 import { apiBulkRegister } from '../services/api';
 
+export const isJaipurDistrict = (districtId) => {
+  if (!districtId) return false;
+  const d = String(districtId).toLowerCase().replace(/[^a-z0-9]/g, '');
+  return d.includes('jaipur') || d.includes('jprcomm') || d === 'jaipurcomm';
+};
+
 export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }) {
   const [instType, setInstType] = useState("police_unit"); // police_unit, college_school, ncc_nss, ngo_corp
   const [instName, setInstName] = useState("");
@@ -14,6 +20,8 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
   const [selectedDistrict, setSelectedDistrict] = useState("JPR-COMM");
   const fileInputRef = useRef(null);
   const [uploadFeedback, setUploadFeedback] = useState(null);
+
+  const isJaipur = isJaipurDistrict(selectedDistrict);
 
   // Multi-row runner entry
   const [runners, setRunners] = useState([
@@ -34,7 +42,7 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
   const addRunnerRow = () => {
     setRunners(prev => [
       ...prev,
-      { id: Date.now(), name: "", gender: "Female", age: 22, category: "5k", size: "M" }
+      { id: Date.now(), name: "", gender: "Female", age: 22, category: "5k", size: isJaipur ? "M" : "N/A" }
     ]);
   };
 
@@ -82,8 +90,8 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
               rawCategory = "5k";
             }
 
-            let rawSize = (parts[4] || "M").toUpperCase().trim();
-            if (!["XS", "S", "M", "L", "XL", "XXL"].includes(rawSize)) {
+            let rawSize = isJaipur ? (parts[4] || "M").toUpperCase().trim() : "N/A";
+            if (isJaipur && !["XS", "S", "M", "L", "XL", "XXL"].includes(rawSize)) {
               rawSize = "M";
             }
 
@@ -115,16 +123,26 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
 
   // Download Sample CSV Template
   const downloadSampleTemplate = () => {
-    const csvContent = "data:text/csv;charset=utf-8," + 
-      "Full Name,Gender,Age,Category (21k/10k/5k/2k),T-Shirt Size (XS/S/M/L/XL/XXL)\n" +
-      "Kavita Sharma,Female,22,10k,M\n" +
-      "Rahul Meena,Male,24,21k,L\n" +
-      "Sunita Devi,Female,26,5k,S\n" +
-      "Amit Kumar,Male,20,5k,XL\n";
+    let csvContent = "";
+    if (isJaipur) {
+      csvContent = "data:text/csv;charset=utf-8," + 
+        "Full Name,Gender,Age,Category (21k/10k/5k/2k),T-Shirt Size (XS/S/M/L/XL/XXL)\n" +
+        "Kavita Sharma,Female,22,10k,M\n" +
+        "Rahul Meena,Male,24,21k,L\n" +
+        "Sunita Devi,Female,26,5k,S\n" +
+        "Amit Kumar,Male,20,5k,XL\n";
+    } else {
+      csvContent = "data:text/csv;charset=utf-8," + 
+        "Full Name,Gender,Age,Category (10k/5k/2k)\n" +
+        "Kavita Sharma,Female,22,10k\n" +
+        "Rahul Meena,Male,24,10k\n" +
+        "Sunita Devi,Female,26,5k\n" +
+        "Amit Kumar,Male,20,5k\n";
+    }
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "Rajasthan_Police_Marathon_Bulk_Upload_Template.csv");
+    link.setAttribute("download", isJaipur ? "Rajasthan_Police_Marathon_Bulk_Upload_Template_Jaipur.csv" : "Rajasthan_Police_Marathon_Bulk_Upload_Template_District.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -134,14 +152,14 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
   const handleSimulatedCSVUpload = () => {
     alert("सैंपल एक्सेल शीट पार्स की गई! 15 कैडेट्स की सूची स्वतः फॉर्म में लोड हो गई।");
     const simulatedBatch = [
-      { id: Date.now() + 1, name: "Cadet Neha Rathore", gender: "Female", age: 21, category: "10k", size: "S" },
-      { id: Date.now() + 2, name: "Constable Pooja Soni", gender: "Female", age: 25, category: "21k", size: "M" },
-      { id: Date.now() + 3, name: "Cadet Deepak Bairwa", gender: "Male", age: 22, category: "10k", size: "L" },
-      { id: Date.now() + 4, name: "Cadet Simran Bano", gender: "Female", age: 20, category: "5k", size: "M" },
-      { id: Date.now() + 5, name: "Trainee Suman Kanwar", gender: "Female", age: 23, category: "21k", size: "M" },
-      { id: Date.now() + 6, name: "Constable Rakesh Dhaka", gender: "Male", age: 28, category: "21k", size: "XL" },
-      { id: Date.now() + 7, name: "Cadet Anjali Choudhary", gender: "Female", age: 21, category: "5k", size: "S" },
-      { id: Date.now() + 8, name: "Cadet Jyoti Meena", gender: "Female", age: 22, category: "10k", size: "M" }
+      { id: Date.now() + 1, name: "Cadet Neha Rathore", gender: "Female", age: 21, category: "10k", size: isJaipur ? "S" : "N/A" },
+      { id: Date.now() + 2, name: "Constable Pooja Soni", gender: "Female", age: 25, category: "21k", size: isJaipur ? "M" : "N/A" },
+      { id: Date.now() + 3, name: "Cadet Deepak Bairwa", gender: "Male", age: 22, category: "10k", size: isJaipur ? "L" : "N/A" },
+      { id: Date.now() + 4, name: "Cadet Simran Bano", gender: "Female", age: 20, category: "5k", size: isJaipur ? "M" : "N/A" },
+      { id: Date.now() + 5, name: "Trainee Suman Kanwar", gender: "Female", age: 23, category: "21k", size: isJaipur ? "M" : "N/A" },
+      { id: Date.now() + 6, name: "Constable Rakesh Dhaka", gender: "Male", age: 28, category: "21k", size: isJaipur ? "XL" : "N/A" },
+      { id: Date.now() + 7, name: "Cadet Anjali Choudhary", gender: "Female", age: 21, category: "5k", size: isJaipur ? "S" : "N/A" },
+      { id: Date.now() + 8, name: "Cadet Jyoti Meena", gender: "Female", age: 22, category: "10k", size: isJaipur ? "M" : "N/A" }
     ];
     setRunners(simulatedBatch);
   };
@@ -182,7 +200,7 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
         bloodGroup: "B+",
         categoryId: r.category,
         districtId: (selectedDistrict || "jaipur_comm").toLowerCase().replace(/-/g, '_'),
-        tshirtSize: r.size || "M",
+        tshirtSize: isJaipur ? (r.size && r.size !== "N/A" ? r.size : "M") : "N/A",
         idType: "Institutional ID",
         idLast4: cleanNodalPhone.slice(-4)
       }))
@@ -329,7 +347,16 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                     <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>पार्टिसिपेशन जिला</label>
                     <select
                       value={selectedDistrict}
-                      onChange={(e) => setSelectedDistrict(e.target.value)}
+                      onChange={(e) => {
+                        const newDist = e.target.value;
+                        setSelectedDistrict(newDist);
+                        const nowJaipur = isJaipurDistrict(newDist);
+                        if (!nowJaipur) {
+                          setRunners(prev => prev.map(r => ({ ...r, size: "N/A" })));
+                        } else {
+                          setRunners(prev => prev.map(r => ({ ...r, size: r.size === "N/A" ? "M" : r.size })));
+                        }
+                      }}
                       style={{ width: '100%', padding: '9px', background: '#fff', border: '1px solid var(--border-strong)', borderRadius: '6px', fontSize: '0.85rem' }}
                     >
                       {RAJASTHAN_POLICE_DISTRICTS.map(d => (
@@ -447,6 +474,28 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                   <button type="button" onClick={() => setUploadFeedback(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 800, color: 'inherit' }}>✕</button>
                 </div>
               )}
+              {/* Information Banner for Other Districts (No T-shirt) */}
+              {!isJaipur && (
+                <div style={{
+                  background: '#f8fafc',
+                  border: '1.5px solid #cbd5e1',
+                  borderLeft: '4px solid #0b3a75',
+                  padding: '9px 14px',
+                  borderRadius: '6px',
+                  fontSize: '0.78rem',
+                  color: '#334155',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '12px'
+                }}>
+                  <span style={{ fontSize: '1rem' }}>ℹ️</span>
+                  <span>
+                    <strong>टी-शर्ट उपलब्धता सूचना:</strong> आधिकारिक ड्राई-फिट टी-शर्ट केवल <strong>जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल)</strong> आयोजन हेतु उपलब्ध है। चयनित जिले (<strong>{RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selectedDistrict)?.name || selectedDistrict}</strong>) में सभी धावकों को आधिकारिक चेस्ट बिब, सहभागिता किट, मेडल व ई-सर्टिफिकेट प्रदान किया जाएगा।
+                  </span>
+                </div>
+              )}
+
               {/* Runners Table (Responsive with touch scroll) */}
               <div style={{ overflowX: 'auto', maxHeight: '280px', borderRadius: '6px', border: '1px solid var(--border-medium)', marginBottom: '18px' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
@@ -457,7 +506,9 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                       <th style={{ padding: '8px 10px' }}>जेंडर</th>
                       <th style={{ padding: '8px 10px', width: '70px' }}>आयु</th>
                       <th style={{ padding: '8px 10px', minWidth: '130px' }}>रेस कैटेगरी</th>
-                      <th style={{ padding: '8px 10px', width: '100px' }}>टी-शर्ट</th>
+                      {isJaipur && (
+                        <th style={{ padding: '8px 10px', width: '100px' }}>टी-शर्ट</th>
+                      )}
                       <th style={{ padding: '8px 10px', width: '40px' }}></th>
                     </tr>
                   </thead>
@@ -505,20 +556,22 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                             <option value="2k">2 KM Family Walk</option>
                           </select>
                         </td>
-                        <td style={{ padding: '8px 10px' }}>
-                          <select
-                            value={r.size}
-                            onChange={(e) => updateRunnerField(r.id, 'size', e.target.value)}
-                            style={{ padding: '6px 8px', border: '1px solid var(--border-strong)', borderRadius: '4px', fontSize: '0.82rem' }}
-                          >
-                            <option value="XS">XS</option>
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="XXL">XXL</option>
-                          </select>
-                        </td>
+                        {isJaipur && (
+                          <td style={{ padding: '8px 10px' }}>
+                            <select
+                              value={r.size}
+                              onChange={(e) => updateRunnerField(r.id, 'size', e.target.value)}
+                              style={{ padding: '6px 8px', border: '1px solid var(--border-strong)', borderRadius: '4px', fontSize: '0.82rem' }}
+                            >
+                              <option value="XS">XS</option>
+                              <option value="S">S</option>
+                              <option value="M">M</option>
+                              <option value="L">L</option>
+                              <option value="XL">XL</option>
+                              <option value="XXL">XXL</option>
+                            </select>
+                          </td>
+                        )}
                         <td style={{ padding: '8px 10px', textAlign: 'center' }}>
                           <button
                             type="button"
@@ -578,7 +631,7 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                     <div key={i} style={{ background: '#ffffff', padding: '8px 12px', borderRadius: '4px', border: '1px solid var(--border-subtle)', fontSize: '0.78rem' }}>
                       <div style={{ fontWeight: 800, color: 'var(--crimson-600)', fontFamily: 'monospace' }}>{g.bibNumber}</div>
                       <div style={{ fontWeight: 700, color: 'var(--police-navy-900)' }}>{g.fullName}</div>
-                      <div style={{ color: 'var(--text-muted)' }}>{g.categoryName} • Size: {g.tshirtSize}</div>
+                      <div style={{ color: 'var(--text-muted)' }}>{g.categoryName} {g.tshirtSize && g.tshirtSize !== 'N/A' ? `• Size: ${g.tshirtSize}` : '• जिला सहभागिता'}</div>
                     </div>
                   ))}
                 </div>

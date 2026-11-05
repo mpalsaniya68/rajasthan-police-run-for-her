@@ -37,6 +37,11 @@ export const CATEGORY_FEES = {
   "2k": 199
 };
 
+export const isJaipurDistrict = (districtId, districtName = '') => {
+  const str = `${districtId || ''} ${districtName || ''}`.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return str.includes('jaipur') || str.includes('jprcomm') || str === 'jaipurcomm';
+};
+
 const DISTRICT_NAMES = {
   "jaipur_comm": "जयपुर पुलिस कमिश्नरेट (Jaipur)",
   "jodhpur_comm": "जोधपुर पुलिस कमिश्नरेट (Jodhpur)",
@@ -308,6 +313,8 @@ export async function handleApiRequest(req, res) {
       const now = new Date().toISOString();
       const catName = CATEGORY_NAMES[data.categoryId] || data.categoryId.toUpperCase();
       const distName = DISTRICT_NAMES[data.districtId] || data.districtId;
+      const isJaipur = isJaipurDistrict(data.districtId, distName);
+      const finalTshirtSize = isJaipur ? (data.tshirtSize && data.tshirtSize !== 'N/A' ? data.tshirtSize : 'M') : 'N/A';
 
       const maskedId = maskIdNumber(data.idType, data.idNumber);
       const maskedMob = maskMobile(data.mobile);
@@ -345,7 +352,7 @@ export async function handleApiRequest(req, res) {
           catName,
           data.districtId,
           distName,
-          data.tshirtSize,
+          finalTshirtSize,
           data.idType || "Aadhaar",
           data.idNumber ? data.idNumber.slice(-4) : "XXXX",
           maskedId,
@@ -473,12 +480,14 @@ export async function handleApiRequest(req, res) {
 
       const { institution, districtId, runners } = parsed.data;
       const distName = DISTRICT_NAMES[districtId] || districtId;
+      const isJaipur = isJaipurDistrict(districtId, distName);
       const batchId = `BATCH-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
       const now = new Date().toISOString();
       const registeredRunners = [];
 
       for (let i = 0; i < runners.length; i++) {
         const r = runners[i];
+        const finalTshirtSize = isJaipur ? (r.tshirtSize && r.tshirtSize !== 'N/A' ? r.tshirtSize : 'M') : 'N/A';
         const countRes = await db.execute({
           sql: "SELECT count(*) as count FROM participants WHERE category_id = ?",
           args: [r.categoryId]
@@ -497,11 +506,11 @@ export async function handleApiRequest(req, res) {
           args: [
             pId, bibNumber, r.fullName, r.gender, r.dob, r.mobile, maskMobile(r.mobile),
             r.emergencyContact, r.emergencyRelation, r.bloodGroup, r.categoryId, catName,
-            districtId, distName, r.tshirtSize, institution, batchId, certId, `QR-${bibNumber}`, now
+            districtId, distName, finalTshirtSize, institution, batchId, certId, `QR-${bibNumber}`, now
           ]
         });
 
-        registeredRunners.push({ bibNumber, fullName: r.fullName, categoryName: catName });
+        registeredRunners.push({ bibNumber, fullName: r.fullName, categoryName: catName, tshirtSize: finalTshirtSize });
       }
 
       await db.execute({
@@ -1018,14 +1027,16 @@ export async function handleApiRequest(req, res) {
       });
 
       // Immutable Audit Log
+      const sizeNote = (runner.tshirt_size && runner.tshirt_size !== 'N/A') ? `, Size: ${runner.tshirt_size}` : '';
       await db.execute({
         sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-        args: [operatorName, "KIT_HANDOVER_SUCCESS", `Bib: ${runner.bib_number}, Size: ${runner.tshirt_size}, Counter: ${counterName}, RFID: ${tag}`, clientIp, now]
+        args: [operatorName, "KIT_HANDOVER_SUCCESS", `Bib: ${runner.bib_number}${sizeNote}, Counter: ${counterName}, RFID: ${tag}`, clientIp, now]
       });
 
+      const runnerSizeMsg = (runner.tshirt_size && runner.tshirt_size !== 'N/A') ? ` • साइज ${runner.tshirt_size}` : '';
       return json({
         success: true,
-        message: `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${runner.full_name} • साइज ${runner.tshirt_size})`,
+        message: `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${runner.full_name}${runnerSizeMsg})`,
         runner: {
           ...runner,
           kit_collected: 1,
