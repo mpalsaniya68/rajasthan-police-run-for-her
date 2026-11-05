@@ -527,8 +527,24 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                   </button>
                 </div>
                 {accessType === 'expo' && (
-                  <div style={{ marginTop: '6px', fontSize: '0.75rem', color: '#047857', fontWeight: 700 }}>
-                    💡 अधिकृत स्टेशन पासकोड: <strong>Expo@RajPol#2027</strong> या <strong>expo123</strong>
+                  <div style={{ marginTop: '6px', fontSize: '0.75rem', color: '#047857', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
+                    <span>💡 अधिकृत पासकोड: <strong>Expo@RajPol#2027</strong> या <strong>expo123</strong></span>
+                    <button
+                      type="button"
+                      onClick={() => setPassword('Expo@RajPol#2027')}
+                      style={{
+                        background: '#dcfce7',
+                        color: '#15803d',
+                        border: '1px solid #86efac',
+                        borderRadius: '4px',
+                        padding: '2px 8px',
+                        fontSize: '0.72rem',
+                        cursor: 'pointer',
+                        fontWeight: 700
+                      }}
+                    >
+                      स्वतः भरें (Fill PIN)
+                    </button>
                   </div>
                 )}
               </div>
