@@ -1,7 +1,11 @@
 import crypto from "crypto";
 import { z } from "zod";
 
-const APP_SECRET = process.env.APP_SECRET || "rajpol_marathon_2027_super_secure_salt_jaipur";
+export function getAppSecret() {
+  return process.env.APP_SECRET || "rajpol_marathon_2026_super_secure_salt_jaipur";
+}
+
+const APP_SECRET = getAppSecret();
 
 /**
  * 1. Zod Validation Schemas
@@ -128,32 +132,42 @@ export function generateSecureQrToken(bibNumber, certId) {
  * Provides state-grade protection against brute-force & GPU attacks.
  * Includes backwards compatibility verification for legacy hashes.
  */
-export function hashPassword(password) {
-  return crypto.pbkdf2Sync(password, APP_SECRET, 100000, 32, "sha512").toString("hex");
+export function hashPassword(password, secret = getAppSecret()) {
+  return crypto.pbkdf2Sync(password, secret, 100000, 32, "sha512").toString("hex");
 }
 
 export function verifyPassword(password, storedHash) {
   if (!password || !storedHash) return false;
 
-  // 1. Primary check: PBKDF2-SHA512 (64 hex characters)
-  const computedPbkdf2 = hashPassword(password);
-  if (computedPbkdf2.length === storedHash.length) {
-    try {
-      if (crypto.timingSafeEqual(Buffer.from(computedPbkdf2), Buffer.from(storedHash))) {
-        return true;
-      }
-    } catch (e) { }
-  }
+  const candidateSecrets = Array.from(new Set([
+    getAppSecret(),
+    "rajpol_marathon_2026_super_secure_salt_jaipur",
+    "rajpol_marathon_2027_super_secure_salt_jaipur"
+  ])).filter(Boolean);
 
-  // 2. Compatibility check: legacy salted SHA-256
-  const legacySha256 = crypto
-    .createHash("sha256")
-    .update(`${password}:${APP_SECRET}`)
-    .digest("hex");
-  if (legacySha256.length === storedHash.length) {
-    try {
-      return crypto.timingSafeEqual(Buffer.from(legacySha256), Buffer.from(storedHash));
-    } catch (e) { }
+  for (const secret of candidateSecrets) {
+    // 1. Primary check: PBKDF2-SHA512 (64 hex characters)
+    const computedPbkdf2 = hashPassword(password, secret);
+    if (computedPbkdf2.length === storedHash.length) {
+      try {
+        if (crypto.timingSafeEqual(Buffer.from(computedPbkdf2), Buffer.from(storedHash))) {
+          return true;
+        }
+      } catch (e) { }
+    }
+
+    // 2. Compatibility check: legacy salted SHA-256
+    const legacySha256 = crypto
+      .createHash("sha256")
+      .update(`${password}:${secret}`)
+      .digest("hex");
+    if (legacySha256.length === storedHash.length) {
+      try {
+        if (crypto.timingSafeEqual(Buffer.from(legacySha256), Buffer.from(storedHash))) {
+          return true;
+        }
+      } catch (e) { }
+    }
   }
 
   return false;
@@ -176,7 +190,7 @@ export function createAdminToken(user) {
   };
   const b64Payload = Buffer.from(JSON.stringify(payload)).toString("base64url");
   const signature = crypto
-    .createHmac("sha256", APP_SECRET)
+    .createHmac("sha256", getAppSecret())
     .update(b64Payload)
     .digest("base64url");
   return `${b64Payload}.${signature}`;
@@ -188,16 +202,32 @@ export function verifyAdminToken(token) {
   if (parts.length !== 2) return null;
   const [b64Payload, signature] = parts;
 
-  const expectedSig = crypto
-    .createHmac("sha256", APP_SECRET)
-    .update(b64Payload)
-    .digest("base64url");
+  const candidateSecrets = Array.from(new Set([
+    getAppSecret(),
+    "rajpol_marathon_2026_super_secure_salt_jaipur",
+    "rajpol_marathon_2027_super_secure_salt_jaipur"
+  ])).filter(Boolean);
 
-  if (signature.length !== expectedSig.length) return null;
+  let verified = false;
+  for (const secret of candidateSecrets) {
+    const expectedSig = crypto
+      .createHmac("sha256", secret)
+      .update(b64Payload)
+      .digest("base64url");
+
+    if (signature.length === expectedSig.length) {
+      try {
+        if (crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig))) {
+          verified = true;
+          break;
+        }
+      } catch (e) { }
+    }
+  }
+
+  if (!verified) return null;
+
   try {
-    const isValidSig = crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig));
-    if (!isValidSig) return null;
-
     const payload = JSON.parse(Buffer.from(b64Payload, "base64url").toString("utf8"));
     if (!payload.exp || Date.now() > payload.exp) {
       return null; // Expired
