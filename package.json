@@ -8,6 +8,7 @@
     "build": "vite build",
     "start": "node server/server.js",
     "db:backup": "node server/backup.js",
+    "test": "node --test",
     "lint": "oxlint",
     "preview": "vite preview"
   },

@@ -42,17 +42,21 @@ npm run dev
 ### स्टेप 2: Vercel पर एक क्लिक में डिप्लॉय करें
 1. [https://vercel.com](https://vercel.com) पर जाएं (GitHub से लॉगिन करें)।
 2. **"Add New" ➔ "Project"** पर क्लिक करें और अपनी रिपॉजिटरी `mpalsaniya68/rajasthan-police-run-for-her` चुनें।
-3. **Environment Variables** सेक्शन में ये दो वेरिएबल्स जोड़ें:
+3. **Environment Variables** सेक्शन में ये वेरिएबल्स जोड़ें:
    * `TURSO_DATABASE_URL` = (आपका Turso URL, उदा: `libsql://rajpol-marathon-xyz.turso.io`)
    * `TURSO_AUTH_TOKEN` = (आपका Turso Auth Token)
-   * `APP_SECRET` = (कोई भी सुरक्षित सीक्रेट की)
+   * `APP_SECRET` = कम से कम 32 random bytes वाला secret
+   * `ADMIN_BOOTSTRAP_USERNAME` = पहले PHQ admin के लिए अलग username
+   * `ADMIN_BOOTSTRAP_PASSWORD` = कम से कम 16 अक्षरों का unique password
+   * `EXPO_PASSCODE` = station/supervisor login के लिए कम से कम 16 अक्षरों का unique passcode
 4. **"Deploy"** बटन पर क्लिक करें।
 
 30 सेकंड के अंदर आपकी वेबसाइट और बैकएंड दोनों लाइव हो जाएंगे, बिल्कुल फ्री! 🏆
 
 ---
 
-## 👮‍♂️ डिफ़ॉल्ट पुलिस एडमिन क्रेडेंशियल्स
-* **यूजरनेम**: `rajpolice`
-* **सुरक्षा पासवर्ड**: `RajPol#2026`
-* **क्विक हॉटकी**: वेबसाइट पर कहीं भी `Ctrl + Shift + A` दबाएं।
+## 🔐 एडमिन और एक्सपो लॉगिन
+
+कोई डिफ़ॉल्ट एडमिन या एक्सपो पासकोड नहीं है। पहली बार डेटाबेस शुरू करते समय `ADMIN_BOOTSTRAP_USERNAME` और `ADMIN_BOOTSTRAP_PASSWORD` से केवल तब PHQ admin बनाया जाता है जब कोई admin मौजूद न हो। बाद के startup पर मौजूदा admin पासवर्ड नहीं बदले जाते।
+
+क्रेडेंशियल्स को Vercel Environment Variables में ही रखें—उन्हें source code, frontend variables (`VITE_*`), या Git में न डालें। पहले से deployed सिस्टम में पुराना `rajpolice` डिफ़ॉल्ट खाता तथा demo volunteer accounts हटेंगे; volunteers को PHQ द्वारा नए unique accounts दिए जाने चाहिए।

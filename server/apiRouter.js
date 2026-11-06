@@ -10,6 +10,7 @@ import {
   generateCertificateId,
   generateSecureQrToken,
   verifyPassword,
+  hashPassword,
   createAdminToken,
   verifyAdminToken,
   otpManager,
@@ -733,7 +734,7 @@ export async function handleApiRequest(req, res) {
 
       let authenticatedUser = null;
 
-      if (userRes.rows.length > 0 && verifyPassword(password, userRes.rows[0].password_hash)) {
+      if (userRes.rows.length > 0 && userRes.rows[0].status === "ACTIVE" && verifyPassword(password, userRes.rows[0].password_hash)) {
         const u = userRes.rows[0];
         authenticatedUser = {
           id: u.id,
@@ -743,70 +744,6 @@ export async function handleApiRequest(req, res) {
           districtName: u.district_name || (u.role === "PHQ" || u.role === "SUPER_ADMIN" ? "समस्त राजस्थान (PHQ)" : "राजस्थान पुलिस"),
           fullName: u.full_name
         };
-      } else {
-        // Fallback / Built-in State Police Credential Directory
-        // PHQ Level
-        if ((rawUsername === "phq_admin" || rawUsername === "rajpolice") && 
-            (password === "RajPol@PHQ#2027" || password === "RajPol#2027" || password === "RajPol@2027" || password === "RajPol@PHQ#2026" || password === "RajPol#2026")) {
-          authenticatedUser = {
-            id: "phq-state-01",
-            username: "phq_admin",
-            role: "PHQ",
-            districtId: "ALL",
-            districtName: "समस्त राजस्थान (PHQ State Command)",
-            fullName: "राज्य कमान एवं नोडल अधिकारी (PHQ)"
-          };
-        } 
-        // District SP Level (e.g. sp_kta_city, sp_kota_city, sp_jpr_comm, sp_jaipur, sp_udr, sp_udaipur)
-        else if (rawUsername.startsWith("sp_")) {
-          const distCode = rawUsername.replace(/^sp_/, "").toLowerCase();
-          
-          let matchedDist = Object.entries(DISTRICT_NAMES).find(([k, v]) => 
-            k.toLowerCase().includes(distCode) || distCode.includes(k.toLowerCase())
-          );
-
-          if (!matchedDist) {
-            const aliasMap = {
-              kta: "kota_city",
-              jpr: "jaipur_comm",
-              jdh: "jodhpur_comm",
-              udr: "udaipur",
-              bkn: "bikaner",
-              ajm: "ajmer",
-              alw: "alwar",
-              bht: "bharatpur",
-              skr: "sikar"
-            };
-            const prefix = distCode.split('_')[0];
-            if (aliasMap[prefix]) {
-              const targetKey = aliasMap[prefix];
-              matchedDist = [targetKey, DISTRICT_NAMES[targetKey]];
-            }
-          }
-
-          // Standard district passwords allowed:
-          // SP#<District>@2026 OR SP#<DistCode>@2026 OR RajPol@SP#2026 OR SP#2026
-          const passLower = password.toLowerCase();
-          const isStandardPass = 
-            passLower === `sp#${distCode}@2027` || passLower === `sp#${distCode}@2026` ||
-            (passLower.startsWith("sp#") && passLower.endsWith("@2026")) ||
-            passLower === "sp#2026" ||
-            password === "RajPol@SP#2026" || 
-            password === "SP#2026";
-
-          if (isStandardPass) {
-            const dId = matchedDist ? matchedDist[0] : distCode;
-            const dName = matchedDist ? matchedDist[1] : `${distCode.toUpperCase().replace(/_/g, ' ')} Police District`;
-            authenticatedUser = {
-              id: `sp-${distCode}`,
-              username: rawUsername,
-              role: "DISTRICT",
-              districtId: dId,
-              districtName: dName,
-              fullName: `पुलिस अधीक्षक (SP - ${dName.split(' ')[0]})`
-            };
-          }
-        }
       }
 
       if (!authenticatedUser) {
@@ -848,59 +785,129 @@ export async function handleApiRequest(req, res) {
       });
     }
 
-    // 7c. Dedicated Expo Counter & Gate Volunteer Login
+    // 7c. Dedicated Expo Counter & Gate Volunteer Login (Supports Individual PHQ-issued Credentials + Station Fallback)
     if (pathname === "/expo/login" && method === "POST") {
       const body = await parseJsonBody(req);
-      const operatorName = (body.operatorName || "").trim();
-      const counterId = (body.counterId || "counter_01").trim();
-      const counterName = (body.counterName || counterId).trim();
-      const passcode = (body.passcode || "").trim();
+      const loginIdentifier = (body.username || body.loginId || body.mobile || body.operatorName || "").trim();
+      const inputPasscode = (body.passcode || body.password || "").trim();
+      let counterId = (body.counterId || "").trim();
+      let counterName = (body.counterName || "").trim();
 
-      if (!operatorName) {
-        return error("कृपया ऑपरेटर / वॉलंटियर का नाम व पद संख्या दर्ज करें।", 400);
+      if (!loginIdentifier) {
+        return error("कृपया वॉलंटियर आईडी / मोबाइल नंबर या ऑपरेटर नाम दर्ज करें।", 400);
       }
-      if (!passcode) {
-        return error("एक्सपो सुरक्षा पासकोड / पिन आवश्यक है।", 400);
-      }
-
-      const validPasscode = process.env.EXPO_PASSCODE || "Expo@RajPol#2027";
-      const passLower = passcode.toLowerCase();
-      const isValid = 
-        passcode === validPasscode || 
-        passLower === "expo@rajpol#2027" || 
-        passLower === "rajpol@expo#2027" || 
-        passLower === "expo#2027" || 
-        passLower === "expo2027" || 
-        passLower === "expo123" || 
-        passLower === "123456" || 
-        passLower === "rajpolice" || 
-        passLower === "volunteer" || 
-        passLower === "admin" || 
-        passcode === "202701" ||
-        passcode === "RajPol#2027";
-
-      if (!isValid) {
-        return error("अमान्य एक्सपो सुरक्षा पासकोड। कृपया अधिकृत एक्सपो पिन दर्ज करें।", 401);
+      if (!inputPasscode) {
+        return error("एक्सपो सुरक्षा पासवर्ड / पिन आवश्यक है।", 400);
       }
 
-      const isGate = counterId.startsWith("gate_");
+      // Step A: Check Database for Individual Volunteer / Gate Marshal Accounts
+      const lowerIdent = loginIdentifier.toLowerCase();
+      const volUserRes = await db.execute({
+        sql: `SELECT * FROM admin_users 
+              WHERE (lower(username) = ? OR mobile = ? OR lower(full_name) = ?) 
+                AND role IN ('EXPO_VOLUNTEER', 'GATE_MARSHAL') 
+              LIMIT 1`,
+        args: [lowerIdent, loginIdentifier, lowerIdent]
+      });
+
+      if (volUserRes.rows.length > 0) {
+        const u = volUserRes.rows[0];
+
+        if (u.status !== 'ACTIVE') {
+          return error("⚠️ यह वॉलंटियर खाता वर्तमान में निष्क्रिय (Deactivated) है। कृपया PHQ कंट्रोल रूम से संपर्क करें।", 403);
+        }
+
+        const isPassValid = verifyPassword(inputPasscode, u.password_hash);
+
+        if (!isPassValid) {
+          return error("अमान्य सुरक्षा पासवर्ड या पिन! कृपया सही वॉलंटियर क्रेडेंशियल्स दर्ज करें।", 401);
+        }
+
+        const isGate = u.role === 'GATE_MARSHAL' || (u.counter_id && u.counter_id.startsWith('gate_'));
+        const assignedCounterId = counterId || u.counter_id || (isGate ? "gate_01" : "counter_01");
+        const assignedCounterName = counterName || u.counter_name || (isGate ? "गेट-01" : "काउंटर-01");
+
+        const authenticatedUser = {
+          id: u.id,
+          username: u.username,
+          fullName: u.full_name,
+          designation: u.designation || (isGate ? "गेट मार्शल" : "एक्सपो वॉलंटियर"),
+          mobile: u.mobile || "",
+          role: u.role,
+          districtId: u.district_id || "jaipur_comm",
+          districtName: u.district_name || "जयपुर पुलिस आयुक्तालय",
+          counterId: assignedCounterId,
+          counterName: assignedCounterName
+        };
+
+        const token = createAdminToken(authenticatedUser);
+
+        try {
+          await db.execute({
+            sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+            args: [
+              u.username,
+              isGate ? "GATE_MARSHAL_LOGIN" : "EXPO_VOLUNTEER_LOGIN",
+              `Volunteer: ${u.full_name} (${u.designation || 'Staff'}) | Station: ${assignedCounterName} (${assignedCounterId})`,
+              clientIp,
+              new Date().toISOString()
+            ]
+          });
+        } catch (e) {}
+
+        return json({
+          success: true,
+          token,
+          user: authenticatedUser
+        });
+      }
+
+      // Step B: Station-Based Generic Login with Master Passcode (Fallback / Supervisor Mode)
+      const validPasscode = process.env.EXPO_PASSCODE;
+      let isValidMaster = false;
+      if (validPasscode) {
+        isValidMaster = (inputPasscode === validPasscode);
+      } else {
+        const passLower = inputPasscode.toLowerCase();
+        isValidMaster = 
+          inputPasscode === "Expo@RajPol#2027" || 
+          passLower === "expo@rajpol#2027" || 
+          passLower === "rajpol@expo#2027" || 
+          passLower === "expo#2027" || 
+          passLower === "expo2027" || 
+          passLower === "expo123" || 
+          passLower === "123456" || 
+          passLower === "rajpolice" || 
+          passLower === "volunteer" || 
+          passLower === "admin" || 
+          inputPasscode === "202701" ||
+          inputPasscode === "RajPol#2027";
+      }
+
+      if (!isValidMaster) {
+        return error("अमान्य क्रेडेंशियल्स! वॉलंटियर आईडी नहीं मिली या सुरक्षा पासवर्ड गलत है।", 401);
+      }
+
+      const effectiveCounterId = counterId || "counter_01";
+      const effectiveCounterName = counterName || effectiveCounterId;
+      const isGate = effectiveCounterId.startsWith("gate_");
       const user = {
-        id: `expo-${counterId}-${Date.now().toString(36)}`,
-        username: `station_${counterId}`,
-        fullName: operatorName,
+        id: `expo-${effectiveCounterId}-${Date.now().toString(36)}`,
+        username: `station_${effectiveCounterId}`,
+        fullName: loginIdentifier,
+        designation: isGate ? "गेट ऑपरेटर" : "एक्सपो ऑपरेटर",
         role: isGate ? "GATE_MARSHAL" : "EXPO_VOLUNTEER",
         districtId: "jaipur_comm",
-        counterId: counterId,
-        counterName: counterName
+        counterId: effectiveCounterId,
+        counterName: effectiveCounterName
       };
 
       const token = createAdminToken(user);
 
-      // Audit Log
       try {
         await db.execute({
           sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-          args: [operatorName, isGate ? "GATE_MARSHAL_LOGIN" : "EXPO_VOLUNTEER_LOGIN", `Station: ${counterName} (${counterId})`, clientIp, new Date().toISOString()]
+          args: [loginIdentifier, isGate ? "GATE_MARSHAL_LOGIN" : "EXPO_VOLUNTEER_LOGIN", `Station: ${effectiveCounterName} (${effectiveCounterId})`, clientIp, new Date().toISOString()]
         });
       } catch (e) {}
 
@@ -908,6 +915,254 @@ export async function handleApiRequest(req, res) {
         success: true,
         token,
         user
+      });
+    }
+
+    // 7x. Admin: Volunteer Roster & Management (PHQ Admin Exclusive)
+    if (pathname === "/admin/volunteers" && method === "GET") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+      if (adminUser.role !== "PHQ" && adminUser.role !== "SUPER_ADMIN") {
+        return error("अनधिकृत पहुंच (403 Forbidden)। वॉलंटियर प्रबंधन केवल राज्य पुलिस मुख्यालय (PHQ) के पास उपलब्ध है।", 403);
+      }
+
+      const resVols = await db.execute(`
+        SELECT id, username, role, full_name, designation, mobile, counter_id, counter_name, plain_passcode, status, district_id, district_name, created_at 
+        FROM admin_users 
+        WHERE role IN ('EXPO_VOLUNTEER', 'GATE_MARSHAL') 
+        ORDER BY created_at DESC;
+      `);
+
+      // Fetch distribution stats grouped by counter/operator
+      let kitMap = {};
+      try {
+        const distStatsRes = await db.execute(`
+          SELECT collected_by, count(*) as count 
+          FROM participants 
+          WHERE kit_collected = 1 
+          GROUP BY collected_by;
+        `);
+        for (const row of distStatsRes.rows) {
+          const key = String(row.collected_by || "");
+          kitMap[key] = Number(row.count) || 0;
+        }
+      } catch (e) {}
+
+      const enriched = resVols.rows.map(v => {
+        let kitCount = 0;
+        for (const [colKey, cnt] of Object.entries(kitMap)) {
+          if (
+            (v.counter_name && colKey.includes(v.counter_name)) ||
+            (v.counter_id && colKey.includes(v.counter_id)) ||
+            (v.full_name && colKey.includes(v.full_name)) ||
+            (v.username && colKey.includes(v.username))
+          ) {
+            kitCount += cnt;
+          }
+        }
+        return {
+          id: v.id,
+          username: v.username,
+          role: v.role,
+          fullName: v.full_name,
+          designation: v.designation || 'वॉलंटियर',
+          mobile: v.mobile || '',
+          counterId: v.counter_id || '',
+          counterName: v.counter_name || '',
+          plainPasscode: v.plain_passcode || 'Vol#2027',
+          status: v.status || 'ACTIVE',
+          districtId: v.district_id || 'jaipur_comm',
+          districtName: v.district_name || 'जयपुर पुलिस आयुक्तालय',
+          createdAt: v.created_at,
+          kitsDistributed: kitCount
+        };
+      });
+
+      return json({
+        success: true,
+        volunteers: enriched,
+        total: enriched.length
+      });
+    }
+
+    // Register / Create New Volunteer & Assign Duty Station
+    if (pathname === "/admin/volunteers" && method === "POST") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+      if (adminUser.role !== "PHQ" && adminUser.role !== "SUPER_ADMIN") {
+        return error("अनधिकृत पहुंच (403 Forbidden)। केवल PHQ एडमिन नया वॉलंटियर बना सकते हैं।", 403);
+      }
+
+      const body = await parseJsonBody(req);
+      const fullName = (body.fullName || "").trim();
+      const designation = (body.designation || "वॉलंटियर / पुलिस स्टाफ").trim();
+      const mobile = (body.mobile || "").trim();
+      let username = (body.username || "").trim().toLowerCase();
+      const password = (body.password || body.passcode || "").trim();
+      const stationType = body.stationType || (body.counterId?.startsWith("gate_") ? "gate" : "counter");
+      const role = stationType === "gate" || body.role === "GATE_MARSHAL" ? "GATE_MARSHAL" : "EXPO_VOLUNTEER";
+      const counterId = (body.counterId || (role === "GATE_MARSHAL" ? "gate_01" : "counter_01")).trim();
+      const counterName = (body.counterName || counterId).trim();
+
+      if (!fullName) {
+        return error("वॉलंटियर का पूरा नाम आवश्यक है।", 400);
+      }
+      if (!password || password.length < 3) {
+        return error("कृपया कम से कम 3 अक्षरों का सुरक्षा पासवर्ड दर्ज करें।", 400);
+      }
+
+      // Generate username if not provided
+      if (!username) {
+        const cleanName = fullName.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8);
+        const rand = Math.floor(100 + Math.random() * 900);
+        username = `vol_${cleanName || 'staff'}_${rand}`;
+      }
+
+      // Check for collision
+      const checkRes = await db.execute({
+        sql: "SELECT id FROM admin_users WHERE lower(username) = ? LIMIT 1",
+        args: [username]
+      });
+      if (checkRes.rows.length > 0) {
+        return error(`यूजरनेम '${username}' पहले से उपयोग में है। कृपया दूसरा यूजरनेम चुनें।`, 409);
+      }
+
+      const newId = `vol-${Date.now().toString(36)}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const now = new Date().toISOString();
+      const hashed = hashPassword(password);
+
+      await db.execute({
+        sql: `INSERT INTO admin_users (
+          id, username, password_hash, plain_passcode, role, full_name, designation, mobile, counter_id, counter_name, status, district_id, district_name, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE', 'jaipur_comm', 'जयपुर पुलिस आयुक्तालय', ?)`,
+        args: [
+          newId, username, hashed, password, role, fullName, designation, mobile, counterId, counterName, now
+        ]
+      });
+
+      // Audit Log
+      try {
+        await db.execute({
+          sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+          args: [
+            adminUser.username,
+            "VOLUNTEER_REGISTERED",
+            `Created: ${fullName} (${designation}) | Station: ${counterName} | User: ${username}`,
+            clientIp,
+            now
+          ]
+        });
+      } catch (e) {}
+
+      return json({
+        success: true,
+        message: `वॉलंटियर ${fullName} सफलतापूर्वक पंजीकृत एवं ${counterName} पर तैनात किया गया!`,
+        volunteer: {
+          id: newId,
+          username,
+          role,
+          fullName,
+          designation,
+          mobile,
+          counterId,
+          counterName,
+          plainPasscode: password,
+          status: 'ACTIVE',
+          createdAt: now
+        }
+      });
+    }
+
+    // Toggle Volunteer Status or Update Assignment / Password
+    if ((pathname === "/admin/volunteers/update" && method === "POST") || (pathname === "/admin/volunteers" && method === "PUT")) {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+      if (adminUser.role !== "PHQ" && adminUser.role !== "SUPER_ADMIN") {
+        return error("अनधिकृत पहुंच (403 Forbidden)।", 403);
+      }
+
+      const body = await parseJsonBody(req);
+      const id = (body.id || "").trim();
+      if (!id) {
+        return error("वॉलंटियर आईडी आवश्यक है।", 400);
+      }
+
+      const existRes = await db.execute({
+        sql: "SELECT * FROM admin_users WHERE id = ? AND role IN ('EXPO_VOLUNTEER', 'GATE_MARSHAL') LIMIT 1",
+        args: [id]
+      });
+      if (existRes.rows.length === 0) {
+        return error("वॉलंटियर रिकॉर्ड नहीं मिला।", 404);
+      }
+
+      const curr = existRes.rows[0];
+      const newStatus = body.status !== undefined ? body.status : curr.status;
+      const newCounterId = body.counterId !== undefined ? body.counterId : curr.counter_id;
+      const newCounterName = body.counterName !== undefined ? body.counterName : curr.counter_name;
+      const newDesignation = body.designation !== undefined ? body.designation : curr.designation;
+      const newMobile = body.mobile !== undefined ? body.mobile : curr.mobile;
+      const newRole = newCounterId?.startsWith('gate_') ? 'GATE_MARSHAL' : (body.role || curr.role);
+
+      let newPassHash = curr.password_hash;
+      if (body.password && body.password.trim()) {
+        const password = body.password.trim();
+        if (password.length < 3) {
+          return error("कृपया कम से कम 3 अक्षरों का सुरक्षा पासवर्ड दर्ज करें।", 400);
+        }
+        newPassHash = hashPassword(password);
+      }
+
+      await db.execute({
+        sql: `UPDATE admin_users SET 
+                status = ?, 
+                counter_id = ?, 
+                counter_name = ?, 
+                designation = ?, 
+                mobile = ?, 
+                role = ?,
+                password_hash = ?,
+                plain_passcode = ''
+              WHERE id = ?`,
+        args: [newStatus, newCounterId, newCounterName, newDesignation, newMobile, newRole, newPassHash, id]
+      });
+
+      return json({
+        success: true,
+        message: "वॉलंटियर विवरण सफलतापूर्वक अपडेट किया गया।"
+      });
+    }
+
+    // Delete Volunteer
+    if ((pathname === "/admin/volunteers/delete" && method === "POST") || (pathname === "/admin/volunteers" && method === "DELETE")) {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+      if (adminUser.role !== "PHQ" && adminUser.role !== "SUPER_ADMIN") {
+        return error("अनधिकृत पहुंच (403 Forbidden)।", 403);
+      }
+
+      const body = method === "POST" ? await parseJsonBody(req) : {};
+      const id = (body.id || parsedUrl.searchParams.get("id") || "").trim();
+
+      if (!id) {
+        return error("हटाने हेतु वॉलंटियर आईडी आवश्यक है।", 400);
+      }
+
+      await db.execute({
+        sql: "DELETE FROM admin_users WHERE id = ? AND role IN ('EXPO_VOLUNTEER', 'GATE_MARSHAL')",
+        args: [id]
+      });
+
+      return json({
+        success: true,
+        message: "वॉलंटियर को ड्यूटी रोस्टर से सफलतापूर्वक हटा दिया गया।"
       });
     }
 

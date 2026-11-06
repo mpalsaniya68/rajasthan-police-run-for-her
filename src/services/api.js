@@ -128,66 +128,41 @@ export async function apiAdminLogin(username, password) {
     });
     return await res.json();
   } catch (err) {
-    console.warn("apiAdminLogin network error, using fallback:", err);
-    // Offline resilience fallback
-    if (username === "phq_admin" && password === "RajPol@Marathon#2027") {
-      return {
-        success: true,
-        user: {
-          username: "phq_admin",
-          fullName: "कमान अधिकारी (राज्य पुलिस मुख्यालय)",
-          role: "SUPER_ADMIN",
-          districtId: "HQ",
-          districtName: "समस्त राजस्थान (PHQ)"
-        },
-        token: `offline_admin_${Date.now()}`
-      };
-    }
-    if (username.startsWith("sp_") && (password === "RajPol@District#2027" || password === "SP@RajPol#2027")) {
-      return {
-        success: true,
-        user: {
-          username: username,
-          fullName: "जिला पुलिस अधीक्षक (SP Desk)",
-          role: "DISTRICT",
-          districtId: username.replace("sp_", "").toUpperCase(),
-          districtName: "जिला पुलिस कमान"
-        },
-        token: `offline_sp_${Date.now()}`
-      };
-    }
-    return { success: false, error: "अमान्य क्रेडेंशियल्स! कृपया सही अधिकृत पुलिस आईडी और पासवर्ड दर्ज करें।" };
+    console.error("apiAdminLogin network error:", err);
+    return { success: false, error: "लॉगिन सर्वर से कनेक्ट नहीं हो सका। कृपया पुनः प्रयास करें।" };
   }
 }
 
-export async function apiExpoLogin(operatorName, counterId, counterName, passcode) {
+export async function apiExpoLogin(operatorNameOrUser, counterIdOrPass, counterName, passcode) {
+  let payload = {};
+  if (typeof operatorNameOrUser === "object") {
+    payload = operatorNameOrUser;
+  } else if (!counterName && !passcode) {
+    // Individual credential login: (username, password)
+    payload = {
+      username: operatorNameOrUser,
+      password: counterIdOrPass
+    };
+  } else {
+    // Counter/Gate selection mode: (operatorName, counterId, counterName, passcode)
+    payload = {
+      operatorName: operatorNameOrUser,
+      counterId: counterIdOrPass,
+      counterName: counterName,
+      passcode: passcode
+    };
+  }
+
   try {
     const res = await fetch(`${API_BASE}/expo/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ operatorName, counterId, counterName, passcode })
+      body: JSON.stringify(payload)
     });
     return await res.json();
   } catch (err) {
-    console.warn("apiExpoLogin network error, using fallback:", err);
-    // Offline resilience fallback
-    const passLower = (passcode || "").toLowerCase();
-    const isPassValid = passcode === "Expo@RajPol#2027" || passcode === "202701" || passLower === "expo@rajpol#2027" || passLower === "expo123" || passLower === "expo2027" || passLower === "123456" || passLower === "rajpolice" || passLower === "volunteer" || passLower === "admin";
-    if (isPassValid) {
-      const isGate = counterId?.startsWith("gate_");
-      return {
-        success: true,
-        user: {
-          username: (operatorName || "volunteer").toLowerCase().replace(/\s+/g, "_"),
-          fullName: operatorName || "एक्सपो वॉलंटियर",
-          role: isGate ? "GATE_MARSHAL" : "EXPO_VOLUNTEER",
-          counterId: counterId || "counter_01",
-          counterName: counterName || "काउंटर-01"
-        },
-        token: `offline_expo_${Date.now()}`
-      };
-    }
-    return { success: false, error: "अमान्य एक्सपो सुरक्षा पासकोड! कृपया अधिकृत पिन दर्ज करें।" };
+    console.error("apiExpoLogin network error:", err);
+    return { success: false, error: "लॉगिन सर्वर से कनेक्ट नहीं हो सका। कृपया पुनः प्रयास करें।" };
   }
 }
 
@@ -250,5 +225,60 @@ export async function apiGetLeaderboard(filters = {}) {
   } catch (err) {
     console.error("apiGetLeaderboard error:", err);
     return { success: false, leaderboard: [], count: 0 };
+  }
+}
+
+
+export async function apiGetVolunteers() {
+  try {
+    const res = await fetch(`${API_BASE}/admin/volunteers`, {
+      headers: getAdminAuthHeaders()
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiGetVolunteers error:", err);
+    return { success: false, volunteers: [] };
+  }
+}
+
+export async function apiCreateVolunteer(data) {
+  try {
+    const res = await fetch(`${API_BASE}/admin/volunteers`, {
+      method: "POST",
+      headers: getAdminAuthHeaders(),
+      body: JSON.stringify(data)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiCreateVolunteer error:", err);
+    return { success: false, error: "सर्वर से कनेक्ट नहीं हो सका।" };
+  }
+}
+
+export async function apiUpdateVolunteer(id, data) {
+  try {
+    const res = await fetch(`${API_BASE}/admin/volunteers/update`, {
+      method: "POST",
+      headers: getAdminAuthHeaders(),
+      body: JSON.stringify({ id, ...data })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiUpdateVolunteer error:", err);
+    return { success: false, error: "सर्वर से कनेक्ट नहीं हो सका।" };
+  }
+}
+
+export async function apiDeleteVolunteer(id) {
+  try {
+    const res = await fetch(`${API_BASE}/admin/volunteers/delete`, {
+      method: "POST",
+      headers: getAdminAuthHeaders(),
+      body: JSON.stringify({ id })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiDeleteVolunteer error:", err);
+    return { success: false, error: "सर्वर से कनेक्ट नहीं हो सका।" };
   }
 }

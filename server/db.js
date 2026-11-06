@@ -15,7 +15,7 @@ try {
 
 // Auto-load .env or .env.local file if present
 try {
-  if (typeof process.loadEnvFile === "function") {
+  if (process.env.NODE_ENV !== "test" && typeof process.loadEnvFile === "function") {
     if (fs.existsSync(".env")) {
       process.loadEnvFile(".env");
     } else if (fs.existsSync(".env.local")) {
@@ -209,6 +209,20 @@ export async function initDatabase() {
       );
     `);
 
+    // Migrations for volunteer duty roster and stations in admin_users
+    try { await db.execute("ALTER TABLE admin_users ADD COLUMN designation TEXT DEFAULT '';"); } catch (e) {}
+    try { await db.execute("ALTER TABLE admin_users ADD COLUMN mobile TEXT DEFAULT '';"); } catch (e) {}
+    try { await db.execute("ALTER TABLE admin_users ADD COLUMN counter_id TEXT DEFAULT '';"); } catch (e) {}
+    try { await db.execute("ALTER TABLE admin_users ADD COLUMN counter_name TEXT DEFAULT '';"); } catch (e) {}
+    try { await db.execute("ALTER TABLE admin_users ADD COLUMN plain_passcode TEXT DEFAULT '';"); } catch (e) {}
+    try { await db.execute("ALTER TABLE admin_users ADD COLUMN status TEXT DEFAULT 'ACTIVE';"); } catch (e) {}
+    try { await db.execute("ALTER TABLE admin_users ADD COLUMN district_id TEXT DEFAULT 'jaipur_comm';"); } catch (e) {}
+    try { await db.execute("ALTER TABLE admin_users ADD COLUMN district_name TEXT DEFAULT 'जयपुर पुलिस आयुक्तालय';"); } catch (e) {}
+
+    await db.execute(`CREATE INDEX IF NOT EXISTS idx_admin_username ON admin_users(username);`);
+    await db.execute(`CREATE INDEX IF NOT EXISTS idx_admin_role ON admin_users(role);`);
+    await db.execute(`CREATE INDEX IF NOT EXISTS idx_admin_mobile ON admin_users(mobile);`);
+
     // 4. Audit Logs Table (Government Compliance)
     await db.execute(`
       CREATE TABLE IF NOT EXISTS audit_logs (
@@ -249,28 +263,40 @@ export async function initDatabase() {
       }
     }
 
-    // Seed default admin if missing (default admin: rajpolice / RajPol#2026)
-    const adminHash = hashPassword('RajPol#2026');
-    const adminCheck = await db.execute(`SELECT count(*) as count FROM admin_users;`);
-    if (adminCheck.rows[0].count === 0) {
+    await db.execute(`
+      DELETE FROM admin_users
+      WHERE (id = 'admin-01' AND lower(username) = 'rajpolice')
+         OR (id = 'vol-rahul-01' AND lower(username) = 'vol_rahul')
+         OR (id = 'vol-priya-02' AND lower(username) = 'vol_priya')
+         OR (id = 'gate-suresh-03' AND lower(username) = 'gate_suresh')
+    `);
+    await db.execute("UPDATE admin_users SET plain_passcode = '' WHERE COALESCE(plain_passcode, '') <> ''");
+
+    const bootstrapUsername = process.env.ADMIN_BOOTSTRAP_USERNAME?.trim();
+    const bootstrapPassword = process.env.ADMIN_BOOTSTRAP_PASSWORD;
+    if (Boolean(bootstrapUsername) !== Boolean(bootstrapPassword)) {
+      throw new Error("ADMIN_BOOTSTRAP_USERNAME and ADMIN_BOOTSTRAP_PASSWORD must be configured together.");
+    }
+    if (bootstrapUsername && (bootstrapUsername.length < 3 || bootstrapPassword.length < 16)) {
+      throw new Error("Bootstrap username must be at least 3 characters and password at least 16 characters.");
+    }
+
+    const adminCheck = await db.execute("SELECT count(*) as count FROM admin_users;");
+    if (Number(adminCheck.rows[0].count) === 0 && bootstrapUsername && bootstrapPassword) {
       await db.execute({
         sql: `INSERT INTO admin_users (id, username, password_hash, role, full_name, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
         args: [
-          'admin-01',
-          'rajpolice',
-          adminHash,
+          `admin-${Date.now().toString(36)}`,
+          bootstrapUsername,
+          hashPassword(bootstrapPassword),
           'SUPER_ADMIN',
           'Police State Nodal Officer',
           new Date().toISOString()
         ]
       });
-      console.log(`[DB] Seeded default secure police admin account.`);
-    } else {
-      // Ensure password hash matches
-      await db.execute({
-        sql: `UPDATE admin_users SET password_hash = ? WHERE username = 'rajpolice'`,
-        args: [adminHash]
-      });
+      console.log("[DB] Provisioned initial admin account from configured bootstrap credentials.");
+    } else if (Number(adminCheck.rows[0].count) === 0) {
+      console.warn("[DB] No admin account exists. Configure ADMIN_BOOTSTRAP_USERNAME and ADMIN_BOOTSTRAP_PASSWORD to provision one.");
     }
 
     // Seed initial realistic participants if empty so dashboard and tracker immediately work
@@ -282,6 +308,7 @@ export async function initDatabase() {
     console.log(`[DB] Schema & Indexes initialized successfully.`);
   } catch (err) {
     console.error("[DB Init Error]:", err);
+    throw err;
   }
 }
 

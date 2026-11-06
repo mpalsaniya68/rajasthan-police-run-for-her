@@ -7,6 +7,7 @@ import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 import { apiAdminLogin, apiExpoLogin } from '../services/api';
 
 export const EXPO_COUNTERS = [
+  { id: "auto", name: "✨ प्रोफ़ाइल के अनुसार स्वतः निर्धारित (Auto Detect Station)" },
   { id: "counter_01", name: "काउंटर-01 (21KM हाफ मैराथन - पुरुष)" },
   { id: "counter_02", name: "काउंटर-02 (21KM हाफ मैराथन - महिला)" },
   { id: "counter_03", name: "काउंटर-03 (10KM स्पीड चैलेंज - पुरुष)" },
@@ -25,9 +26,9 @@ export const EXPO_COUNTERS = [
 export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
   const [accessType, setAccessType] = useState('phq'); // 'phq' | 'district' | 'expo'
   const [selectedDistrictId, setSelectedDistrictId] = useState('KTA-CITY');
-  const [operatorName, setOperatorName] = useState('कॉन्स्टेबल राहुल शर्मा (#4812)');
-  const [selectedCounterId, setSelectedCounterId] = useState('counter_01');
-  const [username, setUsername] = useState('phq_admin');
+  const [operatorName, setOperatorName] = useState('');
+  const [selectedCounterId, setSelectedCounterId] = useState('auto');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,17 +40,13 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
     setAccessType(type);
     setErrorMessage('');
     if (type === 'phq') {
-      setUsername('phq_admin');
-      setPassword('');
+      setUsername('');
     } else if (type === 'district') {
       const dist = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selectedDistrictId) || RAJASTHAN_POLICE_DISTRICTS[0];
       const cleanId = (dist.id || 'dist').toLowerCase().replace(/-/g, '_');
       setUsername(`sp_${cleanId}`);
-      setPassword('');
-    } else {
-      // 'expo'
-      setPassword('Expo@RajPol#2027');
     }
+    setPassword('');
   };
 
   // Change district in SP mode
@@ -71,11 +68,11 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
     // 1. Volunteer Expo & Gate Desk Login
     if (accessType === 'expo') {
       if (!operatorName.trim()) {
-        setErrorMessage('कृपया ऑपरेटर / वॉलंटियर का नाम व बैज संख्या दर्ज करें।');
+        setErrorMessage('कृपया वॉलंटियर आईडी, मोबाइल नंबर अथवा ऑपरेटर नाम दर्ज करें।');
         return;
       }
       if (!password.trim()) {
-        setErrorMessage('कृपया एक्सपो सुरक्षा पासकोड / पिन दर्ज करें।');
+        setErrorMessage('कृपया सुरक्षा पासवर्ड अथवा पिन दर्ज करें।');
         return;
       }
 
@@ -83,8 +80,11 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
       setErrorMessage('');
 
       try {
-        const counterObj = EXPO_COUNTERS.find(c => c.id === selectedCounterId) || EXPO_COUNTERS[0];
-        const res = await apiExpoLogin(operatorName.trim(), selectedCounterId, counterObj.name, password.trim());
+        const counterObj = EXPO_COUNTERS.find(c => c.id === selectedCounterId);
+        const targetCounterId = selectedCounterId === "auto" ? "" : selectedCounterId;
+        const targetCounterName = selectedCounterId === "auto" ? "" : (counterObj?.name || "");
+
+        const res = await apiExpoLogin(operatorName.trim(), targetCounterId, targetCounterName, password.trim());
         setIsLoading(false);
 
         if (res && res.success && res.user) {
@@ -417,11 +417,11 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
 
             {/* Login Form */}
             <form onSubmit={handleSubmit}>
-              {/* If Expo Mode: Operator Name */}
+              {/* If Expo Mode: Operator Name / Login ID */}
               {accessType === 'expo' ? (
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
-                    ऑपरेटर / वॉलंटियर का नाम व बैज ID:
+                    वॉलंटियर आईडी / मोबाइल नंबर (Volunteer ID or Mobile):
                   </label>
                   <div style={{ position: 'relative' }}>
                     <input
@@ -429,7 +429,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                       value={operatorName}
                       onChange={(e) => setOperatorName(e.target.value)}
                       required
-                      placeholder="उदा. कॉ. राहुल शर्मा (#4812)"
+                      placeholder="उदा. vol_rahul अथवा 9829012345"
                       style={{
                         width: '100%',
                         padding: '10px 12px 10px 38px',
@@ -482,7 +482,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
               {/* Password */}
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
-                  {accessType === 'expo' ? 'एक्सपो सुरक्षा पासकोड / दैनिक स्टेशन पिन:' : 'सुरक्षा पासवर्ड (Security Password):'}
+                  {accessType === 'expo' ? 'वॉलंटियर पासवर्ड / सुरक्षा पिन (Password / PIN):' : 'सुरक्षा पासवर्ड (Security Password):'}
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -490,7 +490,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    placeholder={accessType === 'expo' ? "एक्सपो पासकोड दर्ज करें (उदा. Expo@RajPol#2027)" : "गोपनीय पासवर्ड दर्ज करें"}
+                    placeholder={accessType === 'expo' ? "PHQ द्वारा जारी पासवर्ड दर्ज करें (उदा. Vol#2027)" : "गोपनीय पासवर्ड दर्ज करें"}
                     style={{
                       width: '100%',
                       padding: '10px 40px 10px 38px',
@@ -526,27 +526,6 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                {accessType === 'expo' && (
-                  <div style={{ marginTop: '6px', fontSize: '0.75rem', color: '#047857', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
-                    <span>💡 अधिकृत पासकोड: <strong>Expo@RajPol#2027</strong> या <strong>expo123</strong></span>
-                    <button
-                      type="button"
-                      onClick={() => setPassword('Expo@RajPol#2027')}
-                      style={{
-                        background: '#dcfce7',
-                        color: '#15803d',
-                        border: '1px solid #86efac',
-                        borderRadius: '4px',
-                        padding: '2px 8px',
-                        fontSize: '0.72rem',
-                        cursor: 'pointer',
-                        fontWeight: 700
-                      }}
-                    >
-                      स्वतः भरें (Fill PIN)
-                    </button>
-                  </div>
-                )}
               </div>
 
               {/* Submit Button */}
@@ -590,42 +569,6 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
               </button>
             </form>
 
-            {/* Quick Demo Autofill Chips for Expo Mode */}
-            {accessType === 'expo' && (
-              <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
-                <span style={{ color: '#64748b', fontWeight: 700 }}>त्वरित 1-क्लिक टेस्ट क्रेडेंशियल्स:</span>
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-                  {[
-                    { counterId: 'counter_01', name: 'कॉ. राहुल शर्मा (#4812)', label: 'काउंटर-01 (राहुल)' },
-                    { counterId: 'counter_03', name: 'कॉ. प्रिया वर्मा (#5120)', label: 'काउंटर-03 (प्रिया)' },
-                    { counterId: 'gate_01', name: 'हेड कॉ. सुरेश सिंह (#3419)', label: 'गेट-01 (सुरेश)' }
-                  ].map(testStation => (
-                    <button
-                      key={testStation.counterId}
-                      type="button"
-                      onClick={() => {
-                        setSelectedCounterId(testStation.counterId);
-                        setOperatorName(testStation.name);
-                        setPassword('Expo@RajPol#2027');
-                      }}
-                      style={{
-                        background: '#f1f5f9',
-                        border: '1px solid #cbd5e1',
-                        color: '#0f172a',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        fontWeight: 700,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      🏷️ {testStation.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            
           </div>
         </div>
       </main>

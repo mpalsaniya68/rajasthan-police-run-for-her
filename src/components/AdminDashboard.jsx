@@ -8,11 +8,12 @@ import {
 
   Activity, Zap, RefreshCw, ArrowLeft, HeartPulse,
 
-  PackageCheck, Trophy, QrCode, Radio
+  PackageCheck, Trophy, QrCode, Radio, Users
 
 } from 'lucide-react';
 
 import { PoliceEmblem } from './Emblems';
+import { VolunteerRosterManager } from './VolunteerRosterManager';
 
 import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 
@@ -1344,6 +1345,39 @@ export function AdminDashboard({
               >
                 <Trophy size={16} color={adminTab === "leaderboard" ? "#f59e0b" : "#64748b"} />
                 <span>🏆 रेस डे लीडरबोर्ड व परिणाम</span>
+              </button>
+
+              {/* Point 3: Volunteer & Gate Duty Roster Management */}
+              <button
+                onClick={() => setAdminTab("volunteers")}
+                style={{
+                  padding: '12px 16px',
+                  fontSize: '0.85rem',
+                  fontWeight: adminTab === "volunteers" ? 800 : 600,
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: adminTab === "volunteers" ? '3px solid #16a34a' : '3px solid transparent',
+                  color: adminTab === "volunteers" ? '#15803d' : '#475569',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                <Users size={16} color={adminTab === "volunteers" ? "#16a34a" : "#64748b"} />
+                <span>👥 वॉलंटियर व ड्यूटी रोस्टर</span>
+                <span style={{
+                  background: adminTab === "volunteers" ? '#dcfce7' : '#f1f5f9',
+                  color: adminTab === "volunteers" ? '#15803d' : '#64748b',
+                  fontSize: '0.65rem',
+                  padding: '2px 7px',
+                  borderRadius: '10px',
+                  border: '1px solid #bbf7d0',
+                  fontWeight: 700
+                }}>
+                  PHQ कमान
+                </span>
               </button>
 
               
@@ -3870,6 +3904,11 @@ export function AdminDashboard({
       
 
 
+
+      {/* TAB 4: VOLUNTEER & GATE ROSTER MANAGEMENT (PHQ Admin Exclusive) */}
+      {!isDistrictRole && adminTab === "volunteers" && (
+        <VolunteerRosterManager />
+      )}
 
       {/* TAB: DISTRICT CERTIFICATES (SP Level) */}
 
