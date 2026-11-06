@@ -736,12 +736,13 @@ export async function handleApiRequest(req, res) {
 
       if (userRes.rows.length > 0 && userRes.rows[0].status === "ACTIVE" && verifyPassword(password, userRes.rows[0].password_hash)) {
         const u = userRes.rows[0];
+        const isPhq = u.role === "SUPER_ADMIN" || u.role === "PHQ";
         authenticatedUser = {
           id: u.id,
           username: u.username,
-          role: u.role === "SUPER_ADMIN" || u.role === "PHQ" ? "PHQ" : "DISTRICT",
-          districtId: u.district_id || (u.role === "PHQ" || u.role === "SUPER_ADMIN" ? "ALL" : "jaipur_comm"),
-          districtName: u.district_name || (u.role === "PHQ" || u.role === "SUPER_ADMIN" ? "समस्त राजस्थान (PHQ)" : "राजस्थान पुलिस"),
+          role: isPhq ? "PHQ" : "DISTRICT",
+          districtId: isPhq ? "ALL" : (u.district_id || "jaipur_comm"),
+          districtName: isPhq ? "समस्त राजस्थान (PHQ)" : (u.district_name || "राजस्थान पुलिस"),
           fullName: u.full_name
         };
       }
