@@ -1425,6 +1425,114 @@ export async function handleApiRequest(req, res) {
       });
     }
 
+    // 7h. Dedicated Volunteer Activity & Scans History (Kit Handover & Gate Entries by Logged-in Operator)
+    if (pathname === "/expo/my-scans" && method === "GET") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)। कृपया एक्सपो डेस्क लॉगिन करें।", 401);
+      }
+
+      const counterFilter = parsedUrl.searchParams.get("counterId") || adminUser.counterId || "";
+      const counterName = adminUser.counterName || counterFilter;
+      const operatorName = adminUser.fullName || adminUser.username || "";
+
+      // 1. Fetch kits handed over by this counter/operator
+      let kitScans = [];
+      try {
+        const queryRes = await db.execute({
+          sql: `SELECT id, bib_number, full_name, gender, category_name, district_name, tshirt_size, 
+                       kit_collected, kit_collected_at, collected_by, rfid_tag_id
+                FROM participants 
+                WHERE kit_collected = 1 
+                  AND (
+                    collected_by LIKE ? 
+                    OR collected_by LIKE ?
+                    OR collected_by LIKE ?
+                    OR ? = ''
+                  )
+                ORDER BY kit_collected_at DESC 
+                LIMIT 200;`,
+          args: [`%${counterName}%`, `%${counterFilter}%`, `%${operatorName}%`, counterFilter]
+        });
+
+        kitScans = queryRes.rows.map(r => ({
+          id: r.id,
+          type: "KIT_HANDOVER",
+          bibNumber: r.bib_number,
+          fullName: r.full_name,
+          gender: r.gender,
+          categoryName: r.category_name,
+          districtName: r.district_name,
+          tshirtSize: r.tshirt_size || "N/A",
+          rfidTagId: r.rfid_tag_id || `RFID-${r.bib_number}`,
+          timestamp: r.kit_collected_at,
+          operatorInfo: r.collected_by,
+          statusLabel: "किट हैंडओवर पूर्ण"
+        }));
+      } catch (err) {
+        console.warn("[my-scans error]:", err);
+      }
+
+      // 2. Fetch gate entries approved by this gate/operator
+      let gateScans = [];
+      try {
+        const gateLogsRes = await db.execute({
+          sql: `SELECT id, actor, action, details, created_at 
+                FROM audit_logs 
+                WHERE action = 'GATE_ENTRY_APPROVED' 
+                  AND (
+                    actor LIKE ? 
+                    OR details LIKE ? 
+                    OR details LIKE ?
+                    OR ? = ''
+                  )
+                ORDER BY created_at DESC 
+                LIMIT 200;`,
+          args: [`%${counterName}%`, `%${counterName}%`, `%${operatorName}%`, counterFilter]
+        });
+
+        gateScans = gateLogsRes.rows.map(g => {
+          const bibMatch = (g.details || "").match(/Bib:\s*([A-Za-z0-9_-]+)/i);
+          const nameMatch = (g.details || "").match(/Runner:\s*([^|]+)/i);
+          return {
+            id: `gate_${g.id}`,
+            type: "GATE_ENTRY",
+            bibNumber: bibMatch ? bibMatch[1] : "-",
+            fullName: nameMatch ? nameMatch[1].trim() : (g.actor || "धावक"),
+            gender: "-",
+            categoryName: "प्रवेश द्वार सत्यापन",
+            districtName: "जयपुर",
+            tshirtSize: "N/A",
+            rfidTagId: "-",
+            timestamp: g.created_at,
+            operatorInfo: `${g.actor}`,
+            statusLabel: "गेट प्रवेश अधिकृत"
+          };
+        });
+      } catch (err) {
+        console.warn("[my-scans gate error]:", err);
+      }
+
+      // Combine and sort chronologically descending
+      const combined = [...kitScans, ...gateScans].sort((a, b) => {
+        const timeA = new Date(a.timestamp || 0).getTime();
+        const timeB = new Date(b.timestamp || 0).getTime();
+        return timeB - timeA;
+      });
+
+      return json({
+        success: true,
+        stats: {
+          myKitsDistributed: kitScans.length,
+          myGateEntries: gateScans.length,
+          myTotalScans: combined.length,
+          stationName: counterName,
+          operatorName: operatorName
+        },
+        scans: combined
+      });
+    }
+
     // 8. Admin Participants Query (Paginated & Filterable by Role / District)
     if (pathname === "/admin/participants" && method === "GET") {
       const adminUser = extractAdminUser(req, parsedUrl);

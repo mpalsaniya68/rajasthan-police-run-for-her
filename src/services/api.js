@@ -282,3 +282,18 @@ export async function apiDeleteVolunteer(id) {
     return { success: false, error: "सर्वर से कनेक्ट नहीं हो सका।" };
   }
 }
+
+
+export async function apiGetVolunteerScans(counterId = "") {
+  try {
+    const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
+    const url = counterId ? `${API_BASE}/expo/my-scans?counterId=${encodeURIComponent(counterId)}` : `${API_BASE}/expo/my-scans`;
+    const res = await fetch(url, {
+      headers: token ? { "Authorization": `Bearer ${token}` } : {}
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiGetVolunteerScans error:", err);
+    return { success: false, scans: [], stats: null };
+  }
+}
