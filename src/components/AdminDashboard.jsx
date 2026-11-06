@@ -986,7 +986,85 @@ export function AdminDashboard({
 
   };
 
-
+  // HARD RBAC GATE: Expo Station Volunteers & Gate Marshals MUST NEVER access PHQ/SP Dashboard!
+  const isExpoRole = adminUser?.role === 'EXPO_VOLUNTEER' || adminUser?.role === 'GATE_MARSHAL';
+  if (isExpoRole) {
+    return (
+      <div style={{
+        minHeight: '80vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        background: '#f8fafc'
+      }}>
+        <div style={{
+          maxWidth: '520px',
+          width: '100%',
+          background: '#ffffff',
+          borderRadius: '12px',
+          border: '2px solid #ef4444',
+          padding: '32px 24px',
+          textAlign: 'center',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
+        }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            borderRadius: '50%',
+            background: '#fee2e2',
+            color: '#dc2626',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 16px'
+          }}>
+            <Shield size={34} color="#dc2626" />
+          </div>
+          <h2 style={{ fontSize: '1.28rem', fontWeight: 900, color: '#991b1b', margin: '0 0 8px' }}>
+            अनधिकृत प्रशासनिक पहुंच (403 Access Denied)
+          </h2>
+          <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6, margin: '0 0 20px' }}>
+            आप वर्तमान में <strong>एक्सपो स्टेशन ऑपरेटर ({adminUser?.fullName || 'वॉलंटियर'})</strong> के रूप में अधिकृत हैं। आपके पास <strong>राज्य स्तरीय पुलिस कमान (PHQ)</strong> का प्रशासनिक डेटा देखने का अधिकार नहीं है।
+          </p>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => onNavigate('expo-terminal')}
+              style={{
+                background: '#047857',
+                color: '#ffffff',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                border: 'none',
+                fontWeight: 700,
+                fontSize: '0.88rem',
+                cursor: 'pointer'
+              }}
+            >
+              📦 एक्सपो स्टेशन पर वापस जाएं
+            </button>
+            <button
+              type="button"
+              onClick={onLogout}
+              style={{
+                background: '#ffffff',
+                color: '#64748b',
+                padding: '10px 18px',
+                borderRadius: '6px',
+                border: '1px solid #cbd5e1',
+                fontWeight: 700,
+                fontSize: '0.88rem',
+                cursor: 'pointer'
+              }}
+            >
+              लॉगआउट करें
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const wrapperStyle = isFullPage ? {
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PoliceEmblem, StateEmblemOfIndia, RunForHerBadge } from './Emblems';
-import { Shield, Award, MapPin, UserPlus, FileCheck, Menu, X, Heart, Phone, HelpCircle, Sun, CloudRain } from 'lucide-react';
+import { Shield, Award, MapPin, UserPlus, FileCheck, Menu, X, Heart, Phone, HelpCircle, Sun, CloudRain, PackageCheck, LogOut } from 'lucide-react';
 
 export function Navbar({ 
   onOpenRegister, 
@@ -9,14 +9,47 @@ export function Navbar({
   activePage = 'home', 
   onNavigate, 
   totalRegistered = 18450,
-  isAdminAuthenticated = false 
+  isAdminAuthenticated = false,
+  adminUser = null
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [fontSize, setFontSize] = useState("normal"); // "normal", "large", "xlarge"
 
+  const isExpoRole = adminUser?.role === 'EXPO_VOLUNTEER' || adminUser?.role === 'GATE_MARSHAL';
+  const isDistrictRole = adminUser?.role === 'DISTRICT';
+
+  const navAdminTarget = !isAdminAuthenticated 
+    ? 'admin-login' 
+    : isExpoRole 
+      ? 'expo-terminal' 
+      : 'admin';
+
+  const navAdminLabel = !isAdminAuthenticated
+    ? 'प्रशासनिक लॉगिन'
+    : isExpoRole
+      ? (adminUser?.role === 'GATE_MARSHAL' ? '🚪 गेट स्कैनर' : '📦 एक्सपो स्टेशन')
+      : isDistrictRole
+        ? `🛡️ ${adminUser?.districtName?.split(' ')[0] || 'जिला SP'} कमान`
+        : '🛡️ PHQ कमान';
+
+  const navAdminBg = !isAdminAuthenticated
+    ? '#1e3a8a'
+    : isExpoRole
+      ? '#047857'
+      : isDistrictRole
+        ? '#1e40af'
+        : '#15803d';
+
   const handleNav = (pageId) => {
     setMobileMenuOpen(false);
-    const targetPage = (pageId === 'admin-login' && isAdminAuthenticated) ? 'admin' : pageId;
+    let targetPage = pageId;
+    if (pageId === 'admin-login' || pageId === 'admin') {
+      if (isAdminAuthenticated) {
+        targetPage = isExpoRole ? 'expo-terminal' : 'admin';
+      } else {
+        targetPage = 'admin-login';
+      }
+    }
     if (onNavigate) {
       onNavigate(targetPage);
     } else {
@@ -239,20 +272,21 @@ export function Navbar({
             })}
           </nav>
 
-          {/* Admin Login Button - Placed cleanly at the extreme right corner */}
+          {/* Admin / Expo Station Button - Role-Aware */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
+            gap: '8px',
             marginLeft: 'auto'
           }}>
             <button
               id="btn-nav-admin-login"
-              onClick={() => handleNav(isAdminAuthenticated ? 'admin' : 'admin-login')}
+              onClick={() => handleNav(navAdminTarget)}
               style={{
-                background: isAdminAuthenticated ? '#15803d' : '#1e3a8a',
+                background: navAdminBg,
                 color: '#ffffff',
                 border: '1.5px solid var(--police-gold-500)',
-                padding: '6px 16px',
+                padding: '6px 14px',
                 borderRadius: '4px',
                 fontSize: '0.8rem',
                 fontWeight: 800,
@@ -264,17 +298,47 @@ export function Navbar({
                 boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
                 transition: 'background 0.2s ease'
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = isAdminAuthenticated ? '#166534' : '#2563eb';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = isAdminAuthenticated ? '#15803d' : '#1e3a8a';
-              }}
-              title="अधिकृत पुलिस प्रशासनिक कमान एवं जिला SP लॉगिन"
+              title={isAdminAuthenticated ? `लॉगिन: ${adminUser?.fullName || 'अधिकृत अधिकारी'}` : "अधिकृत पुलिस प्रशासनिक कमान एवं एक्सपो लॉगिन"}
             >
-              <Shield size={13} color="#fde68a" />
-              <span>{isAdminAuthenticated ? 'प्रशासनिक कमान' : 'प्रशासनिक लॉगिन'}</span>
+              {isExpoRole ? (
+                <PackageCheck size={14} color="#fde68a" />
+              ) : (
+                <Shield size={13} color="#fde68a" />
+              )}
+              <span>{navAdminLabel}</span>
             </button>
+
+            {isAdminAuthenticated && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm("क्या आप वर्तमान सत्र से लॉगआउट करना चाहते हैं?")) {
+                    sessionStorage.removeItem('rajpol_admin_auth');
+                    sessionStorage.removeItem('rajpol_admin_token');
+                    sessionStorage.removeItem('rajpol_admin_user');
+                    window.location.reload();
+                  }
+                }}
+                style={{
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid #ef4444',
+                  color: '#fee2e2',
+                  borderRadius: '4px',
+                  padding: '5px 8px',
+                  cursor: 'pointer',
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+                title="सत्र से लॉगआउट करें (Logout)"
+              >
+                <LogOut size={12} color="#fca5a5" />
+                <span>लॉगआउट</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -345,9 +409,11 @@ export function Navbar({
           </button>
 
           <button
-            onClick={() => { setMobileMenuOpen(false); handleNav(isAdminAuthenticated ? 'admin' : 'admin-login'); }}
+            onClick={() => { setMobileMenuOpen(false); handleNav(navAdminTarget); }}
             style={{
-              background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
+              background: isExpoRole 
+                ? 'linear-gradient(135deg, #065f46 0%, #047857 100%)' 
+                : 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
               color: '#fde68a',
               border: '1px solid var(--police-gold-500)',
               padding: '12px',
@@ -363,8 +429,8 @@ export function Navbar({
               cursor: 'pointer'
             }}
           >
-            <Shield size={16} color="var(--police-gold-400)" /> 
-            <span>{isAdminAuthenticated ? 'प्रशासनिक कमान (Admin Dashboard)' : 'प्रशासनिक लॉगिन (Admin Login)'}</span>
+            {isExpoRole ? <PackageCheck size={16} color="#fde68a" /> : <Shield size={16} color="var(--police-gold-400)" />}
+            <span>{navAdminLabel}</span>
           </button>
         </div>
       )}

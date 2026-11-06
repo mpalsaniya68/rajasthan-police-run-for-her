@@ -1177,6 +1177,12 @@ export async function handleApiRequest(req, res) {
         return error("अनधिकृत पहुंच (401 Unauthorized)। कृपया अधिकृत पुलिस एडमिन आईडी से लॉगिन करें।", 401);
       }
 
+      // RBAC Gate: Expo Volunteers & Gate Marshals are strictly forbidden from viewing Command Registry
+      const isCommandUser = adminUser.role === "PHQ" || adminUser.role === "SUPER_ADMIN" || adminUser.role === "DISTRICT";
+      if (!isCommandUser) {
+        return error("अनधिकृत पहुंच (403 Forbidden)। एक्सपो काउंटर ऑपरेटर को प्रशासनिक कमान डेटा देखने की अनुमति नहीं है।", 403);
+      }
+
       const q = parsedUrl.searchParams.get("q") || "";
       const category = parsedUrl.searchParams.get("category") || "";
       let district = parsedUrl.searchParams.get("district") || "";
@@ -1236,6 +1242,12 @@ export async function handleApiRequest(req, res) {
         return error("अनधिकृत पहुंच (401 Unauthorized)। डेटा डाउनलोड करने हेतु अधिकृत एडमिन लॉगिन आवश्यक है।", 401);
       }
 
+      // RBAC Gate: Only PHQ and District SP can export database lists
+      const isCommandUser = adminUser.role === "PHQ" || adminUser.role === "SUPER_ADMIN" || adminUser.role === "DISTRICT";
+      if (!isCommandUser) {
+        return error("अनधिकृत पहुंच (403 Forbidden)। डेटा डाउनलोड करने की अनुमति केवल पुलिस कमान अधिकारियों को है।", 403);
+      }
+
       let district = parsedUrl.searchParams.get("district") || "";
       // RBAC Enforcement: District SP can strictly ONLY export their assigned district
       if (adminUser.role === "DISTRICT") {
@@ -1292,6 +1304,12 @@ export async function handleApiRequest(req, res) {
       const adminUser = extractAdminUser(req, parsedUrl);
       if (!adminUser) {
         return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+
+      // RBAC Gate
+      const isCommandUser = adminUser.role === "PHQ" || adminUser.role === "SUPER_ADMIN" || adminUser.role === "DISTRICT";
+      if (!isCommandUser) {
+        return error("अनधिकृत पहुंच (403 Forbidden)।", 403);
       }
 
       let district = parsedUrl.searchParams.get("district") || "";
