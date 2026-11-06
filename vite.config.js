@@ -5,6 +5,10 @@ import { apiDevPlugin } from './server/viteDevPlugin.js'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), apiDevPlugin()],
+  server: {
+    host: '0.0.0.0',
+    port: 5173
+  },
   build: {
     chunkSizeWarningLimit: 600,
     rollupOptions: {

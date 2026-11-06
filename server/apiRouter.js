@@ -143,9 +143,26 @@ function extractAdminUser(req, parsedUrl) {
 }
 
 export async function handleApiRequest(req, res) {
-  // Extract URL and path
-  const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-  const pathname = parsedUrl.pathname.replace(/^\/api/, "") || "/";
+  // Extract URL and path robustly across Local Vite, Node server, and Vercel Serverless
+  let rawPath = req.url || "/";
+  if (req.headers["x-matched-path"] && req.headers["x-matched-path"].startsWith("/api")) {
+    rawPath = req.headers["x-matched-path"];
+  } else if (req.headers["x-forwarded-uri"] && req.headers["x-forwarded-uri"].startsWith("/api")) {
+    rawPath = req.headers["x-forwarded-uri"];
+  }
+
+  const parsedUrl = new URL(rawPath, `http://${req.headers.host || 'localhost'}`);
+  let pathname = parsedUrl.pathname.replace(/^\/api/, "") || "/";
+
+  // If Vercel passed route as query param in [...route] handler or rewrites
+  if (pathname === "/" || pathname === "/[...route]") {
+    const routeQuery = req.query?.route || parsedUrl.searchParams.get("route");
+    if (routeQuery) {
+      const segs = Array.isArray(routeQuery) ? routeQuery.join("/") : routeQuery;
+      pathname = `/${segs}`.replace(/^\/+/, "/");
+    }
+  }
+
   const method = req.method.toUpperCase();
   const rawIp = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "127.0.0.1";
   const clientIp = (typeof rawIp === "string" ? rawIp.split(",")[0].trim() : "127.0.0.1").replace(/[^0-9a-fA-F:.]/g, "");
@@ -155,7 +172,7 @@ export async function handleApiRequest(req, res) {
     res.writeHead(status, {
       "Content-Type": "application/json; charset=utf-8",
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Timing-Key"
     });
     res.end(JSON.stringify(data));
