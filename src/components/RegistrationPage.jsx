@@ -647,8 +647,8 @@ export function RegistrationPage({
       // Blood Group & T-shirt in Bib box
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 15px sans-serif";
-      const eventModeStr = (p.tshirtSize && p.tshirtSize !== 'N/A') ? `Size: ${p.tshirtSize}` : 'कम्युनिटी रन';
-      ctx.fillText(`रक्त समूह: ${p.bloodGroup || 'B+'}  |  ${eventModeStr}`, bibCenterX, 396);
+      const eventModeStr = (p.tshirtSize && p.tshirtSize !== 'N/A') ? `  |  Size: ${p.tshirtSize}` : '';
+      ctx.fillText(`रक्त समूह: ${p.bloodGroup || 'B+'}${eventModeStr}`, bibCenterX, 396);
 
       // Divider Line
       ctx.strokeStyle = "#e2e8f0";
@@ -1543,7 +1543,7 @@ export function RegistrationPage({
                 <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '4px' }}>
                   ℹ️ महत्वपूर्ण सूचना (Official Advisory):
                 </div>
-                • यह ई-पास 1 व 2 जनवरी 2027 को बिब व टी-शर्ट किट प्राप्त करने हेतु अनिवार्य है।<br />
+                • यह ई-पास 1 व 2 जनवरी 2027 को आधिकारिक बिब व रनिंग किट प्राप्त करने हेतु अनिवार्य है।<br />
                 • 3 जनवरी 2027 को दौड़ स्थल (अल्बर्ट हॉल / जिला केंद्र) पर प्रवेश इसी ई-पास के डिजिटल अथवा प्रिंटेड रूप में दिखाने पर दिया जाएगा।
               </div>
             </div>
@@ -2163,7 +2163,7 @@ export function RegistrationPage({
                     </select>
                   </div>
 
-                  {venueType === "jaipur" ? (
+                  {venueType === "jaipur" && (
                     <div>
                       <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
                         टी-शर्ट साइज़ (Official Dry-Fit Tee) <span style={{ color: '#ef4444' }}>*</span>:
@@ -2180,27 +2180,6 @@ export function RegistrationPage({
                         <option value="XL">XL (Chest 42")</option>
                         <option value="XXL">XXL (Chest 44")</option>
                       </select>
-                    </div>
-                  ) : (
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                        टी-शर्ट उपलब्धता सूचना (T-Shirt Availability):
-                      </label>
-                      <div style={{
-                        padding: '10px 12px',
-                        background: '#f8fafc',
-                        border: '1.5px solid #cbd5e1',
-                        borderRadius: '8px',
-                        fontSize: '0.82rem',
-                        color: '#475569',
-                        fontWeight: 600,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px'
-                      }}>
-                        <span>ℹ️</span>
-                        <span>ड्राई-फिट टी-शर्ट केवल <strong>जयपुर मुख्य फ्लैगशिप</strong> हेतु है (जिला रन में मेडल + बिब किट शामिल)।</span>
-                      </div>
                     </div>
                   )}
                 </div>

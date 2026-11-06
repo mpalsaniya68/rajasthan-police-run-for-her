@@ -474,27 +474,6 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                   <button type="button" onClick={() => setUploadFeedback(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 800, color: 'inherit' }}>✕</button>
                 </div>
               )}
-              {/* Information Banner for Other Districts (No T-shirt) */}
-              {!isJaipur && (
-                <div style={{
-                  background: '#f8fafc',
-                  border: '1.5px solid #cbd5e1',
-                  borderLeft: '4px solid #0b3a75',
-                  padding: '9px 14px',
-                  borderRadius: '6px',
-                  fontSize: '0.78rem',
-                  color: '#334155',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  marginBottom: '12px'
-                }}>
-                  <span style={{ fontSize: '1rem' }}>ℹ️</span>
-                  <span>
-                    <strong>टी-शर्ट उपलब्धता सूचना:</strong> आधिकारिक ड्राई-फिट टी-शर्ट केवल <strong>जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल)</strong> आयोजन हेतु उपलब्ध है। चयनित जिले (<strong>{RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selectedDistrict)?.name || selectedDistrict}</strong>) में सभी धावकों को आधिकारिक चेस्ट बिब, सहभागिता किट, मेडल व ई-सर्टिफिकेट प्रदान किया जाएगा।
-                  </span>
-                </div>
-              )}
 
               {/* Runners Table (Responsive with touch scroll) */}
               <div style={{ overflowX: 'auto', maxHeight: '280px', borderRadius: '6px', border: '1px solid var(--border-medium)', marginBottom: '18px' }}>
@@ -631,7 +610,7 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                     <div key={i} style={{ background: '#ffffff', padding: '8px 12px', borderRadius: '4px', border: '1px solid var(--border-subtle)', fontSize: '0.78rem' }}>
                       <div style={{ fontWeight: 800, color: 'var(--crimson-600)', fontFamily: 'monospace' }}>{g.bibNumber}</div>
                       <div style={{ fontWeight: 700, color: 'var(--police-navy-900)' }}>{g.fullName}</div>
-                      <div style={{ color: 'var(--text-muted)' }}>{g.categoryName} {g.tshirtSize && g.tshirtSize !== 'N/A' ? `• Size: ${g.tshirtSize}` : '• जिला सहभागिता'}</div>
+                      <div style={{ color: 'var(--text-muted)' }}>{g.categoryName} {g.tshirtSize && g.tshirtSize !== 'N/A' ? `• Size: ${g.tshirtSize}` : ''}</div>
                     </div>
                   ))}
                 </div>
