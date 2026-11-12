@@ -83,48 +83,33 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
                   {cat.description}
                 </p>
 
-                {/* 1. Official Cash Prize Podium Box for 21K and 10K (Only Jaipur Flagship) */}
+                {/* 1. Official Cash Prize Podium Box for 21K and 10K (Only Jaipur Flagship - Dark Black Theme) */}
                 {cat.prizes && (
                   <div style={{
-                    background: 'linear-gradient(135deg, #fefce8 0%, #fffdf0 100%)',
-                    border: '1.5px solid #fde047',
-                    borderLeft: '4px solid #ca8a04',
+                    background: '#ffffff',
+                    border: '1.5px solid #0f172a',
+                    borderLeft: '5px solid #0f172a',
                     borderRadius: '8px',
                     padding: '12px 14px',
                     marginBottom: '16px',
-                    boxShadow: '0 2px 8px rgba(202, 138, 4, 0.08)'
+                    boxShadow: '0 2px 6px rgba(15, 23, 42, 0.06)'
                   }}>
                     <div style={{
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: '8px',
-                      flexWrap: 'wrap',
-                      gap: '4px'
+                      marginBottom: '10px'
                     }}>
                       <span style={{
-                        fontSize: '0.82rem',
+                        fontSize: '0.84rem',
                         fontWeight: 900,
-                        color: '#854d0e',
+                        color: '#0f172a',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '6px'
                       }}>
-                        <Trophy size={16} color="#ca8a04" />
+                        <Trophy size={16} color="#0f172a" />
                         नकद पुरस्कार (Cash Prizes):
                       </span>
-                      {cat.totalPrize && (
-                        <span style={{
-                          fontSize: '0.74rem',
-                          fontWeight: 800,
-                          background: '#ca8a04',
-                          color: '#ffffff',
-                          padding: '2px 8px',
-                          borderRadius: '4px'
-                        }}>
-                          कुल {cat.totalPrize}
-                        </span>
-                      )}
                     </div>
                     
                     <div style={{
@@ -135,46 +120,48 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
                     }}>
                       {cat.prizes.map((p, idx) => (
                         <div key={idx} style={{
-                          background: '#ffffff',
-                          padding: '6px 4px',
+                          background: idx === 0 ? '#0f172a' : '#f8fafc',
+                          padding: '7px 4px',
                           borderRadius: '6px',
-                          border: '1px solid #fef08a'
+                          border: '1.5px solid #0f172a',
+                          color: idx === 0 ? '#ffffff' : '#0f172a'
                         }}>
-                          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#713f12' }}>
+                          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: idx === 0 ? '#cbd5e1' : '#475569' }}>
                             {p.trophy} {p.label}
                           </div>
-                          <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#854d0e', marginTop: '2px' }}>
+                          <div style={{ fontSize: '1.02rem', fontWeight: 900, color: idx === 0 ? '#fde047' : '#0f172a', marginTop: '2px' }}>
                             {p.amount}
                           </div>
                         </div>
                       ))}
                     </div>
                     
-                    <div style={{ fontSize: '0.68rem', color: '#a16207', fontWeight: 700, marginTop: '6px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '0.68rem', color: '#475569', fontWeight: 700, marginTop: '8px', textAlign: 'center' }}>
                       ★ केवल जयपुर मुख्य फ्लैगशिप रन (ओपन संयुक्त पोडियम)
                     </div>
                   </div>
                 )}
 
-                {/* 2. Perks Highlights for 5K, 2K & Adapted Course */}
+                {/* 2. Perks Highlights for 5K, 2K & Adapted Course (Dark Black Theme) */}
                 {cat.highlightPerks && (
                   <div style={{
-                    background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
-                    border: '1.5px solid #86efac',
-                    borderLeft: '4px solid #16a34a',
+                    background: '#ffffff',
+                    border: '1.5px solid #0f172a',
+                    borderLeft: '5px solid #0f172a',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    marginBottom: '16px'
+                    marginBottom: '16px',
+                    boxShadow: '0 2px 6px rgba(15, 23, 42, 0.06)'
                   }}>
-                    <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#166534', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <Gift size={14} color="#16a34a" /> प्रतिभागी किट एवं सुविधाएं:
+                    <div style={{ fontSize: '0.8rem', fontWeight: 900, color: '#0f172a', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <Gift size={14} color="#0f172a" /> प्रतिभागी किट एवं सुविधाएं:
                     </div>
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       {cat.highlightPerks.map((h, i) => (
                         <span key={i} style={{
-                          background: '#ffffff',
-                          border: '1px solid #bbf7d0',
-                          color: '#14532d',
+                          background: '#0f172a',
+                          border: '1px solid #0f172a',
+                          color: '#ffffff',
                           fontWeight: 800,
                           fontSize: '0.78rem',
                           padding: '4px 10px',

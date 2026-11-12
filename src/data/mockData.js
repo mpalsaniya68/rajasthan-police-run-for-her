@@ -16,7 +16,6 @@ export const RACE_CATEGORIES = [
       { rank: "2nd", amount: "₹11,000", trophy: "🥈", label: "द्वितीय" },
       { rank: "3rd", amount: "₹5,100", trophy: "🥉", label: "तृतीय" }
     ],
-    totalPrize: "₹37,100",
     prizeNote: "नकद पुरस्कार केवल जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल) ओपन पोडियम हेतु लागू है।",
     perks: [
       "RFID Timing Chip Bib",
@@ -44,7 +43,6 @@ export const RACE_CATEGORIES = [
       { rank: "2nd", amount: "₹5,100", trophy: "🥈", label: "द्वितीय" },
       { rank: "3rd", amount: "₹2,100", trophy: "🥉", label: "तृतीय" }
     ],
-    totalPrize: "₹18,200",
     prizeNote: "नकद पुरस्कार केवल जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल) ओपन पोडियम हेतु लागू है।",
     perks: [
       "RFID Timing Chip Bib",

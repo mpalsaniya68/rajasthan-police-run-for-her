@@ -363,19 +363,19 @@ export default function App() {
 
             />
 
-            <PrizePodiumSection
-
-              onOpenRegister={() => navigateToPage('register')}
-
-              onNavigate={navigateToPage}
-
-            />
-
             <PatronDesk
 
               onOpenRegister={() => navigateToPage('register')}
 
               onOpenBulkRegister={() => setIsBulkModalOpen(true)}
+
+              onNavigate={navigateToPage}
+
+            />
+
+            <PrizePodiumSection
+
+              onOpenRegister={() => navigateToPage('register')}
 
               onNavigate={navigateToPage}
 
