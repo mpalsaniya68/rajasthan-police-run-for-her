@@ -283,15 +283,16 @@ export async function handleApiRequest(req, res) {
         return error("कृपया 10-अंकीय मोबाइल नंबर या बिब संख्या दर्ज करें।", 400);
       }
 
-      const cleanDigits = q.replace(/\D/g, "");
+      const digitsOnly = q.replace(/\D/g, "");
+      const cleanDigits = digitsOnly.length >= 10 ? digitsOnly.slice(-10) : digitsOnly;
       let sql = "";
       let args = [];
       if (cleanDigits.length === 10) {
-        sql = "SELECT id, bib_number, full_name, mobile, masked_mobile, category_id, category_name, district_id, district_name, status FROM participants WHERE mobile = ? OR bib_number = ? OR certificate_id = ? ORDER BY created_at DESC LIMIT 5";
-        args = [cleanDigits, q.toUpperCase(), q.toUpperCase()];
+        sql = "SELECT id, bib_number, full_name, mobile, masked_mobile, category_id, category_name, district_id, district_name, status FROM participants WHERE mobile = ? OR mobile LIKE ? OR bib_number = ? OR certificate_id = ? ORDER BY created_at DESC LIMIT 5";
+        args = [cleanDigits, `%${cleanDigits}%`, q.toUpperCase(), q.toUpperCase()];
       } else {
-        sql = "SELECT id, bib_number, full_name, mobile, masked_mobile, category_id, category_name, district_id, district_name, status FROM participants WHERE bib_number = ? OR certificate_id = ? OR mobile = ? ORDER BY created_at DESC LIMIT 5";
-        args = [q.toUpperCase(), q.toUpperCase(), q];
+        sql = "SELECT id, bib_number, full_name, mobile, masked_mobile, category_id, category_name, district_id, district_name, status FROM participants WHERE bib_number = ? OR certificate_id = ? OR mobile = ? OR id = ? ORDER BY created_at DESC LIMIT 5";
+        args = [q.toUpperCase(), q.toUpperCase(), q, q];
       }
 
       const resRunner = await db.execute({ sql, args });
@@ -332,10 +333,11 @@ export async function handleApiRequest(req, res) {
         });
         if (res.rows.length > 0) r = res.rows[0];
       } else if (query) {
-        const clean = query.replace(/\D/g, "");
+        const digitsOnly = query.replace(/\D/g, "");
+        const clean = digitsOnly.length >= 10 ? digitsOnly.slice(-10) : digitsOnly;
         const res = await db.execute({
-          sql: "SELECT id, mobile, masked_mobile, full_name FROM participants WHERE mobile = ? OR bib_number = ? OR certificate_id = ? LIMIT 1",
-          args: [clean, query.toUpperCase(), query.toUpperCase()]
+          sql: "SELECT id, mobile, masked_mobile, full_name FROM participants WHERE mobile = ? OR mobile LIKE ? OR bib_number = ? OR certificate_id = ? LIMIT 1",
+          args: [clean, `%${clean}%`, query.toUpperCase(), query.toUpperCase()]
         });
         if (res.rows.length > 0) r = res.rows[0];
       }
@@ -384,10 +386,11 @@ export async function handleApiRequest(req, res) {
         });
         if (res.rows.length > 0) r = res.rows[0];
       } else if (query) {
-        const clean = query.replace(/\D/g, "");
+        const digitsOnly = query.replace(/\D/g, "");
+        const clean = digitsOnly.length >= 10 ? digitsOnly.slice(-10) : digitsOnly;
         const res = await db.execute({
-          sql: "SELECT * FROM participants WHERE mobile = ? OR bib_number = ? OR certificate_id = ? LIMIT 1",
-          args: [clean, query.toUpperCase(), query.toUpperCase()]
+          sql: "SELECT * FROM participants WHERE mobile = ? OR mobile LIKE ? OR bib_number = ? OR certificate_id = ? LIMIT 1",
+          args: [clean, `%${clean}%`, query.toUpperCase(), query.toUpperCase()]
         });
         if (res.rows.length > 0) r = res.rows[0];
       }

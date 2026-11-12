@@ -130,7 +130,7 @@ export function RegistrationPage({
       return;
     }
     setIsFinding(true);
-    setHasSearched(true);
+    setHasSearched(false);
     setFindSearchError("");
     setFindResults([]);
     setSelectedPassToUnlock(null);
@@ -151,6 +151,7 @@ export function RegistrationPage({
       setFindSearchError("सर्वर से संपर्क नहीं हो सका। कृपया पुनः प्रयास करें।");
     } finally {
       setIsFinding(false);
+      setHasSearched(true);
     }
   };
 
@@ -1544,8 +1545,25 @@ export function RegistrationPage({
                 </div>
               </form>
 
-              {/* Search Results */}
-              {hasSearched && findResults.length === 0 && (
+              {/* Loading Indicator while Searching */}
+              {isFinding && (
+                <div style={{
+                  background: '#f8fafc',
+                  border: '1.5px solid #cbd5e1',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  textAlign: 'center',
+                  marginBottom: '20px',
+                  color: '#0f172a',
+                  fontWeight: 800,
+                  fontSize: '0.94rem'
+                }}>
+                  🔍 ई-पास रिकॉर्ड खोजा जा रहा है, कृपया प्रतीक्षा करें...
+                </div>
+              )}
+
+              {/* Search Results - Not Found */}
+              {hasSearched && !isFinding && findResults.length === 0 && (
                 <div style={{
                   background: '#fef2f2',
                   border: '1.5px solid #fecaca',
@@ -1572,7 +1590,7 @@ export function RegistrationPage({
               )}
 
               {/* Found Masked Records - Requires OTP to Unlock */}
-              {findResults.length > 0 && (
+              {!isFinding && findResults.length > 0 && (
                 <div style={{ marginBottom: '24px' }}>
                   <div style={{
                     display: 'flex',
@@ -1586,21 +1604,6 @@ export function RegistrationPage({
                       <Shield size={20} color="#047857" />
                       <span>अधिकृत रिकॉर्ड प्राप्त हुआ (सत्यापन आवश्यक):</span>
                     </div>
-                    <span style={{
-                      fontSize: '0.74rem',
-                      fontWeight: 800,
-                      background: '#ecfdf5',
-                      color: '#047857',
-                      border: '1px solid #a7f3d0',
-                      padding: '3px 10px',
-                      borderRadius: '20px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}>
-                      <Lock size={12} />
-                      गोपनीयता सुरक्षित (Protected)
-                    </span>
                   </div>
 
                   {findResults.map((r, i) => {
@@ -1672,31 +1675,6 @@ export function RegistrationPage({
                               {r.districtName}
                             </div>
                           </div>
-                          <div>
-                            <span style={{ color: '#64748b', fontWeight: 700 }}>ई-पास स्थिति:</span>
-                            <div style={{ fontWeight: 800, color: '#16a34a', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <Check size={14} /> कन्फर्म्ड (सत्यापन आवश्यक)
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Privacy Advisory */}
-                        <div style={{
-                          background: '#eff6ff',
-                          border: '1px solid #bfdbfe',
-                          borderRadius: '8px',
-                          padding: '10px 14px',
-                          fontSize: '0.8rem',
-                          color: '#1e40af',
-                          marginBottom: '18px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px'
-                        }}>
-                          <Lock size={16} color="#2563eb" style={{ flexShrink: 0 }} />
-                          <span>
-                            <strong>गोपनीयता सुरक्षा:</strong> ई-पास व QR कोड को केवल पंजीकृत धावक ही डाउनलोड कर सकते हैं। सत्यापन हेतु <strong>{r.maskedMobile}</strong> पर OTP भेजा जाएगा।
-                          </span>
                         </div>
 
                         {/* OTP Unlock Section */}
