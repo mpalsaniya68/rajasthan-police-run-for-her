@@ -140,7 +140,7 @@ export function CertificateHub({ registrations = [] }) {
       // Background Watermark (Crest)
       if (logoImg.complete && logoImg.naturalWidth > 0) {
         ctx.save();
-        ctx.globalAlpha = 0.045;
+        ctx.globalAlpha = 0.12;
         ctx.drawImage(logoImg, 450, 240, 450, 450);
         ctx.restore();
       }
@@ -586,7 +586,7 @@ export function CertificateHub({ registrations = [] }) {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                opacity: 0.04,
+                opacity: 0.12,
                 pointerEvents: 'none',
                 zIndex: 0
               }}>
