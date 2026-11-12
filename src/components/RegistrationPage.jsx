@@ -27,6 +27,7 @@ const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COM
 export function RegistrationPage({
   initialCategory = "21k",
   initialDistrict = "JPR-COMM",
+  initialTab = "register",
   onNavigate,
   onRegisterSuccess
 }) {
@@ -101,7 +102,13 @@ export function RegistrationPage({
   const [otpVerificationToken, setOtpVerificationToken] = useState('');
 
   // Tab State: "register" (New Registration) or "find" (Find/Re-print Existing E-Pass)
-  const [activeTab, setActiveTab] = useState("register");
+  const [activeTab, setActiveTab] = useState(() => initialTab || "register");
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
   const [findQuery, setFindQuery] = useState("");
   const [findResults, setFindResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);

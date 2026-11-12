@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Calendar, MapPin, Users, Award, Bell, ArrowRight } from 'lucide-react';
 
-export function Hero({ onOpenRegister, onOpenBulkRegister, totalRegistered = 18450 }) {
+export function Hero({ onOpenRegister, onOpenBulkRegister, onOpenFindPass, totalRegistered = 18450 }) {
   // Live Countdown logic strictly targeted to 3 January 2027, 06:00:00 AM IST
   const TARGET_DATE = new Date(2027, 0, 3, 6, 0, 0); // 3 January 2027, 06:00:00 local IST
 
@@ -255,6 +255,37 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, totalRegistered = 184
               >
                 <Shield size={18} color="#fde68a" />
                 <span>ग्रुप / संस्थागत पंजीकरण (Bulk Entry)</span>
+              </button>
+
+              <button 
+                onClick={onOpenFindPass} 
+                style={{
+                  background: 'rgba(255, 255, 255, 0.14)',
+                  backdropFilter: 'blur(8px)',
+                  color: '#ffffff',
+                  border: '1.5px solid rgba(255, 255, 255, 0.45)',
+                  padding: '14px 24px',
+                  borderRadius: '50px',
+                  fontSize: '0.95rem',
+                  fontWeight: 800,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.14)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                title="खोया हुआ ई-पास खोजें व पुनः डाउनलोड करें"
+              >
+                <span>🔍 ई-पास / बिब खोजें</span>
               </button>
             </div>
 

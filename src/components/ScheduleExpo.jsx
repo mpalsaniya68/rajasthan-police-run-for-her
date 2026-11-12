@@ -1,15 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { RACE_DAY_TIMELINE, PROHIBITED_ITEMS } from '../data/mockData';
-import { Clock, Package, AlertCircle, ShieldAlert, Download, FileText, Luggage } from 'lucide-react';
+import { Clock, Package, AlertCircle, ShieldAlert, Luggage } from 'lucide-react';
 
 export function ScheduleExpo() {
-  const [downloadMsg, setDownloadMsg] = useState(null);
-
-  const handleSimulateDownload = (docName) => {
-    setDownloadMsg(`${docName} डाउनलोड प्रारंभ हो गया है...`);
-    setTimeout(() => setDownloadMsg(null), 3500);
-  };
-
   return (
     <section id="schedule" className="section-padding" style={{ position: 'relative', background: '#ffffff', borderTop: '1px solid var(--border-subtle)' }}>
       <div className="container">
@@ -147,8 +140,8 @@ export function ScheduleExpo() {
           </div>
         </div>
 
-        {/* ROW 2: Baggage Policy + Prohibited Items + Official Downloads */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px' }}>
+        {/* ROW 2: Baggage Policy + Prohibited Items */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px' }}>
           
           {/* Baggage Counter Policy */}
           <div className="gov-card" style={{ padding: '24px', border: '1.5px solid var(--border-medium)', borderRadius: '12px', background: '#ffffff' }}>
@@ -176,87 +169,6 @@ export function ScheduleExpo() {
                   <strong style={{ color: '#991b1b', fontWeight: 800 }}>✕ {item.item}:</strong> {item.reason}
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Official Documents Downloads */}
-          <div className="gov-card" style={{ padding: '24px', border: '1.5px solid var(--border-medium)', borderRadius: '12px', background: 'var(--police-navy-50)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-              <FileText size={22} color="var(--police-navy-900)" />
-              <h4 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800 }}>आधिकारिक दस्तावेज</h4>
-            </div>
-            <p style={{ fontSize: '0.92rem', color: '#475569', marginBottom: '16px', lineHeight: 1.5 }}>
-              रेस दिवस से पूर्व नियम पुस्तिका व अभिभावक सहमति प्रपत्र डाउनलोड करें:
-            </p>
-
-            {downloadMsg && (
-              <div style={{ background: '#dcfce7', border: '1px solid #86efac', padding: '8px 12px', borderRadius: '6px', fontSize: '0.88rem', color: '#166534', marginBottom: '12px', fontWeight: 700 }}>
-                ✓ {downloadMsg}
-              </div>
-            )}
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <button
-                onClick={() => handleSimulateDownload("Athlete-Handbook-2027.pdf")}
-                style={{
-                  background: '#ffffff',
-                  border: '1.5px solid var(--police-navy-800)',
-                  color: 'var(--police-navy-950)',
-                  padding: '11px 16px',
-                  borderRadius: '50px',
-                  fontSize: '0.95rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s'
-                }}
-              >
-                <span>📖 धावक मार्गदर्शिका (Handbook PDF)</span>
-                <Download size={16} />
-              </button>
-
-              <button
-                onClick={() => handleSimulateDownload("Minor-Parental-Consent-Form.pdf")}
-                style={{
-                  background: '#ffffff',
-                  border: '1.5px solid var(--police-navy-800)',
-                  color: 'var(--police-navy-950)',
-                  padding: '11px 16px',
-                  borderRadius: '50px',
-                  fontSize: '0.95rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s'
-                }}
-              >
-                <span>📝 अभिभावक सहमति पत्र (Consent Form)</span>
-                <Download size={16} />
-              </button>
-
-              <button
-                onClick={() => handleSimulateDownload("Jaipur-Marathon-Route-Clearance.pdf")}
-                style={{
-                  background: '#ffffff',
-                  border: '1.5px solid var(--border-medium)',
-                  color: 'var(--police-navy-950)',
-                  padding: '11px 16px',
-                  borderRadius: '50px',
-                  fontSize: '0.95rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer'
-                }}
-              >
-                <span>🗺️ आधिकारिक रूट जीपीएक्स / ट्रैफिक गजट</span>
-                <Download size={16} />
-              </button>
             </div>
           </div>
 

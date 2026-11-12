@@ -5,6 +5,7 @@ import { Shield, UserPlus, Menu, X, Phone, PackageCheck, LogOut } from 'lucide-r
 export function Navbar({ 
   onOpenRegister, 
   onOpenBulkRegister, 
+  onOpenFindPass,
   activePage = 'home', 
   onNavigate, 
   isAdminAuthenticated = false,
@@ -221,9 +222,9 @@ export function Navbar({
             {[
               { id: 'home', label: 'मुख्य पृष्ठ' },
               { id: 'register', label: 'रजिस्ट्रेशन (e-Pass)', isGold: true },
+              { id: 'find-pass', label: '🔍 ई-पास खोजें', isFindPass: true },
               { id: 'categories', label: 'दौड़ श्रेणियां' },
               { id: 'route-schedule', label: 'रूट व एक्सपो' },
-
               { id: 'certificates', label: 'ई-प्रमाण पत्र' },
               { id: 'pledge-safety', label: 'सुरक्षा संकल्प' }
             ].map(tab => {
@@ -231,7 +232,14 @@ export function Navbar({
               return (
                 <button
                   key={tab.id}
-                  onClick={() => handleNav(tab.id)}
+                  onClick={() => {
+                    if (tab.isFindPass) {
+                      if (onOpenFindPass) onOpenFindPass();
+                      else handleNav('register');
+                    } else {
+                      handleNav(tab.id);
+                    }
+                  }}
                   aria-current={isActive ? 'page' : undefined}
                   style={{
                     padding: '11px 16px',
@@ -390,6 +398,32 @@ export function Navbar({
               </button>
             );
           })}
+
+          <button
+            onClick={() => { 
+              setMobileMenuOpen(false); 
+              if (onOpenFindPass) onOpenFindPass();
+              else handleNav('register'); 
+            }}
+            style={{
+              padding: '11px',
+              textAlign: 'center',
+              fontWeight: 800,
+              fontSize: '0.88rem',
+              justifyContent: 'center',
+              marginTop: '4px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              color: '#fde68a',
+              border: '1px solid rgba(253, 230, 138, 0.35)',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer'
+            }}
+          >
+            🔍 ई-पास / बिब खोजें (Find E-Pass)
+          </button>
 
           <button
             onClick={() => { setMobileMenuOpen(false); onOpenBulkRegister(); }}

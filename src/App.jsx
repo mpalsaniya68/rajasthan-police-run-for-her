@@ -36,6 +36,7 @@ import { PrizePodiumSection } from './components/PrizePodiumSection';
 import { RegistrationPage } from './components/RegistrationPage';
 
 import { FAQSection } from './components/FAQSection';
+import { MobileQuickSosBar } from './components/MobileQuickSosBar';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -100,6 +101,8 @@ export default function App() {
 
   const [selectedDistrictForRegister, setSelectedDistrictForRegister] = useState("JPR-COMM");
 
+  const [selectedRegTab, setSelectedRegTab] = useState("register");
+
   
 
   // Single Access Admin States & RBAC Credentials
@@ -125,6 +128,11 @@ export default function App() {
     }
 
   });
+
+  const navigateToPage = (pageId) => {
+    setActivePage(pageId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleOpenAdminTrigger = () => {
     if (sessionStorage.getItem('rajpol_admin_auth') === 'true') {
@@ -241,20 +249,15 @@ export default function App() {
 
   };
 
-  const openRegisterModalWithCat = (catId) => {
-
+  const openRegisterModalWithCat = (catId = "21k") => {
     setSelectedCategoryForModal(catId);
-
+    setSelectedRegTab("register");
     navigateToPage('register');
-
   };
 
-  const navigateToPage = (pageId) => {
-
-    setActivePage(pageId);
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
+  const handleOpenFindPass = () => {
+    setSelectedRegTab("find");
+    navigateToPage('register');
   };
 
   return (
@@ -271,8 +274,9 @@ export default function App() {
 
             {/* Official Top Navbar with Page Tabs */}
       <Navbar
-        onOpenRegister={() => navigateToPage('register')}
+        onOpenRegister={() => openRegisterModalWithCat(selectedCategoryForModal)}
         onOpenBulkRegister={() => setIsBulkModalOpen(true)}
+        onOpenFindPass={handleOpenFindPass}
         activePage={activePage}
         onNavigate={navigateToPage}
         isAdminAuthenticated={isAdminAuthenticated}
@@ -296,6 +300,8 @@ export default function App() {
 
               initialDistrict={selectedDistrictForRegister}
 
+              initialTab={selectedRegTab}
+
               onNavigate={navigateToPage}
 
               onRegisterSuccess={handleRegisterSuccess}
@@ -314,9 +320,11 @@ export default function App() {
 
             <Hero
 
-              onOpenRegister={() => navigateToPage('register')}
+              onOpenRegister={() => openRegisterModalWithCat(selectedCategoryForModal)}
 
               onOpenBulkRegister={() => setIsBulkModalOpen(true)}
+
+              onOpenFindPass={handleOpenFindPass}
 
               totalRegistered={registrations.length + 18450}
 
@@ -326,7 +334,7 @@ export default function App() {
 
             <PrizePodiumSection
 
-              onOpenRegister={() => navigateToPage('register')}
+              onOpenRegister={() => openRegisterModalWithCat(selectedCategoryForModal)}
 
             />
 
@@ -689,6 +697,9 @@ export default function App() {
         onBulkRegisterSuccess={handleBulkRegisterSuccess}
 
       />
+
+      {/* Rajasthan Police 24x7 Women Safety & Emergency Mobile Quick Dial Bar */}
+      <MobileQuickSosBar />
 
     </div>
 
