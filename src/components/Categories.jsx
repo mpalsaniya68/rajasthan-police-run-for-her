@@ -1,6 +1,6 @@
 import React from 'react';
 import { RACE_CATEGORIES } from '../data/mockData';
-import { Zap, Flame, Users, HeartHandshake, Sparkles, Check, Clock, ArrowRight, Timer, Trophy, Gift } from 'lucide-react';
+import { Zap, Flame, Users, HeartHandshake, Sparkles, Check, Clock, ArrowRight, Timer, Trophy } from 'lucide-react';
 
 export function Categories({ onSelectCategory, onOpenBulkRegister }) {
   const getIcon = (name) => {
@@ -138,38 +138,6 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
                     
                     <div style={{ fontSize: '0.68rem', color: '#475569', fontWeight: 700, marginTop: '8px', textAlign: 'center' }}>
                       ★ केवल जयपुर मुख्य फ्लैगशिप रन (ओपन संयुक्त पोडियम)
-                    </div>
-                  </div>
-                )}
-
-                {/* 2. Perks Highlights for 5K, 2K & Adapted Course (Dark Black Theme) */}
-                {cat.highlightPerks && (
-                  <div style={{
-                    background: '#ffffff',
-                    border: '1.5px solid #0f172a',
-                    borderLeft: '5px solid #0f172a',
-                    borderRadius: '8px',
-                    padding: '10px 14px',
-                    marginBottom: '16px',
-                    boxShadow: '0 2px 6px rgba(15, 23, 42, 0.06)'
-                  }}>
-                    <div style={{ fontSize: '0.8rem', fontWeight: 900, color: '#0f172a', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <Gift size={14} color="#0f172a" /> प्रतिभागी किट एवं सुविधाएं:
-                    </div>
-                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                      {cat.highlightPerks.map((h, i) => (
-                        <span key={i} style={{
-                          background: '#0f172a',
-                          border: '1px solid #0f172a',
-                          color: '#ffffff',
-                          fontWeight: 800,
-                          fontSize: '0.78rem',
-                          padding: '4px 10px',
-                          borderRadius: '6px'
-                        }}>
-                          {h}
-                        </span>
-                      ))}
                     </div>
                   </div>
                 )}

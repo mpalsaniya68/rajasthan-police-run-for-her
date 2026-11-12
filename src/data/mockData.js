@@ -65,7 +65,6 @@ export const RACE_CATEGORIES = [
     cutOffTime: "1 घंटा (सुबह 07:45 AM)",
     reporting: "05:30 AM",
     description: "The flagship mass awareness run happening simultaneously in Jaipur and all 41 Rajasthan Police Districts and Commissionerates.",
-    highlightPerks: ["मेडल 🥇", "टी-शर्ट 👕", "रिफ्रेशमेंट्स 🥪"],
     perks: [
       "आधिकारिक फिनिशर मेडल 🥇",
       "ड्राई-फिट रनिंग टी-शर्ट 👕",
@@ -87,7 +86,6 @@ export const RACE_CATEGORIES = [
     cutOffTime: "45 मिनट (सुबह 08:00 AM)",
     reporting: "06:00 AM",
     description: "A joyful, celebratory walk/jog welcoming children, families, elders, and citizens pledging for women's dignity.",
-    highlightPerks: ["मेडल 🥇", "टी-शर्ट 👕", "रिफ्रेशमेंट्स 🥪"],
     perks: [
       "सहभागिता मेडल 🥇",
       "इवेंट टी-शर्ट 👕",
@@ -109,7 +107,6 @@ export const RACE_CATEGORIES = [
     cutOffTime: "1 घंटा (सुबह 08:00 AM)",
     reporting: "05:45 AM",
     description: "Specially dedicated adapted category for differently-abled athletes and senior citizens with volunteer escort support.",
-    highlightPerks: ["मेडल 🥇", "टी-शर्ट 👕", "रिफ्रेशमेंट्स 🥪"],
     perks: [
       "विशेष चैंपियंस मेडल 🥇",
       "आधिकारिक इवेंट टी-शर्ट 👕",

@@ -1802,23 +1802,6 @@ export function RegistrationPage({
                             </div>
                           )}
 
-                          {venueType === "jaipur" && cat.highlightPerks && (
-                            <div style={{
-                              marginBottom: '10px',
-                              padding: '6px 10px',
-                              background: '#0f172a',
-                              borderRadius: '6px',
-                              fontSize: '0.74rem',
-                              fontWeight: 800,
-                              color: '#ffffff',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '6px'
-                            }}>
-                              <span>🎁 मेडल 🥇 • टी-शर्ट 👕 • रिफ्रेशमेंट्स 🥪</span>
-                            </div>
-                          )}
-
                           <div style={{
                             display: 'flex',
                             justifyContent: 'space-between',
