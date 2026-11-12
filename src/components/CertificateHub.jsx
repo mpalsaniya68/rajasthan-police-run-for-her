@@ -795,26 +795,6 @@ export function CertificateHub({ registrations = [] }) {
                 >
                   <Share2 size={15} /> WhatsApp पर शेयर करें
                 </button>
-
-                <div style={{
-                  padding: '12px',
-                  borderRadius: '6px',
-                  background: '#ecfdf5',
-                  border: '1.5px solid #10b981',
-                  color: '#065f46',
-                  fontSize: '0.82rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  <CheckCircle2 size={18} color="#059669" style={{ flexShrink: 0 }} />
-                  <div>
-                    <div style={{ fontWeight: 800 }}>अधिकृत सत्यापन पूर्ण (100% Verified)</div>
-                    <div style={{ fontSize: '0.72rem', color: '#047857' }}>
-                      राजस्थान पुलिस महानिदेशक कार्यालय द्वारा अधिकृत एवं सुरक्षित क्यूआर क्रिप्टोग्राफिक लेजर द्वारा डिजिटल सत्यापित।
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
