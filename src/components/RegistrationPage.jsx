@@ -2057,11 +2057,8 @@ export function RegistrationPage({
                             <div style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--police-navy-800)', textTransform: 'uppercase' }}>
                               {cat.distance}
                             </div>
-                            <div style={{ fontWeight: 900, fontSize: '1.02rem', color: 'var(--police-navy-950)', margin: '4px 0' }}>
+                            <div style={{ fontWeight: 900, fontSize: '1.02rem', color: 'var(--police-navy-950)', margin: '4px 0 8px 0' }}>
                               {cat.name}
-                            </div>
-                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '8px', lineHeight: 1.4 }}>
-                              {cat.desc || cat.description}
                             </div>
                           </div>
 

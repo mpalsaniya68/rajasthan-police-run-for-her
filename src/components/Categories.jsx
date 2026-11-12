@@ -75,13 +75,9 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
                   </span>
                 </div>
 
-                <h3 style={{ fontSize: '1.55rem', fontWeight: 900, marginBottom: '10px', color: 'var(--police-navy-950)', letterSpacing: '-0.01em' }}>
+                <h3 style={{ fontSize: '1.55rem', fontWeight: 900, marginBottom: '16px', color: 'var(--police-navy-950)', letterSpacing: '-0.01em' }}>
                   {cat.name}
                 </h3>
-                
-                <p style={{ color: '#475569', fontSize: '1rem', lineHeight: '1.6', marginBottom: '16px', minHeight: '44px', fontWeight: 500 }}>
-                  {cat.description}
-                </p>
 
                 {/* 1. Official Cash Prize Podium Box for 21K and 10K (Only Jaipur Flagship - Dark Black Theme) */}
                 {cat.prizes && (
