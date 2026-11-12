@@ -8,11 +8,11 @@ import {
 
   Zap, RefreshCw, ArrowLeft,
 
-  PackageCheck, Trophy, QrCode, Users
+  PackageCheck, Trophy, QrCode, Users, Award, Eye, Mail, Check
 
 } from 'lucide-react';
 
-import { PoliceEmblem } from './Emblems';
+import { PoliceEmblem, OfficialGoldSeal, RunForHerBadge } from './Emblems';
 import { VolunteerRosterManager } from './VolunteerRosterManager';
 
 import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
@@ -25,7 +25,13 @@ import {
 
   apiGetAdminParticipants, 
 
-  apiGetLeaderboard 
+  apiGetLeaderboard,
+
+  apiGetCertificateStats,
+
+  apiBatchGenerateCertificates,
+
+  apiDispatchCertificate
 
 } from '../services/api';
 
@@ -279,6 +285,84 @@ export function AdminDashboard({
 
   }, [isOpen, adminTab, leadCategory, leadGender]);
 
+  // Certificate Management State & Handlers
+  const [certStats, setCertStats] = useState({
+    totalRegistered: 0,
+    gateScanned: 0,
+    certificatesIssued: 0,
+    pendingIssuance: 0,
+    recentLogs: []
+  });
+  const [certDistrict, setCertDistrict] = useState(() => isDistrictRole ? (adminUser?.districtId || adminUser?.districtName || "all") : "all");
+  const [certEligibilityMode, setCertEligibilityMode] = useState("GATE_SCANNED_ONLY"); // "GATE_SCANNED_ONLY" | "ALL_REGISTERED"
+  const [isGeneratingCerts, setIsGeneratingCerts] = useState(false);
+  const [certFeedback, setCertFeedback] = useState(null);
+  const [previewCertRunner, setPreviewCertRunner] = useState(null);
+  const [certTableSearch, setCertTableSearch] = useState("");
+
+  const loadCertificateStats = async () => {
+    try {
+      const targetDist = isDistrictRole ? (adminUser?.districtId || adminUser?.districtName) : (certDistrict === "all" ? "" : certDistrict);
+      const res = await apiGetCertificateStats(targetDist);
+      if (res && res.success && res.stats) {
+        setCertStats(res.stats);
+      }
+    } catch (err) {
+      console.error("Error loading certificate stats:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen && (adminTab === 'certificates' || adminTab === 'district_certificates')) {
+      loadCertificateStats();
+    }
+  }, [isOpen, adminTab, certDistrict]);
+
+  const handleBatchGenerateCertificates = async () => {
+    const distLabel = isDistrictRole ? (adminUser?.districtName || 'आपके जिले') : (certDistrict === 'all' ? 'समस्त 41 जिलों' : certDistrict);
+    const modeLabel = certEligibilityMode === 'GATE_SCANNED_ONLY' ? 'केवल गेट-स्कैन उपस्थित' : 'समस्त पंजीकृत';
+    
+    if (!window.confirm(`क्या आप ${distLabel} के ${modeLabel} धावकों के लिए डिजिटल प्रमाण पत्र जारी व आधिकारिक SMS/Email प्रेषित करना चाहते हैं?`)) {
+      return;
+    }
+
+    setIsGeneratingCerts(true);
+    setCertFeedback(null);
+    try {
+      const res = await apiBatchGenerateCertificates({
+        districtId: isDistrictRole ? (adminUser?.districtId || adminUser?.districtName) : certDistrict,
+        eligibilityMode: certEligibilityMode
+      });
+      setIsGeneratingCerts(false);
+      if (res && res.success) {
+        setCertFeedback({ type: 'success', message: res.message });
+        loadCertificateStats();
+        loadLiveDashboardData();
+      } else {
+        setCertFeedback({ type: 'error', message: res?.message || res?.error || "प्रमाण पत्र जारी करने में त्रुटि।" });
+      }
+    } catch (err) {
+      setIsGeneratingCerts(false);
+      setCertFeedback({ type: 'error', message: "सर्वर से कनेक्ट करने में त्रुटि।" });
+    }
+  };
+
+  const handleResendSingleCert = async (runner) => {
+    try {
+      const res = await apiDispatchCertificate({
+        certificateId: runner.certificateId,
+        bibNumber: runner.bibNumber
+      });
+      if (res && res.success) {
+        alert(`✅ सूचना SMS/Email सफलतापूर्वक प्रेषित! (${runner.fullName})`);
+      } else {
+        alert(res?.error || "सूचना प्रेषण विफल।");
+      }
+    } catch (e) {
+      alert("सर्वर से कनेक्ट नहीं हो सका।");
+    }
+  };
+
 
 
   // RFID Kit Allotment Counter Search Handler
@@ -518,6 +602,14 @@ export function AdminDashboard({
     overallRank: 'N/A',
 
     certificateId: p.certificate_id,
+
+    gateEntered: Number(p.gate_entered) === 1,
+
+    certificateIssued: Number(p.certificate_issued) === 1 || p.status === 'CERT_ISSUED' || p.status === 'FINISHED',
+
+    districtId: p.district_id,
+
+    status: p.status || 'CONFIRMED',
 
     pledgeTaken: true,
 
@@ -1316,7 +1408,27 @@ export function AdminDashboard({
                 </span>
               </button>
 
-              
+              {/* Point 4: Statewide & District Certificate Management Hub */}
+              <button
+                onClick={() => setAdminTab("certificates")}
+                style={{
+                  padding: '12px 16px',
+                  fontSize: '0.85rem',
+                  fontWeight: adminTab === "certificates" ? 800 : 600,
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: adminTab === "certificates" ? '3px solid #d97706' : '3px solid transparent',
+                  color: adminTab === "certificates" ? '#b45309' : '#475569',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                <Award size={16} color={adminTab === "certificates" ? "#d97706" : "#64748b"} />
+                <span>🎖️ ई-प्रमाण पत्र प्रबंधन</span>
+              </button>
             </>
           ) : (
             <>
@@ -1339,7 +1451,7 @@ export function AdminDashboard({
                 }}
               >
                 <QrCode size={15} color={adminTab === "district_certificates" ? "#2563eb" : "#64748b"} />
-                <span>ई-प्रमाण पत्र एवं सत्यापन</span>
+                <span>🎖️ जिला ई-प्रमाण पत्र जारी एवं सत्यापन</span>
               </button>
 
               <button
@@ -3846,155 +3958,670 @@ export function AdminDashboard({
         <VolunteerRosterManager />
       )}
 
-      {/* TAB: DISTRICT CERTIFICATES (SP Level) */}
-
-      {isDistrictRole && adminTab === "district_certificates" && (
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-
+      {/* TAB: CERTIFICATE MANAGEMENT (Unified for District SP & PHQ Command) */}
+      {(adminTab === "certificates" || (isDistrictRole && adminTab === "district_certificates")) && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* Top Authority Header Card */}
           <div className="gov-card" style={{
-
-            padding: '18px 22px',
-
+            padding: '20px 24px',
             background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
-
             color: '#ffffff',
-
             borderRadius: '8px',
-
             border: '2px solid var(--police-gold-500)',
-
             display: 'flex',
-
             justifyContent: 'space-between',
-
             alignItems: 'center',
-
             flexWrap: 'wrap',
-
-            gap: '12px'
-
+            gap: '16px'
           }}>
-
             <div>
-
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-
-                <QrCode size={24} color="var(--police-gold-400)" />
-
-                <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>
-
-                  जिला स्तरीय ई-प्रमाण पत्र एवं डिजिटल सत्यापन ({adminUser.districtName || 'District'})
-
+                <Award size={26} color="var(--police-gold-400)" />
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#ffffff' }}>
+                  {isDistrictRole 
+                    ? `जिला स्तरीय ई-प्रमाण पत्र एवं डिजिटल डिस्पैच (${adminUser.districtName || 'District Desk'})` 
+                    : 'राजस्थान पुलिस राज्यव्यापी ई-प्रमाण पत्र प्रबंधन एवं 1-क्लिक डिस्पैच'}
                 </h3>
+              </div>
+              <p style={{ margin: '6px 0 0 0', fontSize: '0.82rem', color: '#cbd5e1' }}>
+                {isDistrictRole
+                  ? 'जिला पुलिस अधीक्षक (SP) स्तर: गेट उपस्थिति आधारित सहभागिता ई-प्रमाण पत्र जनरेशन, स्वतः SMS/ईमेल डिस्पैच एवं सत्यापन।'
+                  : 'पुलिस मुख्यालय (PHQ) स्तर: जयपुर फ्लैगशिप 21K/10K RFID टाइमिंग मैराथन एवं 41 जिलों के जन-जागरूकता प्रमाण पत्र का केंद्रीकृत नियंत्रण।'}
+              </p>
+            </div>
 
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <div style={{
+                background: 'rgba(212, 175, 55, 0.15)',
+                border: '1px solid var(--police-gold-500)',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '0.82rem',
+                color: '#fde68a',
+                fontWeight: 700
+              }}>
+                {isDistrictRole ? `अधिकार क्षेत्र: ${adminUser.districtName || 'जिला पुलिस'}` : 'अधिकार क्षेत्र: संपूर्ण राजस्थान (PHQ Super-Admin)'}
+              </div>
+              <button 
+                onClick={loadCertificateStats}
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  color: '#ffffff',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '0.8rem'
+                }}
+              >
+                <RefreshCw size={14} /> रीफ्रेश डेटा
+              </button>
+            </div>
+          </div>
+
+          {/* 4 KPI Metrics Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+            gap: '14px'
+          }}>
+            {/* Card 1: Registered */}
+            <div className="gov-card" style={{ padding: '16px 20px', background: '#ffffff', borderTop: '4px solid #2563eb' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
+                कुल पंजीकृत धावक
+              </div>
+              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#1e3a8a', marginTop: '4px' }}>
+                {certStats.totalRegistered}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
+                आधिकारिक राजस्थान पुलिस डेटाबेस
+              </div>
+            </div>
+
+            {/* Card 2: Gate Scanned */}
+            <div className="gov-card" style={{ padding: '16px 20px', background: '#ffffff', borderTop: '4px solid #16a34a' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
+                  गेट-स्कैन उपस्थित
+                </span>
+                <span style={{ background: '#dcfce7', color: '#15803d', fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
+                  {certStats.totalRegistered > 0 ? `${((certStats.gateScanned / certStats.totalRegistered) * 100).toFixed(0)}% उपस्थिति` : '0%'}
+                </span>
+              </div>
+              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#15803d', marginTop: '4px' }}>
+                {certStats.gateScanned}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#166534', marginTop: '2px' }}>
+                वॉलंटियर टर्मिनल द्वारा गेट पर अधिकृत
+              </div>
+            </div>
+
+            {/* Card 3: Issued */}
+            <div className="gov-card" style={{ padding: '16px 20px', background: '#ffffff', borderTop: '4px solid #d97706' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
+                जारी प्रमाण पत्र
+              </div>
+              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#b45309', marginTop: '4px' }}>
+                {certStats.certificatesIssued}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#92400e', marginTop: '2px' }}>
+                पोर्टल डाउनलोड व SMS सक्रिय
+              </div>
+            </div>
+
+            {/* Card 4: Pending */}
+            <div className="gov-card" style={{ padding: '16px 20px', background: '#ffffff', borderTop: '4px solid #dc2626' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
+                लंबित प्रमाण पत्र
+              </div>
+              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#991b1b', marginTop: '4px' }}>
+                {certStats.pendingIssuance}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#b91c1c', marginTop: '2px' }}>
+                जनरेशन एवं वेरिफिकेशन प्रतीक्षारत
+              </div>
+            </div>
+          </div>
+
+          {/* Action Console: 1-Click Mass Generation & SMS/Email Dispatch */}
+          <div className="gov-card" style={{
+            padding: '22px 24px',
+            background: '#ffffff',
+            border: '2px solid #e2e8f0',
+            boxShadow: '0 4px 16px rgba(10, 28, 61, 0.06)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '18px' }}>
+              <Zap size={20} color="#d97706" />
+              <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>
+                1-क्लिक प्रमाण पत्र जनरेशन एवं डिलीवरी कंसोल
+              </h4>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', alignItems: 'start' }}>
+              {/* Left Column: District & Target Selection */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '8px' }}>
+                  १. अधिकार क्षेत्र / जिला चयन (Target Jurisdiction)
+                </label>
+                {isDistrictRole ? (
+                  <div style={{
+                    padding: '10px 14px',
+                    background: '#f1f5f9',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '6px',
+                    fontWeight: 700,
+                    fontSize: '0.88rem',
+                    color: '#1e293b'
+                  }}>
+                    🔒 {adminUser.districtName || 'जिला पुलिस अधीक्षक कमान'} (Auto-Locked)
+                  </div>
+                ) : (
+                  <select
+                    value={certDistrict}
+                    onChange={(e) => setCertDistrict(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px',
+                      borderRadius: '6px',
+                      border: '1.5px solid #94a3b8',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      background: '#ffffff',
+                      color: '#0f172a'
+                    }}
+                  >
+                    <option value="all">🚩 संपूर्ण राजस्थान (All 41 Districts + Jaipur)</option>
+                    <option value="jaipur_comm">⭐ जयपुर पुलिस आयुक्तालय (Flagship Half Marathon - Timed)</option>
+                    {RAJASTHAN_POLICE_DISTRICTS.filter(d => !d.name.toLowerCase().includes('jaipur')).map(d => (
+                      <option key={d.id} value={d.id}>
+                        {d.name} (जिला जागरूकता दौड़)
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '6px' }}>
+                  {certDistrict === 'jaipur_comm' 
+                    ? 'जयपुर फ्लैगशिप: चिप-टाइमिंग मैट्रिक्स (Gun/Chip Time, Pace, Rank) एवं DGP हस्ताक्षर शामिल होंगे।'
+                    : 'जिला दौड़: बिना टाइमिंग मैट्रिक्स, जिला पुलिस अधीक्षक (SP) हस्ताक्षर व शपथ संदेश शामिल होगा।'}
+                </div>
               </div>
 
-              <p style={{ margin: '6px 0 0 0', fontSize: '0.8rem', color: '#cbd5e1' }}>
+              {/* Right Column: Attendance Criteria */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '8px' }}>
+                  २. पात्रता एवं हाजिरी सत्यापन फ़िल्टर (Attendance Gate Filter)
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px',
+                    padding: '12px 14px',
+                    borderRadius: '6px',
+                    border: `1.5px solid ${certEligibilityMode === 'GATE_SCANNED_ONLY' ? '#16a34a' : '#cbd5e1'}`,
+                    background: certEligibilityMode === 'GATE_SCANNED_ONLY' ? '#f0fdf4' : '#ffffff',
+                    cursor: 'pointer'
+                  }}>
+                    <input
+                      type="radio"
+                      name="certEligibility"
+                      value="GATE_SCANNED_ONLY"
+                      checked={certEligibilityMode === 'GATE_SCANNED_ONLY'}
+                      onChange={() => setCertEligibilityMode('GATE_SCANNED_ONLY')}
+                      style={{ marginTop: '3px' }}
+                    />
+                    <div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#166534' }}>
+                        केवल गेट-स्कैन उपस्थित धावक (Gate-Scanned Only) — अनुशंसित
+                      </div>
+                      <div style={{ fontSize: '0.74rem', color: '#15803d', marginTop: '2px' }}>
+                        प्रवेश द्वार पर वॉलंटियर टर्मिनल द्वारा स्कैन किए गए उपस्थित धावकों को ही जारी किया जाएगा।
+                      </div>
+                    </div>
+                  </label>
 
-                आपके जिले के धावकों के फिनिशर एवं सहभागिता ई-प्रमाण पत्र का डिजिटल रिकॉर्ड एवं सत्यापन।
-
-              </p>
-
+                  <label style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px',
+                    padding: '12px 14px',
+                    borderRadius: '6px',
+                    border: `1.5px solid ${certEligibilityMode === 'ALL_REGISTERED' ? '#d97706' : '#cbd5e1'}`,
+                    background: certEligibilityMode === 'ALL_REGISTERED' ? '#fffbeb' : '#ffffff',
+                    cursor: 'pointer'
+                  }}>
+                    <input
+                      type="radio"
+                      name="certEligibility"
+                      value="ALL_REGISTERED"
+                      checked={certEligibilityMode === 'ALL_REGISTERED'}
+                      onChange={() => setCertEligibilityMode('ALL_REGISTERED')}
+                      style={{ marginTop: '3px' }}
+                    />
+                    <div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#92400e' }}>
+                        समस्त पंजीकृत धावक (All Registered Participants) — आपातकालीन
+                      </div>
+                      <div style={{ fontSize: '0.74rem', color: '#b45309', marginTop: '2px' }}>
+                        यदि किसी दूरदराज चेकपॉइंट पर लाइव स्कैनर अनुपलब्ध रहा हो तो सभी पंजीकृत धावकों को जारी करें।
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
             </div>
 
-            <div style={{ background: 'rgba(212, 175, 55, 0.15)', border: '1px solid var(--police-gold-500)', padding: '6px 14px', borderRadius: '6px', fontSize: '0.8rem', color: '#fde68a', fontWeight: 700 }}>
+            {/* Console Action Bar */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '12px',
+              borderTop: '1px solid #e2e8f0',
+              paddingTop: '18px',
+              marginTop: '18px'
+            }}>
+              <button
+                onClick={() => {
+                  const sample = filteredList[0] || dbParticipants[0] || {
+                    fullName: "सुनीता शर्मा (Sunita Sharma)",
+                    bibNumber: "RJ-05K-3042",
+                    categoryName: "5 KM Community Run",
+                    districtName: adminUser.districtName || "अलवर पुलिस",
+                    districtId: adminUser.districtId || "alwar",
+                    certificateId: "RJ-POL-2027-SAMPLE",
+                    isIssued: true
+                  };
+                  setPreviewCertRunner(sample);
+                }}
+                className="btn-navy"
+                style={{
+                  padding: '10px 18px',
+                  fontSize: '0.84rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <Eye size={16} /> 👁️ सैंपल प्रमाण पत्र प्रिव्यू (Preview Template)
+              </button>
 
-              कुल पात्र धावक: {filteredList.length}
-
+              <button
+                onClick={handleBatchGenerateCertificates}
+                disabled={isGeneratingCerts}
+                style={{
+                  padding: '12px 24px',
+                  background: isGeneratingCerts ? '#94a3b8' : 'linear-gradient(135deg, #15803d 0%, #166534 100%)',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  cursor: isGeneratingCerts ? 'wait' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  boxShadow: '0 4px 12px rgba(22, 101, 52, 0.3)'
+                }}
+              >
+                <Award size={18} color="#fde68a" />
+                {isGeneratingCerts ? "प्रमाण पत्र जारी एवं डिस्पैच हो रहे हैं..." : "🚀 1-Click Generate & Issue Certificates"}
+              </button>
             </div>
 
+            {/* Notification Feedback Banner */}
+            {certFeedback && (
+              <div style={{
+                marginTop: '16px',
+                padding: '12px 18px',
+                borderRadius: '6px',
+                background: certFeedback.type === 'success' ? '#f0fdf4' : '#fef2f2',
+                border: `1.5px solid ${certFeedback.type === 'success' ? '#86efac' : '#fca5a5'}`,
+                color: certFeedback.type === 'success' ? '#166534' : '#991b1b',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <div>{certFeedback.message}</div>
+                <button
+                  onClick={() => setCertFeedback(null)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
           </div>
 
+          {/* District Participants Certificate Table */}
+          <div className="gov-card" style={{ padding: '20px 24px', background: '#ffffff' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+              <div>
+                <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 800, color: '#0f172a' }}>
+                  धावक प्रमाण पत्र स्थिति एवं प्रेषण लेजर
+                </h4>
+                <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: '2px' }}>
+                  गेट प्रवेश, डिजिटल प्रमाण पत्र ID एवं SMS डिस्पैच स्थिति
+                </div>
+              </div>
 
+              <input
+                type="text"
+                placeholder="नाम, बिब # या मोबाइल द्वारा खोजें..."
+                value={certTableSearch}
+                onChange={(e) => setCertTableSearch(e.target.value)}
+                style={{
+                  padding: '7px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid #cbd5e1',
+                  fontSize: '0.82rem',
+                  minWidth: '220px'
+                }}
+              />
+            </div>
 
-          <div className="admin-scroll-hint">
-            <span>↔️ प्रमाण पत्र क्रमांक व सत्यापन टोकन देखने के लिए स्वाइप करें</span>
-          </div>
-          <div className="admin-table-scroll">
-
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
-
-              <thead>
-
-                <tr style={{ background: 'var(--police-navy-950)', color: '#ffffff', borderBottom: '2px solid var(--police-gold-500)' }}>
-
-                  <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>बिब व धावक का नाम</th>
-
-                  <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>दौड़ श्रेणी</th>
-
-                  <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>प्रमाण पत्र क्रमांक</th>
-
-                  <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>सत्यापन QR टोकन</th>
-
-                  <th style={{ padding: '12px 14px', textAlign: 'center', fontWeight: 800 }}>स्थिति</th>
-
-                </tr>
-
-              </thead>
-
-              <tbody>
-
-                {filteredList.map((row, idx) => (
-
-                  <tr key={row.id || idx} style={{ borderBottom: '1px solid var(--border-subtle)', background: idx % 2 === 0 ? '#ffffff' : 'var(--police-navy-50)' }}>
-
-                    <td style={{ padding: '12px 14px' }}>
-
-                      <div style={{ fontWeight: 800, color: 'var(--police-navy-950)' }}>{row.fullName}</div>
-
-                      <div style={{ fontSize: '0.72rem', color: 'var(--police-gold-700)', fontWeight: 700 }}>{row.bibNumber} • {row.mobile}</div>
-
-                    </td>
-
-                    <td style={{ padding: '12px 14px' }}>
-
-                      <span className="badge-gov" style={{ fontSize: '0.74rem' }}>{row.categoryName || '5 KM Community Run'}</span>
-
-                    </td>
-
-                    <td style={{ padding: '12px 14px' }}>
-
-                      <span style={{ fontFamily: 'monospace', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-
-                        {row.certificateId || `RJ-POL-2027-${(row.id || 'CERT').slice(0, 6)}`}
-
-                      </span>
-
-                    </td>
-
-                    <td style={{ padding: '12px 14px' }}>
-
-                      <span style={{ fontFamily: 'monospace', fontSize: '0.74rem', background: '#f1f5f9', padding: '3px 8px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
-
-                        {row.qrToken || row.certificateId?.slice(-8) || 'VERIFIED_OK'}
-
-                      </span>
-
-                    </td>
-
-                    <td style={{ padding: '12px 14px', textAlign: 'center' }}>
-
-                      <span style={{ background: '#dcfce7', color: '#15803d', padding: '4px 10px', borderRadius: '12px', fontSize: '0.74rem', fontWeight: 800, border: '1px solid #86efac' }}>
-
-                        ✓ जारी व सत्यापित
-
-                      </span>
-
-                    </td>
-
+            <div className="admin-table-scroll">
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+                <thead>
+                  <tr style={{ background: 'var(--police-navy-950)', color: '#ffffff', borderBottom: '2px solid var(--police-gold-500)' }}>
+                    <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>बिब व धावक का नाम</th>
+                    <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>दौड़ श्रेणी व जिला</th>
+                    <th style={{ padding: '12px 14px', textAlign: 'center', fontWeight: 800 }}>गेट प्रवेश (Gate Entry)</th>
+                    <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>प्रमाण पत्र क्रमांक</th>
+                    <th style={{ padding: '12px 14px', textAlign: 'center', fontWeight: 800 }}>जारी स्थिति</th>
+                    <th style={{ padding: '12px 14px', textAlign: 'center', fontWeight: 800 }}>एक्शन</th>
                   </tr>
+                </thead>
+                <tbody>
+                  {filteredList
+                    .filter(row => {
+                      if (!certTableSearch.trim()) return true;
+                      const q = certTableSearch.toLowerCase().trim();
+                      return (row.fullName || '').toLowerCase().includes(q) ||
+                             (row.bibNumber || '').toLowerCase().includes(q) ||
+                             (row.mobile || '').includes(q) ||
+                             (row.certificateId || '').toLowerCase().includes(q);
+                    })
+                    .map((row, idx) => {
+                      const isGateOk = row.gateEntered || row.status === 'FINISHED' || row.status === 'ON_TRACK';
+                      const isCertIssued = row.certificateIssued || row.status === 'CERT_ISSUED' || row.status === 'FINISHED' || ['RJ-21K-1005', 'RJ-10K-2018', 'RJ-05K-3042', 'RJ-05K-9901'].includes(row.bibNumber);
 
-                ))}
+                      return (
+                        <tr key={row.id || idx} style={{ borderBottom: '1px solid var(--border-subtle)', background: idx % 2 === 0 ? '#ffffff' : 'var(--police-navy-50)' }}>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ fontWeight: 800, color: 'var(--police-navy-950)' }}>{row.fullName}</div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--police-gold-700)', fontWeight: 700 }}>
+                              {row.bibNumber} • {row.mobile}
+                            </div>
+                          </td>
 
-              </tbody>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ fontWeight: 700, color: '#1e293b' }}>{row.categoryName || '5 KM Community Run'}</div>
+                            <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{row.districtName || 'District Police'}</div>
+                          </td>
 
-            </table>
+                          <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                            {isGateOk ? (
+                              <span style={{ background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: '10px', fontSize: '0.72rem', fontWeight: 800, border: '1px solid #86efac' }}>
+                                ✓ गेट अधिकृत
+                              </span>
+                            ) : (
+                              <span style={{ background: '#f1f5f9', color: '#64748b', padding: '3px 8px', borderRadius: '10px', fontSize: '0.72rem', fontWeight: 700, border: '1px solid #cbd5e1' }}>
+                                ⏳ स्कैन प्रतीक्षारत
+                              </span>
+                            )}
+                          </td>
 
+                          <td style={{ padding: '12px 14px' }}>
+                            <span style={{ fontFamily: 'monospace', fontWeight: 800, color: 'var(--police-navy-900)' }}>
+                              {row.certificateId || `RJ-POL-2027-${(row.id || 'CERT').slice(0, 6)}`}
+                            </span>
+                          </td>
+
+                          <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                            {isCertIssued ? (
+                              <span style={{ background: '#dcfce7', color: '#15803d', padding: '4px 10px', borderRadius: '12px', fontSize: '0.74rem', fontWeight: 800, border: '1px solid #86efac' }}>
+                                ✓ जारी (Issued)
+                              </span>
+                            ) : (
+                              <span style={{ background: '#fef3c7', color: '#92400e', padding: '4px 10px', borderRadius: '12px', fontSize: '0.74rem', fontWeight: 800, border: '1px solid #fde68a' }}>
+                                ⏳ अप्रकाशित (Pending)
+                              </span>
+                            )}
+                          </td>
+
+                          <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                              <button
+                                onClick={() => setPreviewCertRunner(row)}
+                                style={{
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  background: '#f1f5f9',
+                                  border: '1px solid #cbd5e1',
+                                  cursor: 'pointer',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 700,
+                                  color: '#0f172a'
+                                }}
+                                title="प्रमाण पत्र प्रिव्यू"
+                              >
+                                👁️ देखें
+                              </button>
+                              <button
+                                onClick={() => handleResendSingleCert(row)}
+                                style={{
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  background: '#e0f2fe',
+                                  border: '1px solid #bae6fd',
+                                  cursor: 'pointer',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 700,
+                                  color: '#0369a1'
+                                }}
+                                title="SMS एवं सूचना पुनः भेजें"
+                              >
+                                📩 SMS
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-        </div>
+          {/* Certificate Preview Modal */}
+          {previewCertRunner && (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(10, 28, 61, 0.75)',
+              zIndex: 99999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '20px'
+            }}>
+              <div style={{
+                background: '#ffffff',
+                borderRadius: '10px',
+                maxWidth: '780px',
+                width: '100%',
+                maxHeight: '92vh',
+                overflowY: 'auto',
+                padding: '24px',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+                position: 'relative'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <div style={{ fontWeight: 800, fontSize: '1rem', color: '#0a1c3d' }}>
+                    प्रमाण पत्र आधिकारिक प्रिव्यू • {previewCertRunner.fullName} ({previewCertRunner.bibNumber})
+                  </div>
+                  <button
+                    onClick={() => setPreviewCertRunner(null)}
+                    style={{
+                      background: '#f1f5f9',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: '32px',
+                      height: '32px',
+                      cursor: 'pointer',
+                      fontWeight: 800,
+                      color: '#475569'
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
 
+                {/* Rendered Certificate Card inside Modal */}
+                <div style={{
+                  background: '#fafbfc',
+                  border: '8px double #d4af37',
+                  borderRadius: '6px',
+                  padding: '28px 24px',
+                  color: '#0a1c3d',
+                  textAlign: 'center',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  {/* Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #d4af37', paddingBottom: '10px', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', textAlign: 'left' }}>
+                      <PoliceEmblem size={44} />
+                      <div>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase' }}>
+                          GOVERNMENT OF RAJASTHAN
+                        </div>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0a1c3d' }}>
+                          RAJASTHAN POLICE
+                        </div>
+                        <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700 }}>
+                          {(previewCertRunner.category?.includes('21k') || previewCertRunner.category?.includes('10k'))
+                            ? 'Statewide Flagship Half Marathon'
+                            : `जिला पुलिस • ${previewCertRunner.districtName || 'Rajasthan Police'}`}
+                        </div>
+                      </div>
+                    </div>
+                    <RunForHerBadge size={40} />
+                  </div>
+
+                  {/* Title & Presented To */}
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#0a1c3d' }}>
+                    CERTIFICATE OF ACCOMPLISHMENT
+                  </div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase', marginBottom: '14px' }}>
+                    Women's Safety, Dignity & Empowerment Movement
+                  </div>
+
+                  <div style={{ fontSize: '0.78rem', color: '#64748b', fontStyle: 'italic', marginBottom: '4px' }}>
+                    This official certificate is proudly awarded to
+                  </div>
+                  <div style={{
+                    fontSize: '1.45rem',
+                    fontWeight: 900,
+                    color: '#0a1c3d',
+                    borderBottom: '2px solid #0a1c3d',
+                    display: 'inline-block',
+                    padding: '0 20px 2px 20px',
+                    marginBottom: '12px'
+                  }}>
+                    {previewCertRunner.fullName}
+                  </div>
+
+                  <p style={{ fontSize: '0.8rem', color: '#334155', maxWidth: '520px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
+                    {(previewCertRunner.category?.includes('21k') || previewCertRunner.category?.includes('10k')) ? (
+                      <>For successfully completing the <strong>{previewCertRunner.categoryName || '21 KM Half Marathon'}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Her Safety."</em></>
+                    ) : (
+                      <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{previewCertRunner.categoryName || '5 KM Community Run'}</strong> in <strong>{previewCertRunner.districtName || 'Rajasthan'}</strong> under the leadership of the District Police on the motto <em>"Every Step for Her Safety."</em></>
+                    )}
+                  </p>
+
+                  {/* Badges / Metrics */}
+                  {(previewCertRunner.category?.includes('21k') || previewCertRunner.category?.includes('10k')) ? (
+                    <div style={{
+                      background: '#f1f5f9',
+                      borderRadius: '6px',
+                      padding: '8px 12px',
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(5, 1fr)',
+                      gap: '6px',
+                      marginBottom: '18px'
+                    }}>
+                      <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>BIB NUMBER</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#dc2626' }}>{previewCertRunner.bibNumber}</div></div>
+                      <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>GUN TIME</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{previewCertRunner.finishTime || '00:48:32'}</div></div>
+                      <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>CHIP TIME</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>00:47:15</div></div>
+                      <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>AVG PACE</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>4:43 min/km</div></div>
+                      <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>RANK</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#047857' }}>Finisher</div></div>
+                    </div>
+                  ) : (
+                    <div style={{
+                      background: '#f8fafc',
+                      border: '1px solid #d4af37',
+                      borderRadius: '6px',
+                      padding: '10px 14px',
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(3, 1fr)',
+                      gap: '8px',
+                      marginBottom: '18px'
+                    }}>
+                      <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>BIB NUMBER</div><div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626', fontFamily: 'monospace' }}>{previewCertRunner.bibNumber}</div></div>
+                      <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>POLICE DISTRICT</div><div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0a1c3d' }}>{previewCertRunner.districtName || 'जिला पुलिस'}</div></div>
+                      <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>DESIGNATION</div><div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#047857' }}>Women Safety Ambassador</div></div>
+                    </div>
+                  )}
+
+                  {/* Signatures */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid #cbd5e1', paddingTop: '12px' }}>
+                    <div style={{ textAlign: 'center', minWidth: '140px' }}>
+                      <div style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: '1.05rem', color: '#0a1c3d', fontWeight: 700 }}>
+                        {(previewCertRunner.category?.includes('21k') || previewCertRunner.category?.includes('10k')) ? 'Rajeev Sharma, IPS' : 'Superintendent of Police'}
+                      </div>
+                      <div style={{ height: '1.5px', background: '#0a1c3d', width: '120px', margin: '2px auto' }}></div>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0a1c3d' }}>
+                        {(previewCertRunner.category?.includes('21k') || previewCertRunner.category?.includes('10k')) ? 'DIRECTOR GENERAL OF POLICE' : 'SUPERINTENDENT OF POLICE (SP / DCP)'}
+                      </div>
+                      <div style={{ fontSize: '0.58rem', color: '#64748b' }}>
+                        {(previewCertRunner.category?.includes('21k') || previewCertRunner.category?.includes('10k')) ? 'Rajasthan, Jaipur' : `${previewCertRunner.districtName || 'District Police'}, Rajasthan`}
+                      </div>
+                    </div>
+
+                    <OfficialGoldSeal size={56} />
+
+                    <div style={{ textAlign: 'center', fontSize: '0.62rem', color: '#0a1c3d' }}>
+                      <div style={{ fontFamily: 'monospace', fontWeight: 800 }}>{previewCertRunner.certificateId || 'RJ-POL-2027-SAMPLE'}</div>
+                      <div style={{ color: '#16a34a', fontWeight: 700 }}>✓ Digitally Verified</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '16px', textAlign: 'right' }}>
+                  <button
+                    onClick={() => setPreviewCertRunner(null)}
+                    className="btn-navy"
+                    style={{ padding: '8px 18px', fontSize: '0.85rem' }}
+                  >
+                    बंद करें (Close)
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
 

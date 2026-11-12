@@ -339,3 +339,36 @@ export async function apiGetVolunteerScans(counterId = "") {
     return { success: false, scans: [], stats: null };
   }
 }
+
+export async function apiGetCertificateStats(district = "") {
+  try {
+    const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
+    const url = district ? `${API_BASE}/admin/certificates/stats?district=${encodeURIComponent(district)}` : `${API_BASE}/admin/certificates/stats`;
+    const res = await fetch(url, {
+      headers: token ? { "Authorization": `Bearer ${token}` } : {}
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiGetCertificateStats error:", err);
+    return { success: false, error: "प्रमाण पत्र सांख्यिकी प्राप्त करने में त्रुटि।" };
+  }
+}
+
+export async function apiBatchGenerateCertificates(payload) {
+  try {
+    const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
+    const res = await fetch(`${API_BASE}/admin/certificates/batch-generate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiBatchGenerateCertificates error:", err);
+    return { success: false, error: "प्रमाण पत्र जारी करने में त्रुटि।" };
+  }
+}
+

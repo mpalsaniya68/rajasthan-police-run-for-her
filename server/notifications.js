@@ -72,19 +72,44 @@ export async function sendRegistrationNotification(participant) {
 }
 
 /**
- * Dispatch Finisher Certificate Announcement Notification
+ * Dispatch Finisher Certificate Announcement Notification (SMS & Email)
+ * Distinct drafts for District Awareness Run (SP Level) vs Jaipur Flagship (PHQ / DGP Level)
  */
 export async function sendCertificateNotification(runner) {
-  const { mobile, certificateId, finishTime, categoryName } = runner;
-  const msg = `बधाई! आपने राजस्थान पुलिस मैराथन (${categoryName}) आधिकारिक समय ${finishTime} में पूर्ण की है। आपका पुलिस प्रमाण पत्र डाउनलोड हेतु उपलब्ध है: https://police.rajasthan.gov.in/cert/${certificateId}`;
+  const {
+    fullName = "धावक",
+    mobile = "",
+    email = "",
+    certificateId = "",
+    finishTime = "",
+    categoryName = "5 KM Community Run",
+    districtName = "राजस्थान पुलिस",
+    isJaipurTimed = false
+  } = runner;
+
+  let smsText = "";
+  let emailSubject = "";
+  let emailBody = "";
+
+  if (isJaipurTimed && finishTime) {
+    // PHQ / Jaipur Flagship Timed Half Marathon
+    smsText = `राजस्थान पुलिस हाफ मैराथन 2027: प्रिय ${fullName}, आपने 'रन फॉर हर' (${categoryName}) आधिकारिक समय ${finishTime} में पूर्ण की है। पुलिस महानिदेशक (DGP), राजस्थान द्वारा अधिकृत डिजिटल प्रमाण पत्र डाउनलोड करें: https://police.rajasthan.gov.in/cert/${certificateId} — राजस्थान पुलिस`;
+    emailSubject = `आधिकारिक फिनिशर प्रमाण पत्र | राजस्थान पुलिस हाफ मैराथन 2027 (${categoryName})`;
+    emailBody = `प्रिय ${fullName},\n\nहार्दिक बधाई! राजस्थान पुलिस हाफ मैराथन 2027 'रन फॉर हर' में आपने ${categoryName} दौड़ आधिकारिक समय ${finishTime} में सफलतापूर्वक पूर्ण की है।\n\nपुलिस महानिदेशक (DGP) राजस्थान द्वारा अधिकृत आपका डिजिटल प्रमाण पत्र पोर्टल पर जारी कर दिया गया है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\nराजस्थान पुलिस परिवार आपकी खेल भावना और नारी सुरक्षा संकल्प को सलाम करता है।\n\nकार्यालय महानिदेशक पुलिस, राजस्थान, जयपुर।`;
+  } else {
+    // District / SP Level Awareness Run
+    smsText = `राजस्थान पुलिस 'रन फॉर हर': प्रिय ${fullName}, ${districtName} में नारी सुरक्षा व सम्मान दौड़ में आपकी सहभागिता का आधिकारिक डिजिटल प्रमाण पत्र जारी हो चुका है। डाउनलोड: https://police.rajasthan.gov.in/cert/${certificateId} — पुलिस अधीक्षक कार्यालय`;
+    emailSubject = `अधिकृत सहभागिता प्रमाण पत्र | रन फॉर हर - राजस्थान पुलिस (${districtName})`;
+    emailBody = `प्रिय ${fullName},\n\n'रन फॉर हर' - महिला सुरक्षा, सम्मान एवं सशक्तिकरण के राज्यव्यापी जन-जागरूकता अभियान में ${districtName} से सक्रिय सहभागिता के लिए राजस्थान पुलिस आपका हार्दिक आभार व्यक्त करती है।\n\nजिला पुलिस अधीक्षक (SP) द्वारा अधिकृत आपका डिजिटल सहभागिता प्रमाण पत्र पोर्टल पर उपलब्ध है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\n"हर कदम उसकी सुरक्षा के लिए"\nकार्यालय जिला पुलिस अधीक्षक, ${districtName}।`;
+  }
 
   try {
     await db.execute({
       sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
       args: [
         "CERT_DISPATCHER",
-        "CERTIFICATE_SENT",
-        `Cert: ${certificateId}, To: ${mobile}`,
+        "CERTIFICATE_NOTIFY_SENT",
+        `Cert: ${certificateId}, To: ${mobile}${email ? ` [${email}]` : ''}, Dist: ${districtName}, Timed: ${isJaipurTimed ? 'YES' : 'NO'}`,
         "127.0.0.1",
         new Date().toISOString()
       ]
@@ -93,6 +118,29 @@ export async function sendCertificateNotification(runner) {
 
   return {
     success: true,
-    message: msg
+    smsText,
+    emailSubject,
+    emailBody
   };
+}
+
+/**
+ * Async Batch Queue Dispatcher for 1-Click Mass Certificate Release
+ */
+export async function batchDispatchCertificateNotifications(runners = []) {
+  if (!runners.length) return { processed: 0 };
+  
+  // Non-blocking background worker execution
+  setImmediate(async () => {
+    try {
+      for (let i = 0; i < runners.length; i += 25) {
+        const chunk = runners.slice(i, i + 25);
+        await Promise.all(chunk.map(r => sendCertificateNotification(r)));
+      }
+    } catch (err) {
+      console.error("[Batch Notification Queue Error]:", err);
+    }
+  });
+
+  return { processed: runners.length, queued: true };
 }

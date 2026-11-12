@@ -137,6 +137,21 @@ export async function initDatabase() {
     try {
       await db.execute("ALTER TABLE participants ADD COLUMN id_hash TEXT DEFAULT '';");
     } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN gate_entered INTEGER DEFAULT 0;");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN gate_entry_time TEXT;");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN certificate_issued INTEGER DEFAULT 0;");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN certificate_issued_at TEXT;");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN cert_template_type TEXT DEFAULT 'DISTRICT';");
+    } catch (e) {}
 
     // Enforce T-shirt size = 'N/A' for all non-Jaipur districts in database
     try {
@@ -320,6 +335,50 @@ export async function initDatabase() {
 async function seedInitialParticipants() {
   const samples = [
     {
+      id: "P-1005",
+      bib: "RJ-21K-1005",
+      name: "मदन (Madan)",
+      gender: "male",
+      dob: "1992-05-10",
+      mobile: "9829000001",
+      masked: "XXXXXX0001",
+      emergency: "9829099887",
+      relation: "परिवार (Family)",
+      blood: "B+",
+      catId: "21k",
+      catName: "21 KM Half Marathon",
+      distId: "jaipur_comm",
+      distName: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+      tshirt: "L",
+      certId: "RJ-POL-2027-5B2A2F",
+      status: "FINISHED",
+      overallRank: 5,
+      genderRank: 4,
+      finishTime: "01:34:20"
+    },
+    {
+      id: "P-3042",
+      bib: "RJ-05K-3042",
+      name: "कविता मीणा (Kavita Meena)",
+      gender: "female",
+      dob: "1998-07-14",
+      mobile: "9414000002",
+      masked: "XXXXXX0002",
+      emergency: "9414099887",
+      relation: "अभिभावक (Guardian)",
+      blood: "O+",
+      catId: "5k",
+      catName: "5 KM Community Run",
+      distId: "alwar",
+      distName: "अलवर पुलिस",
+      tshirt: "N/A",
+      certId: "RJ-POL-2027-3042",
+      status: "FINISHED",
+      overallRank: 12,
+      genderRank: 5,
+      finishTime: "00:24:10"
+    },
+    {
       id: "P-1048",
       bib: "RJ-21K-1048",
       name: "पूजा चौधरी (Pooja Choudhary)",
@@ -442,6 +501,15 @@ async function seedInitialParticipants() {
       args: [sc.bib, sc.cp, sc.name, sc.km, sc.time, sc.el, sc.pace, sc.speed, new Date().toISOString()]
     });
   }
+
+  // Ensure sample demo participants have certificate_issued = 1 and gate_entered = 1
+  try {
+    await db.execute(`
+      UPDATE participants 
+      SET certificate_issued = 1, gate_entered = 1, certificate_issued_at = COALESCE(certificate_issued_at, created_at)
+      WHERE bib_number IN ('RJ-21K-1005', 'RJ-10K-2018', 'RJ-05K-3042', 'RJ-05K-9901', 'RJ-21K-1048', 'RJ-10K-3419', 'RJ-05K-7714');
+    `);
+  } catch (e) {}
 
   console.log(`[DB] Seeded initial participant & timing records.`);
 }
