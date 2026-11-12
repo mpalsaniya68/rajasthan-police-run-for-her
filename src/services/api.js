@@ -81,6 +81,48 @@ export async function apiTrackRunner(query) {
   }
 }
 
+export async function apiSearchPass(query) {
+  try {
+    const res = await fetch(`${API_BASE}/pass/search`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiSearchPass error:", err);
+    return { success: false, error: "ई-पास सर्वर से कनेक्ट नहीं हो सका।" };
+  }
+}
+
+export async function apiSendPassOtp(passId, query) {
+  try {
+    const res = await fetch(`${API_BASE}/pass/send-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ passId, query })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiSendPassOtp error:", err);
+    return { success: false, error: "OTP प्रेषित करने में त्रुटि हुई।" };
+  }
+}
+
+export async function apiVerifyPassOtp(passId, query, otp) {
+  try {
+    const res = await fetch(`${API_BASE}/pass/verify-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ passId, query, otp })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiVerifyPassOtp error:", err);
+    return { success: false, error: "OTP सत्यापन में त्रुटि हुई।" };
+  }
+}
+
 export async function apiSimulateScan(scanData) {
   try {
     const res = await fetch(`${API_BASE}/tracking/scan`, {

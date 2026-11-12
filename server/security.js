@@ -79,6 +79,27 @@ export function maskIdNumber(idType, idNumber) {
 }
 
 /**
+ * 2c. Name Masking for Public E-Pass Lookup Privacy
+ * e.g. "Madan Palsaniya" -> "M***N P******YA"
+ */
+export function maskName(fullName) {
+  if (!fullName || typeof fullName !== "string") return "D*****K";
+  return fullName
+    .trim()
+    .split(/\s+/)
+    .map(word => {
+      if (word.length <= 2) return word[0].toUpperCase() + "*";
+      if (word.length === 3) return word[0].toUpperCase() + "*" + word[2].toUpperCase();
+      const keepEnd = word.length > 5 ? 2 : 1;
+      const start = word.slice(0, 1).toUpperCase();
+      const end = word.slice(-keepEnd).toUpperCase();
+      const stars = "*".repeat(Math.max(3, word.length - 1 - keepEnd));
+      return `${start}${stars}${end}`;
+    })
+    .join(" ");
+}
+
+/**
  * 2b. Cryptographic One-Way Salted Hash for Govt Photo IDs (DPDP Act Compliance)
  * Ensures duplicate check without storing raw Aadhaar in plaintext.
  */

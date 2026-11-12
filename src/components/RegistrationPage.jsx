@@ -12,13 +12,16 @@ import {
   FileText,
   Shield,
   Eye,
-  EyeOff
+  EyeOff,
+  Lock,
+  Unlock,
+  KeyRound
 } from 'lucide-react';
 import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS, INITIAL_REGISTRATIONS } from '../data/mockData';
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
 import confetti from 'canvas-confetti';
 import QRCode from 'qrcode';
-import { apiRegister, apiTrackRunner, apiSendOtp, apiVerifyOtp } from '../services/api';
+import { apiRegister, apiTrackRunner, apiSendOtp, apiVerifyOtp, apiSearchPass, apiSendPassOtp, apiVerifyPassOtp } from '../services/api';
 import { GovPaymentModal } from './GovPaymentModal';
 
 const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
@@ -107,79 +110,100 @@ export function RegistrationPage({
   const [findResults, setFindResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [isFinding, setIsFinding] = useState(false);
+  const [findSearchError, setFindSearchError] = useState("");
+
+  // OTP Unlocking States for Existing E-Pass
+  const [selectedPassToUnlock, setSelectedPassToUnlock] = useState(null);
+  const [passOtpSent, setPassOtpSent] = useState(false);
+  const [passEnteredOtp, setPassEnteredOtp] = useState("");
+  const [passOtpTimer, setPassOtpTimer] = useState(0);
+  const [isSendingPassOtp, setIsSendingPassOtp] = useState(false);
+  const [isVerifyingPassOtp, setIsVerifyingPassOtp] = useState(false);
+  const [passOtpError, setPassOtpError] = useState("");
+  const [passOtpToast, setPassOtpToast] = useState(null);
 
   const handleFindPass = async (e) => {
     if (e) e.preventDefault();
-    const q = findQuery.trim().toLowerCase();
+    const q = findQuery.trim();
     if (!q) {
-      alert("कृपया अपना 10-अंकीय मोबाइल नंबर, बिब संख्या या प्रमाण पत्र आईडी दर्ज करें।");
+      alert("कृपया अपना 10-अंकीय मोबाइल नंबर या बिब संख्या दर्ज करें।");
       return;
     }
     setIsFinding(true);
     setHasSearched(true);
+    setFindSearchError("");
+    setFindResults([]);
+    setSelectedPassToUnlock(null);
+    setPassOtpSent(false);
+    setPassEnteredOtp("");
+    setPassOtpError("");
+    setPassOtpToast(null);
 
-    const cleanDigits = q.replace(/\D/g, "");
-
-    let savedLocal = [];
     try {
-      const stored = localStorage.getItem('rpm_registrations');
-      if (stored) savedLocal = JSON.parse(stored);
-    } catch (err) { }
+      const res = await apiSearchPass(q);
+      if (res && res.success && res.runners && res.runners.length > 0) {
+        setFindResults(res.runners);
+        setSelectedPassToUnlock(res.runners[0]);
+      } else {
+        setFindSearchError(res?.error || "दर्ज किए गए मोबाइल नंबर या बिब संख्या से कोई अधिकृत ई-पास रिकॉर्ड नहीं मिला।");
+      }
+    } catch (err) {
+      setFindSearchError("सर्वर से संपर्क नहीं हो सका। कृपया पुनः प्रयास करें।");
+    } finally {
+      setIsFinding(false);
+    }
+  };
 
-    const localPool = [...(registrations || []), ...savedLocal, ...INITIAL_REGISTRATIONS];
-    const matched = localPool.filter(r => {
-      const rMobile = (r.mobile || "").replace(/\D/g, "");
-      const matchMobile = cleanDigits.length >= 6 && (rMobile.includes(cleanDigits) || cleanDigits.includes(rMobile));
-      const matchBib = (r.bibNumber || "").toLowerCase().includes(q);
-      const matchCert = (r.certificateId || "").toLowerCase().includes(q);
-      const matchName = (r.fullName || "").toLowerCase().includes(q);
-      return matchMobile || matchBib || matchCert || matchName;
-    });
+  const handleSendPassUnlockOtp = async (passObj) => {
+    const targetPass = passObj || selectedPassToUnlock || findResults[0];
+    if (!targetPass) return;
+    setIsSendingPassOtp(true);
+    setPassOtpError("");
 
-    let apiMatches = [];
     try {
-      const res = await apiTrackRunner(q);
-      if (res && res.success && res.runner) {
-        const r = res.runner;
-        apiMatches.push({
-          id: r.id || r.bibNumber,
-          bibNumber: r.bibNumber,
-          certificateId: r.certificateId || `RPM-2027-${r.bibNumber}`,
-          fullName: r.fullName,
-          gender: r.gender,
-          age: r.age || 25,
-          mobile: r.mobile,
-          email: r.email || "runner@rajasthan.gov.in",
-          idType: r.idType || "Aadhaar",
-          idMasked: r.idMasked || "XXXX-XXXX-1048",
-          bloodGroup: r.bloodGroup || "B+",
-          medicalCondition: r.medicalCondition || "None / Fully Fit",
-          category: r.category || "21k",
-          categoryName: r.categoryName || "21 KM Half Marathon",
-          districtName: r.districtName || "जयपुर पुलिस कमिश्नरेट (Albert Hall)",
-          tshirtSize: r.tshirtSize || "M",
-          emergencyContact: r.emergencyContact || "Registered Relative"
-        });
+      const res = await apiSendPassOtp(targetPass.passId, findQuery.trim());
+      if (res && res.success) {
+        setPassOtpSent(true);
+        setPassOtpTimer(45);
+        if (res.code) {
+          setPassOtpToast({ mobile: res.maskedMobile || targetPass.maskedMobile, otp: res.code });
+          setTimeout(() => setPassOtpToast(null), 12000);
+        }
+      } else {
+        setPassOtpError(res?.error || "OTP भेजने में त्रुटि हुई।");
       }
-    } catch (err) { }
+    } catch (err) {
+      setPassOtpError("OTP सर्वर से कनेक्ट नहीं हो सका।");
+    } finally {
+      setIsSendingPassOtp(false);
+    }
+  };
 
-    const combined = [...matched, ...apiMatches];
-    const unique = [];
-    const seen = new Set();
-    for (const item of combined) {
-      const key = item.bibNumber || item.id;
-      if (!seen.has(key)) {
-        seen.add(key);
-        unique.push(item);
-      }
+  const handleVerifyPassUnlockOtp = async () => {
+    const targetPass = selectedPassToUnlock || findResults[0];
+    if (!targetPass) return;
+    const cleanOtp = passEnteredOtp.trim();
+    if (!cleanOtp || cleanOtp.length < 4) {
+      setPassOtpError("कृपया मान्य 6-अंकीय OTP दर्ज करें।");
+      return;
     }
 
-    setIsFinding(false);
-    setFindResults(unique);
+    setIsVerifyingPassOtp(true);
+    setPassOtpError("");
 
-    if (unique.length === 1) {
-      setRegisteredParticipant(unique[0]);
-      setIsSuccess(true);
+    try {
+      const res = await apiVerifyPassOtp(targetPass.passId, findQuery.trim(), cleanOtp);
+      if (res && res.success && res.participant) {
+        setRegisteredParticipant(res.participant);
+        setIsSuccess(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        setPassOtpError(res?.error || "अमान्य OTP! कृपया पंजीकृत मोबाइल पर आया सही 6-अंकीय कोड दर्ज करें।");
+      }
+    } catch (err) {
+      setPassOtpError("सत्यापन सर्वर से कनेक्ट नहीं हो सका।");
+    } finally {
+      setIsVerifyingPassOtp(false);
     }
   };
 
@@ -324,6 +348,17 @@ export function RegistrationPage({
     }
     return () => clearInterval(timerInterval);
   }, [otpTimer]);
+
+  // E-Pass Unlock OTP cooldown timer
+  useEffect(() => {
+    let timerInterval;
+    if (passOtpTimer > 0) {
+      timerInterval = setInterval(() => {
+        setPassOtpTimer(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timerInterval);
+  }, [passOtpTimer]);
 
   const handleSendOtp = async () => {
     const clean = formData.mobile.replace(/\D/g, "");
@@ -1515,81 +1550,303 @@ export function RegistrationPage({
                   background: '#fef2f2',
                   border: '1.5px solid #fecaca',
                   borderRadius: '10px',
-                  padding: '20px',
+                  padding: '24px 20px',
                   textAlign: 'center',
                   marginBottom: '20px'
                 }}>
                   <AlertCircle size={32} color="#dc2626" style={{ margin: '0 auto 8px auto', display: 'block' }} />
-                  <div style={{ fontSize: '1rem', fontWeight: 800, color: '#991b1b', marginBottom: '4px' }}>
-                    कोई पंजीकरण रिकॉर्ड नहीं मिला
+                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#991b1b', marginBottom: '4px' }}>
+                    कोई ई-पास रिकॉर्ड नहीं मिला
                   </div>
-                  <p style={{ fontSize: '0.84rem', color: '#7f1d1d', margin: '0 0 14px 0' }}>
-                    दर्ज किए गए विवरण <strong>"{findQuery}"</strong> से संबंधित कोई ई-पास नहीं मिला। कृपया नंबर की जांच करें या अभी नया पंजीकरण करें।
+                  <p style={{ fontSize: '0.86rem', color: '#7f1d1d', margin: '0 0 16px 0' }}>
+                    {findSearchError || `दर्ज किए गए विवरण "${findQuery}" से संबंधित कोई अधिकृत ई-पास नहीं मिला।`}
                   </p>
                   <button
                     onClick={() => setActiveTab('register')}
                     className="btn-primary"
-                    style={{ padding: '10px 20px', fontSize: '0.88rem' }}
+                    style={{ padding: '10px 22px', fontSize: '0.9rem', fontWeight: 800 }}
                   >
                     + नया पंजीकरण फॉर्म खोलें
                   </button>
                 </div>
               )}
 
-              {/* Multiple Results List */}
-              {findResults.length > 1 && (
-                <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '12px' }}>
-                    कुल {findResults.length} पंजीकृत ई-पास मिले (Select a Pass):
+              {/* Found Masked Records - Requires OTP to Unlock */}
+              {findResults.length > 0 && (
+                <div style={{ marginBottom: '24px' }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '14px',
+                    flexWrap: 'wrap',
+                    gap: '8px'
+                  }}>
+                    <div style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--police-navy-950)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Shield size={20} color="#047857" />
+                      <span>अधिकृत रिकॉर्ड प्राप्त हुआ (सत्यापन आवश्यक):</span>
+                    </div>
+                    <span style={{
+                      fontSize: '0.74rem',
+                      fontWeight: 800,
+                      background: '#ecfdf5',
+                      color: '#047857',
+                      border: '1px solid #a7f3d0',
+                      padding: '3px 10px',
+                      borderRadius: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}>
+                      <Lock size={12} />
+                      गोपनीयता सुरक्षित (Protected)
+                    </span>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '14px' }}>
-                    {findResults.map((r, i) => (
+
+                  {findResults.map((r, i) => {
+                    const isSelected = selectedPassToUnlock?.passId === r.passId || findResults.length === 1;
+                    return (
                       <div
-                        key={r.bibNumber || i}
+                        key={r.passId || r.bibNumber || i}
                         style={{
-                          background: 'var(--police-navy-50)',
-                          border: '1.5px solid var(--border-medium)',
-                          borderRadius: '10px',
-                          padding: '16px',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'space-between'
+                          background: '#ffffff',
+                          border: isSelected ? '2px solid #0f172a' : '1.5px solid var(--border-medium)',
+                          borderLeft: '5px solid #0f172a',
+                          borderRadius: '12px',
+                          padding: '20px 22px',
+                          marginBottom: '16px',
+                          boxShadow: '0 4px 12px rgba(15, 23, 42, 0.06)'
                         }}
                       >
-                        <div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                            <span style={{ fontSize: '0.78rem', fontWeight: 900, color: 'var(--crimson-600)', background: '#ffffff', padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--border-subtle)' }}>
-                              {r.bibNumber}
+                        {/* Header Details */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
+                          <div>
+                            <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>
+                              पंजीकृत धावक का नाम:
                             </span>
-                            <span style={{ fontSize: '0.74rem', color: '#047857', fontWeight: 800 }}>
-                              ✓ सत्यापित
-                            </span>
+                            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0f172a', letterSpacing: '0.04em', marginTop: '2px' }}>
+                              {r.maskedName}
+                            </div>
                           </div>
-                          <div style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--police-navy-950)' }}>
-                            {r.fullName}
+
+                          <span style={{
+                            fontSize: '0.85rem',
+                            fontWeight: 900,
+                            color: '#ffffff',
+                            background: '#0f172a',
+                            padding: '4px 12px',
+                            borderRadius: '6px',
+                            fontFamily: 'monospace'
+                          }}>
+                            {r.bibNumber}
+                          </span>
+                        </div>
+
+                        {/* Summary Grid */}
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                          gap: '10px',
+                          background: '#f8fafc',
+                          padding: '12px 14px',
+                          borderRadius: '8px',
+                          border: '1px solid #e2e8f0',
+                          marginBottom: '16px',
+                          fontSize: '0.84rem'
+                        }}>
+                          <div>
+                            <span style={{ color: '#64748b', fontWeight: 700 }}>पंजीकृत मोबाइल:</span>
+                            <div style={{ fontWeight: 900, color: '#0f172a', fontFamily: 'monospace', fontSize: '0.92rem' }}>
+                              {r.maskedMobile}
+                            </div>
                           </div>
-                          <div style={{ fontSize: '0.82rem', color: 'var(--text-body)', marginTop: '2px' }}>
-                            {r.categoryName || r.category}
+                          <div>
+                            <span style={{ color: '#64748b', fontWeight: 700 }}>रेस श्रेणी:</span>
+                            <div style={{ fontWeight: 800, color: '#0f172a' }}>
+                              {r.categoryName}
+                            </div>
                           </div>
-                          <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                            📍 {r.districtName || 'जयपुर पुलिस कमिश्नरेट'}
+                          <div>
+                            <span style={{ color: '#64748b', fontWeight: 700 }}>इवेंट वेन्यू / जिला:</span>
+                            <div style={{ fontWeight: 800, color: '#0f172a' }}>
+                              {r.districtName}
+                            </div>
+                          </div>
+                          <div>
+                            <span style={{ color: '#64748b', fontWeight: 700 }}>ई-पास स्थिति:</span>
+                            <div style={{ fontWeight: 800, color: '#16a34a', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <Check size={14} /> कन्फर्म्ड (सत्यापन आवश्यक)
+                            </div>
                           </div>
                         </div>
 
-                        <button
-                          onClick={() => {
-                            setRegisteredParticipant(r);
-                            setIsSuccess(true);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          className="btn-primary"
-                          style={{ marginTop: '14px', width: '100%', padding: '8px', fontSize: '0.84rem', justifyContent: 'center' }}
-                        >
-                          ई-पास देखें व प्रिंट करें &rarr;
-                        </button>
+                        {/* Privacy Advisory */}
+                        <div style={{
+                          background: '#eff6ff',
+                          border: '1px solid #bfdbfe',
+                          borderRadius: '8px',
+                          padding: '10px 14px',
+                          fontSize: '0.8rem',
+                          color: '#1e40af',
+                          marginBottom: '18px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}>
+                          <Lock size={16} color="#2563eb" style={{ flexShrink: 0 }} />
+                          <span>
+                            <strong>गोपनीयता सुरक्षा:</strong> ई-पास व QR कोड को केवल पंजीकृत धावक ही डाउनलोड कर सकते हैं। सत्यापन हेतु <strong>{r.maskedMobile}</strong> पर OTP भेजा जाएगा।
+                          </span>
+                        </div>
+
+                        {/* OTP Unlock Section */}
+                        {(!passOtpSent || selectedPassToUnlock?.passId !== r.passId) ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPassToUnlock(r);
+                              handleSendPassUnlockOtp(r);
+                            }}
+                            disabled={isSendingPassOtp}
+                            className="btn-primary"
+                            style={{
+                              width: '100%',
+                              padding: '12px 18px',
+                              fontSize: '0.94rem',
+                              fontWeight: 900,
+                              justifyContent: 'center',
+                              background: '#0f172a',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px'
+                            }}
+                          >
+                            <KeyRound size={18} />
+                            <span>{isSendingPassOtp ? "OTP भेजा जा रहा है..." : "ई-पास डाउनलोड करने हेतु OTP प्राप्त करें"}</span>
+                          </button>
+                        ) : (
+                          <div style={{
+                            background: '#ffffff',
+                            border: '1.5px solid #0f172a',
+                            borderRadius: '10px',
+                            padding: '16px',
+                            boxShadow: '0 2px 8px rgba(15, 23, 42, 0.08)'
+                          }}>
+                            {/* Demo Toast */}
+                            {passOtpToast && (
+                              <div style={{
+                                background: '#ecfdf5',
+                                border: '1px solid #86efac',
+                                borderRadius: '6px',
+                                padding: '8px 12px',
+                                marginBottom: '12px',
+                                fontSize: '0.8rem',
+                                color: '#166534',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flexWrap: 'wrap',
+                                gap: '6px'
+                              }}>
+                                <div>
+                                  📩 सैंडबॉक्स SMS: <strong>{passOtpToast.mobile}</strong> पर भेजा गया OTP:
+                                </div>
+                                <div style={{
+                                  background: '#ffffff',
+                                  border: '1px solid #22c55e',
+                                  padding: '2px 8px',
+                                  borderRadius: '4px',
+                                  fontFamily: 'monospace',
+                                  fontWeight: 900,
+                                  fontSize: '1rem',
+                                  letterSpacing: '2px',
+                                  color: '#15803d'
+                                }}>
+                                  {passOtpToast.otp}
+                                </div>
+                              </div>
+                            )}
+
+                            <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
+                              📲 पंजीकृत मोबाइल <strong>{r.maskedMobile}</strong> पर भेजा गया 6-अंकीय OTP दर्ज करें:
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                              <input
+                                type="text"
+                                maxLength={6}
+                                placeholder="• • • • • •"
+                                value={passEnteredOtp}
+                                onChange={(e) => setPassEnteredOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                style={{
+                                  flex: 1,
+                                  minWidth: '160px',
+                                  padding: '10px 14px',
+                                  borderRadius: '8px',
+                                  border: '1.5px solid #0f172a',
+                                  fontSize: '1.1rem',
+                                  fontFamily: 'monospace',
+                                  letterSpacing: '4px',
+                                  textAlign: 'center',
+                                  fontWeight: 900
+                                }}
+                              />
+
+                              <button
+                                type="button"
+                                onClick={() => handleSendPassUnlockOtp(r)}
+                                disabled={passOtpTimer > 0 || isSendingPassOtp}
+                                style={{
+                                  padding: '10px 14px',
+                                  borderRadius: '8px',
+                                  border: '1px solid #cbd5e1',
+                                  background: passOtpTimer > 0 ? '#f1f5f9' : '#ffffff',
+                                  color: passOtpTimer > 0 ? '#94a3b8' : '#0f172a',
+                                  fontSize: '0.82rem',
+                                  fontWeight: 800,
+                                  cursor: passOtpTimer > 0 ? 'not-allowed' : 'pointer',
+                                  whiteSpace: 'nowrap'
+                                }}
+                              >
+                                {passOtpTimer > 0 ? `पुनः OTP (${passOtpTimer}s)` : "पुनः OTP भेजें"}
+                              </button>
+                            </div>
+
+                            {passOtpError && (
+                              <div style={{ color: '#dc2626', fontSize: '0.8rem', fontWeight: 700, marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <AlertCircle size={14} />
+                                <span>{passOtpError}</span>
+                              </div>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={handleVerifyPassUnlockOtp}
+                              disabled={isVerifyingPassOtp || passEnteredOtp.length < 4}
+                              className="btn-primary"
+                              style={{
+                                width: '100%',
+                                padding: '12px 18px',
+                                fontSize: '0.94rem',
+                                fontWeight: 900,
+                                justifyContent: 'center',
+                                background: '#16a34a',
+                                borderColor: '#16a34a',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                cursor: (isVerifyingPassOtp || passEnteredOtp.length < 4) ? 'not-allowed' : 'pointer',
+                                opacity: (isVerifyingPassOtp || passEnteredOtp.length < 4) ? 0.7 : 1
+                              }}
+                            >
+                              <Unlock size={18} />
+                              <span>{isVerifyingPassOtp ? "सत्यापन जारी है..." : "सत्यापित करें व आधिकारिक ई-पास डाउनलोड करें"}</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
               )}
 

@@ -4,6 +4,7 @@ import {
   registrationSchema,
   bulkRegistrationSchema,
   maskMobile,
+  maskName,
   maskIdNumber,
   hashIdNumber,
   generateBibNumber,
@@ -265,6 +266,174 @@ export async function handleApiRequest(req, res) {
         success: true,
         message: "मोबाइल नंबर सफलतापूर्वक सत्यापित हुआ।",
         verificationToken: result.verificationToken
+      });
+    }
+
+    // 1d. Privacy-Protected E-Pass Search (Returns Masked Teaser Only)
+    if (pathname === "/pass/search" && (method === "POST" || method === "GET")) {
+      let q = "";
+      if (method === "POST") {
+        const body = await parseJsonBody(req);
+        q = (body.query || body.q || "").trim();
+      } else {
+        q = (parsedUrl.searchParams.get("q") || "").trim();
+      }
+
+      if (!q) {
+        return error("कृपया 10-अंकीय मोबाइल नंबर या बिब संख्या दर्ज करें।", 400);
+      }
+
+      const cleanDigits = q.replace(/\D/g, "");
+      let sql = "";
+      let args = [];
+      if (cleanDigits.length === 10) {
+        sql = "SELECT id, bib_number, full_name, mobile, masked_mobile, category_id, category_name, district_id, district_name, status FROM participants WHERE mobile = ? OR bib_number = ? OR certificate_id = ? ORDER BY created_at DESC LIMIT 5";
+        args = [cleanDigits, q.toUpperCase(), q.toUpperCase()];
+      } else {
+        sql = "SELECT id, bib_number, full_name, mobile, masked_mobile, category_id, category_name, district_id, district_name, status FROM participants WHERE bib_number = ? OR certificate_id = ? OR mobile = ? ORDER BY created_at DESC LIMIT 5";
+        args = [q.toUpperCase(), q.toUpperCase(), q];
+      }
+
+      const resRunner = await db.execute({ sql, args });
+
+      if (resRunner.rows.length === 0) {
+        return error("दर्ज किए गए मोबाइल नंबर या बिब संख्या से कोई अधिकृत ई-पास रिकॉर्ड नहीं मिला।", 404);
+      }
+
+      return json({
+        success: true,
+        found: true,
+        runners: resRunner.rows.map(r => ({
+          passId: r.id,
+          bibNumber: r.bib_number,
+          maskedName: maskName(r.full_name),
+          maskedMobile: r.masked_mobile || maskMobile(r.mobile),
+          categoryName: r.category_name,
+          districtName: r.district_name,
+          status: r.status || "CONFIRMED"
+        }))
+      });
+    }
+
+    // 1e. Send OTP to Registered Mobile for E-Pass Download
+    if (pathname === "/pass/send-otp" && method === "POST") {
+      if (otpRequestLimiter.isRateLimited(clientIp)) {
+        return error("अत्यधिक OTP अनुरोध। कृपया 1 मिनट बाद पुनः प्रयास करें।", 429);
+      }
+      const body = await parseJsonBody(req);
+      const passId = (body.passId || "").trim();
+      const query = (body.query || "").trim();
+
+      let r = null;
+      if (passId) {
+        const res = await db.execute({
+          sql: "SELECT id, mobile, masked_mobile, full_name FROM participants WHERE id = ? LIMIT 1",
+          args: [passId]
+        });
+        if (res.rows.length > 0) r = res.rows[0];
+      } else if (query) {
+        const clean = query.replace(/\D/g, "");
+        const res = await db.execute({
+          sql: "SELECT id, mobile, masked_mobile, full_name FROM participants WHERE mobile = ? OR bib_number = ? OR certificate_id = ? LIMIT 1",
+          args: [clean, query.toUpperCase(), query.toUpperCase()]
+        });
+        if (res.rows.length > 0) r = res.rows[0];
+      }
+
+      if (!r || !r.mobile) {
+        return error("धावक रिकॉर्ड नहीं मिला।", 404);
+      }
+
+      const result = otpManager.sendOtp(r.mobile);
+      if (!result.success) {
+        return error(result.message, 429);
+      }
+
+      try {
+        await db.execute({
+          sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+          args: ["CITIZEN", "SEND_PASS_OTP", `PassId: ${r.id}, Mobile: ${maskMobile(r.mobile)}`, clientIp, new Date().toISOString()]
+        });
+      } catch (e) {}
+
+      return json({
+        success: true,
+        message: `सुरक्षा OTP पंजीकृत मोबाइल ${maskMobile(r.mobile)} पर भेजा गया।`,
+        maskedMobile: maskMobile(r.mobile),
+        expiresIn: result.expiresIn,
+        code: result.code // For dev/demo testing
+      });
+    }
+
+    // 1f. Verify OTP and Unlock Full E-Pass for Download
+    if (pathname === "/pass/verify-otp" && method === "POST") {
+      const body = await parseJsonBody(req);
+      const passId = (body.passId || "").trim();
+      const query = (body.query || "").trim();
+      const otp = (body.otp || "").trim();
+
+      if (!otp) {
+        return error("कृपया 6-अंकीय OTP दर्ज करें।", 400);
+      }
+
+      let r = null;
+      if (passId) {
+        const res = await db.execute({
+          sql: "SELECT * FROM participants WHERE id = ? LIMIT 1",
+          args: [passId]
+        });
+        if (res.rows.length > 0) r = res.rows[0];
+      } else if (query) {
+        const clean = query.replace(/\D/g, "");
+        const res = await db.execute({
+          sql: "SELECT * FROM participants WHERE mobile = ? OR bib_number = ? OR certificate_id = ? LIMIT 1",
+          args: [clean, query.toUpperCase(), query.toUpperCase()]
+        });
+        if (res.rows.length > 0) r = res.rows[0];
+      }
+
+      if (!r || !r.mobile) {
+        return error("धावक रिकॉर्ड नहीं मिला।", 404);
+      }
+
+      const result = otpManager.verifyOtp(r.mobile, otp);
+      if (!result.success) {
+        return error(result.message, 400);
+      }
+
+      try {
+        await db.execute({
+          sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+          args: ["CITIZEN", "UNLOCK_PASS_SUCCESS", `Bib: ${r.bib_number}`, clientIp, new Date().toISOString()]
+        });
+      } catch (e) {}
+
+      return json({
+        success: true,
+        message: "सत्यापन सफल! ई-पास अनलॉक हो चुका है।",
+        participant: {
+          id: r.id,
+          bibNumber: r.bib_number,
+          certificateId: r.certificate_id,
+          fullName: r.full_name,
+          gender: r.gender,
+          dob: r.dob,
+          mobile: r.mobile,
+          email: r.email,
+          idType: r.id_type || "Aadhaar",
+          idMasked: r.id_masked || (r.id_last4 ? `XXXX-XXXX-${r.id_last4}` : 'XXXX-XXXX-1048'),
+          bloodGroup: r.blood_group || "B+",
+          medicalCondition: r.medical_condition || "None / Fully Fit",
+          medicalNotes: r.medical_notes || "",
+          category: r.category_id,
+          categoryName: r.category_name,
+          districtName: r.district_name,
+          tshirtSize: r.tshirt_size || "M",
+          emergencyContact: `${r.emergency_contact || 'N/A'} (${r.emergency_relation || 'Guardian'})`,
+          registeredAt: r.created_at,
+          bibCollected: r.kit_collected === 1 || r.status === "COLLECTED",
+          isCompleted: r.status === "COMPLETED"
+        }
       });
     }
 
