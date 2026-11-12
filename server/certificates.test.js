@@ -99,3 +99,4 @@ test("admin certificate stats and 1-click batch generation endpoint works seamle
   assert.ok(genData.count >= 1);
   assert.ok(genData.message.includes("सफलतापूर्वक जारी"));
 });
+

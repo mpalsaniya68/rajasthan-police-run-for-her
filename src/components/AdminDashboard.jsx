@@ -8,7 +8,7 @@ import {
 
   Zap, RefreshCw, ArrowLeft,
 
-  PackageCheck, Trophy, QrCode, Users, Award, Eye, Mail, Check
+  PackageCheck, Trophy, QrCode, Users, Award, Eye, Mail, Check, HeartPulse
 
 } from 'lucide-react';
 

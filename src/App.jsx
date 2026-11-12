@@ -58,9 +58,19 @@ class ErrorBoundary extends React.Component {
             <p style={{ color: '#475569', fontSize: '0.88rem', marginBottom: '18px' }}>
               कृपया पुनः प्रयास करें अथवा मुख्य पृष्ठ पर जाएं।
             </p>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-              <button onClick={() => window.location.reload()} style={{ background: '#0b3a75', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: 700 }}>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button onClick={() => window.location.reload()} style={{ background: '#0b3a75', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem' }}>
                 पेज रिफ्रेश करें
+              </button>
+              <button 
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  window.location.hash = '';
+                  window.location.href = '/';
+                }} 
+                style={{ background: '#f1f5f9', color: '#1e293b', border: '1px solid #cbd5e1', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem' }}
+              >
+                🏠 मुख्य पृष्ठ पर जाएं
               </button>
             </div>
           </div>
