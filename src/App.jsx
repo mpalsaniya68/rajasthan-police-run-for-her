@@ -31,6 +31,7 @@ import { AdminLoginPage } from './components/AdminLoginPage';
 import { ExpoScannerTerminal } from './components/ExpoScannerTerminal';
 
 import { PatronDesk } from './components/PatronDesk';
+import { PrizePodiumSection } from './components/PrizePodiumSection';
 
 import { RegistrationPage } from './components/RegistrationPage';
 
@@ -359,6 +360,14 @@ export default function App() {
               onNavigate={navigateToPage}
 
               totalRegistered={registrations.length + 18450}
+
+            />
+
+            <PrizePodiumSection
+
+              onOpenRegister={() => navigateToPage('register')}
+
+              onNavigate={navigateToPage}
 
             />
 

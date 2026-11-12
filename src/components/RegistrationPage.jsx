@@ -1779,21 +1779,59 @@ export function RegistrationPage({
                             <div style={{ fontWeight: 900, fontSize: '1.02rem', color: 'var(--police-navy-950)', margin: '4px 0' }}>
                               {cat.name}
                             </div>
-                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '10px', lineHeight: 1.4 }}>
-                              {cat.desc}
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '8px', lineHeight: 1.4 }}>
+                              {cat.desc || cat.description}
                             </div>
                           </div>
+
+                          {/* Flagship Prize Money or Perks Badge (ONLY for Jaipur) */}
+                          {venueType === "jaipur" && cat.prizes && (
+                            <div style={{
+                              marginBottom: '8px',
+                              padding: '6px 8px',
+                              background: '#fefce8',
+                              border: '1px solid #fde047',
+                              borderRadius: '6px',
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                              color: '#854d0e',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}>
+                              <span>🏆 1st: {cat.prizes[0].amount} • 2nd: {cat.prizes[1].amount} • 3rd: {cat.prizes[2].amount}</span>
+                            </div>
+                          )}
+
+                          {venueType === "jaipur" && cat.highlightPerks && (
+                            <div style={{
+                              marginBottom: '8px',
+                              padding: '5px 8px',
+                              background: '#f0fdf4',
+                              border: '1px solid #bbf7d0',
+                              borderRadius: '6px',
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                              color: '#166534',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}>
+                              <span>🎁 मेडल 🥇 • टी-शर्ट 👕 • रिफ्रेशमेंट्स 🥪</span>
+                            </div>
+                          )}
+
                           <div style={{
                             fontSize: '0.74rem',
                             fontWeight: 700,
                             padding: '3px 8px',
                             borderRadius: '4px',
-                            background: cat.timingChip ? '#f1f5f9' : '#f8fafc',
-                            color: 'var(--police-navy-900)',
+                            background: cat.id === '21k' || cat.id === '10k' ? '#eff6ff' : '#f8fafc',
+                            color: cat.id === '21k' || cat.id === '10k' ? '#1d4ed8' : 'var(--police-navy-900)',
                             border: '1px solid var(--border-subtle)',
                             display: 'inline-block'
                           }}>
-                            {cat.timingChip ? 'RFID टाइमिंग चिप युक्त' : 'कम्युनिटी रन'}
+                            {cat.id === '21k' || cat.id === '10k' ? '⚡ RFID टाइमिंग चिप युक्त' : cat.id === 'inclusive' ? '♿ सुलभ अडैप्टेड ट्रैक' : '👥 कम्युनिटी रन'}
                           </div>
                           <div style={{
                             display: 'flex',
@@ -1805,7 +1843,7 @@ export function RegistrationPage({
                           }}>
                             <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>निर्धारित शुल्क:</span>
                             <span style={{ fontSize: '1rem', fontWeight: 900, color: '#0a1c3d' }}>
-                              {cat.id === '21k' ? '₹499' : cat.id === '10k' ? '₹399' : '₹199'}
+                              {cat.fee || (cat.id === '21k' ? '₹499' : cat.id === '10k' ? '₹399' : '₹199')}
                             </span>
                           </div>
                         </div>

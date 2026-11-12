@@ -11,7 +11,20 @@ export const RACE_CATEGORIES = [
     cutOffTime: "3 घंटे 30 मिनट (सुबह 09:30 AM)",
     reporting: "05:00 AM",
     description: "The premier competitive endurance run for seasoned marathoners, police personnel, and serious athletes.",
-    perks: ["RFID Timing Chip", "Official Finisher Medal", "Dry-Fit Running T-Shirt", "DGP Signed Timing Certificate", "Hot Breakfast & Energy Hydration"],
+    prizes: [
+      { rank: "1st", amount: "₹21,000", trophy: "🥇", label: "प्रथम" },
+      { rank: "2nd", amount: "₹11,000", trophy: "🥈", label: "द्वितीय" },
+      { rank: "3rd", amount: "₹5,100", trophy: "🥉", label: "तृतीय" }
+    ],
+    totalPrize: "₹37,100",
+    prizeNote: "नकद पुरस्कार केवल जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल) ओपन पोडियम हेतु लागू है।",
+    perks: [
+      "RFID Timing Chip Bib",
+      "आधिकारिक फिनिशर मेडल 🥇",
+      "ड्राई-फिट रनिंग टी-शर्ट 👕",
+      "DGP हस्ताक्षरित ई-सर्टिफिकेट",
+      "एनर्जी रिफ्रेशमेंट्स व ब्रेकफास्ट 🥪"
+    ],
     fee: "₹499",
     color: "#ff2e63",
     iconName: "Zap"
@@ -26,7 +39,20 @@ export const RACE_CATEGORIES = [
     cutOffTime: "1 घंटा 45 मिनट (सुबह 08:00 AM)",
     reporting: "05:15 AM",
     description: "High-energy timed course designed for intermediate runners, university athletes, and enthusiastic youth.",
-    perks: ["RFID Timing Chip", "Finisher Medal", "Official Event T-Shirt", "E-Certificate with Net Time", "Hydration & Energy Fuel"],
+    prizes: [
+      { rank: "1st", amount: "₹11,000", trophy: "🥇", label: "प्रथम" },
+      { rank: "2nd", amount: "₹5,100", trophy: "🥈", label: "द्वितीय" },
+      { rank: "3rd", amount: "₹2,100", trophy: "🥉", label: "तृतीय" }
+    ],
+    totalPrize: "₹18,200",
+    prizeNote: "नकद पुरस्कार केवल जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल) ओपन पोडियम हेतु लागू है।",
+    perks: [
+      "RFID Timing Chip Bib",
+      "आधिकारिक फिनिशर मेडल 🥇",
+      "ड्राई-फिट रनिंग टी-शर्ट 👕",
+      "नेट टाइमिंग ई-प्रमाण पत्र",
+      "एनर्जी रिफ्रेशमेंट्स व हाइड्रेशन 🥪"
+    ],
     fee: "₹399",
     color: "#d4af37",
     iconName: "Flame"
@@ -41,7 +67,14 @@ export const RACE_CATEGORIES = [
     cutOffTime: "1 घंटा (सुबह 07:45 AM)",
     reporting: "05:30 AM",
     description: "The flagship mass awareness run happening simultaneously in Jaipur and all 41 Rajasthan Police Districts and Commissionerates.",
-    perks: ["Finisher Commemorative Medal", "Event T-Shirt", "Participation Certificate", "Women's Safety Awareness Kit", "Post-Run Refreshments"],
+    highlightPerks: ["मेडल 🥇", "टी-शर्ट 👕", "रिफ्रेशमेंट्स 🥪"],
+    perks: [
+      "आधिकारिक फिनिशर मेडल 🥇",
+      "ड्राई-फिट रनिंग टी-शर्ट 👕",
+      "पोस्ट-रन न्यूट्रिशन रिफ्रेशमेंट्स 🥪",
+      "डिजिटल सहभागिता ई-प्रमाण पत्र",
+      "महिला सुरक्षा जागरूकता किट"
+    ],
     fee: "₹199",
     color: "#00d2d3",
     iconName: "Users"
@@ -56,21 +89,36 @@ export const RACE_CATEGORIES = [
     cutOffTime: "45 मिनट (सुबह 08:00 AM)",
     reporting: "06:00 AM",
     description: "A joyful, celebratory walk/jog welcoming children, families, elders, and citizens pledging for women's dignity.",
-    perks: ["Participation Ribbon/Medal", "Official 'Run for Her' Cap/Badge", "Digital Certificate", "Refreshments & Celebration"],
+    highlightPerks: ["मेडल 🥇", "टी-शर्ट 👕", "रिफ्रेशमेंट्स 🥪"],
+    perks: [
+      "सहभागिता मेडल 🥇",
+      "इवेंट टी-शर्ट 👕",
+      "पोस्ट-वॉक रिफ्रेशमेंट्स 🥪",
+      "डिजिटल सहभागिता प्रमाण पत्र",
+      "'Run for Her' कैप व बैज"
+    ],
     fee: "₹199",
     color: "#10ac84",
     iconName: "HeartHandshake"
   },
   {
     id: "inclusive",
-    name: "Inclusive & Champions Run",
+    name: "Adapted Course (Inclusive & Champions Run)",
     badge: "Accessible Route",
     distance: "Adapted Course",
     minAge: 8,
     flagOff: "07:00 AM",
+    cutOffTime: "1 घंटा (सुबह 08:00 AM)",
     reporting: "05:45 AM",
     description: "Specially dedicated adapted category for differently-abled athletes and senior citizens with volunteer escort support.",
-    perks: ["Special Finisher Trophy/Medal", "Custom Assisted Care", "T-Shirt & Goodie Bag", "Official Recognition Certificate"],
+    highlightPerks: ["मेडल 🥇", "टी-शर्ट 👕", "रिफ्रेशमेंट्स 🥪"],
+    perks: [
+      "विशेष चैंपियंस मेडल 🥇",
+      "आधिकारिक इवेंट टी-शर्ट 👕",
+      "विशेष हाइड्रेशन व रिफ्रेशमेंट्स 🥪",
+      "असिस्टेड केयर व सपोर्ट",
+      "सम्मान ई-प्रमाण पत्र"
+    ],
     fee: "₹199",
     color: "#a55eea",
     iconName: "Sparkles"

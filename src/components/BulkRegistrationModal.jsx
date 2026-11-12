@@ -86,7 +86,7 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
             const age = parseInt(parts[2]) || 22;
 
             let rawCategory = (parts[3] || "5k").toLowerCase().replace(/[^0-9k]/g, '');
-            if (!["21k", "10k", "5k", "2k"].includes(rawCategory)) {
+            if (!["21k", "10k", "5k", "2k", "inclusive", "adapted"].includes(rawCategory)) {
               rawCategory = "5k";
             }
 
@@ -533,6 +533,7 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
                             <option value="10k">10 KM Speed Run</option>
                             <option value="5k">5 KM Community</option>
                             <option value="2k">2 KM Family Walk</option>
+                            <option value="inclusive">Adapted Course (Inclusive)</option>
                           </select>
                         </td>
                         {isJaipur && (

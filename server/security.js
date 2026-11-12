@@ -22,7 +22,7 @@ export const registrationSchema = z.object({
   hasMedicalIssue: z.boolean().optional().default(false),
   medicalCondition: z.string().max(200).optional().default(""),
   medicalNotes: z.string().max(300).optional().default(""),
-  categoryId: z.enum(["21k", "10k", "5k", "3k", "2k"]),
+  categoryId: z.enum(["21k", "10k", "5k", "3k", "2k", "inclusive", "adapted"]),
   districtId: z.string().min(2).max(50),
   tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL", "N/A"]).default("N/A"),
   idType: z.enum(["Aadhaar", "PAN", "Voter ID"]).default("Aadhaar"),
@@ -105,6 +105,9 @@ export function generateBibNumber(categoryId, counter) {
       return `RJ-03K-${pad}`;
     case "2k":
       return `RJ-02K-${pad}`;
+    case "inclusive":
+    case "adapted":
+      return `RJ-INC-${pad}`;
     default:
       return `RJ-GEN-${pad}`;
   }
