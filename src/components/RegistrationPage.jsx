@@ -2197,16 +2197,9 @@ export function RegistrationPage({
 
                   {/* Photo ID Number */}
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                      <label style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', margin: 0 }}>
-                        {formData.idType === "Aadhaar" ? "आधार कार्ड संख्या" : formData.idType === "PAN" ? "पैन कार्ड संख्या" : "मतदाता पहचान पत्र संख्या"} <span style={{ color: '#ef4444' }}>*</span>:
-                      </label>
-                      {formData.idType === "Aadhaar" && formData.idNumber && (
-                        <span style={{ fontSize: '0.74rem', color: formData.idNumber.length === 12 ? '#16a34a' : '#64748b', fontWeight: 700 }}>
-                          {formData.idNumber.length}/12 अंक {formData.idNumber.length === 12 ? '✓' : ''}
-                        </span>
-                      )}
-                    </div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                      {formData.idType === "Aadhaar" ? "आधार कार्ड संख्या" : formData.idType === "PAN" ? "पैन कार्ड संख्या" : "मतदाता पहचान पत्र संख्या"} <span style={{ color: '#ef4444' }}>*</span>:
+                    </label>
 
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                       <input
@@ -2267,25 +2260,6 @@ export function RegistrationPage({
                         </button>
                       )}
                     </div>
-
-                    {formData.idType === "Aadhaar" && (
-                      <div style={{
-                        fontSize: '0.73rem',
-                        color: '#047857',
-                        marginTop: '6px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        fontWeight: 600,
-                        background: '#f0fdf4',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        border: '1px solid #bbf7d0'
-                      }}>
-                        <Shield size={13} color="#059669" style={{ flexShrink: 0 }} />
-                        <span>सुरक्षा गोपनीयता: पहले 8 अंक मास्क (XXXX) हैं, केवल अंतिम 4 अंक दिखेंगे। डेटाबेस में पूर्ण 12-अंक सुरक्षित रूप से दर्ज होंगे।</span>
-                      </div>
-                    )}
                   </div>
 
                   <div>
