@@ -1622,27 +1622,13 @@ export function RegistrationPage({
                         }}
                       >
                         {/* Header Details */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
-                          <div>
-                            <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>
-                              पंजीकृत धावक का नाम:
-                            </span>
-                            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0f172a', letterSpacing: '0.04em', marginTop: '2px' }}>
-                              {r.maskedName}
-                            </div>
-                          </div>
-
-                          <span style={{
-                            fontSize: '0.85rem',
-                            fontWeight: 900,
-                            color: '#ffffff',
-                            background: '#0f172a',
-                            padding: '4px 12px',
-                            borderRadius: '6px',
-                            fontFamily: 'monospace'
-                          }}>
-                            {r.bibNumber}
+                        <div style={{ marginBottom: '14px' }}>
+                          <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>
+                            पंजीकृत धावक का नाम:
                           </span>
+                          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0f172a', letterSpacing: '0.04em', marginTop: '2px' }}>
+                            {r.maskedName}
+                          </div>
                         </div>
 
                         {/* Summary Grid */}

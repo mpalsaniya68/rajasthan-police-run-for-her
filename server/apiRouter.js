@@ -306,7 +306,6 @@ export async function handleApiRequest(req, res) {
         found: true,
         runners: resRunner.rows.map(r => ({
           passId: r.id,
-          bibNumber: r.bib_number,
           maskedName: maskName(r.full_name),
           maskedMobile: r.masked_mobile || maskMobile(r.mobile),
           categoryName: r.category_name,
