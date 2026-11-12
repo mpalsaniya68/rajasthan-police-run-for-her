@@ -126,65 +126,30 @@ export default function App() {
 
   });
 
-  // Global Keyboard Shortcut: [Ctrl + Shift + A] / [Cmd + Shift + A]
-
-  useEffect(() => {
-
-    const handleKeyDown = (e) => {
-
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'a' || e.key === 'A')) {
-
-        e.preventDefault();
-
-        if (sessionStorage.getItem('rajpol_admin_auth') === 'true') {
-
-          if (adminUser?.role === 'EXPO_VOLUNTEER' || adminUser?.role === 'GATE_MARSHAL') {
-
-            navigateToPage('expo-terminal');
-
-          } else {
-
-            navigateToPage('admin');
-
-          }
-
-        } else {
-
-          navigateToPage('admin-login');
-
-        }
-
+  const handleOpenAdminTrigger = () => {
+    if (sessionStorage.getItem('rajpol_admin_auth') === 'true') {
+      if (adminUser?.role === 'EXPO_VOLUNTEER' || adminUser?.role === 'GATE_MARSHAL') {
+        navigateToPage('expo-terminal');
+      } else {
+        navigateToPage('admin');
       }
+    } else {
+      navigateToPage('admin-login');
+    }
+  };
 
+  // Global Keyboard Shortcut: [Ctrl + Shift + A] / [Cmd + Shift + A]
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'a' || e.key === 'A')) {
+        e.preventDefault();
+        handleOpenAdminTrigger();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
-
     return () => window.removeEventListener('keydown', handleKeyDown);
-
   }, [adminUser]);
-
-  const handleOpenAdminTrigger = () => {
-
-    if (sessionStorage.getItem('rajpol_admin_auth') === 'true') {
-
-      if (adminUser?.role === 'EXPO_VOLUNTEER' || adminUser?.role === 'GATE_MARSHAL') {
-
-        navigateToPage('expo-terminal');
-
-      } else {
-
-        navigateToPage('admin');
-
-      }
-
-    } else {
-
-      navigateToPage('admin-login');
-
-    }
-
-  };
 
   const handleAdminLoginSuccess = (user) => {
 
@@ -308,10 +273,8 @@ export default function App() {
       <Navbar
         onOpenRegister={() => navigateToPage('register')}
         onOpenBulkRegister={() => setIsBulkModalOpen(true)}
-        onOpenAdmin={handleOpenAdminTrigger}
         activePage={activePage}
         onNavigate={navigateToPage}
-        totalRegistered={registrations.length + 18450}
         isAdminAuthenticated={isAdminAuthenticated}
         adminUser={adminUser}
       />
@@ -337,8 +300,6 @@ export default function App() {
 
               onRegisterSuccess={handleRegisterSuccess}
 
-              registrations={registrations}
-
             />
 
           </div>
@@ -357,33 +318,19 @@ export default function App() {
 
               onOpenBulkRegister={() => setIsBulkModalOpen(true)}
 
-              onNavigate={navigateToPage}
-
               totalRegistered={registrations.length + 18450}
 
             />
 
-            <PatronDesk
-
-              onOpenRegister={() => navigateToPage('register')}
-
-              onOpenBulkRegister={() => setIsBulkModalOpen(true)}
-
-              onNavigate={navigateToPage}
-
-            />
+            <PatronDesk />
 
             <PrizePodiumSection
 
               onOpenRegister={() => navigateToPage('register')}
 
-              onNavigate={navigateToPage}
-
             />
 
             <FAQSection
-
-              onOpenRegister={() => navigateToPage('register')}
 
               onNavigate={navigateToPage}
 

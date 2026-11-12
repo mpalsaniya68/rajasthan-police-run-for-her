@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 
 import { 
 
-  X, Shield, Download, Search, CheckCircle2, Shirt, Send, LogOut, 
+  Shield, Download, Search, CheckCircle2, Shirt, Send, LogOut, 
 
   FileSpreadsheet, MapPin, Database, AlertTriangle, 
 
-  Activity, Zap, RefreshCw, ArrowLeft, HeartPulse,
+  Zap, RefreshCw, ArrowLeft,
 
-  PackageCheck, Trophy, QrCode, Radio, Users
+  PackageCheck, Trophy, QrCode, Users
 
 } from 'lucide-react';
 
@@ -152,70 +152,6 @@ export function AdminDashboard({
   const [leaderboardList, setLeaderboardList] = useState([]);
 
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(false);
-
-
-
-  // Live Course Delayed Runner Alerts
-
-  const [delayedRunners, setDelayedRunners] = useState([
-
-    {
-
-      id: "ALERT-1",
-
-      bibNumber: "RJ-21K-7714",
-
-      fullName: "Manvendra Singh Rathore",
-
-      category: "21 KM Half Marathon",
-
-      sector: "Sector 2 (5KM - 10KM JLN Marg)",
-
-      lastSeen: "06:31:05 AM (52 mins ago at RU Gate)",
-
-      expectedPace: "5:30 min/km",
-
-      currentDelay: "असामान्य विलंब (+28 मिनट)",
-
-      mobile: "+91 94141 33445",
-
-      emergencyContact: "Bhawani Singh (94141 99880)",
-
-      status: "DISPATCHED",
-
-      notes: "बाइक पेट्रोल यूनिट 04 मौके पर रवाना।"
-
-    },
-
-    {
-
-      id: "ALERT-2",
-
-      bibNumber: "RJ-21K-6640",
-
-      fullName: "Anita Meena",
-
-      category: "21 KM Half Marathon",
-
-      sector: "Sector 3 (10KM - 15KM WTP to Jawahar Circle)",
-
-      lastSeen: "07:05:10 AM (35 mins ago at WTP Gate)",
-
-      expectedPace: "6:00 min/km",
-
-      currentDelay: "विलंब (+16 मिनट)",
-
-      mobile: "+91 98291 44332",
-
-      emergencyContact: "Rajesh Meena (98291 00112)",
-
-      status: "PENDING",
-
-      notes: "संभावित डिहाइड्रेशन या क्रैम्प। निकटतम हाइड्रेशन पोस्ट को सूचित किया गया।"
-
-    }
-
-  ]);
 
 
 

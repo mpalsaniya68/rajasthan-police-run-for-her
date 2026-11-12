@@ -1,7 +1,7 @@
 import React from 'react';
 import { Trophy, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 
-export function PrizePodiumSection({ onOpenRegister, onNavigate }) {
+export function PrizePodiumSection({ onOpenRegister }) {
   return (
     <section 
       id="prizes-showcase" 

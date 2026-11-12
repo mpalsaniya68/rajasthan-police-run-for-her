@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { HelpCircle, ChevronDown, ChevronUp, Shield, CheckCircle2, Phone, Sparkles } from 'lucide-react';
+import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
-export function FAQSection({ onOpenRegister, onNavigate }) {
+export function FAQSection({ onNavigate }) {
   const [openIndex, setOpenIndex] = useState(0);
 
   const faqs = [

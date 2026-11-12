@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Calendar, MapPin, Users, Award, Heart, Bell, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
-import { RunForHerBadge, PoliceEmblem } from './Emblems';
+import { Shield, Calendar, MapPin, Users, Award, Bell, ArrowRight } from 'lucide-react';
 
-export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegistered = 18450 }) {
+export function Hero({ onOpenRegister, onOpenBulkRegister, totalRegistered = 18450 }) {
   // Live Countdown logic strictly targeted to 3 January 2027, 06:00:00 AM IST
   const TARGET_DATE = new Date(2027, 0, 3, 6, 0, 0); // 3 January 2027, 06:00:00 local IST
 
@@ -38,11 +37,6 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onNavigate, totalRegi
     { text: "संस्थाओं, कॉलेजों व RPA बटालियनों हेतु बल्क / ग्रुप रजिस्ट्रेशन उपलब्ध", tag: "ग्रुप पोर्टल" },
     { text: "महिला सुरक्षा हेल्पलाइन 1090 (गरिमा) एवं 112 चौबीसों घंटे आपकी सेवा में तत्पर", tag: "सुरक्षा" }
   ];
-
-  const scrollTo = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
 
   return (
     <section id="hero" className="hero-section">

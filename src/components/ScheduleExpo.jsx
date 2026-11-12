@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RACE_DAY_TIMELINE, PROHIBITED_ITEMS } from '../data/mockData';
-import { Clock, Package, AlertCircle, ShieldAlert, Download, FileText, CheckCircle2, Shield, Luggage } from 'lucide-react';
+import { Clock, Package, AlertCircle, ShieldAlert, Download, FileText, Luggage } from 'lucide-react';
 
 export function ScheduleExpo() {
   const [downloadMsg, setDownloadMsg] = useState(null);

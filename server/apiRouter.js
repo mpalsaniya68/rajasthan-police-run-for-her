@@ -1776,7 +1776,7 @@ export async function handleApiRequest(req, res) {
       // Sensitive PII protection: raw unmasked ID is ONLY disclosed to PHQ State Command
       const safeParticipants = dataRes.rows.map(row => {
         if (requesterRole !== "PHQ") {
-          const { id_raw, ...safeRow } = row;
+          const { id_raw: _id_raw, ...safeRow } = row;
           return safeRow;
         }
         return row;

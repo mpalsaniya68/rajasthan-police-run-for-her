@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
-  Shield, Lock, ArrowLeft, KeyRound, UserCheck, AlertTriangle, 
-  Eye, EyeOff, Building2, MapPin, CheckCircle2, ChevronRight, PackageCheck
+  Lock, ArrowLeft, KeyRound, UserCheck, AlertTriangle, 
+  Eye, EyeOff, Building2, MapPin, ChevronRight, PackageCheck
 } from 'lucide-react';
 import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 import { apiAdminLogin, apiExpoLogin } from '../services/api';
@@ -33,7 +33,6 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [attempts, setAttempts] = useState(0);
 
   // Switch access level tab
   const handleAccessTypeChange = (type) => {
@@ -97,7 +96,6 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
             onLoginSuccess(res.user);
           }
         } else {
-          setAttempts(prev => prev + 1);
           setErrorMessage(res?.error || 'अमान्य एक्सपो सुरक्षा पासकोड! कृपया अधिकृत पिन दर्ज करें।');
         }
       } catch (err) {
@@ -131,7 +129,6 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
           onLoginSuccess(res.user);
         }
       } else {
-        setAttempts(prev => prev + 1);
         const errMsg = res?.error || 'अमान्य क्रेडेंशियल्स! कृपया सही अधिकृत पुलिस आईडी और पासवर्ड दर्ज करें।';
         setErrorMessage(errMsg);
       }

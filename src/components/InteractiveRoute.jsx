@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Droplets, HeartPulse, Timer, Music, Shield, Flag, Compass } from 'lucide-react';
+import { MapPin, Droplets, HeartPulse, Timer, Music, Shield } from 'lucide-react';
 
 export function InteractiveRoute() {
   const [activeLayer, setActiveLayer] = useState("all");

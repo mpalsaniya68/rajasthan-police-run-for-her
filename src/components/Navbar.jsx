@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { PoliceEmblem, StateEmblemOfIndia, RunForHerBadge } from './Emblems';
-import { Shield, Award, MapPin, UserPlus, FileCheck, Menu, X, Heart, Phone, HelpCircle, Sun, CloudRain, PackageCheck, LogOut } from 'lucide-react';
+import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
+import { Shield, UserPlus, Menu, X, Phone, PackageCheck, LogOut } from 'lucide-react';
 
 export function Navbar({ 
   onOpenRegister, 
   onOpenBulkRegister, 
-  onOpenAdmin, 
   activePage = 'home', 
   onNavigate, 
-  totalRegistered = 18450,
   isAdminAuthenticated = false,
   adminUser = null
 }) {

@@ -75,7 +75,7 @@ export async function sendRegistrationNotification(participant) {
  * Dispatch Finisher Certificate Announcement Notification
  */
 export async function sendCertificateNotification(runner) {
-  const { fullName, mobile, certificateId, finishTime, categoryName } = runner;
+  const { mobile, certificateId, finishTime, categoryName } = runner;
   const msg = `बधाई! आपने राजस्थान पुलिस मैराथन (${categoryName}) आधिकारिक समय ${finishTime} में पूर्ण की है। आपका पुलिस प्रमाण पत्र डाउनलोड हेतु उपलब्ध है: https://police.rajasthan.gov.in/cert/${certificateId}`;
 
   try {

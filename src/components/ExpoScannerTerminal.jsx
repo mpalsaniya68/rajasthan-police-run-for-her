@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Shield, QrCode, Search, CheckCircle2, AlertTriangle, PackageCheck, 
-  Shirt, RefreshCw, LogOut, Camera, CameraOff, Volume2, VolumeX, 
-  UserCheck, AlertOctagon, Sparkles, Award, Upload, RotateCcw,
-  Download, Clock, Filter, ClipboardList
+  RefreshCw, LogOut, Camera, CameraOff, Volume2, VolumeX, 
+  UserCheck, AlertOctagon, Upload, RotateCcw,
+  Download, Clock, ClipboardList
 } from 'lucide-react';
 import { apiGetVolunteerScans } from '../services/api';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
-import { PoliceEmblem, RunForHerBadge } from './Emblems';
+import { PoliceEmblem } from './Emblems';
+import { isJaipurDistrict } from '../data/mockData';
 
 // Built-in Web Audio API Synthesizer (No external MP3 files needed)
 const playSound = (type = 'success') => {
@@ -55,11 +56,6 @@ const playSound = (type = 'success') => {
       osc.stop(ctx.currentTime + 0.4);
     }
   } catch (e) {}
-};
-
-const isJaipurDistrict = (districtId, districtName = '') => {
-  const str = `${districtId || ''} ${districtName || ''}`.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return str.includes('jaipur') || str.includes('jprcomm') || str === 'jaipurcomm';
 };
 
 export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {

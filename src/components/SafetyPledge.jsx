@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Heart, CheckCircle2, Share2, Download, Shield } from 'lucide-react';
-import { PoliceEmblem, RunForHerBadge } from './Emblems';
+import { Heart, CheckCircle2, Share2, Shield } from 'lucide-react';
+import { PoliceEmblem } from './Emblems';
 import confetti from 'canvas-confetti';
 
 export function SafetyPledge() {

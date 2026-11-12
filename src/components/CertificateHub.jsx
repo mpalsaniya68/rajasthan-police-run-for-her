@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiVerifyCertificate, apiDispatchCertificate } from '../services/api';
-import { Award, Search, Download, Share2, Send, CheckCircle2, Shield, Calendar, MapPin, Clock, ExternalLink } from 'lucide-react';
+import { Award, Search, Download, Share2, Send, CheckCircle2 } from 'lucide-react';
 import { PoliceEmblem, OfficialGoldSeal, RunForHerBadge } from './Emblems';
 import QRCode from 'qrcode';
 
@@ -11,7 +11,6 @@ export function CertificateHub({ registrations = [] }) {
   const [showDispatchNotice, setShowDispatchNotice] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchFeedback, setSearchFeedback] = useState(null);
-  const [isVerifiedFromBackend, setIsVerifiedFromBackend] = useState(false);
   const [isDownloadingCert, setIsDownloadingCert] = useState(false);
 
   // Check URL hash for direct QR verification: #verify?certId=RJ-POL-2027-XXXX

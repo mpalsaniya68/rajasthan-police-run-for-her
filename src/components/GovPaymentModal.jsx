@@ -11,14 +11,12 @@ export function GovPaymentModal({
   onClose,
   onPaymentSuccess,
   runnerData,
-  category,
   categoryName,
   feeAmount = 199
 }) {
   const [activeTab, setActiveTab] = useState('upi'); // 'upi' | 'netbanking' | 'card'
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [selectedBank, setSelectedBank] = useState('sbi');
-  const [upiId, setUpiId] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [transactionId, setTransactionId] = useState('');

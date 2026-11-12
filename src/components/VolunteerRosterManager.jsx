@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Users, UserPlus, Shield, CheckCircle2, XCircle, KeyRound, 
+  Users, UserPlus, CheckCircle2, KeyRound, 
   Copy, Printer, Share2, Trash2, RefreshCw, 
-  Search, Filter, MapPin, Building2, Check, AlertTriangle, 
-  ExternalLink, QrCode, Phone, Sparkles
+  Search, Filter, Check, AlertTriangle, Phone
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { PoliceEmblem } from './Emblems';

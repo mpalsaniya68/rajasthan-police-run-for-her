@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   CheckCircle2,
   AlertCircle,
-  HeartPulse,
   ArrowLeft,
   Share2,
   Check,
@@ -13,15 +12,14 @@ import {
   Shield,
   Eye,
   EyeOff,
-  Lock,
   Unlock,
   KeyRound
 } from 'lucide-react';
-import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS, INITIAL_REGISTRATIONS } from '../data/mockData';
+import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
 import confetti from 'canvas-confetti';
 import QRCode from 'qrcode';
-import { apiRegister, apiTrackRunner, apiSendOtp, apiVerifyOtp, apiSearchPass, apiSendPassOtp, apiVerifyPassOtp } from '../services/api';
+import { apiRegister, apiSendOtp, apiVerifyOtp, apiSearchPass, apiSendPassOtp, apiVerifyPassOtp } from '../services/api';
 import { GovPaymentModal } from './GovPaymentModal';
 
 const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
@@ -30,8 +28,7 @@ export function RegistrationPage({
   initialCategory = "21k",
   initialDistrict = "JPR-COMM",
   onNavigate,
-  onRegisterSuccess,
-  registrations = []
+  onRegisterSuccess
 }) {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [pendingPayload, setPendingPayload] = useState(null);
@@ -98,7 +95,6 @@ export function RegistrationPage({
   const [isMobileVerified, setIsMobileVerified] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [enteredOtp, setEnteredOtp] = useState('');
-  const [serverOtp, setServerOtp] = useState('');
   const [otpTimer, setOtpTimer] = useState(0);
   const [otpError, setOtpError] = useState('');
   const [otpToast, setOtpToast] = useState(null);
@@ -2848,7 +2844,6 @@ export function RegistrationPage({
         onClose={() => setIsPaymentModalOpen(false)}
         onPaymentSuccess={handlePaymentSuccess}
         runnerData={formData}
-        category={category}
         categoryName={currentCatObj?.name || "राजस्थान पुलिस मैराथन 2027"}
         feeAmount={category === "21k" ? 499 : category === "10k" ? 399 : 199}
       />

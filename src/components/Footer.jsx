@@ -1,7 +1,7 @@
 import React from 'react';
-import { PoliceEmblem, RunForHerBadge } from './Emblems';
+import { PoliceEmblem } from './Emblems';
 import { SAFETY_HELPLINES } from '../data/mockData';
-import { PhoneCall, Shield, Heart, MapPin, ExternalLink } from 'lucide-react';
+import { PhoneCall, MapPin } from 'lucide-react';
 
 export function Footer({ onNavigate }) {
   const handleNav = (e, pageId) => {

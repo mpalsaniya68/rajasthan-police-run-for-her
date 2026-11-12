@@ -120,6 +120,12 @@ export const RACE_CATEGORIES = [
   }
 ];
 
+export const isJaipurDistrict = (districtId, districtName = '') => {
+  const d = (districtId || '').toLowerCase();
+  const n = (districtName || '').toLowerCase();
+  return d.includes('jpr') || d.includes('jaipur') || n.includes('jaipur');
+};
+
 export const RAJASTHAN_POLICE_DISTRICTS = [
   // 1. State Capital / Flagship Host
   { id: "JPR-COMM", name: "Jaipur Police Commissionerate (Flagship Host)", zone: "Jaipur", flagship: true, nodalOfficer: "Addl. CP (HQ), Jaipur", flagOffVenue: "Albert Hall Museum, Ram Niwas Garden" },

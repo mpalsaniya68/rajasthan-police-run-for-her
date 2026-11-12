@@ -1,15 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { X, Building2, Download, Upload, Plus, Trash2, CheckCircle2, Shield, Users, FileSpreadsheet, ArrowRight } from 'lucide-react';
+import { X, Building2, Download, Upload, Plus, Trash2, CheckCircle2, FileSpreadsheet } from 'lucide-react';
 import { PoliceEmblem } from './Emblems';
-import { RAJASTHAN_POLICE_DISTRICTS, RACE_CATEGORIES } from '../data/mockData';
+import { RAJASTHAN_POLICE_DISTRICTS, isJaipurDistrict } from '../data/mockData';
 import confetti from 'canvas-confetti';
 import { apiBulkRegister } from '../services/api';
-
-export const isJaipurDistrict = (districtId) => {
-  if (!districtId) return false;
-  const d = String(districtId).toLowerCase().replace(/[^a-z0-9]/g, '');
-  return d.includes('jaipur') || d.includes('jprcomm') || d === 'jaipurcomm';
-};
 
 export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }) {
   const [instType, setInstType] = useState("police_unit"); // police_unit, college_school, ncc_nss, ngo_corp
@@ -35,7 +29,6 @@ export function BulkRegistrationModal({ isOpen, onClose, onBulkRegisterSuccess }
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [batchId, setBatchId] = useState("");
   const [generatedBibs, setGeneratedBibs] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 

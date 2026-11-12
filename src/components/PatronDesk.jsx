@@ -1,8 +1,8 @@
 import React from 'react';
-import { Shield, Award, MapPin, Calendar, Clock, AlertCircle, CheckCircle2, Heart, Users, Compass, Droplets } from 'lucide-react';
+import { MapPin, Clock, CheckCircle2, Droplets } from 'lucide-react';
 import { PoliceEmblem } from './Emblems';
 
-export function PatronDesk({ onOpenRegister, onOpenBulkRegister, onNavigate }) {
+export function PatronDesk() {
   return (
     <section id="patron-desk" style={{ background: '#f8fafc', padding: '60px 0', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
       <div className="container">
