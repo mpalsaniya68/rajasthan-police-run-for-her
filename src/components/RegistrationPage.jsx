@@ -1456,16 +1456,6 @@ export function RegistrationPage({
                 >
                   <Search size={18} color={activeTab === 'find' ? '#fde68a' : 'currentColor'} />
                   <span>ई-पास खोजें / पुनः डाउनलोड (Find My E-Pass)</span>
-                  <span style={{
-                    background: activeTab === 'find' ? '#fde68a' : 'var(--police-gold-100)',
-                    color: activeTab === 'find' ? '#0a1c3d' : 'var(--police-navy-900)',
-                    fontSize: '0.72rem',
-                    padding: '2px 8px',
-                    borderRadius: '10px',
-                    fontWeight: 900
-                  }}>
-                    त्वरित खोज
-                  </span>
                 </button>
               </div>
 
