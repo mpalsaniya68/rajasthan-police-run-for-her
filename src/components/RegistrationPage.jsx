@@ -10,7 +10,9 @@ import {
   Search,
   Download,
   FileText,
-  Shield
+  Shield,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS, INITIAL_REGISTRATIONS } from '../data/mockData';
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
@@ -81,6 +83,7 @@ export function RegistrationPage({
     acceptedFitness: true
   });
 
+  const [showAadhaar, setShowAadhaar] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
@@ -248,6 +251,67 @@ export function RegistrationPage({
       return d.length >= 4 ? `XXXX-XXXX-${d.slice(-4)}` : "XXXX-XXXX-XXXX";
     }
     return clean.length >= 4 ? `XXXXXX${clean.slice(-4)}` : "XXXXXXXXXX";
+  };
+
+  const formatAadhaarDisplay = (rawDigits, showFull = false) => {
+    const clean = (rawDigits || '').replace(/\D/g, '').slice(0, 12);
+    if (showFull) {
+      return clean.replace(/(\d{4})(?=\d)/g, '$1 ');
+    }
+    let res = '';
+    for (let i = 0; i < clean.length; i++) {
+      if (i > 0 && i % 4 === 0) res += ' ';
+      if (i < 8) {
+        res += 'X';
+      } else {
+        res += clean[i];
+      }
+    }
+    return res;
+  };
+
+  const deriveRawAadhaar = (prevRaw, newDisplayVal, showFull = false) => {
+    if (showFull) {
+      return newDisplayVal.replace(/\D/g, '').slice(0, 12);
+    }
+    if (!newDisplayVal || !newDisplayVal.trim()) return '';
+    if (!newDisplayVal.includes('X') && !newDisplayVal.includes('x')) {
+      return newDisplayVal.replace(/[^0-9]/g, '').slice(0, 12);
+    }
+
+    const prevDisplay = formatAadhaarDisplay(prevRaw, false);
+    let pIdx = 0;
+    let nIdx = 0;
+    while (pIdx < prevDisplay.length && nIdx < newDisplayVal.length && prevDisplay[pIdx] === newDisplayVal[nIdx]) {
+      pIdx++;
+      nIdx++;
+    }
+
+    let pEnd = prevDisplay.length - 1;
+    let nEnd = newDisplayVal.length - 1;
+    while (pEnd >= pIdx && nEnd >= nIdx && prevDisplay[pEnd] === newDisplayVal[nEnd]) {
+      pEnd--;
+      nEnd--;
+    }
+
+    let rawStart = 0;
+    for (let i = 0; i < pIdx; i++) {
+      if (prevDisplay[i] !== ' ') rawStart++;
+    }
+
+    let rawDeleted = 0;
+    for (let i = pIdx; i <= pEnd; i++) {
+      if (prevDisplay[i] !== ' ') rawDeleted++;
+    }
+
+    if (rawDeleted === 0 && prevDisplay.length > newDisplayVal.length && rawStart > 0) {
+      rawStart--;
+      rawDeleted = 1;
+    }
+
+    const inserted = newDisplayVal.slice(nIdx, nEnd + 1).replace(/[^0-9]/g, '');
+    const newRaw = prevRaw.slice(0, rawStart) + inserted + prevRaw.slice(rawStart + rawDeleted);
+    return newRaw.slice(0, 12);
   };
 
   // OTP 45-second resend cooldown timer
@@ -2119,7 +2183,10 @@ export function RegistrationPage({
                     </label>
                     <select
                       value={formData.idType}
-                      onChange={(e) => setFormData({ ...formData, idType: e.target.value, idNumber: "" })}
+                      onChange={(e) => {
+                        setShowAadhaar(false);
+                        setFormData({ ...formData, idType: e.target.value, idNumber: "" });
+                      }}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     >
                       <option value="Aadhaar">आधार कार्ड (Aadhaar Card)</option>
@@ -2130,27 +2197,95 @@ export function RegistrationPage({
 
                   {/* Photo ID Number */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      {formData.idType === "Aadhaar" ? "आधार कार्ड संख्या" : formData.idType === "PAN" ? "पैन कार्ड संख्या" : "मतदाता पहचान पत्र संख्या"} <span style={{ color: '#ef4444' }}>*</span>:
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      maxLength={formData.idType === "Aadhaar" ? 14 : 16}
-                      placeholder={formData.idType === "Aadhaar" ? "उदा. 4920 1928 1048" : formData.idType === "PAN" ? "उदा. ABCDE1234F" : "उदा. RJ01234567"}
-                      value={formData.idNumber}
-                      onChange={(e) => {
-                        let val = e.target.value;
-                        if (formData.idType === "Aadhaar") {
-                          val = val.replace(/\D/g, '').slice(0, 12);
-                        } else {
-                          val = val.toUpperCase().trim();
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', margin: 0 }}>
+                        {formData.idType === "Aadhaar" ? "आधार कार्ड संख्या" : formData.idType === "PAN" ? "पैन कार्ड संख्या" : "मतदाता पहचान पत्र संख्या"} <span style={{ color: '#ef4444' }}>*</span>:
+                      </label>
+                      {formData.idType === "Aadhaar" && formData.idNumber && (
+                        <span style={{ fontSize: '0.74rem', color: formData.idNumber.length === 12 ? '#16a34a' : '#64748b', fontWeight: 700 }}>
+                          {formData.idNumber.length}/12 अंक {formData.idNumber.length === 12 ? '✓' : ''}
+                        </span>
+                      )}
+                    </div>
+
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <input
+                        type="text"
+                        required
+                        maxLength={formData.idType === "Aadhaar" ? 14 : 16}
+                        placeholder={formData.idType === "Aadhaar" ? "XXXX XXXX 1048" : formData.idType === "PAN" ? "उदा. ABCDE1234F" : "उदा. RJ01234567"}
+                        value={
+                          formData.idType === "Aadhaar"
+                            ? formatAadhaarDisplay(formData.idNumber, showAadhaar)
+                            : formData.idNumber
                         }
-                        setFormData({ ...formData, idNumber: val });
-                      }}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem', fontFamily: 'monospace' }}
-                    />
-                    
+                        onChange={(e) => {
+                          let val = e.target.value;
+                          if (formData.idType === "Aadhaar") {
+                            const newRaw = deriveRawAadhaar(formData.idNumber, val, showAadhaar);
+                            setFormData({ ...formData, idNumber: newRaw });
+                          } else {
+                            val = val.toUpperCase().trim();
+                            setFormData({ ...formData, idNumber: val });
+                          }
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: formData.idType === "Aadhaar" ? '10px 85px 10px 12px' : '10px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border-medium)',
+                          fontSize: '0.94rem',
+                          fontFamily: 'monospace',
+                          letterSpacing: formData.idType === "Aadhaar" ? '0.08em' : 'normal',
+                          background: '#ffffff'
+                        }}
+                      />
+                      {formData.idType === "Aadhaar" && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAadhaar(!showAadhaar)}
+                          title={showAadhaar ? "आधार संख्या मास्क करें (Mask)" : "आधार संख्या देखें (Show)"}
+                          aria-label={showAadhaar ? "आधार संख्या मास्क करें" : "आधार संख्या देखें"}
+                          style={{
+                            position: 'absolute',
+                            right: '8px',
+                            background: '#f1f5f9',
+                            border: '1px solid #cbd5e1',
+                            cursor: 'pointer',
+                            color: '#334155',
+                            padding: '4px 8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            borderRadius: '5px',
+                            fontSize: '0.72rem',
+                            fontWeight: 700
+                          }}
+                        >
+                          {showAadhaar ? <EyeOff size={14} /> : <Eye size={14} />}
+                          <span>{showAadhaar ? "छिपाएं" : "देखें"}</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {formData.idType === "Aadhaar" && (
+                      <div style={{
+                        fontSize: '0.73rem',
+                        color: '#047857',
+                        marginTop: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontWeight: 600,
+                        background: '#f0fdf4',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        border: '1px solid #bbf7d0'
+                      }}>
+                        <Shield size={13} color="#059669" style={{ flexShrink: 0 }} />
+                        <span>सुरक्षा गोपनीयता: पहले 8 अंक मास्क (XXXX) हैं, केवल अंतिम 4 अंक दिखेंगे। डेटाबेस में पूर्ण 12-अंक सुरक्षित रूप से दर्ज होंगे।</span>
+                      </div>
+                    )}
                   </div>
 
                   <div>
