@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { apiVerifyCertificate, apiDispatchCertificate } from '../services/api';
-import { Award, Search, Download, Share2, Send, CheckCircle2 } from 'lucide-react';
+import { apiVerifyCertificate } from '../services/api';
+import { Award, Search, Download, Share2, CheckCircle2 } from 'lucide-react';
 import { PoliceEmblem, OfficialGoldSeal, RunForHerBadge } from './Emblems';
 import QRCode from 'qrcode';
 
@@ -8,7 +8,6 @@ export function CertificateHub({ registrations = [] }) {
   const [selectedRunner, setSelectedRunner] = useState(registrations[0] || null);
   const [searchQuery, setSearchQuery] = useState("");
   const [qrCodeUrl, setQrCodeUrl] = useState("");
-  const [showDispatchNotice, setShowDispatchNotice] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchFeedback, setSearchFeedback] = useState(null);
   const [isDownloadingCert, setIsDownloadingCert] = useState(false);
@@ -88,20 +87,6 @@ export function CertificateHub({ registrations = [] }) {
       setIsSearching(false);
       setSearchFeedback({ type: 'error', message: "सर्वर से कनेक्ट करने में त्रुटि। कृपया पुनः प्रयास करें।" });
     }
-  };
-
-  const handleAutoDispatch = async () => {
-    if (!selectedRunner) return;
-    setShowDispatchNotice(true);
-    try {
-      await apiDispatchCertificate({
-        certificateId: selectedRunner.certificateId,
-        mobile: selectedRunner.mobile
-      });
-    } catch (e) {
-      console.error("Dispatch notice error:", e);
-    }
-    setTimeout(() => setShowDispatchNotice(false), 5000);
   };
 
   const handleDownloadCertificatePNG = async () => {
@@ -563,7 +548,7 @@ export function CertificateHub({ registrations = [] }) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               {searchFeedback.type === 'success' ? (
-                <Shield size={20} color="#16a34a" />
+                <CheckCircle2 size={20} color="#16a34a" />
               ) : (
                 <Award size={20} color="#dc2626" />
               )}
@@ -577,33 +562,6 @@ export function CertificateHub({ registrations = [] }) {
             >
               ✕
             </button>
-          </div>
-        )}
-
-        {/* Automated Dispatch Notification Alert */}
-        {showDispatchNotice && (
-          <div className="no-print" style={{
-            background: '#ecfdf5',
-            border: '1px solid #10b981',
-            borderRadius: '6px',
-            padding: '12px 18px',
-            marginBottom: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '8px'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <CheckCircle2 size={20} color="#059669" />
-              <div>
-                <strong style={{ color: '#065f46', fontSize: '0.88rem' }}>सर्टिफिकेट स्वतः प्रेषित हुआ!</strong>
-                <div style={{ fontSize: '0.78rem', color: '#047857' }}>
-                  आधिकारिक लिंक एवं PDF <strong>{selectedRunner.mobile}</strong> (WhatsApp/SMS) तथा <strong>{selectedRunner.email}</strong> पर भेजा गया।
-                </div>
-              </div>
-            </div>
-            <span style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 700 }}>Status: Delivered ✓</span>
           </div>
         )}
 
@@ -781,48 +739,8 @@ export function CertificateHub({ registrations = [] }) {
             </div>
           </div>
 
-          {/* RIGHT SIDE: DISPATCH CONTROLS */}
+          {/* RIGHT SIDE: DOWNLOAD & ACTIONS CONTROLS */}
           <div className="cert-dispatch-controls no-print" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div className="gov-card" style={{ padding: '18px' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--police-navy-900)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Send size={15} color="var(--police-navy-800)" /> ऑटोमैटिक डिलीवरी स्थिति
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--police-navy-50)', padding: '8px 10px', borderRadius: '4px' }}>
-                  <div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--text-body)', fontWeight: 600 }}>SMS Notification</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{selectedRunner.mobile}</div>
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 700 }}>✓ Sent</span>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--police-navy-50)', padding: '8px 10px', borderRadius: '4px' }}>
-                  <div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--text-body)', fontWeight: 600 }}>WhatsApp PDF</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Official Digital Card</div>
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 700 }}>✓ Delivered</span>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--police-navy-50)', padding: '8px 10px', borderRadius: '4px' }}>
-                  <div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--text-body)', fontWeight: 600 }}>Email Attachment</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{selectedRunner.email}</div>
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 700 }}>✓ Delivered</span>
-                </div>
-              </div>
-
-              <button 
-                onClick={handleAutoDispatch}
-                className="btn-secondary"
-                style={{ width: '100%', padding: '8px', fontSize: '0.8rem', justifyContent: 'center' }}
-              >
-                <Send size={14} /> पुनः SMS/Email डिस्पैच करें
-              </button>
-            </div>
-
             <div className="gov-card" style={{ padding: '18px' }}>
               <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--police-navy-900)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
                 सर्टिफिकेट डाउनलोड व शेयर
