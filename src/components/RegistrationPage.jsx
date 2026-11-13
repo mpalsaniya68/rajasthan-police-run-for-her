@@ -2251,46 +2251,6 @@ export function RegistrationPage({
               <div style={{ textAlign: 'right' }} className="d-tablet-block"><div style={{ fontSize: '0.82rem', color: '#fef08a', fontWeight: 700 }}>इवेंट तिथि: 3 जनवरी 2027</div></div>
             </div>
 
-            {/* Step 2 Verified Notification Banner */}
-            <div style={{
-              background: '#f0fdf4',
-              borderBottom: '1.5px solid #86efac',
-              padding: '12px 24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '12px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <CheckCircle2 size={20} color="#16a34a" />
-                <div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#166534' }}>
-                    सत्यापित मोबाइल: +91 {formData.mobile} (चरण 1 पूर्ण ✓)
-                  </div>
-                  <div style={{ fontSize: '0.74rem', color: '#15803d' }}>
-                    सुरक्षा प्रमाणीकरण सफल • अब नीचे धावक का विवरण एवं श्रेणी भरें
-                  </div>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleChangeMobileNumber}
-                style={{
-                  background: '#ffffff',
-                  border: '1px solid #bbf7d0',
-                  color: '#15803d',
-                  padding: '5px 12px',
-                  borderRadius: '6px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}
-              >
-                नंबर बदलें (Change Mobile)
-              </button>
-            </div>
-
             {/* Error Callout if any (Accessible WCAG Alert) */}
             {errorMessage && (
               <div
@@ -2574,62 +2534,20 @@ export function RegistrationPage({
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      मोबाइल नंबर (सत्यापित) <span style={{ color: '#ef4444' }}>*</span>:
+                      मोबाइल नंबर (Mobile Number) <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <div style={{
-                        flex: 1,
-                        padding: '10px 14px',
+                    <input
+                      type="tel"
+                      readOnly
+                      value={formData.mobile}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
                         borderRadius: '8px',
-                        border: '1.5px solid #86efac',
-                        background: '#f0fdf4',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '8px'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Lock size={15} color="#16a34a" />
-                          <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#166534', letterSpacing: '0.04em' }}>
-                            +91 {formData.mobile}
-                          </span>
-                        </div>
-                        <span style={{
-                          background: '#dcfce7',
-                          color: '#15803d',
-                          fontSize: '0.72rem',
-                          fontWeight: 800,
-                          padding: '2px 8px',
-                          borderRadius: '12px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}>
-                          <CheckCircle2 size={13} color="#16a34a" /> सत्यापित (Verified)
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleChangeMobileNumber}
-                        title="मोबाइल नंबर बदलें"
-                        style={{
-                          background: '#fee2e2',
-                          color: '#991b1b',
-                          border: '1px solid #fecaca',
-                          padding: '0 14px',
-                          borderRadius: '8px',
-                          fontSize: '0.8rem',
-                          fontWeight: 800,
-                          cursor: 'pointer',
-                          whiteSpace: 'nowrap'
-                        }}
-                      >
-                        बदलें
-                      </button>
-                    </div>
-                    <div style={{ fontSize: '0.74rem', color: '#15803d', marginTop: '4px', fontWeight: 600 }}>
-                      ✓ यह मोबाइल नंबर 6-अंकीय सुरक्षा OTP द्वारा अधिकृत है। ई-पास व अपडेट्स इसी नंबर पर प्रेषित होंगे।
-                    </div>
+                        border: '1px solid var(--border-medium)',
+                        fontSize: '0.92rem'
+                      }}
+                    />
                   </div>
 
                   <div>
