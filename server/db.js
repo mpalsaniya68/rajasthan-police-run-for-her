@@ -369,6 +369,38 @@ export async function initDatabase() {
     // Always ensure core demo participants and mock runners exist and are synced
     await syncCoreParticipants();
 
+    // Ensure core expo volunteer account exists for seamless fallback testing across all environments
+    try {
+      const rohanCheck = await db.execute({
+        sql: "SELECT count(*) as count FROM admin_users WHERE username = 'vol_rohan_3248' OR mobile = '7023233248';",
+        args: []
+      });
+      if (Number(rohanCheck.rows[0]?.count) === 0) {
+        await db.execute({
+          sql: `INSERT INTO admin_users (id, username, password_hash, role, full_name, mobile, district_id, district_name, counter_id, counter_name, designation, status, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          args: [
+            'vol-mwesytzg-1025',
+            'vol_rohan_3248',
+            'a583fb4c3bada44945debba161e32458537d6b7e61c208cfb0fd14ef05e18ef2',
+            'EXPO_VOLUNTEER',
+            'ROHAN',
+            '7023233248',
+            'jaipur_comm',
+            'जयपुर पुलिस आयुक्तालय',
+            'counter_01',
+            'काउंटर-01 (21KM हाफ मैराथन - पुरुष)',
+            'कांस्टेबल (Constable)',
+            'ACTIVE',
+            new Date().toISOString()
+          ]
+        });
+        console.log("[DB] Core expo volunteer account (ROHAN - 7023233248) synchronized successfully.");
+      }
+    } catch (e) {
+      console.warn("[DB] Note on volunteer sync:", e.message);
+    }
+
     console.log(`[DB] Schema & Indexes initialized successfully.`);
   } catch (err) {
     console.error("[DB Init Error]:", err);

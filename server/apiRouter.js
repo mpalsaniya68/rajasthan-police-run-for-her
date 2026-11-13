@@ -1778,10 +1778,10 @@ export async function handleApiRequest(req, res) {
       }
 
       // Step B: Station-Based Generic Login with Master Passcode (Fallback / Supervisor Mode)
-      const validPasscode = process.env.EXPO_PASSCODE;
+      const rawPasscode = (process.env.EXPO_PASSCODE || "").replace(/^["']|["']$/g, "").trim();
       let isValidMaster = false;
-      if (validPasscode) {
-        isValidMaster = (inputPasscode === validPasscode);
+      if (rawPasscode) {
+        isValidMaster = (inputPasscode === rawPasscode);
       } else {
         const passLower = inputPasscode.toLowerCase();
         isValidMaster = 
