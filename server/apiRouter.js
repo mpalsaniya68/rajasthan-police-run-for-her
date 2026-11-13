@@ -17,6 +17,8 @@ import {
   otpManager,
   otpRequestLimiter,
   verifyOtpVerificationToken,
+  createOtpVerificationToken,
+  getAppSecret,
   registrationLimiter,
   bulkRegistrationLimiter,
   adminLoginLimiter,
@@ -250,6 +252,74 @@ function cleanExpiredAdminOtps() {
 setInterval(cleanExpiredAdminOtps, 60000).unref();
 
 /**
+ * Stateless Cryptographic 2FA Session Tokens
+ * Allows verification across distributed Vercel Serverless Lambdas without shared memory.
+ */
+function createAdmin2faToken(user, targetMobile, generatedOtp) {
+  const secret = getAppSecret();
+  const otpHash = crypto.createHmac("sha256", secret).update(generatedOtp).digest("hex");
+  const payload = {
+    user,
+    mobile: targetMobile,
+    otpHash,
+    createdAt: Date.now(),
+    expiresAt: Date.now() + 5 * 60 * 1000 // 5 minutes
+  };
+  const b64Payload = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const sig = crypto.createHmac("sha256", secret).update(`2FA:${b64Payload}`).digest("base64url");
+  return `2fa.${b64Payload}.${sig}`;
+}
+
+function verifyAdmin2faToken(tempToken, enteredOtp) {
+  if (!tempToken || typeof tempToken !== "string") {
+    return { valid: false, error: "अमान्य सत्र टोकन।", status: 400 };
+  }
+
+  // 1. Check stateless cryptographic token (Preferred for Vercel Serverless)
+  if (tempToken.startsWith("2fa.")) {
+    const parts = tempToken.slice(4).split(".");
+    if (parts.length !== 2) return { valid: false, error: "अमान्य सत्र टोकन प्रारूप।", status: 400 };
+    const [b64Payload, sig] = parts;
+    const secret = getAppSecret();
+    const expectedSig = crypto.createHmac("sha256", secret).update(`2FA:${b64Payload}`).digest("base64url");
+    if (sig.length !== expectedSig.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedSig))) {
+      return { valid: false, error: "अमान्य या छेड़छाड़ किया गया सुरक्षा टोकन।", status: 401 };
+    }
+    let payload;
+    try {
+      payload = JSON.parse(Buffer.from(b64Payload, "base64url").toString("utf8"));
+    } catch (e) {
+      return { valid: false, error: "अमान्य टोकन डेटा।", status: 400 };
+    }
+    if (Date.now() > payload.expiresAt) {
+      return { valid: false, error: "OTP की समयावधि (5 मिनट) समाप्त हो चुकी है। कृपया पुनः लॉगिन करें।", status: 401 };
+    }
+    const enteredHash = crypto.createHmac("sha256", secret).update((enteredOtp || "").trim()).digest("hex");
+    if (enteredHash.length !== payload.otpHash.length || !crypto.timingSafeEqual(Buffer.from(enteredHash), Buffer.from(payload.otpHash))) {
+      return { valid: false, error: "अमान्य OTP कोड दर्ज किया गया है। कृपया पुनः जांचें।", status: 400 };
+    }
+    return { valid: true, user: payload.user, mobile: payload.mobile };
+  }
+
+  // 2. Fallback to in-memory store (for legacy sessions or tests)
+  const record = adminOtpStore.get(tempToken);
+  if (!record || record.expiresAt < Date.now()) {
+    adminOtpStore.delete(tempToken);
+    return { valid: false, error: "OTP की समयावधि समाप्त हो चुकी है। कृपया पुनः लॉगिन करें।", status: 401 };
+  }
+  if ((enteredOtp || "").trim() !== record.otp) {
+    record.attempts = (record.attempts || 0) + 1;
+    if (record.attempts >= 3) {
+      adminOtpStore.delete(tempToken);
+      return { valid: false, error: "3 बार गलत OTP दर्ज किया गया। कृपया पुनः लॉगिन करें।", status: 401 };
+    }
+    return { valid: false, error: `अमान्य OTP कोड! (${3 - record.attempts} प्रयास शेष)`, status: 400 };
+  }
+  adminOtpStore.delete(tempToken);
+  return { valid: true, user: record.user, mobile: record.mobile };
+}
+
+/**
  * Helper to extract and cryptographically verify Admin Token from Authorization Header or ?token=
  */
 function extractAdminUser(req, parsedUrl) {
@@ -267,22 +337,42 @@ function extractAdminUser(req, parsedUrl) {
 
 export async function handleApiRequest(req, res) {
   // Extract URL and path robustly across Local Vite, Node server, and Vercel Serverless
-  let rawPath = req.url || "/";
-  if (req.headers["x-matched-path"] && req.headers["x-matched-path"].startsWith("/api")) {
-    rawPath = req.headers["x-matched-path"];
-  } else if (req.headers["x-forwarded-uri"] && req.headers["x-forwarded-uri"].startsWith("/api")) {
-    rawPath = req.headers["x-forwarded-uri"];
+  // Prefer x-forwarded-uri or x-original-url which preserves the original client path on reverse proxies & Vercel
+  let rawPath = req.headers["x-forwarded-uri"] || req.headers["x-original-url"] || req.url || "/";
+
+  // If rawPath has no subpath (is "/api" or "/api/" or "/") but x-matched-path has an actual subpath
+  if ((rawPath === "/api" || rawPath === "/api/" || rawPath === "/") && req.headers["x-matched-path"]) {
+    const mp = req.headers["x-matched-path"];
+    if (mp.startsWith("/api/") && !mp.includes("[...") && mp !== "/api/index") {
+      rawPath = mp;
+    }
   }
 
-  const parsedUrl = new URL(rawPath, `http://${req.headers.host || 'localhost'}`);
+  const host = req.headers["x-forwarded-host"] || req.headers.host || "localhost";
+  const parsedUrl = new URL(rawPath, `http://${host}`);
+
+  // Merge any query parameters that Vercel or Express might have already parsed into req.query
+  if (req.query && typeof req.query === "object") {
+    for (const [k, v] of Object.entries(req.query)) {
+      if (k !== "route" && !parsedUrl.searchParams.has(k)) {
+        if (Array.isArray(v)) {
+          v.forEach(item => parsedUrl.searchParams.append(k, item));
+        } else if (v !== undefined && v !== null) {
+          parsedUrl.searchParams.set(k, String(v));
+        }
+      }
+    }
+  }
+
   let pathname = parsedUrl.pathname.replace(/^\/api/, "") || "/";
 
   // If Vercel passed route as query param in [...route] handler or rewrites
-  if (pathname === "/" || pathname === "/[...route]") {
+  if (pathname === "/" || pathname === "/[...route]" || pathname === "/index") {
     const routeQuery = req.query?.route || parsedUrl.searchParams.get("route");
     if (routeQuery) {
       const segs = Array.isArray(routeQuery) ? routeQuery.join("/") : routeQuery;
       pathname = `/${segs}`.replace(/^\/+/, "/");
+      parsedUrl.searchParams.delete("route");
     }
   }
 
@@ -350,6 +440,16 @@ export async function handleApiRequest(req, res) {
         return error(result.message, 429);
       }
 
+      // Persist to distributed database table (ensures multi-instance serverless sync on Vercel)
+      try {
+        await db.execute({
+          sql: `INSERT INTO otp_codes (mobile, code, expires_at, attempts, sent_at)
+                VALUES (?, ?, ?, 0, ?)
+                ON CONFLICT(mobile) DO UPDATE SET code = excluded.code, expires_at = excluded.expires_at, attempts = 0, sent_at = excluded.sent_at;`,
+          args: [mobile, result.code, Date.now() + 5 * 60 * 1000, Date.now()]
+        });
+      } catch (e) {}
+
       const notifRes = await sendRegistrationOtpNotification({ mobile, otp: result.code });
       const liveConfigured = isLiveSmsConfigured();
       const shouldProvideCode = !liveConfigured || notifRes.simulated || process.env.ENABLE_OTP_SIMULATION === "true" || process.env.NODE_ENV !== "production";
@@ -378,7 +478,36 @@ export async function handleApiRequest(req, res) {
         return error("मोबाइल नंबर एवं OTP दोनों दर्ज करना आवश्यक है।", 400);
       }
 
-      const result = otpManager.verifyOtp(mobile, otp);
+      let result = otpManager.verifyOtp(mobile, otp);
+
+      // Distributed DB Fallback (critical for Vercel Serverless if verify hits different container than send)
+      if (!result.success) {
+        try {
+          const otpRow = await db.execute({
+            sql: "SELECT code, expires_at, attempts FROM otp_codes WHERE mobile = ? LIMIT 1",
+            args: [mobile]
+          });
+          if (otpRow.rows.length > 0) {
+            const r = otpRow.rows[0];
+            if (Date.now() > Number(r.expires_at)) {
+              await db.execute({ sql: "DELETE FROM otp_codes WHERE mobile = ?", args: [mobile] });
+              return error("OTP की समयावधि (5 मिनट) समाप्त हो चुकी है। कृपया पुनः नया OTP भेजें।", 400);
+            } else if (Number(r.attempts) >= 3) {
+              await db.execute({ sql: "DELETE FROM otp_codes WHERE mobile = ?", args: [mobile] });
+              return error("3 बार गलत प्रयास किए गए। कृपया नया OTP प्राप्त करें।", 400);
+            } else if (String(r.code).trim() !== String(otp).trim()) {
+              await db.execute({ sql: "UPDATE otp_codes SET attempts = attempts + 1 WHERE mobile = ?", args: [mobile] });
+              return error(`अमान्य OTP कोड! शेष प्रयास: ${2 - Number(r.attempts)}`, 400);
+            } else {
+              // Successfully verified!
+              await db.execute({ sql: "DELETE FROM otp_codes WHERE mobile = ?", args: [mobile] });
+              const token = createOtpVerificationToken(mobile);
+              result = { success: true, verificationToken: token };
+            }
+          }
+        } catch (e) {}
+      }
+
       if (!result.success) {
         return error(result.message, 400);
       }
@@ -664,6 +793,16 @@ export async function handleApiRequest(req, res) {
         return error(result.message, 429);
       }
 
+      // Persist to distributed database table (ensures multi-instance serverless sync on Vercel)
+      try {
+        await db.execute({
+          sql: `INSERT INTO otp_codes (mobile, code, expires_at, attempts, sent_at)
+                VALUES (?, ?, ?, 0, ?)
+                ON CONFLICT(mobile) DO UPDATE SET code = excluded.code, expires_at = excluded.expires_at, attempts = 0, sent_at = excluded.sent_at;`,
+          args: [r.mobile, result.code, Date.now() + 5 * 60 * 1000, Date.now()]
+        });
+      } catch (e) {}
+
       const notifRes = await sendPassOtpNotification({
         mobile: r.mobile,
         otp: result.code,
@@ -772,7 +911,34 @@ export async function handleApiRequest(req, res) {
         return error("धावक रिकॉर्ड नहीं मिला।", 404);
       }
 
-      const result = otpManager.verifyOtp(r.mobile, otp);
+      let result = otpManager.verifyOtp(r.mobile, otp);
+
+      // Distributed DB Fallback (critical for Vercel Serverless multi-instance sync)
+      if (!result.success) {
+        try {
+          const otpRow = await db.execute({
+            sql: "SELECT code, expires_at, attempts FROM otp_codes WHERE mobile = ? LIMIT 1",
+            args: [r.mobile]
+          });
+          if (otpRow.rows.length > 0) {
+            const row = otpRow.rows[0];
+            if (Date.now() > Number(row.expires_at)) {
+              await db.execute({ sql: "DELETE FROM otp_codes WHERE mobile = ?", args: [r.mobile] });
+              return error("OTP की समयावधि (5 मिनट) समाप्त हो चुकी है। कृपया पुनः नया OTP भेजें।", 400);
+            } else if (Number(row.attempts) >= 3) {
+              await db.execute({ sql: "DELETE FROM otp_codes WHERE mobile = ?", args: [r.mobile] });
+              return error("3 बार गलत प्रयास किए गए। कृपया नया OTP प्राप्त करें।", 400);
+            } else if (String(row.code).trim() !== String(otp).trim()) {
+              await db.execute({ sql: "UPDATE otp_codes SET attempts = attempts + 1 WHERE mobile = ?", args: [r.mobile] });
+              return error(`अमान्य OTP कोड! शेष प्रयास: ${2 - Number(row.attempts)}`, 400);
+            } else {
+              await db.execute({ sql: "DELETE FROM otp_codes WHERE mobile = ?", args: [r.mobile] });
+              result = { success: true };
+            }
+          }
+        } catch (e) {}
+      }
+
       if (!result.success) {
         return error(result.message, 400);
       }
@@ -1558,7 +1724,7 @@ export async function handleApiRequest(req, res) {
       // Step 2: 2FA OTP Generation
       const targetMobile = authenticatedUser.mobile || process.env.ADMIN_BOOTSTRAP_MOBILE || "7023233248";
       const generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
-      const tempToken = `2fa-${crypto.randomBytes(20).toString("hex")}`;
+      const tempToken = createAdmin2faToken(authenticatedUser, targetMobile, generatedOtp);
 
       adminOtpStore.set(tempToken, {
         user: authenticatedUser,
@@ -1597,24 +1763,12 @@ export async function handleApiRequest(req, res) {
         return error("सत्र टोकन एवं 6-अंकीय OTP दोनों आवश्यक हैं।", 400);
       }
 
-      const record = adminOtpStore.get(tempToken);
-      if (!record || record.expiresAt < Date.now()) {
-        adminOtpStore.delete(tempToken);
-        return error("OTP की समयावधि समाप्त हो चुकी है। कृपया पुनः लॉगिन करें।", 401);
+      const verifyRes = verifyAdmin2faToken(tempToken, enteredOtp);
+      if (!verifyRes.valid) {
+        return error(verifyRes.error || "अमान्य OTP दर्ज किया गया है।", verifyRes.status || 401);
       }
 
-      if (enteredOtp !== record.otp) {
-        record.attempts = (record.attempts || 0) + 1;
-        if (record.attempts >= 3) {
-          adminOtpStore.delete(tempToken);
-          return error("3 बार गलत OTP दर्ज किया गया। कृपया पुनः लॉगिन करें।", 401);
-        }
-        return error(`अमान्य OTP दर्ज किया गया है। (${3 - record.attempts} प्रयास शेष)`, 400);
-      }
-
-      // OTP Matched Successfully
-      adminOtpStore.delete(tempToken);
-      const authenticatedUser = record.user;
+      const authenticatedUser = verifyRes.user;
       const token = createAdminToken(authenticatedUser);
 
       // Audit Log
@@ -1624,7 +1778,7 @@ export async function handleApiRequest(req, res) {
           args: [
             authenticatedUser.username,
             "ADMIN_2FA_LOGIN_SUCCESS",
-            `Role: ${authenticatedUser.role}, Dist: ${authenticatedUser.districtId}, Mobile: ${record.mobile}`,
+            `Role: ${authenticatedUser.role}, Dist: ${authenticatedUser.districtId}, Mobile: ${verifyRes.mobile}`,
             clientIp,
             new Date().toISOString()
           ]
@@ -1647,23 +1801,47 @@ export async function handleApiRequest(req, res) {
         return error("अमान्य सत्र।", 400);
       }
 
-      const record = adminOtpStore.get(tempToken);
-      if (!record || record.expiresAt < Date.now()) {
-        adminOtpStore.delete(tempToken);
+      let user = null;
+      let targetMobile = "";
+
+      if (tempToken.startsWith("2fa.")) {
+        try {
+          const b64 = tempToken.slice(4).split(".")[0];
+          const payload = JSON.parse(Buffer.from(b64, "base64url").toString("utf8"));
+          user = payload.user;
+          targetMobile = payload.mobile;
+        } catch (e) {}
+      }
+
+      if (!user) {
+        const record = adminOtpStore.get(tempToken);
+        if (record && record.expiresAt >= Date.now()) {
+          user = record.user;
+          targetMobile = record.mobile;
+        }
+      }
+
+      if (!user) {
         return error("सत्र समाप्त हो चुका है। कृपया पुनः लॉगिन करें।", 401);
       }
 
       const newOtp = String(Math.floor(100000 + Math.random() * 900000));
-      record.otp = newOtp;
-      record.createdAt = Date.now();
-      record.expiresAt = Date.now() + 5 * 60 * 1000;
-      record.attempts = 0;
+      const newTempToken = createAdmin2faToken(user, targetMobile, newOtp);
+
+      adminOtpStore.set(newTempToken, {
+        user,
+        mobile: targetMobile,
+        otp: newOtp,
+        attempts: 0,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 5 * 60 * 1000
+      });
 
       const notifRes = await sendAdminOtpNotification({
-        mobile: record.mobile,
+        mobile: targetMobile,
         otp: newOtp,
-        username: record.user.username,
-        role: record.user.role
+        username: user.username,
+        role: user.role
       });
       const liveConfigured = isLiveSmsConfigured();
       const shouldProvideAdminCode = !liveConfigured || notifRes.simulated || process.env.ENABLE_OTP_SIMULATION === "true" || process.env.NODE_ENV !== "production";
@@ -1671,7 +1849,8 @@ export async function handleApiRequest(req, res) {
       return json({
         success: true,
         message: "नया OTP अधिकृत मोबाइल नंबर पर भेज दिया गया है।",
-        maskedMobile: maskMobile(record.mobile),
+        tempToken: newTempToken,
+        maskedMobile: maskMobile(targetMobile),
         simulatedOtp: shouldProvideAdminCode ? newOtp : undefined
       });
     }
@@ -1750,7 +1929,7 @@ export async function handleApiRequest(req, res) {
 
         const targetMobile = authenticatedUser.mobile || process.env.ADMIN_BOOTSTRAP_MOBILE || "7023233248";
         const generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
-        const tempToken = `2fa-${crypto.randomBytes(20).toString("hex")}`;
+        const tempToken = createAdmin2faToken(authenticatedUser, targetMobile, generatedOtp);
 
         adminOtpStore.set(tempToken, {
           user: authenticatedUser,
@@ -1821,7 +2000,7 @@ export async function handleApiRequest(req, res) {
 
       const targetMobile = user.mobile;
       const generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
-      const tempToken = `2fa-${crypto.randomBytes(20).toString("hex")}`;
+      const tempToken = createAdmin2faToken(user, targetMobile, generatedOtp);
 
       adminOtpStore.set(tempToken, {
         user,

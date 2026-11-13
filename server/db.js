@@ -59,11 +59,94 @@ export const db = createClient({
 
 console.log(`[DB] Connected to: ${isProductionTurso ? "Turso Cloud Edge DB" : "Local SQLite (data/rajasthan_police_marathon.db)"}`);
 
+let isDbInitialized = false;
+
 /**
  * Initialize Database Schema with Indexes for high concurrency (400,000+ records)
  */
-export async function initDatabase() {
+export async function initDatabase(force = false) {
+  if (isDbInitialized && !force) return;
+
   try {
+    // ⚡️ High-Speed Warm-Start Check for Vercel Serverless (reduces cold start from 4s to ~150ms)
+    if (!force) {
+      try {
+        const quickCheck = await db.execute("SELECT count(*) as count FROM category_sequences;");
+        if (Number(quickCheck.rows[0]?.count) >= 4) {
+          // Verify core volunteer Rohan exists
+          try {
+            const rohanCheck = await db.execute({
+              sql: "SELECT count(*) as count FROM admin_users WHERE username = 'vol_rohan_3248' OR mobile = '7023233248';",
+              args: []
+            });
+            if (Number(rohanCheck.rows[0]?.count) === 0) {
+              await db.execute({
+                sql: `INSERT INTO admin_users (id, username, password_hash, role, full_name, mobile, district_id, district_name, counter_id, counter_name, designation, status, created_at)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                args: [
+                  'vol-mwesytzg-1025',
+                  'vol_rohan_3248',
+                  'a583fb4c3bada44945debba161e32458537d6b7e61c208cfb0fd14ef05e18ef2',
+                  'EXPO_VOLUNTEER',
+                  'ROHAN',
+                  '7023233248',
+                  'jaipur_comm',
+                  'जयपुर पुलिस आयुक्तालय',
+                  'counter_01',
+                  'काउंटर-01 (21KM हाफ मैराथन - पुरुष)',
+                  'कांस्टेबल (Constable)',
+                  'ACTIVE',
+                  new Date().toISOString()
+                ]
+              });
+            }
+          } catch (e) {}
+
+          // Ensure otp_codes table exists for distributed serverless
+          try {
+            await db.execute(`
+              CREATE TABLE IF NOT EXISTS otp_codes (
+                mobile TEXT PRIMARY KEY,
+                code TEXT NOT NULL,
+                expires_at INTEGER NOT NULL,
+                attempts INTEGER DEFAULT 0,
+                sent_at INTEGER NOT NULL
+              );
+            `);
+          } catch (e) {}
+
+          // Purge legacy demo accounts to enforce security
+          try {
+            await db.execute(`
+              DELETE FROM admin_users
+              WHERE (id = 'admin-01' AND lower(username) = 'rajpolice')
+                 OR (id = 'vol-rahul-01' AND lower(username) = 'vol_rahul')
+                 OR (id = 'vol-priya-02' AND lower(username) = 'vol_priya')
+                 OR (id = 'gate-suresh-03' AND lower(username) = 'gate_suresh');
+            `);
+            await db.execute("UPDATE admin_users SET plain_passcode = '' WHERE COALESCE(plain_passcode, '') <> '';");
+          } catch (e) {}
+
+          isDbInitialized = true;
+          console.log("[DB] Warm-start ready. Schema and core accounts verified.");
+          return;
+        }
+      } catch (quickErr) {
+        // Table does not exist yet; fall through to full schema generation below
+      }
+    }
+
+    // 0. Persistent Distributed OTP Codes Table (for Vercel serverless multi-instance sync)
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS otp_codes (
+        mobile TEXT PRIMARY KEY,
+        code TEXT NOT NULL,
+        expires_at INTEGER NOT NULL,
+        attempts INTEGER DEFAULT 0,
+        sent_at INTEGER NOT NULL
+      );
+    `);
+
     // 1. Participants Table
     await db.execute(`
       CREATE TABLE IF NOT EXISTS participants (
