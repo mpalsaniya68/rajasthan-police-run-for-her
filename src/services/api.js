@@ -210,8 +210,16 @@ export async function apiExpoLogin(operatorNameOrUser, counterIdOrPass, counterN
 
 export async function apiGetAdminParticipants(filters = {}) {
   try {
-    const params = new URLSearchParams(filters);
-    const res = await fetch(`${API_BASE}/admin/participants?${params.toString()}`, {
+    const cleanFilters = {};
+    for (const [k, v] of Object.entries(filters || {})) {
+      if (v !== undefined && v !== null && v !== "" && v !== "undefined" && v !== "null" && v !== "all" && v !== "ALL") {
+        cleanFilters[k] = v;
+      }
+    }
+    const params = new URLSearchParams(cleanFilters);
+    const qs = params.toString();
+    const url = qs ? `${API_BASE}/admin/participants?${qs}` : `${API_BASE}/admin/participants`;
+    const res = await fetch(url, {
       headers: getAdminAuthHeaders()
     });
     return await res.json();
@@ -224,16 +232,22 @@ export async function apiGetAdminParticipants(filters = {}) {
 export function apiGetExportUrl(district = "") {
   const token = typeof sessionStorage !== "undefined" ? (sessionStorage.getItem("rajpol_admin_token") || "") : "";
   const tokenParam = token ? `token=${encodeURIComponent(token)}` : "";
-  if (district && district !== "all" && district !== "ALL") {
-    return `${API_BASE}/admin/export?district=${encodeURIComponent(district)}${tokenParam ? `&${tokenParam}` : ""}`;
+  const cleanDist = district && district !== "all" && district !== "ALL" && district !== "undefined" && district !== "null"
+    ? encodeURIComponent(district)
+    : "";
+  if (cleanDist) {
+    return `${API_BASE}/admin/export?district=${cleanDist}${tokenParam ? `&${tokenParam}` : ""}`;
   }
   return tokenParam ? `${API_BASE}/admin/export?${tokenParam}` : `${API_BASE}/admin/export`;
 }
 
 export async function apiGetAdminStats(district = "") {
   try {
-    const url = district && district !== "all" && district !== "ALL"
-      ? `${API_BASE}/admin/stats?district=${encodeURIComponent(district)}`
+    const cleanDist = district && district !== "all" && district !== "ALL" && district !== "undefined" && district !== "null"
+      ? encodeURIComponent(district)
+      : "";
+    const url = cleanDist
+      ? `${API_BASE}/admin/stats?district=${cleanDist}`
       : `${API_BASE}/admin/stats`;
     const res = await fetch(url, {
       headers: getAdminAuthHeaders()
@@ -343,7 +357,10 @@ export async function apiGetVolunteerScans(counterId = "") {
 export async function apiGetCertificateStats(district = "") {
   try {
     const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
-    const url = district ? `${API_BASE}/admin/certificates/stats?district=${encodeURIComponent(district)}` : `${API_BASE}/admin/certificates/stats`;
+    const cleanDist = district && district !== "all" && district !== "ALL" && district !== "undefined" && district !== "null"
+      ? encodeURIComponent(district)
+      : "";
+    const url = cleanDist ? `${API_BASE}/admin/certificates/stats?district=${cleanDist}` : `${API_BASE}/admin/certificates/stats`;
     const res = await fetch(url, {
       headers: token ? { "Authorization": `Bearer ${token}` } : {}
     });
@@ -354,16 +371,20 @@ export async function apiGetCertificateStats(district = "") {
   }
 }
 
-export async function apiBatchGenerateCertificates(payload) {
+export async function apiBatchGenerateCertificates(payload = {}) {
   try {
     const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
+    const cleanPayload = { ...payload };
+    if (!cleanPayload.districtId || cleanPayload.districtId === "undefined" || cleanPayload.districtId === "null") {
+      cleanPayload.districtId = "all";
+    }
     const res = await fetch(`${API_BASE}/admin/certificates/batch-generate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         ...(token ? { "Authorization": `Bearer ${token}` } : {})
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(cleanPayload)
     });
     return await res.json();
   } catch (err) {

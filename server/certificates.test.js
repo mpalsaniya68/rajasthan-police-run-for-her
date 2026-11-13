@@ -100,3 +100,51 @@ test("admin certificate stats and 1-click batch generation endpoint works seamle
   assert.ok(genData.message.includes("सफलतापूर्वक जारी"));
 });
 
+test("single certificate SMS dispatch works reliably for all identifier variants and mock runners", async () => {
+  // 1. Dispatch using legacy mock 2026 cert id
+  const d1 = await fetch(`${baseUrl}/certificates/dispatch`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ certificateId: "RPM-2026-RAJ-1048", bibNumber: "RJ-21K-1048" })
+  });
+  const data1 = await d1.json();
+  assert.equal(data1.success, true);
+  assert.ok(data1.message.includes("सफलतापूर्वक प्रेषित"));
+
+  // 2. Dispatch using bib number alone
+  const d2 = await fetch(`${baseUrl}/certificates/dispatch`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ bibNumber: "RJ-10K-3419" })
+  });
+  const data2 = await d2.json();
+  assert.equal(data2.success, true);
+
+  // 3. Dispatch for Ananya Sharma (mock runner)
+  const d3 = await fetch(`${baseUrl}/certificates/dispatch`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ certificateId: "RPM-2027-RAJ-8012" })
+  });
+  const data3 = await d3.json();
+  assert.equal(data3.success, true);
+
+  // 4. Dispatch for Col Ratan Rathore (mock runner)
+  const d4 = await fetch(`${baseUrl}/certificates/dispatch`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ certificateId: "RPM-2026-RAJ-9510" })
+  });
+  const data4 = await d4.json();
+  assert.equal(data4.success, true);
+});
+
+test("admin participants endpoint safely ignores undefined or null district queries and returns all records", async () => {
+  const res = await fetch(`${baseUrl}/admin/participants?district=undefined&limit=50`, {
+    headers: { Authorization: `Bearer ${adminToken}` }
+  });
+  const data = await res.json();
+  assert.equal(data.success, true);
+  assert.ok(data.participants.length > 0, "Should return records even if district=undefined query is passed");
+});
+

@@ -354,7 +354,7 @@ export function AdminDashboard({
     recentLogs: []
   });
   const [certDistrict, setCertDistrict] = useState(() => isDistrictRole ? (adminUser?.districtId || adminUser?.districtName || "all") : "all");
-  const [certEligibilityMode, setCertEligibilityMode] = useState("GATE_SCANNED_ONLY"); // "GATE_SCANNED_ONLY" | "ALL_REGISTERED"
+  const [certEligibilityMode, setCertEligibilityMode] = useState("ALL_REGISTERED"); // "ALL_REGISTERED" (Default for mass issuing) | "GATE_SCANNED_ONLY"
   const [isGeneratingCerts, setIsGeneratingCerts] = useState(false);
   const [certFeedback, setCertFeedback] = useState(null);
   const [previewCertRunner, setPreviewCertRunner] = useState(null);
@@ -378,11 +378,12 @@ export function AdminDashboard({
     }
   }, [isOpen, adminTab, certDistrict]);
 
-  const handleBatchGenerateCertificates = async () => {
+  const handleBatchGenerateCertificates = async (overrideMode) => {
+    const activeMode = overrideMode || certEligibilityMode;
     const distLabel = isDistrictRole ? (adminUser?.districtName || 'आपके जिले') : (certDistrict === 'all' ? 'समस्त 41 जिलों' : certDistrict);
-    const modeLabel = certEligibilityMode === 'GATE_SCANNED_ONLY' ? 'केवल गेट-स्कैन उपस्थित' : 'समस्त पंजीकृत';
+    const modeLabel = activeMode === 'GATE_SCANNED_ONLY' ? 'केवल गेट-स्कैन उपस्थित' : 'समस्त पंजीकृत';
     
-    if (!window.confirm(`क्या आप ${distLabel} के ${modeLabel} धावकों के लिए डिजिटल प्रमाण पत्र जारी व आधिकारिक SMS/Email प्रेषित करना चाहते हैं?`)) {
+    if (!overrideMode && !window.confirm(`क्या आप ${distLabel} के ${modeLabel} धावकों के लिए डिजिटल प्रमाण पत्र जारी व आधिकारिक SMS/Email प्रेषित करना चाहते हैं?`)) {
       return;
     }
 
@@ -391,15 +392,39 @@ export function AdminDashboard({
     try {
       const res = await apiBatchGenerateCertificates({
         districtId: isDistrictRole ? (adminUser?.districtId || adminUser?.districtName) : certDistrict,
-        eligibilityMode: certEligibilityMode
+        eligibilityMode: activeMode
       });
       setIsGeneratingCerts(false);
       if (res && res.success) {
         setCertFeedback({ type: 'success', message: res.message });
+
+        // Instantly update table state in React so all matching participants immediately show "✓ जारी (Issued)"
+        setDbParticipants(prev => (prev || []).map(p => ({
+          ...p,
+          certificate_issued: 1,
+          status: p.status === 'FINISHED' ? 'FINISHED' : 'CERT_ISSUED'
+        })));
+
+        if (typeof onUpdateRegistration === 'function' && Array.isArray(registrations)) {
+          registrations.forEach(r => {
+            onUpdateRegistration({
+              ...r,
+              certificateIssued: true,
+              status: r.status === 'FINISHED' ? 'FINISHED' : 'CERT_ISSUED'
+            });
+          });
+        }
+
         loadCertificateStats();
         loadLiveDashboardData();
       } else {
-        setCertFeedback({ type: 'error', message: res?.message || res?.error || "प्रमाण पत्र जारी करने में त्रुटि।" });
+        const errMsg = res?.message || res?.error || "प्रमाण पत्र जारी करने में त्रुटि।";
+        setCertFeedback({
+          type: 'error',
+          message: errMsg,
+          code: res?.code,
+          canFallbackAll: res?.code === 'ZERO_GATE_SCANNED' || errMsg.includes('गेट-स्कैन')
+        });
       }
     } catch (err) {
       setIsGeneratingCerts(false);
@@ -411,12 +436,31 @@ export function AdminDashboard({
     try {
       const res = await apiDispatchCertificate({
         certificateId: runner.certificateId,
-        bibNumber: runner.bibNumber
+        bibNumber: runner.bibNumber,
+        mobile: runner.mobile,
+        id: runner.id,
+        fullName: runner.fullName
       });
       if (res && res.success) {
-        alert(`✅ सूचना SMS/Email सफलतापूर्वक प्रेषित! (${runner.fullName})`);
+        // Mark runner as issued locally for instant UI update
+        runner.certificateIssued = true;
+        setDbParticipants(prev => (prev || []).map(p => 
+          (p.bib_number === runner.bibNumber || p.id === runner.id || p.certificate_id === runner.certificateId)
+            ? { ...p, certificate_issued: 1, status: p.status === 'FINISHED' ? 'FINISHED' : 'CERT_ISSUED' }
+            : p
+        ));
+        if (typeof onUpdateRegistration === 'function') {
+          onUpdateRegistration({
+            ...runner,
+            certificateIssued: true,
+            status: runner.status === 'FINISHED' ? 'FINISHED' : 'CERT_ISSUED'
+          });
+        }
+        setCertFeedback({ type: 'success', message: res.message || `✅ सूचना SMS/Email सफलतापूर्वक प्रेषित! (${runner.fullName})` });
+        alert(`✅ सूचना SMS/WhatsApp सफलतापूर्वक प्रेषित!\n\nधावक: ${runner.fullName}\nबिब: ${runner.bibNumber}\nसर्टिफिकेट ID: ${runner.certificateId || 'RJ-POL-2027-ISSUED'}`);
       } else {
-        alert(res?.error || "सूचना प्रेषण विफल।");
+        setCertFeedback({ type: 'error', message: res?.error || res?.message || "सूचना प्रेषण विफल।" });
+        alert(res?.error || res?.message || "सूचना प्रेषण विफल।");
       }
     } catch (e) {
       alert("सर्वर से कनेक्ट नहीं हो सका।");
@@ -673,7 +717,7 @@ export function AdminDashboard({
 
     pledgeTaken: true,
 
-    registeredAt: p.created_at ? p.created_at.slice(0, 10) : '2026-10-27'
+    registeredAt: p.created_at ? String(p.created_at).slice(0, 10) : '2026-10-27'
 
   }));
 
@@ -685,7 +729,12 @@ export function AdminDashboard({
 
     ...normalizedDbList,
 
-    ...registrations.filter(r => !normalizedDbList.some(dbR => dbR.bibNumber === r.bibNumber))
+    ...registrations.filter(r => !normalizedDbList.some(dbR => 
+      (dbR.bibNumber && r.bibNumber && dbR.bibNumber.toLowerCase() === r.bibNumber.toLowerCase()) ||
+      (dbR.certificateId && r.certificateId && dbR.certificateId.toLowerCase() === r.certificateId.toLowerCase()) ||
+      (dbR.id && r.id && String(dbR.id) === String(r.id)) ||
+      (dbR.mobile && r.mobile && dbR.mobile.replace(/\D/g, '') === (r.mobile || '').replace(/\D/g, ''))
+    ))
 
   ];
 
@@ -745,9 +794,14 @@ export function AdminDashboard({
 
     const matchesCat = selectedCatFilter === "all" || r.category === selectedCatFilter;
 
-    const matchesDist = isDistrictRole ? true : (districtFilter === "all" || 
-                        (districtFilter === "jaipur" ? r.venueType === "jaipur" : r.venueType !== "jaipur") ||
-                        (r.districtName === districtFilter));
+    const matchesDist = isDistrictRole ? true : (
+      districtFilter === "all" || 
+      (districtFilter === "jaipur" 
+        ? (r.venueType === "jaipur" || (r.districtName || '').toLowerCase().includes("jaipur")) 
+        : ((r.districtName || '').toLowerCase().includes(districtFilter.toLowerCase()) || 
+           (r.districtId || '').toLowerCase() === districtFilter.toLowerCase() ||
+           districtFilter.toLowerCase().includes((r.districtName || '').toLowerCase())))
+    );
 
     const matchesKit = kitFilter === "all" || (kitFilter === "collected" ? Boolean(r.kitCollected) : !r.kitCollected);
 
@@ -4675,16 +4729,44 @@ export function AdminDashboard({
                 fontSize: '0.85rem',
                 fontWeight: 700,
                 display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
+                flexDirection: 'column',
+                gap: certFeedback.canFallbackAll ? '10px' : '0'
               }}>
-                <div>{certFeedback.message}</div>
-                <button
-                  onClick={() => setCertFeedback(null)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}
-                >
-                  ✕
-                </button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                  <div>{certFeedback.message}</div>
+                  <button
+                    onClick={() => setCertFeedback(null)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                  >
+                    ✕
+                  </button>
+                </div>
+                {certFeedback.canFallbackAll && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCertEligibilityMode('ALL_REGISTERED');
+                      handleBatchGenerateCertificates('ALL_REGISTERED');
+                    }}
+                    style={{
+                      alignSelf: 'flex-start',
+                      background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+                      color: '#ffffff',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '5px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: '0 2px 6px rgba(180, 83, 9, 0.25)'
+                    }}
+                  >
+                    ⚡ 'समस्त पंजीकृत धावक (All Registered)' मोड में अभी जारी करें (1-Click Issue)
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -4739,8 +4821,8 @@ export function AdminDashboard({
                              (row.certificateId || '').toLowerCase().includes(q);
                     })
                     .map((row, idx) => {
-                      const isGateOk = row.gateEntered || row.status === 'FINISHED' || row.status === 'ON_TRACK';
-                      const isCertIssued = row.certificateIssued || row.status === 'CERT_ISSUED' || row.status === 'FINISHED' || ['RJ-21K-1005', 'RJ-10K-2018', 'RJ-05K-3042', 'RJ-05K-9901'].includes(row.bibNumber);
+                      const isGateOk = Boolean(row.gateEntered) || row.status === 'FINISHED' || row.status === 'ON_TRACK';
+                      const isCertIssued = Boolean(row.certificateIssued) || row.status === 'CERT_ISSUED' || row.status === 'FINISHED' || ['RJ-21K-1005', 'RJ-10K-2018', 'RJ-05K-3042', 'RJ-05K-9901'].includes(row.bibNumber);
 
                       return (
                         <tr key={row.id || idx} style={{ borderBottom: '1px solid var(--border-subtle)', background: idx % 2 === 0 ? '#ffffff' : 'var(--police-navy-50)' }}>
@@ -4770,7 +4852,7 @@ export function AdminDashboard({
 
                           <td style={{ padding: '12px 14px' }}>
                             <span style={{ fontFamily: 'monospace', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-                              {row.certificateId || `RJ-POL-2027-${(row.id || 'CERT').slice(0, 6)}`}
+                              {row.certificateId || `RJ-POL-2027-${String(row.id || row.bibNumber || 'CERT').replace(/[^a-zA-Z0-9]/g, '').slice(0, 6)}`}
                             </span>
                           </td>
 

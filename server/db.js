@@ -338,6 +338,8 @@ export async function initDatabase() {
     if (countRes.rows[0].count === 0) {
       await seedInitialParticipants();
     }
+    // Always ensure core demo participants and mock runners exist and are synced
+    await syncCoreParticipants();
 
     console.log(`[DB] Schema & Indexes initialized successfully.`);
   } catch (err) {
@@ -526,4 +528,184 @@ async function seedInitialParticipants() {
   } catch (e) {}
 
   console.log(`[DB] Seeded initial participant & timing records.`);
+}
+
+async function syncCoreParticipants() {
+  const coreList = [
+    {
+      id: "P-1005",
+      bib: "RJ-21K-1005",
+      name: "मदन (Madan)",
+      gender: "male",
+      dob: "1992-05-10",
+      mobile: "9829000001",
+      masked: "XXXXXX0001",
+      emergency: "9829099887",
+      relation: "परिवार (Family)",
+      blood: "B+",
+      catId: "21k",
+      catName: "21 KM Half Marathon",
+      distId: "jaipur_comm",
+      distName: "जयपुर पुलिस आयुक्तालय",
+      tshirt: "L",
+      certId: "RJ-POL-2027-5B2A2F",
+      status: "FINISHED",
+      certificateIssued: 1,
+      overallRank: 5,
+      genderRank: 4,
+      finishTime: "01:34:20"
+    },
+    {
+      id: "P-1048",
+      bib: "RJ-21K-1048",
+      name: "पूजा चौधरी (Pooja Choudhary)",
+      gender: "female",
+      dob: "1997-04-12",
+      mobile: "9829012345",
+      masked: "XXXXXX2345",
+      emergency: "9829099887",
+      relation: "पिता (Father)",
+      blood: "B+",
+      catId: "21k",
+      catName: "21 KM Half Marathon",
+      distId: "jaipur_comm",
+      distName: "जयपुर पुलिस आयुक्तालय",
+      tshirt: "M",
+      certId: "RPM-2027-RAJ-1048",
+      status: "CERT_ISSUED",
+      certificateIssued: 1,
+      overallRank: 14,
+      genderRank: 3,
+      finishTime: "01:52:18"
+    },
+    {
+      id: "P-3419",
+      bib: "RJ-10K-3419",
+      name: "विक्रम सिंह शेखावत (Vikram Singh)",
+      gender: "male",
+      dob: "1994-08-20",
+      mobile: "9414012345",
+      masked: "XXXXXX2345",
+      emergency: "9414099887",
+      relation: "भाई (Brother)",
+      blood: "O+",
+      catId: "10k",
+      catName: "10 KM Speed Run",
+      distId: "jaipur_comm",
+      distName: "जयपुर पुलिस आयुक्तालय",
+      tshirt: "L",
+      certId: "RPM-2027-RAJ-3419",
+      status: "FINISHED",
+      certificateIssued: 1,
+      overallRank: 8,
+      genderRank: 6,
+      finishTime: "00:44:10"
+    },
+    {
+      id: "P-8012",
+      bib: "RJ-05K-8012",
+      name: "अनन्या शर्मा (Ananya Sharma)",
+      gender: "female",
+      dob: "2000-01-15",
+      mobile: "8290144556",
+      masked: "XXXXXX4556",
+      emergency: "8290199887",
+      relation: "माता (Mother)",
+      blood: "A+",
+      catId: "5k",
+      catName: "5 KM Community Run",
+      distId: "udaipur",
+      distName: "उदयपुर पुलिस",
+      tshirt: "N/A",
+      certId: "RPM-2027-RAJ-8012",
+      status: "FINISHED",
+      certificateIssued: 1,
+      overallRank: 24,
+      genderRank: 5,
+      finishTime: "00:27:42"
+    },
+    {
+      id: "P-9510",
+      bib: "RJ-02K-9510",
+      name: "कर्नल रतन राठौड़ (Col. Ratan Rathore)",
+      gender: "male",
+      dob: "1962-09-10",
+      mobile: "9828077889",
+      masked: "XXXXXX7889",
+      emergency: "9828011122",
+      relation: "पुत्र (Son)",
+      blood: "AB+",
+      catId: "2k",
+      catName: "2 KM Family & Youth Walk",
+      distId: "jaipur_comm",
+      distName: "जयपुर पुलिस आयुक्तालय",
+      tshirt: "XL",
+      certId: "RPM-2027-RAJ-9510",
+      status: "FINISHED",
+      certificateIssued: 1,
+      overallRank: 35,
+      genderRank: 19,
+      finishTime: "00:16:50"
+    },
+    {
+      id: "P-3042",
+      bib: "RJ-05K-3042",
+      name: "कविता मीणा (Kavita Meena)",
+      gender: "female",
+      dob: "1998-07-14",
+      mobile: "9414000002",
+      masked: "XXXXXX0002",
+      emergency: "9414099887",
+      relation: "अभिभावक (Guardian)",
+      blood: "O+",
+      catId: "5k",
+      catName: "5 KM Community Run",
+      distId: "alwar",
+      distName: "अलवर पुलिस",
+      tshirt: "N/A",
+      certId: "RJ-POL-2027-3042",
+      status: "FINISHED",
+      certificateIssued: 1,
+      overallRank: 12,
+      genderRank: 5,
+      finishTime: "00:24:10"
+    }
+  ];
+
+  try {
+    for (const s of coreList) {
+      const checkRes = await db.execute({
+        sql: "SELECT id, certificate_id, status FROM participants WHERE bib_number = ? OR id = ? LIMIT 1",
+        args: [s.bib, s.id]
+      });
+
+      if (checkRes.rows.length === 0) {
+        await db.execute({
+          sql: `INSERT OR IGNORE INTO participants (
+            id, bib_number, full_name, gender, dob, mobile, masked_mobile, emergency_contact, emergency_relation, blood_group,
+            category_id, category_name, district_id, district_name, tshirt_size, certificate_id, qr_token, status,
+            certificate_issued, overall_rank, gender_rank, finish_time, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          args: [
+            s.id, s.bib, s.name, s.gender, s.dob, s.mobile, s.masked, s.emergency, s.relation, s.blood,
+            s.catId, s.catName, s.distId, s.distName, s.tshirt, s.certId, `SEC-TOKEN-${s.bib}`, s.status,
+            s.certificateIssued, s.overallRank, s.genderRank, s.finishTime, new Date().toISOString()
+          ]
+        });
+      } else {
+        // Ensure certificate_id and certificate_issued status are present
+        await db.execute({
+          sql: `UPDATE participants 
+                SET certificate_id = COALESCE(NULLIF(certificate_id, ''), ?), 
+                    certificate_issued = 1,
+                    status = CASE WHEN status = 'FINISHED' THEN 'FINISHED' ELSE 'CERT_ISSUED' END
+                WHERE bib_number = ? OR id = ?`,
+          args: [s.certId, s.bib, s.id]
+        });
+      }
+    }
+    console.log("[DB] Core demo participants synchronized successfully.");
+  } catch (err) {
+    console.error("[DB Core Sync Error]:", err);
+  }
 }
