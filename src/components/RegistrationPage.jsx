@@ -13,7 +13,9 @@ import {
   Eye,
   EyeOff,
   Unlock,
-  KeyRound
+  KeyRound,
+  Lock,
+  Smartphone
 } from 'lucide-react';
 import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
@@ -99,6 +101,7 @@ export function RegistrationPage({
   const [otpTimer, setOtpTimer] = useState(0);
   const [otpError, setOtpError] = useState('');
   const [otpToast, setOtpToast] = useState(null);
+  const [serverOtp, setServerOtp] = useState('');
   const [otpVerificationToken, setOtpVerificationToken] = useState('');
 
   // Tab State: "register" (New Registration) or "find" (Find/Re-print Existing E-Pass)
@@ -429,6 +432,8 @@ export function RegistrationPage({
     setServerOtp('');
     setOtpToast(null);
     setOtpError('');
+    setOtpTimer(0);
+    setOtpVerificationToken('');
   };
 
   const handleDobChange = (e) => {
@@ -1348,6 +1353,14 @@ export function RegistrationPage({
                   onClick={() => {
                     setIsSuccess(false);
                     setRegisteredParticipant(null);
+                    setIsMobileVerified(false);
+                    setOtpSent(false);
+                    setEnteredOtp('');
+                    setServerOtp('');
+                    setOtpToast(null);
+                    setOtpError('');
+                    setOtpTimer(0);
+                    setOtpVerificationToken('');
                     setFormData(prev => ({
                       ...prev,
                       fullName: "",
@@ -1826,8 +1839,399 @@ export function RegistrationPage({
               </div>
             </div>
           </div>
+        ) : !isMobileVerified ? (
+          /* STEP 1: OFFICIAL RUNNER MOBILE VERIFICATION GATEWAY */
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '16px',
+            border: '1.5px solid var(--border-medium)',
+            boxShadow: 'var(--shadow-lg)',
+            overflow: 'hidden'
+          }}>
+            {/* Gateway Header Banner */}
+            <div style={{
+              background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
+              color: '#ffffff',
+              padding: '28px 24px',
+              borderBottom: '3px solid var(--police-gold-500)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '16px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <PoliceEmblem size={52} />
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--police-gold-400)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    राजस्थान पुलिस मुख्यालय, जयपुर | राज्यव्यापी जन-अभियान • 3 जनवरी 2027
+                  </div>
+                  <h1 style={{ fontSize: 'clamp(1.35rem, 2.6vw, 1.85rem)', margin: '4px 0', color: '#ffffff', fontWeight: 900 }}>
+                    ऑनलाइन धावक पंजीकरण पोर्टल (Run for Her)
+                  </h1>
+                  <div style={{ fontSize: '0.88rem', color: '#cbd5e1' }}>
+                    चरण 1: आधिकारिक मोबाइल सत्यापन गेटवे (Mobile Verification Gateway)
+                  </div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }} className="d-tablet-block">
+                <div style={{ fontSize: '0.82rem', color: '#fef08a', fontWeight: 700 }}>इवेंट तिथि: 3 जनवरी 2027</div>
+              </div>
+            </div>
+
+            {/* Step Progress Tracker */}
+            <div style={{
+              background: '#f8fafc',
+              borderBottom: '1px solid var(--border-medium)',
+              padding: '16px 24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 'clamp(12px, 3vw, 36px)',
+              flexWrap: 'wrap'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{
+                  background: 'var(--police-navy-900)',
+                  color: '#fde68a',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 900,
+                  fontSize: '0.88rem',
+                  boxShadow: '0 2px 6px rgba(10,28,61,0.2)'
+                }}>
+                  1
+                </span>
+                <div>
+                  <div style={{ fontSize: '0.86rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
+                    मोबाइल सत्यापन (Security OTP)
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--police-navy-700)', fontWeight: 600 }}>
+                    वर्तमान चरण • अनिवार्य
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ color: '#cbd5e1', fontWeight: 900 }}>➔</div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', opacity: 0.55 }}>
+                <span style={{
+                  background: '#e2e8f0',
+                  color: '#64748b',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 800,
+                  fontSize: '0.88rem'
+                }}>
+                  2
+                </span>
+                <div>
+                  <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#64748b' }}>
+                    धावक विवरण एवं ई-पास
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                    सत्यापन उपरांत खुलेगा
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Gateway Card Content */}
+            <div style={{ padding: 'clamp(28px, 4vw, 48px)', maxWidth: '620px', margin: '0 auto' }}>
+              <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                <div style={{
+                  width: '68px',
+                  height: '68px',
+                  borderRadius: '50%',
+                  background: 'var(--police-navy-50)',
+                  border: '2px solid var(--police-navy-200)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '14px',
+                  boxShadow: '0 4px 12px rgba(10, 28, 61, 0.08)'
+                }}>
+                  <Smartphone size={34} color="var(--police-navy-900)" />
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--police-navy-950)', margin: '0 0 8px 0' }}>
+                  पंजीकरण फॉर्म खोलने हेतु मोबाइल सत्यापन
+                </h3>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>
+                  सुरक्षा, डेटा शुद्धता एवं बॉट रोकथाम हेतु केवल सत्यापित मोबाइल नंबर पर ही पंजीकरण स्वीकार्य है। अपना 10-अंकीय नंबर दर्ज कर OTP सत्यापित करें।
+                </p>
+              </div>
+
+              {/* Mobile Input Card */}
+              <div style={{
+                background: '#ffffff',
+                border: '1.5px solid var(--border-medium)',
+                borderRadius: '12px',
+                padding: '24px',
+                boxShadow: '0 4px 14px rgba(10, 28, 61, 0.06)'
+              }}>
+                <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
+                  अपना 10-अंकीय मोबाइल नंबर दर्ज करें (Enter Mobile Number) <span style={{ color: '#ef4444' }}>*</span>:
+                </label>
+
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'stretch', flexWrap: 'wrap' }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    background: '#f1f5f9',
+                    border: '1px solid var(--border-medium)',
+                    borderRadius: '8px',
+                    padding: '0 14px',
+                    fontWeight: 800,
+                    fontSize: '0.94rem',
+                    color: 'var(--police-navy-900)'
+                  }}>
+                    🇮🇳 +91
+                  </div>
+                  <input
+                    type="tel"
+                    maxLength={10}
+                    disabled={otpSent}
+                    placeholder="उदा. 9829012345"
+                    value={formData.mobile}
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, mobile: e.target.value.replace(/\D/g, '') }));
+                      setOtpError('');
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !otpSent && /^[6-9]\d{9}$/.test(formData.mobile.replace(/\D/g, ''))) {
+                        e.preventDefault();
+                        handleSendOtp();
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      minWidth: '180px',
+                      padding: '12px 14px',
+                      borderRadius: '8px',
+                      border: formData.mobile && !/^[6-9]/.test(formData.mobile) ? '1.5px solid #dc2626' : '1.5px solid var(--border-medium)',
+                      fontSize: '1.05rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.04em',
+                      outline: 'none',
+                      background: otpSent ? '#f8fafc' : '#ffffff'
+                    }}
+                  />
+                  {!otpSent && (
+                    <button
+                      type="button"
+                      onClick={handleSendOtp}
+                      disabled={!/^[6-9]\d{9}$/.test(formData.mobile.replace(/\D/g, '')) || otpTimer > 0}
+                      style={{
+                        background: /^[6-9]\d{9}$/.test(formData.mobile.replace(/\D/g, '')) ? 'var(--police-navy-900)' : '#94a3b8',
+                        color: '#ffffff',
+                        border: 'none',
+                        padding: '0 22px',
+                        borderRadius: '8px',
+                        fontSize: '0.92rem',
+                        fontWeight: 800,
+                        cursor: /^[6-9]\d{9}$/.test(formData.mobile.replace(/\D/g, '')) ? 'pointer' : 'not-allowed',
+                        whiteSpace: 'nowrap',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        boxShadow: '0 2px 8px rgba(10,28,61,0.15)'
+                      }}
+                    >
+                      <Shield size={16} color="#fde68a" />
+                      <span>{otpTimer > 0 ? `प्रतीक्षा (${otpTimer}s)` : 'ओटीपी भेजें'}</span>
+                    </button>
+                  )}
+                </div>
+
+                {formData.mobile && !/^[6-9]/.test(formData.mobile) && (
+                  <div style={{ fontSize: '0.78rem', color: '#dc2626', marginTop: '6px', fontWeight: 600 }}>
+                    कृपया मान्य भारतीय मोबाइल नंबर दर्ज करें (6, 7, 8 या 9 से शुरू होना आवश्यक है)।
+                  </div>
+                )}
+
+                {/* When OTP is Sent */}
+                {otpSent && (
+                  <div style={{
+                    marginTop: '22px',
+                    paddingTop: '20px',
+                    borderTop: '1.5px dashed var(--border-medium)'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
+                        6-अंकीय सुरक्षा कोड (OTP) दर्ज करें:
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleChangeMobileNumber}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#b91c1c',
+                          fontSize: '0.8rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        नंबर बदलें
+                      </button>
+                    </div>
+
+                    {/* Dev Mode OTP Toast notice */}
+                    {otpToast && (
+                      <div style={{
+                        background: '#ecfdf5',
+                        border: '1px solid #86efac',
+                        borderRadius: '8px',
+                        padding: '10px 14px',
+                        marginBottom: '14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: '8px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#166534', fontSize: '0.84rem' }}>
+                          <CheckCircle2 size={16} color="#16a34a" />
+                          <span>सैंडबॉक्स सुरक्षा OTP: <strong>{otpToast.otp}</strong></span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEnteredOtp(otpToast.otp)}
+                          style={{
+                            background: '#16a34a',
+                            color: '#ffffff',
+                            border: 'none',
+                            padding: '4px 10px',
+                            borderRadius: '4px',
+                            fontSize: '0.76rem',
+                            fontWeight: 800,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          ऑटो-भरें (Auto-Fill)
+                        </button>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'stretch', flexWrap: 'wrap' }}>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
+                        autoFocus
+                        placeholder="• • • • • •"
+                        value={enteredOtp}
+                        onChange={(e) => {
+                          setEnteredOtp(e.target.value.replace(/\D/g, ''));
+                          setOtpError('');
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && enteredOtp.length === 6) {
+                            e.preventDefault();
+                            handleVerifyOtp();
+                          }
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: '150px',
+                          padding: '12px 14px',
+                          borderRadius: '8px',
+                          border: otpError ? '2px solid #ef4444' : '2px solid var(--police-navy-800)',
+                          fontSize: '1.25rem',
+                          fontWeight: 900,
+                          letterSpacing: '0.3em',
+                          textAlign: 'center',
+                          outline: 'none',
+                          background: '#f8fafc'
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleVerifyOtp}
+                        disabled={enteredOtp.length !== 6}
+                        style={{
+                          background: enteredOtp.length === 6 ? '#16a34a' : '#94a3b8',
+                          color: '#ffffff',
+                          border: 'none',
+                          padding: '0 24px',
+                          borderRadius: '8px',
+                          fontSize: '0.94rem',
+                          fontWeight: 900,
+                          cursor: enteredOtp.length === 6 ? 'pointer' : 'not-allowed',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          boxShadow: '0 2px 8px rgba(22, 163, 74, 0.2)'
+                        }}
+                      >
+                        <Check size={18} color="#ffffff" />
+                        <span>सत्यापित करें व फॉर्म खोलें &rarr;</span>
+                      </button>
+                    </div>
+
+                    {otpError && (
+                      <div style={{ fontSize: '0.82rem', color: '#dc2626', marginTop: '8px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <AlertCircle size={14} color="#dc2626" />
+                        <span>{otpError}</span>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      <span>OTP प्राप्त नहीं हुआ?</span>
+                      {otpTimer > 0 ? (
+                        <span style={{ fontWeight: 700, color: 'var(--police-navy-900)' }}>
+                          पुनः भेजें ({otpTimer}s)
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleSendOtp}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--police-navy-900)',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            textDecoration: 'underline'
+                          }}
+                        >
+                          OTP पुनः भेजें (Resend)
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Security & DPDP Compliance Note */}
+              <div style={{
+                marginTop: '24px',
+                padding: '14px 18px',
+                background: '#f8fafc',
+                border: '1px solid var(--border-medium)',
+                borderRadius: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                <Shield size={24} color="var(--police-navy-900)" style={{ flexShrink: 0 }} />
+                <div style={{ fontSize: '0.78rem', color: 'var(--police-navy-900)', lineHeight: 1.4 }}>
+                  <strong>राजस्थान पुलिस साइबर सुरक्षा प्रमाणीकरण:</strong> आपका मोबाइल नंबर DPDP अधिनियम 2023 के तहत केवल मैराथन ई-पास, आरएफआईडी बिब आवंटन एवं आधिकारिक सूचनाओं हेतु सुरक्षित रखा जाएगा।
+                </div>
+              </div>
+            </div>
+          </div>
         ) : (
-          /* REGISTRATION FORM (NORMAL FULL PAGE) */
+          /* STEP 2: FULL REGISTRATION FORM (OPEN ONLY AFTER VERIFIED MOBILE) */
           <div style={{
             background: '#ffffff',
             borderRadius: '16px',
@@ -1864,6 +2268,46 @@ export function RegistrationPage({
               </div>
 
               <div style={{ textAlign: 'right' }} className="d-tablet-block"><div style={{ fontSize: '0.82rem', color: '#fef08a', fontWeight: 700 }}>इवेंट तिथि: 3 जनवरी 2027</div></div>
+            </div>
+
+            {/* Step 2 Verified Notification Banner */}
+            <div style={{
+              background: '#f0fdf4',
+              borderBottom: '1.5px solid #86efac',
+              padding: '12px 24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '12px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <CheckCircle2 size={20} color="#16a34a" />
+                <div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#166534' }}>
+                    सत्यापित मोबाइल: +91 {formData.mobile} (चरण 1 पूर्ण ✓)
+                  </div>
+                  <div style={{ fontSize: '0.74rem', color: '#15803d' }}>
+                    सुरक्षा प्रमाणीकरण सफल • अब नीचे धावक का विवरण एवं श्रेणी भरें
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleChangeMobileNumber}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #bbf7d0',
+                  color: '#15803d',
+                  padding: '5px 12px',
+                  borderRadius: '6px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                नंबर बदलें (Change Mobile)
+              </button>
             </div>
 
             {/* Error Callout if any (Accessible WCAG Alert) */}
@@ -2149,205 +2593,62 @@ export function RegistrationPage({
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      मोबाइल नंबर (Mobile Number) <span style={{ color: '#ef4444' }}>*</span>:
+                      मोबाइल नंबर (सत्यापित) <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <input
-                        id="input-mobile-number"
-                        type="tel"
-                        required
-                        disabled={isMobileVerified}
-                        maxLength={10}
-                        placeholder="उदा. 9829012345"
-                        value={formData.mobile}
-                        onChange={(e) => {
-                          setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '') });
-                          if (isMobileVerified) setIsMobileVerified(false);
-                        }}
-                        style={{
-                          flex: 1,
-                          padding: '10px 12px',
-                          borderRadius: '8px',
-                          border: isMobileVerified 
-                            ? '1.5px solid #16a34a' 
-                            : (formData.mobile && !/^[6-9]/.test(formData.mobile) ? '1.5px solid #dc2626' : '1px solid var(--border-medium)'),
-                          fontSize: '0.92rem',
-                          background: isMobileVerified ? '#f0fdf4' : '#ffffff',
-                          fontWeight: isMobileVerified ? 700 : 400
-                        }}
-                      />
-
-                      {!isMobileVerified ? (
-                        <button
-                          type="button"
-                          onClick={handleSendOtp}
-                          disabled={!/^[6-9]\d{9}$/.test(formData.mobile.replace(/\D/g, '')) || otpTimer > 0}
-                          style={{
-                            background: /^[6-9]\d{9}$/.test(formData.mobile.replace(/\D/g, '')) ? 'var(--police-navy-900)' : '#94a3b8',
-                            color: '#ffffff',
-                            border: 'none',
-                            padding: '0 16px',
-                            borderRadius: '8px',
-                            fontSize: '0.84rem',
-                            fontWeight: 800,
-                            cursor: /^[6-9]\d{9}$/.test(formData.mobile.replace(/\D/g, '')) ? 'pointer' : 'not-allowed',
-                            whiteSpace: 'nowrap',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px'
-                          }}
-                        >
-                          <Shield size={14} color="#fde68a" />
-                          <span>{otpTimer > 0 ? `पुनः भेजें (${otpTimer}s)` : (otpSent ? 'पुनः भेजें' : 'ओटीपी भेजें')}</span>
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={handleChangeMobileNumber}
-                          style={{
-                            background: '#fee2e2',
-                            color: '#991b1b',
-                            border: '1px solid #fecaca',
-                            padding: '0 12px',
-                            borderRadius: '8px',
-                            fontSize: '0.8rem',
-                            fontWeight: 800,
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          बदलें
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Verification Status Badge or Helper Text */}
-                    {isMobileVerified ? (
                       <div style={{
+                        flex: 1,
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        border: '1.5px solid #86efac',
+                        background: '#f0fdf4',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '6px',
-                        color: '#166534',
-                        fontWeight: 800,
-                        fontSize: '0.78rem',
-                        marginTop: '6px'
+                        justifyContent: 'space-between',
+                        gap: '8px'
                       }}>
-                        <CheckCircle2 size={15} color="#16a34a" />
-                        <span>मोबाइल नंबर सफलतापूर्वक सत्यापित (Verified by Security OTP)</span>
-                      </div>
-                    ) : (
-                      <>
-                        {formData.mobile && !/^[6-9]/.test(formData.mobile) ? (
-                          <div style={{ fontSize: '0.74rem', color: '#dc2626', marginTop: '4px', fontWeight: 600 }}>
-                            कृपया 10-अंकीय मान्य मोबाइल नंबर दर्ज करें।
-                          </div>
-                        ) : (
-                          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                            पंजीकरण सत्यापन हेतु सुरक्षा ओटीपी दर्ज करें।
-                          </div>
-                        )}
-                      </>
-                    )}
-
-                    {/* OTP Entry Card (Visible when OTP is sent & not yet verified) */}
-                    {otpSent && !isMobileVerified && (
-                      <div id="mobile-otp-section" style={{
-                        marginTop: '10px',
-                        padding: '14px',
-                        background: '#f8fafc',
-                        border: '1.5px solid var(--police-navy-800)',
-                        borderRadius: '8px',
-                        boxShadow: '0 2px 8px rgba(10, 28, 61, 0.08)'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                          <Shield size={16} color="var(--police-navy-950)" />
-                          <span style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
-                            6-अंकीय सुरक्षा ओटीपी दर्ज करें:
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Lock size={15} color="#16a34a" />
+                          <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#166534', letterSpacing: '0.04em' }}>
+                            +91 {formData.mobile}
                           </span>
                         </div>
-
-                        {otpToast && (
-                          <div style={{
-                            background: '#ecfdf5',
-                            border: '1px solid #86efac',
-                            borderRadius: '6px',
-                            padding: '8px 12px',
-                            marginBottom: '10px',
-                            fontSize: '0.8rem',
-                            color: '#166534',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            flexWrap: 'wrap',
-                            gap: '6px'
-                          }}>
-                            <div>
-                              📩 सुरक्षा सैंडबॉक्स: <strong>+91 {otpToast.mobile}</strong> पर भेजा गया OTP:
-                            </div>
-                            <div style={{
-                              background: '#ffffff',
-                              border: '1px solid #22c55e',
-                              padding: '2px 8px',
-                              borderRadius: '4px',
-                              fontFamily: 'monospace',
-                              fontWeight: 900,
-                              fontSize: '1rem',
-                              letterSpacing: '2px',
-                              color: '#15803d'
-                            }}>
-                              {otpToast.otp}
-                            </div>
-                          </div>
-                        )}
-
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-                          <input
-                            type="text"
-                            maxLength={6}
-                            placeholder="• • • • • •"
-                            value={enteredOtp}
-                            onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
-                            style={{
-                              width: '140px',
-                              padding: '8px 12px',
-                              fontSize: '1.1rem',
-                              fontWeight: 900,
-                              letterSpacing: '4px',
-                              textAlign: 'center',
-                              borderRadius: '6px',
-                              border: '1.5px solid var(--police-navy-800)',
-                              fontFamily: 'monospace',
-                              background: '#ffffff'
-                            }}
-                          />
-                          <button
-                            type="button"
-                            onClick={handleVerifyOtp}
-                            style={{
-                              background: '#15803d',
-                              color: '#ffffff',
-                              border: 'none',
-                              padding: '9px 18px',
-                              borderRadius: '6px',
-                              fontWeight: 800,
-                              fontSize: '0.86rem',
-                              cursor: 'pointer',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '6px'
-                            }}
-                          >
-                            <CheckCircle2 size={15} /> सत्यापित करें
-                          </button>
-                        </div>
-
-                        {otpError && (
-                          <div style={{ color: '#dc2626', fontSize: '0.78rem', fontWeight: 800, marginTop: '8px' }}>
-                            {otpError}
-                          </div>
-                        )}
+                        <span style={{
+                          background: '#dcfce7',
+                          color: '#15803d',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          <CheckCircle2 size={13} color="#16a34a" /> सत्यापित (Verified)
+                        </span>
                       </div>
-                    )}
+                      <button
+                        type="button"
+                        onClick={handleChangeMobileNumber}
+                        title="मोबाइल नंबर बदलें"
+                        style={{
+                          background: '#fee2e2',
+                          color: '#991b1b',
+                          border: '1px solid #fecaca',
+                          padding: '0 14px',
+                          borderRadius: '8px',
+                          fontSize: '0.8rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        बदलें
+                      </button>
+                    </div>
+                    <div style={{ fontSize: '0.74rem', color: '#15803d', marginTop: '4px', fontWeight: 600 }}>
+                      ✓ यह मोबाइल नंबर 6-अंकीय सुरक्षा OTP द्वारा अधिकृत है। ई-पास व अपडेट्स इसी नंबर पर प्रेषित होंगे।
+                    </div>
                   </div>
 
                   <div>
