@@ -1,11 +1,124 @@
 /**
  * Rajasthan Police Marathon 2027 - Official Notification Service
- * Handles SMS, WhatsApp & Email confirmation dispatches for runners.
- * Integrates with National Informatics Centre (NIC) / Indian SMS Gateways (MSG91 / Fast2SMS / Twilio).
+ * Native integration for:
+ * 1. RajSMS (DOIT&C - Department of Information Technology & Communication, Govt. of Rajasthan)
+ * 2. National Informatics Centre (NIC) SMS Gateway
+ * 3. Commercial Gateways (MSG91 / Fast2SMS / Twilio)
+ * 4. Automatic Zero-Cost Secure Local Dev Simulation
  */
 
-const SMS_API_KEY = process.env.SMS_API_KEY || "";
 const SMS_SENDER_ID = process.env.SMS_SENDER_ID || "RAJPOL";
+
+/**
+ * Unified SMS Gateway Dispatcher with Native RajSMS (DOIT&C Rajasthan) + Generic Support
+ */
+export async function dispatchGatewaySms({ mobile, message, templateId = "" }) {
+  const cleanMobile = String(mobile || "").replace(/\D/g, "").slice(-10);
+  if (cleanMobile.length !== 10) {
+    return { success: false, error: "Invalid 10-digit mobile number", simulated: true };
+  }
+
+  const gatewayUrl = (process.env.SMS_GATEWAY_URL || "").trim();
+  const provider = (process.env.SMS_PROVIDER || "").toLowerCase().trim();
+  const isRajSms = provider === "rajsms" || gatewayUrl.toLowerCase().includes("rajsms");
+
+  const apiKey = (process.env.SMS_API_KEY || "").trim();
+  const username = (process.env.SMS_USERNAME || apiKey || "").trim();
+  const password = (process.env.SMS_PASSWORD || apiKey || "").trim();
+  const senderId = (process.env.SMS_SENDER_ID || SMS_SENDER_ID || "RAJPOL").trim();
+  const dltTemplateId = (process.env.SMS_DLT_TEMPLATE_ID || templateId || "").trim();
+  const dltEntityId = (process.env.SMS_DLT_ENTITY_ID || "").trim();
+
+  // If live credentials provided, attempt real HTTP dispatch
+  if (gatewayUrl && (apiKey || (username && password))) {
+    try {
+      let res;
+      if (isRajSms) {
+        // 🏛️ Official RajSMS Gateway (DOIT&C Government of Rajasthan)
+        // Standard RajSMS postpush.do endpoint accepts form-urlencoded / query parameters
+        const formParams = new URLSearchParams();
+        formParams.append("username", username);
+        formParams.append("password", password);
+        formParams.append("senderId", senderId);
+        formParams.append("sendTo", cleanMobile);
+        formParams.append("message", message);
+        if (dltTemplateId) formParams.append("templateId", dltTemplateId);
+        if (dltEntityId) formParams.append("entityId", dltEntityId);
+
+        if (gatewayUrl.endsWith(".do") || gatewayUrl.includes("postpush")) {
+          res = await fetch(gatewayUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: formParams.toString()
+          });
+        } else {
+          // Newer RajSMS REST endpoint (JSON)
+          res = await fetch(gatewayUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(apiKey ? { "Authorization": `Bearer ${apiKey}` } : {})
+            },
+            body: JSON.stringify({
+              username,
+              password,
+              senderId,
+              sendTo: cleanMobile,
+              mobile: cleanMobile,
+              message,
+              templateId: dltTemplateId,
+              entityId: dltEntityId
+            })
+          });
+        }
+      } else {
+        // Standard Generic / MSG91 / NIC JSON Gateway
+        res = await fetch(gatewayUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(apiKey ? { "Authorization": `Bearer ${apiKey}` } : {})
+          },
+          body: JSON.stringify({
+            sender: senderId,
+            senderId,
+            numbers: cleanMobile,
+            mobile: cleanMobile,
+            message,
+            templateId: dltTemplateId
+          })
+        });
+      }
+
+      const textResp = await res.text();
+      let parsed = textResp;
+      try { parsed = JSON.parse(textResp); } catch (e) {}
+
+      console.log(`[SMS Gateway (${isRajSms ? 'RajSMS' : 'Live'})]: Sent to +91-${cleanMobile} | Status: ${res.status}`);
+      return {
+        success: res.ok,
+        simulated: false,
+        gatewayResponse: typeof parsed === "object" ? JSON.stringify(parsed) : parsed
+      };
+    } catch (err) {
+      console.error(`[SMS Gateway Error]:`, err.message);
+      return {
+        success: false,
+        simulated: false,
+        gatewayResponse: `ERROR: ${err.message}`
+      };
+    }
+  }
+
+  // Fallback to local secure simulated mode (Zero cost / Dev mode)
+  return {
+    success: true,
+    simulated: true,
+    gatewayResponse: `SUCCESS_SIMULATED: Sent to +91-${cleanMobile}`
+  };
+}
 
 /**
  * Dispatch Official Runner Registration SMS / WhatsApp
@@ -15,41 +128,17 @@ export async function sendRegistrationNotification(participant) {
 
   const smsText = `राजस्थान पुलिस मैराथन 2027 'RUN FOR HER': प्रिय ${fullName}, आपका पंजीकरण सफल रहा! बिब नंबर: ${bibNumber}, श्रेणी: ${categoryName}। ई-पास: https://police.rajasthan.gov.in/epass/${certificateId} | सहायता: 112/1090`;
 
-  let delivered = false;
-  let gatewayResponse = "SIMULATED_LOCAL_DEV";
-
-  // If real SMS Gateway API key is configured in .env, attempt real HTTP POST
-  if (SMS_API_KEY && process.env.SMS_GATEWAY_URL) {
-    try {
-      const res = await fetch(process.env.SMS_GATEWAY_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${SMS_API_KEY}`
-        },
-        body: JSON.stringify({
-          sender: SMS_SENDER_ID,
-          numbers: mobile,
-          message: smsText
-        })
-      });
-      const data = await res.json();
-      delivered = true;
-      gatewayResponse = JSON.stringify(data);
-    } catch (err) {
-      console.error("[SMS Gateway Error]:", err.message);
-      gatewayResponse = `ERROR: ${err.message}`;
-    }
-  } else {
-    // Standard secure simulated dispatch in Dev / Zero-Cost mode
-    delivered = true;
-    gatewayResponse = `SUCCESS_SIMULATED: Sent to +91-${mobile}`;
-  }
+  const dispatchResult = await dispatchGatewaySms({
+    mobile,
+    message: smsText,
+    templateId: process.env.SMS_DLT_REG_TEMPLATE_ID || ""
+  });
 
   return {
-    success: delivered,
+    success: dispatchResult.success,
+    simulated: dispatchResult.simulated,
     smsText,
-    gatewayResponse
+    gatewayResponse: dispatchResult.gatewayResponse
   };
 }
 
@@ -85,11 +174,19 @@ export async function sendCertificateNotification(runner) {
     emailBody = `प्रिय ${fullName},\n\n'रन फॉर हर' - महिला सुरक्षा, सम्मान एवं सशक्तिकरण के राज्यव्यापी जन-जागरूकता अभियान में ${districtName} से सक्रिय सहभागिता के लिए राजस्थान पुलिस आपका हार्दिक आभार व्यक्त करती है।\n\nजिला पुलिस अधीक्षक (SP) द्वारा अधिकृत आपका डिजिटल सहभागिता प्रमाण पत्र पोर्टल पर उपलब्ध है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\n"हर कदम उसकी सुरक्षा के लिए"\nकार्यालय जिला पुलिस अधीक्षक, ${districtName}।`;
   }
 
+  const dispatchResult = await dispatchGatewaySms({
+    mobile,
+    message: smsText,
+    templateId: process.env.SMS_DLT_CERT_TEMPLATE_ID || ""
+  });
+
   return {
-    success: true,
+    success: dispatchResult.success,
+    simulated: dispatchResult.simulated,
     smsText,
     emailSubject,
-    emailBody
+    emailBody,
+    gatewayResponse: dispatchResult.gatewayResponse
   };
 }
 
@@ -118,45 +215,23 @@ export async function batchDispatchCertificateNotifications(runners = []) {
  * Dispatch Admin 2FA Login OTP via Live Gateway or Secure Simulation
  */
 export async function sendAdminOtpNotification({ mobile, otp, username, role }) {
-  const cleanMobile = String(mobile || "").replace(/[^0-9]/g, "").slice(-10);
+  const cleanMobile = String(mobile || "").replace(/\D/g, "").slice(-10);
   const smsText = `राजस्थान पुलिस मैराथन 2027: आपका एडमिन लॉगिन OTP है ${otp}। यह 5 मिनट के लिए मान्य है। कृपया इसे किसी के साथ साझा न करें। - PHQ कंट्रोल रूम`;
 
-  let delivered = false;
-  let simulated = !Boolean(SMS_API_KEY && process.env.SMS_GATEWAY_URL);
-  let gatewayResponse = "SIMULATED_LOCAL_DEV";
+  const dispatchResult = await dispatchGatewaySms({
+    mobile: cleanMobile,
+    message: smsText,
+    templateId: process.env.SMS_DLT_OTP_TEMPLATE_ID || ""
+  });
 
-  if (SMS_API_KEY && process.env.SMS_GATEWAY_URL && cleanMobile.length === 10) {
-    try {
-      const res = await fetch(process.env.SMS_GATEWAY_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${SMS_API_KEY}`
-        },
-        body: JSON.stringify({
-          sender: SMS_SENDER_ID,
-          numbers: cleanMobile,
-          message: smsText
-        })
-      });
-      const data = await res.json();
-      delivered = true;
-      gatewayResponse = JSON.stringify(data);
-    } catch (err) {
-      console.error("[Admin SMS Gateway Error]:", err.message);
-      gatewayResponse = `ERROR: ${err.message}`;
-    }
-  } else {
-    delivered = true;
-    gatewayResponse = `SUCCESS_SIMULATED: Sent to +91-${cleanMobile || 'ADMIN'}`;
+  if (dispatchResult.simulated) {
     console.log(`[ADMIN 2FA OTP] For ${username} (${role}): ${otp} to +91-${cleanMobile}`);
   }
 
   return {
-    success: delivered,
-    simulated,
+    success: dispatchResult.success,
+    simulated: dispatchResult.simulated,
     smsText,
-    gatewayResponse
+    gatewayResponse: dispatchResult.gatewayResponse
   };
 }
-
