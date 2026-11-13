@@ -4,8 +4,6 @@
  * Integrates with National Informatics Centre (NIC) / Indian SMS Gateways (MSG91 / Fast2SMS / Twilio).
  */
 
-import { db } from "./db.js";
-
 const SMS_API_KEY = process.env.SMS_API_KEY || "";
 const SMS_SENDER_ID = process.env.SMS_SENDER_ID || "RAJPOL";
 
@@ -48,22 +46,6 @@ export async function sendRegistrationNotification(participant) {
     gatewayResponse = `SUCCESS_SIMULATED: Sent to +91-${mobile}`;
   }
 
-  // Record dispatch in official audit logs for police accountability
-  try {
-    await db.execute({
-      sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-      args: [
-        "SMS_DISPATCHER",
-        "NOTIFICATION_SENT",
-        `To: ${mobile}, Bib: ${bibNumber}, Status: ${delivered ? 'DELIVERED' : 'FAILED'}`,
-        "127.0.0.1",
-        new Date().toISOString()
-      ]
-    });
-  } catch (e) {
-    // Non-blocking
-  }
-
   return {
     success: delivered,
     smsText,
@@ -102,19 +84,6 @@ export async function sendCertificateNotification(runner) {
     emailSubject = `अधिकृत सहभागिता प्रमाण पत्र | रन फॉर हर - राजस्थान पुलिस (${districtName})`;
     emailBody = `प्रिय ${fullName},\n\n'रन फॉर हर' - महिला सुरक्षा, सम्मान एवं सशक्तिकरण के राज्यव्यापी जन-जागरूकता अभियान में ${districtName} से सक्रिय सहभागिता के लिए राजस्थान पुलिस आपका हार्दिक आभार व्यक्त करती है।\n\nजिला पुलिस अधीक्षक (SP) द्वारा अधिकृत आपका डिजिटल सहभागिता प्रमाण पत्र पोर्टल पर उपलब्ध है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\n"हर कदम उसकी सुरक्षा के लिए"\nकार्यालय जिला पुलिस अधीक्षक, ${districtName}।`;
   }
-
-  try {
-    await db.execute({
-      sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-      args: [
-        "CERT_DISPATCHER",
-        "CERTIFICATE_NOTIFY_SENT",
-        `Cert: ${certificateId}, To: ${mobile}${email ? ` [${email}]` : ''}, Dist: ${districtName}, Timed: ${isJaipurTimed ? 'YES' : 'NO'}`,
-        "127.0.0.1",
-        new Date().toISOString()
-      ]
-    });
-  } catch (e) {}
 
   return {
     success: true,

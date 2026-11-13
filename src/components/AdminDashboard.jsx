@@ -1875,7 +1875,7 @@ export function AdminDashboard({
             }}
           >
             <History size={15} color={adminTab === "audit_logs" ? "#7c3aed" : "#64748b"} />
-            <span>🛡️ प्रशासनिक ऑडिट लॉग (Audit Trail)</span>
+            <span>🔐 एडमिन एक्सेस लॉग (Admin Access Log)</span>
           </button>
         </div>
 
@@ -5272,10 +5272,10 @@ export function AdminDashboard({
               </div>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                  आधिकारिक प्रशासनिक ऑडिट लॉग (Official System Audit Trail)
+                  🔐 प्रशासनिक एक्सेस व लॉगिन लेजर (Admin Access & Security Log)
                 </h3>
                 <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                  राजस्थान पुलिस सुरक्षा मानक • सभी प्रशासनिक, किट वितरण व क्रेडेंशियल गतिविधियों का समय-अंकित लेजर
+                  केवल अधिकृत पुलिस अधिकारियों व ऑपरेटरों के लॉगिन, लॉगआउट एवं उच्च-स्तरीय प्रशासनिक आदेशों का सुरक्षा लेजर
                 </div>
               </div>
             </div>
@@ -5284,7 +5284,7 @@ export function AdminDashboard({
               <div style={{ position: 'relative', minWidth: '220px' }}>
                 <input
                   type="text"
-                  placeholder="लॉग खोजें (Action, Actor)..."
+                  placeholder="एक्सेस लॉग खोजें (Officer, IP, Role)..."
                   value={auditSearch}
                   onChange={(e) => setAuditSearch(e.target.value)}
                   style={{
@@ -5328,24 +5328,26 @@ export function AdminDashboard({
               <thead>
                 <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', color: 'var(--police-navy-900)', fontWeight: 800 }}>
                   <th style={{ padding: '12px 14px', width: '70px' }}>लॉग ID</th>
-                  <th style={{ padding: '12px 14px', width: '160px' }}>समय (Timestamp)</th>
-                  <th style={{ padding: '12px 14px', width: '140px' }}>अधिकारी / ऑपरेटर</th>
-                  <th style={{ padding: '12px 14px', width: '160px' }}>कार्रवाई (Action)</th>
-                  <th style={{ padding: '12px 14px' }}>गतिविधि विवरण (Details)</th>
-                  <th style={{ padding: '12px 14px', width: '110px' }}>IP पता</th>
+                  <th style={{ padding: '12px 14px', width: '170px' }}>समय (Timestamp)</th>
+                  <th style={{ padding: '12px 14px', width: '180px' }}>अधिकृत अधिकारी / ऑपरेटर</th>
+                  <th style={{ padding: '12px 14px', width: '160px' }}>एक्सेस प्रकार (Event)</th>
+                  <th style={{ padding: '12px 14px' }}>विवरण (Details)</th>
+                  <th style={{ padding: '12px 14px', width: '120px' }}>IP पता</th>
                 </tr>
               </thead>
               <tbody>
                 {auditLogs
                   .filter(l => !auditSearch || (l.action || '').toLowerCase().includes(auditSearch.toLowerCase()) || (l.actor || '').toLowerCase().includes(auditSearch.toLowerCase()) || (l.details || '').toLowerCase().includes(auditSearch.toLowerCase()))
                   .map((log, idx) => {
-                    const actionColor = 
-                      log.action?.includes('KIT') ? { bg: '#fff7ed', text: '#c2410c', border: '#fdba74' } :
-                      log.action?.includes('GATE') ? { bg: '#ecfdf5', text: '#047857', border: '#86efac' } :
-                      log.action?.includes('CERT') ? { bg: '#fef3c7', text: '#92400e', border: '#fde68a' } :
-                      log.action?.includes('LOGIN') ? { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' } :
-                      log.action?.includes('BROADCAST') ? { bg: '#faf5ff', text: '#7e22ce', border: '#d8b4fe' } :
-                      { bg: '#f1f5f9', text: '#475569', border: '#cbd5e1' };
+                    const actionBadge = 
+                      log.action === 'ADMIN_LOGIN' ? { bg: '#ecfdf5', text: '#065f46', border: '#a7f3d0', label: '🟢 एडमिन लॉगिन' } :
+                      log.action === 'ADMIN_LOGOUT' ? { bg: '#f1f5f9', text: '#475569', border: '#cbd5e1', label: '⚪ एडमिन लॉगआउट' } :
+                      log.action === 'EXPO_VOLUNTEER_LOGIN' ? { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe', label: '🔵 काउंटर ऑपरेटर लॉगिन' } :
+                      log.action === 'GATE_MARSHAL_LOGIN' ? { bg: '#fefce8', text: '#854d0e', border: '#fef08a', label: '🟡 गेट मार्शल लॉगिन' } :
+                      log.action === 'CERTIFICATES_BATCH_GENERATED' ? { bg: '#faf5ff', text: '#7e22ce', border: '#e9d5ff', label: '🟣 बल्क प्रमाण पत्र जारी' } :
+                      log.action === 'MASS_BROADCAST_SENT' ? { bg: '#fff1f2', text: '#be123c', border: '#fecdd3', label: '📢 मास ब्रॉडकास्ट' } :
+                      log.action === 'VOLUNTEER_REGISTERED' ? { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0', label: '👤 ऑपरेटर आवंटन' } :
+                      { bg: '#f1f5f9', text: '#475569', border: '#cbd5e1', label: log.action };
 
                     return (
                       <tr key={log.id || idx} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? '#ffffff' : '#fafafa' }}>
@@ -5356,24 +5358,23 @@ export function AdminDashboard({
                           {log.created_at ? new Date(log.created_at).toLocaleString('hi-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'आज'}
                         </td>
                         <td style={{ padding: '10px 14px', fontWeight: 800, color: 'var(--police-navy-950)' }}>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <Shield size={12} color="#2563eb" />
-                            {log.actor || 'SYSTEM'}
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <Shield size={13} color="#1d4ed8" />
+                            {log.actor || 'ADMIN'}
                           </span>
                         </td>
                         <td style={{ padding: '10px 14px' }}>
                           <span style={{
-                            background: actionColor.bg,
-                            color: actionColor.text,
-                            border: `1px solid ${actionColor.border}`,
-                            padding: '2px 8px',
+                            background: actionBadge.bg,
+                            color: actionBadge.text,
+                            border: `1px solid ${actionBadge.border}`,
+                            padding: '3px 9px',
                             borderRadius: '4px',
-                            fontSize: '0.72rem',
+                            fontSize: '0.74rem',
                             fontWeight: 800,
-                            fontFamily: 'monospace',
                             display: 'inline-block'
                           }}>
-                            {log.action}
+                            {actionBadge.label}
                           </span>
                         </td>
                         <td style={{ padding: '10px 14px', color: '#1e293b' }}>
@@ -5388,7 +5389,7 @@ export function AdminDashboard({
                 {auditLogs.length === 0 && (
                   <tr>
                     <td colSpan={6} style={{ padding: '28px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                      कोई ऑडिट लॉग उपलब्ध नहीं है।
+                      कोई प्रशासनिक एक्सेस लॉग उपलब्ध नहीं है।
                     </td>
                   </tr>
                 )}

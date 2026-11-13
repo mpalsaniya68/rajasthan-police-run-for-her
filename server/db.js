@@ -255,7 +255,7 @@ export async function initDatabase() {
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_admin_role ON admin_users(role);`);
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_admin_mobile ON admin_users(mobile);`);
 
-    // 4. Audit Logs Table (Government Compliance)
+    // 4. Audit Logs Table (Government Compliance - Strictly Admin Access & Security Controls)
     await db.execute(`
       CREATE TABLE IF NOT EXISTS audit_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -266,6 +266,24 @@ export async function initDatabase() {
         created_at TEXT NOT NULL
       );
     `);
+    await db.execute(`CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_logs(action);`);
+    await db.execute(`CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_logs(actor);`);
+
+    // Purge legacy non-admin micro-events to keep audit trail clean and focused strictly on admin access
+    try {
+      await db.execute(`
+        DELETE FROM audit_logs 
+        WHERE action NOT IN (
+          'ADMIN_LOGIN',
+          'ADMIN_LOGOUT',
+          'EXPO_VOLUNTEER_LOGIN',
+          'GATE_MARSHAL_LOGIN',
+          'CERTIFICATES_BATCH_GENERATED',
+          'MASS_BROADCAST_SENT',
+          'VOLUNTEER_REGISTERED'
+        );
+      `);
+    } catch (e) {}
 
     // 5. Category Sequences Table for Zero-Collision Atomic Bib Generation
     await db.execute(`

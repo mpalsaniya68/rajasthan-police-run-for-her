@@ -239,13 +239,6 @@ export async function handleApiRequest(req, res) {
         return error(result.message, 429);
       }
 
-      try {
-        await db.execute({
-          sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-          args: ["CITIZEN", "SEND_OTP", `Mobile: ${maskMobile(mobile)}`, clientIp, new Date().toISOString()]
-        });
-      } catch (e) {}
-
       return json({
         success: true,
         message: "सुरक्षा OTP सफलतापूर्वक भेजा गया।",
@@ -358,13 +351,6 @@ export async function handleApiRequest(req, res) {
         return error(result.message, 429);
       }
 
-      try {
-        await db.execute({
-          sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-          args: ["CITIZEN", "SEND_PASS_OTP", `PassId: ${r.id}, Mobile: ${maskMobile(r.mobile)}`, clientIp, new Date().toISOString()]
-        });
-      } catch (e) {}
-
       return json({
         success: true,
         message: `सुरक्षा OTP पंजीकृत मोबाइल ${maskMobile(r.mobile)} पर भेजा गया।`,
@@ -411,13 +397,6 @@ export async function handleApiRequest(req, res) {
       if (!result.success) {
         return error(result.message, 400);
       }
-
-      try {
-        await db.execute({
-          sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-          args: ["CITIZEN", "UNLOCK_PASS_SUCCESS", `Bib: ${r.bib_number}`, clientIp, new Date().toISOString()]
-        });
-      } catch (e) {}
 
       return json({
         success: true,
@@ -597,11 +576,7 @@ export async function handleApiRequest(req, res) {
         });
       } catch (payErr) {
         console.error("[Payments Ledger Error]:", payErr);
-      }    // Log Audit Trail
-      await db.execute({
-        sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-        args: ["SYSTEM", "REGISTER_RUNNER", `Bib: ${bibNumber}, Name: ${data.fullName}`, clientIp, now]
-      });
+      }
 
       // Automated Notification Dispatch (SMS / WhatsApp)
       sendRegistrationNotification({
@@ -2393,11 +2368,24 @@ export async function handleApiRequest(req, res) {
       if (isNaN(limit) || limit < 1) limit = 100;
       if (limit > 500) limit = 500;
 
-      let sql = "SELECT id, actor, action, details, ip, created_at FROM audit_logs";
+      // Strictly query ADMIN ACCESS & COMMAND SECURITY events only
+      let sql = `
+        SELECT id, actor, action, details, ip, created_at 
+        FROM audit_logs 
+        WHERE action IN (
+          'ADMIN_LOGIN', 
+          'ADMIN_LOGOUT', 
+          'EXPO_VOLUNTEER_LOGIN', 
+          'GATE_MARSHAL_LOGIN', 
+          'CERTIFICATES_BATCH_GENERATED', 
+          'MASS_BROADCAST_SENT', 
+          'VOLUNTEER_REGISTERED'
+        )
+      `;
       let args = [];
       if (adminUser.role === "DISTRICT") {
         const distName = adminUser.districtName || adminUser.districtId;
-        sql += " WHERE details LIKE ? OR actor LIKE ?";
+        sql += " AND (details LIKE ? OR actor LIKE ?)";
         args.push(`%${distName}%`, `%${adminUser.username}%`);
       }
       sql += " ORDER BY id DESC LIMIT ?;";
