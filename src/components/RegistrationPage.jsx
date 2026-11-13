@@ -1961,12 +1961,9 @@ export function RegistrationPage({
                 }}>
                   <Smartphone size={34} color="var(--police-navy-900)" />
                 </div>
-                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--police-navy-950)', margin: '0 0 8px 0' }}>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--police-navy-950)', margin: '0' }}>
                   पंजीकरण फॉर्म खोलने हेतु मोबाइल सत्यापन
                 </h3>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>
-                  सुरक्षा, डेटा शुद्धता एवं बॉट रोकथाम हेतु केवल सत्यापित मोबाइल नंबर पर ही पंजीकरण स्वीकार्य है। अपना 10-अंकीय नंबर दर्ज कर OTP सत्यापित करें।
-                </p>
               </div>
 
               {/* Mobile Input Card */}
@@ -2212,22 +2209,6 @@ export function RegistrationPage({
                 )}
               </div>
 
-              {/* Security & DPDP Compliance Note */}
-              <div style={{
-                marginTop: '24px',
-                padding: '14px 18px',
-                background: '#f8fafc',
-                border: '1px solid var(--border-medium)',
-                borderRadius: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px'
-              }}>
-                <Shield size={24} color="var(--police-navy-900)" style={{ flexShrink: 0 }} />
-                <div style={{ fontSize: '0.78rem', color: 'var(--police-navy-900)', lineHeight: 1.4 }}>
-                  <strong>राजस्थान पुलिस साइबर सुरक्षा प्रमाणीकरण:</strong> आपका मोबाइल नंबर DPDP अधिनियम 2023 के तहत केवल मैराथन ई-पास, आरएफआईडी बिब आवंटन एवं आधिकारिक सूचनाओं हेतु सुरक्षित रखा जाएगा।
-                </div>
-              </div>
             </div>
           </div>
         ) : (
