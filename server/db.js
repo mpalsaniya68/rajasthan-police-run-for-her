@@ -43,14 +43,14 @@ try {
   // Ignore if not present
 }
 
-// Database URL & Auth Token strictly loaded from environment variables (.env / Vercel secrets)
-export const isProductionTurso = Boolean(process.env.TURSO_DATABASE_URL && !process.env.TURSO_DATABASE_URL.startsWith("file:"));
-let fallbackUrl = "file:data/rajasthan_police_marathon.db";
-if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
-  fallbackUrl = "file:/tmp/rajasthan_police_marathon.db";
-}
-const dbUrl = process.env.TURSO_DATABASE_URL || fallbackUrl;
-const dbAuthToken = process.env.TURSO_AUTH_TOKEN || undefined;
+// Official Turso Cloud Edge DB Fallback for Cloud/Serverless Deployments
+const OFFICIAL_TURSO_URL = "libsql://rajpol-marathon-mpalsaniya68.aws-ap-south-1.turso.io";
+const OFFICIAL_TURSO_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTMxMDI3MDksImlkIjoiMDFhMTdkM2UtODkwMS03MDJmLTg1NDktMTIxYTVjNjNjOTA2Iiwia2lkIjoiYjZQMlBaZ2lramdPWUpFVy01ME5WLTZDZWY5ZFptOXhTN0pHSEFjODhVOCIsInJpZCI6IjY0MDQ4OTVlLWU1YmUtNDJiMS05MGU4LTcwY2E0NDE0MDRmYSJ9.SMGy8PlDNGhVGpRPnvfYazomMSl8NVEQU7Sw9Bce5H-S7ZSo_KSsc_FKGyatty799K_Kd6PTVs5cdR8mO5QvDQ";
+
+const isCloudEnv = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === "production");
+const dbUrl = process.env.TURSO_DATABASE_URL || (isCloudEnv ? OFFICIAL_TURSO_URL : "file:data/rajasthan_police_marathon.db");
+const dbAuthToken = process.env.TURSO_AUTH_TOKEN || (dbUrl === OFFICIAL_TURSO_URL ? OFFICIAL_TURSO_TOKEN : undefined);
+export const isProductionTurso = Boolean(dbUrl && !dbUrl.startsWith("file:"));
 
 export const db = createClient({
   url: dbUrl,

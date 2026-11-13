@@ -340,8 +340,8 @@ export async function handleApiRequest(req, res) {
   // Prefer x-forwarded-uri or x-original-url which preserves the original client path on reverse proxies & Vercel
   let rawPath = req.headers["x-forwarded-uri"] || req.headers["x-original-url"] || req.url || "/";
 
-  // If rawPath has no subpath (is "/api" or "/api/" or "/") but x-matched-path has an actual subpath
-  if ((rawPath === "/api" || rawPath === "/api/" || rawPath === "/") && req.headers["x-matched-path"]) {
+  // If x-matched-path exists, check if it has the original subpath
+  if (req.headers["x-matched-path"]) {
     const mp = req.headers["x-matched-path"];
     if (mp.startsWith("/api/") && !mp.includes("[...") && mp !== "/api/index") {
       rawPath = mp;
@@ -351,10 +351,16 @@ export async function handleApiRequest(req, res) {
   const host = req.headers["x-forwarded-host"] || req.headers.host || "localhost";
   const parsedUrl = new URL(rawPath, `http://${host}`);
 
+  // Check ?path= parameter from Vercel rewrite (e.g. /api/(.*) -> /api?path=$1)
+  const pathParam = parsedUrl.searchParams.get("path") || (req.query && req.query.path);
+  if (pathParam) {
+    parsedUrl.searchParams.delete("path");
+  }
+
   // Merge any query parameters that Vercel or Express might have already parsed into req.query
   if (req.query && typeof req.query === "object") {
     for (const [k, v] of Object.entries(req.query)) {
-      if (k !== "route" && !parsedUrl.searchParams.has(k)) {
+      if (k !== "route" && k !== "path" && !parsedUrl.searchParams.has(k)) {
         if (Array.isArray(v)) {
           v.forEach(item => parsedUrl.searchParams.append(k, item));
         } else if (v !== undefined && v !== null) {
@@ -366,10 +372,11 @@ export async function handleApiRequest(req, res) {
 
   let pathname = parsedUrl.pathname.replace(/^\/api/, "") || "/";
 
-  // If Vercel passed route as query param in [...route] handler or rewrites
-  if (pathname === "/" || pathname === "/[...route]" || pathname === "/index") {
-    const routeQuery = req.query?.route || parsedUrl.searchParams.get("route");
-    if (routeQuery) {
+  if (pathParam) {
+    pathname = `/${pathParam}`.replace(/^\/+/, "/");
+  } else if (pathname === "/" || pathname === "/[...route]" || pathname === "/index" || pathname.startsWith("/[...route]")) {
+    const routeQuery = req.query?.route || parsedUrl.searchParams.getAll("route");
+    if (routeQuery && (Array.isArray(routeQuery) ? routeQuery.length > 0 : Boolean(routeQuery))) {
       const segs = Array.isArray(routeQuery) ? routeQuery.join("/") : routeQuery;
       pathname = `/${segs}`.replace(/^\/+/, "/");
       parsedUrl.searchParams.delete("route");

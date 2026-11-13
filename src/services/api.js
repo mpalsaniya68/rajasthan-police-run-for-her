@@ -168,7 +168,13 @@ export async function apiAdminLogin(username, password) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
     });
-    return await res.json();
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      console.error("apiAdminLogin response was not JSON:", text);
+      return { success: false, error: "सर्वर से कनेक्ट करने में त्रुटि। कृपया पुनः प्रयास करें।" };
+    }
   } catch (err) {
     console.error("apiAdminLogin network error:", err);
     return { success: false, error: "लॉगिन सर्वर से कनेक्ट नहीं हो सका। कृपया पुनः प्रयास करें।" };
@@ -201,7 +207,13 @@ export async function apiExpoLogin(operatorNameOrUser, counterIdOrPass, counterN
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-    return await res.json();
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      console.error("apiExpoLogin response was not JSON:", text);
+      return { success: false, error: "सर्वर से कनेक्ट करने में त्रुटि। कृपया पुनः प्रयास करें।" };
+    }
   } catch (err) {
     console.error("apiExpoLogin network error:", err);
     return { success: false, error: "लॉगिन सर्वर से कनेक्ट नहीं हो सका। कृपया पुनः प्रयास करें।" };
