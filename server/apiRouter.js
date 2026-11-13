@@ -23,7 +23,7 @@ import {
   dispatchLimiter,
   sanitizeCsvCell
 } from "./security.js";
-import { sendRegistrationNotification, sendCertificateNotification, batchDispatchCertificateNotifications } from "./notifications.js";
+import { sendRegistrationNotification, sendCertificateNotification, batchDispatchCertificateNotifications, sendAdminOtpNotification } from "./notifications.js";
 
 const CATEGORY_NAMES = {
   "21k": "21 KM Half Marathon",
@@ -225,6 +225,21 @@ function extractRunnerQuery(rawInput) {
   }
   return clean;
 }
+
+/**
+ * In-Memory 2FA OTP Cache for Admin, District & Volunteer Logins (5 min TTL)
+ */
+const adminOtpStore = new Map();
+
+function cleanExpiredAdminOtps() {
+  const now = Date.now();
+  for (const [token, record] of adminOtpStore.entries()) {
+    if (record.expiresAt < now) {
+      adminOtpStore.delete(token);
+    }
+  }
+}
+setInterval(cleanExpiredAdminOtps, 60000).unref();
 
 /**
  * Helper to extract and cryptographically verify Admin Token from Authorization Header or ?token=
@@ -1500,7 +1515,8 @@ export async function handleApiRequest(req, res) {
           role: isPhq ? "PHQ" : "DISTRICT",
           districtId: isPhq ? "ALL" : (u.district_id || "jaipur_comm"),
           districtName: isPhq ? "समस्त राजस्थान (PHQ)" : (u.district_name || "राजस्थान पुलिस"),
-          fullName: u.full_name
+          fullName: u.full_name,
+          mobile: u.mobile || process.env.ADMIN_BOOTSTRAP_MOBILE || "7023233248"
         };
       }
 
@@ -1508,14 +1524,77 @@ export async function handleApiRequest(req, res) {
         return error("अमान्य क्रेडेंशियल्स! कृपया सही अधिकृत पुलिस आईडी और पासवर्ड दर्ज करें।", 401);
       }
 
-      // Cryptographic HMAC token signed with APP_SECRET and 24h expiration
+      // Step 2: 2FA OTP Generation
+      const targetMobile = authenticatedUser.mobile || process.env.ADMIN_BOOTSTRAP_MOBILE || "7023233248";
+      const generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+      const tempToken = `2fa-${crypto.randomBytes(20).toString("hex")}`;
+
+      adminOtpStore.set(tempToken, {
+        user: authenticatedUser,
+        mobile: targetMobile,
+        otp: generatedOtp,
+        attempts: 0,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 5 * 60 * 1000
+      });
+
+      const notifRes = await sendAdminOtpNotification({
+        mobile: targetMobile,
+        otp: generatedOtp,
+        username: authenticatedUser.username,
+        role: authenticatedUser.role
+      });
+
+      return json({
+        success: true,
+        requireOtp: true,
+        tempToken,
+        maskedMobile: maskMobile(targetMobile),
+        simulatedOtp: notifRes.simulated ? generatedOtp : undefined
+      });
+    }
+
+    // 7a. Admin 2FA OTP Verification
+    if (pathname === "/admin/verify-otp" && method === "POST") {
+      const body = await parseJsonBody(req);
+      const tempToken = (body.tempToken || "").trim();
+      const enteredOtp = (body.otp || "").trim();
+
+      if (!tempToken || !enteredOtp) {
+        return error("सत्र टोकन एवं 6-अंकीय OTP दोनों आवश्यक हैं।", 400);
+      }
+
+      const record = adminOtpStore.get(tempToken);
+      if (!record || record.expiresAt < Date.now()) {
+        adminOtpStore.delete(tempToken);
+        return error("OTP की समयावधि समाप्त हो चुकी है। कृपया पुनः लॉगिन करें।", 401);
+      }
+
+      if (enteredOtp !== record.otp) {
+        record.attempts = (record.attempts || 0) + 1;
+        if (record.attempts >= 3) {
+          adminOtpStore.delete(tempToken);
+          return error("3 बार गलत OTP दर्ज किया गया। कृपया पुनः लॉगिन करें।", 401);
+        }
+        return error(`अमान्य OTP दर्ज किया गया है। (${3 - record.attempts} प्रयास शेष)`, 400);
+      }
+
+      // OTP Matched Successfully
+      adminOtpStore.delete(tempToken);
+      const authenticatedUser = record.user;
       const token = createAdminToken(authenticatedUser);
 
       // Audit Log
       try {
         await db.execute({
           sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-          args: [authenticatedUser.username, "ADMIN_LOGIN", `Role: ${authenticatedUser.role}, Dist: ${authenticatedUser.districtId}`, clientIp, new Date().toISOString()]
+          args: [
+            authenticatedUser.username,
+            "ADMIN_2FA_LOGIN_SUCCESS",
+            `Role: ${authenticatedUser.role}, Dist: ${authenticatedUser.districtId}, Mobile: ${record.mobile}`,
+            clientIp,
+            new Date().toISOString()
+          ]
         });
       } catch (e) {}
 
@@ -1523,6 +1602,42 @@ export async function handleApiRequest(req, res) {
         success: true,
         token,
         user: authenticatedUser
+      });
+    }
+
+    // 7a-2. Resend Admin 2FA OTP
+    if (pathname === "/admin/resend-otp" && method === "POST") {
+      const body = await parseJsonBody(req);
+      const tempToken = (body.tempToken || "").trim();
+
+      if (!tempToken) {
+        return error("अमान्य सत्र।", 400);
+      }
+
+      const record = adminOtpStore.get(tempToken);
+      if (!record || record.expiresAt < Date.now()) {
+        adminOtpStore.delete(tempToken);
+        return error("सत्र समाप्त हो चुका है। कृपया पुनः लॉगिन करें।", 401);
+      }
+
+      const newOtp = String(Math.floor(100000 + Math.random() * 900000));
+      record.otp = newOtp;
+      record.createdAt = Date.now();
+      record.expiresAt = Date.now() + 5 * 60 * 1000;
+      record.attempts = 0;
+
+      const notifRes = await sendAdminOtpNotification({
+        mobile: record.mobile,
+        otp: newOtp,
+        username: record.user.username,
+        role: record.user.role
+      });
+
+      return json({
+        success: true,
+        message: "नया OTP अधिकृत मोबाइल नंबर पर भेज दिया गया है।",
+        maskedMobile: maskMobile(record.mobile),
+        simulatedOtp: notifRes.simulated ? newOtp : undefined
       });
     }
 
@@ -1590,7 +1705,7 @@ export async function handleApiRequest(req, res) {
           username: u.username,
           fullName: u.full_name,
           designation: u.designation || (isGate ? "गेट मार्शल" : "एक्सपो वॉलंटियर"),
-          mobile: u.mobile || "",
+          mobile: u.mobile || process.env.ADMIN_BOOTSTRAP_MOBILE || "7023233248",
           role: u.role,
           districtId: u.district_id || "jaipur_comm",
           districtName: u.district_name || "जयपुर पुलिस आयुक्तालय",
@@ -1598,25 +1713,32 @@ export async function handleApiRequest(req, res) {
           counterName: assignedCounterName
         };
 
-        const token = createAdminToken(authenticatedUser);
+        const targetMobile = authenticatedUser.mobile || process.env.ADMIN_BOOTSTRAP_MOBILE || "7023233248";
+        const generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+        const tempToken = `2fa-${crypto.randomBytes(20).toString("hex")}`;
 
-        try {
-          await db.execute({
-            sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-            args: [
-              u.username,
-              isGate ? "GATE_MARSHAL_LOGIN" : "EXPO_VOLUNTEER_LOGIN",
-              `Volunteer: ${u.full_name} (${u.designation || 'Staff'}) | Station: ${assignedCounterName} (${assignedCounterId})`,
-              clientIp,
-              new Date().toISOString()
-            ]
-          });
-        } catch (e) {}
+        adminOtpStore.set(tempToken, {
+          user: authenticatedUser,
+          mobile: targetMobile,
+          otp: generatedOtp,
+          attempts: 0,
+          createdAt: Date.now(),
+          expiresAt: Date.now() + 5 * 60 * 1000
+        });
+
+        const notifRes = await sendAdminOtpNotification({
+          mobile: targetMobile,
+          otp: generatedOtp,
+          username: authenticatedUser.username,
+          role: authenticatedUser.role
+        });
 
         return json({
           success: true,
-          token,
-          user: authenticatedUser
+          requireOtp: true,
+          tempToken,
+          maskedMobile: maskMobile(targetMobile),
+          simulatedOtp: notifRes.simulated ? generatedOtp : undefined
         });
       }
 
@@ -1656,23 +1778,38 @@ export async function handleApiRequest(req, res) {
         designation: isGate ? "गेट ऑपरेटर" : "एक्सपो ऑपरेटर",
         role: isGate ? "GATE_MARSHAL" : "EXPO_VOLUNTEER",
         districtId: "jaipur_comm",
+        districtName: "जयपुर पुलिस आयुक्तालय",
         counterId: effectiveCounterId,
-        counterName: effectiveCounterName
+        counterName: effectiveCounterName,
+        mobile: process.env.ADMIN_BOOTSTRAP_MOBILE || "7023233248"
       };
 
-      const token = createAdminToken(user);
+      const targetMobile = user.mobile;
+      const generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+      const tempToken = `2fa-${crypto.randomBytes(20).toString("hex")}`;
 
-      try {
-        await db.execute({
-          sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-          args: [loginIdentifier, isGate ? "GATE_MARSHAL_LOGIN" : "EXPO_VOLUNTEER_LOGIN", `Station: ${effectiveCounterName} (${effectiveCounterId})`, clientIp, new Date().toISOString()]
-        });
-      } catch (e) {}
+      adminOtpStore.set(tempToken, {
+        user,
+        mobile: targetMobile,
+        otp: generatedOtp,
+        attempts: 0,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 5 * 60 * 1000
+      });
+
+      const notifRes = await sendAdminOtpNotification({
+        mobile: targetMobile,
+        otp: generatedOtp,
+        username: user.username,
+        role: user.role
+      });
 
       return json({
         success: true,
-        token,
-        user
+        requireOtp: true,
+        tempToken,
+        maskedMobile: maskMobile(targetMobile),
+        simulatedOtp: notifRes.simulated ? generatedOtp : undefined
       });
     }
 
@@ -1689,7 +1826,7 @@ export async function handleApiRequest(req, res) {
       const resVols = await db.execute(`
         SELECT id, username, role, full_name, designation, mobile, counter_id, counter_name, plain_passcode, status, district_id, district_name, created_at 
         FROM admin_users 
-        WHERE role IN ('EXPO_VOLUNTEER', 'GATE_MARSHAL') 
+        WHERE role IN ('EXPO_VOLUNTEER', 'GATE_MARSHAL', 'DISTRICT') 
         ORDER BY created_at DESC;
       `);
 
@@ -1761,13 +1898,17 @@ export async function handleApiRequest(req, res) {
       const mobile = (body.mobile || "").trim();
       let username = (body.username || "").trim().toLowerCase();
       const password = (body.password || body.passcode || "").trim();
-      const stationType = body.stationType || (body.counterId?.startsWith("gate_") ? "gate" : "counter");
-      const role = stationType === "gate" || body.role === "GATE_MARSHAL" ? "GATE_MARSHAL" : "EXPO_VOLUNTEER";
-      const counterId = (body.counterId || (role === "GATE_MARSHAL" ? "gate_01" : "counter_01")).trim();
-      const counterName = (body.counterName || counterId).trim();
+      const stationType = body.stationType || (body.counterId?.startsWith("gate_") ? "gate" : (body.role === "DISTRICT" ? "district" : "counter"));
+      const isDistrict = stationType === "district" || body.role === "DISTRICT";
+      const isGate = !isDistrict && (stationType === "gate" || body.role === "GATE_MARSHAL");
+      const role = isDistrict ? "DISTRICT" : (isGate ? "GATE_MARSHAL" : "EXPO_VOLUNTEER");
+      const districtId = isDistrict ? (body.districtId || "alwar") : (body.districtId || "jaipur_comm");
+      const districtName = isDistrict ? (body.districtName || DISTRICT_NAMES[districtId] || "जिला पुलिस") : "जयपुर पुलिस आयुक्तालय";
+      const counterId = isDistrict ? "" : (body.counterId || (role === "GATE_MARSHAL" ? "gate_01" : "counter_01")).trim();
+      const counterName = isDistrict ? "जिला कमान डेस्क" : (body.counterName || counterId).trim();
 
       if (!fullName) {
-        return error("वॉलंटियर का पूरा नाम आवश्यक है।", 400);
+        return error("वॉलंटियर / अधिकारी का पूरा नाम आवश्यक है।", 400);
       }
       if (!password || password.length < 3) {
         return error("कृपया कम से कम 3 अक्षरों का सुरक्षा पासवर्ड दर्ज करें।", 400);
@@ -1777,7 +1918,8 @@ export async function handleApiRequest(req, res) {
       if (!username) {
         const cleanName = fullName.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8);
         const rand = Math.floor(100 + Math.random() * 900);
-        username = `vol_${cleanName || 'staff'}_${rand}`;
+        const prefix = isDistrict ? `sp_${districtId.slice(0, 4)}` : 'vol';
+        username = `${prefix}_${cleanName || 'staff'}_${rand}`;
       }
 
       // Check for collision
@@ -1789,16 +1931,16 @@ export async function handleApiRequest(req, res) {
         return error(`यूजरनेम '${username}' पहले से उपयोग में है। कृपया दूसरा यूजरनेम चुनें।`, 409);
       }
 
-      const newId = `vol-${Date.now().toString(36)}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newId = `${isDistrict ? 'dist' : 'vol'}-${Date.now().toString(36)}-${Math.floor(1000 + Math.random() * 9000)}`;
       const now = new Date().toISOString();
       const hashed = hashPassword(password);
 
       await db.execute({
         sql: `INSERT INTO admin_users (
           id, username, password_hash, plain_passcode, role, full_name, designation, mobile, counter_id, counter_name, status, district_id, district_name, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE', 'jaipur_comm', 'जयपुर पुलिस आयुक्तालय', ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE', ?, ?, ?)`,
         args: [
-          newId, username, hashed, password, role, fullName, designation, mobile, counterId, counterName, now
+          newId, username, hashed, password, role, fullName, designation, mobile, counterId, counterName, districtId, districtName, now
         ]
       });
 
@@ -1852,7 +1994,7 @@ export async function handleApiRequest(req, res) {
       }
 
       const existRes = await db.execute({
-        sql: "SELECT * FROM admin_users WHERE id = ? AND role IN ('EXPO_VOLUNTEER', 'GATE_MARSHAL') LIMIT 1",
+        sql: "SELECT * FROM admin_users WHERE id = ? AND role IN ('EXPO_VOLUNTEER', 'GATE_MARSHAL', 'DISTRICT') LIMIT 1",
         args: [id]
       });
       if (existRes.rows.length === 0) {
@@ -1914,7 +2056,7 @@ export async function handleApiRequest(req, res) {
       }
 
       await db.execute({
-        sql: "DELETE FROM admin_users WHERE id = ? AND role IN ('EXPO_VOLUNTEER', 'GATE_MARSHAL')",
+        sql: "DELETE FROM admin_users WHERE id = ? AND role IN ('EXPO_VOLUNTEER', 'GATE_MARSHAL', 'DISTRICT')",
         args: [id]
       });
 

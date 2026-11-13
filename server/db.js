@@ -331,16 +331,18 @@ export async function initDatabase() {
       throw new Error("Bootstrap username must be at least 3 characters and password at least 10 characters.");
     }
 
+    const defaultAdminMobile = process.env.ADMIN_BOOTSTRAP_MOBILE?.trim() || '7023233248';
     const adminCheck = await db.execute("SELECT count(*) as count FROM admin_users;");
     if (Number(adminCheck.rows[0].count) === 0 && bootstrapUsername && bootstrapPassword) {
       await db.execute({
-        sql: `INSERT INTO admin_users (id, username, password_hash, role, full_name, district_id, district_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        sql: `INSERT INTO admin_users (id, username, password_hash, role, full_name, mobile, district_id, district_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         args: [
           `admin-${Date.now().toString(36)}`,
           bootstrapUsername,
           hashPassword(bootstrapPassword),
           'SUPER_ADMIN',
           'Police State Nodal Officer',
+          defaultAdminMobile,
           'ALL',
           'समस्त राजस्थान (PHQ)',
           new Date().toISOString()
@@ -350,6 +352,14 @@ export async function initDatabase() {
     } else if (Number(adminCheck.rows[0].count) === 0) {
       console.warn("[DB] No admin account exists. Configure ADMIN_BOOTSTRAP_USERNAME and ADMIN_BOOTSTRAP_PASSWORD to provision one.");
     }
+
+    // Ensure all super admin / PHQ records have an authorized mobile number
+    try {
+      await db.execute({
+        sql: "UPDATE admin_users SET mobile = ? WHERE (mobile IS NULL OR mobile = '') AND role IN ('SUPER_ADMIN', 'PHQ')",
+        args: [defaultAdminMobile]
+      });
+    } catch (e) {}
 
     // Seed initial realistic participants if empty so dashboard and tracker immediately work
     const countRes = await db.execute(`SELECT count(*) as count FROM participants;`);

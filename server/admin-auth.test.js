@@ -171,7 +171,22 @@ test("admin audit logs and broadcast endpoints work with valid authorization", a
     password: "rotated-test-admin-password-2026"
   });
   assert.equal(loginRes.status, 200);
-  const token = loginRes.body.token;
+  assert.equal(loginRes.body.requireOtp, true);
+
+  // 1. Rejection of invalid OTP
+  const badOtpRes = await post("/admin/verify-otp", {
+    tempToken: loginRes.body.tempToken,
+    otp: "000000"
+  });
+  assert.equal(badOtpRes.status, 400);
+
+  // 2. Acceptance of valid 2FA OTP
+  const verifyRes = await post("/admin/verify-otp", {
+    tempToken: loginRes.body.tempToken,
+    otp: loginRes.body.simulatedOtp
+  });
+  assert.equal(verifyRes.status, 200);
+  const token = verifyRes.body.token;
 
   // 1. Audit Logs Endpoint
   requestNumber += 1;
@@ -207,3 +222,62 @@ test("admin audit logs and broadcast endpoints work with valid authorization", a
   assert.equal(broadcastData.success, true);
   assert.equal(broadcastData.channel, "SMS");
 });
+
+test("PHQ can provision a District Admin with registered mobile, who logs in via 2FA OTP", async () => {
+  // 1. Log in as PHQ Admin
+  const phqLogin = await post("/admin/login", {
+    username: bootstrapUsername,
+    password: "rotated-test-admin-password-2026"
+  });
+  const phq2fa = await post("/admin/verify-otp", {
+    tempToken: phqLogin.body.tempToken,
+    otp: phqLogin.body.simulatedOtp
+  });
+  const phqToken = phq2fa.body.token;
+
+  // 2. Create District Admin for Alwar with authorized mobile
+  requestNumber += 1;
+  const createDistRes = await fetch(`${baseUrl}/admin/volunteers`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${phqToken}`,
+      "x-forwarded-for": `198.51.100.${requestNumber}`
+    },
+    body: JSON.stringify({
+      fullName: "आनंद शर्मा (IPS)",
+      designation: "पुलिस अधीक्षक (SP Alwar)",
+      mobile: "9829012345",
+      username: "sp_alwar_official",
+      password: "AlwarPol#2027Secure",
+      stationType: "district",
+      districtId: "alwar",
+      districtName: "अलवर पुलिस"
+    })
+  });
+  assert.equal(createDistRes.status, 200);
+  const createDistData = await createDistRes.json();
+  assert.equal(createDistData.success, true);
+  assert.equal(createDistData.volunteer.role, "DISTRICT");
+  assert.equal(createDistData.volunteer.mobile, "9829012345");
+
+  // 3. District Admin logs in with credentials -> triggers 2FA OTP
+  const distLogin = await post("/admin/login", {
+    username: "sp_alwar_official",
+    password: "AlwarPol#2027Secure"
+  });
+  assert.equal(distLogin.status, 200);
+  assert.equal(distLogin.body.requireOtp, true);
+  assert.equal(distLogin.body.maskedMobile, "XXXXXX2345");
+
+  // 4. District Admin verifies 2FA OTP -> receives token scoped to Alwar
+  const dist2fa = await post("/admin/verify-otp", {
+    tempToken: distLogin.body.tempToken,
+    otp: distLogin.body.simulatedOtp
+  });
+  assert.equal(dist2fa.status, 200);
+  assert.equal(dist2fa.body.success, true);
+  assert.equal(dist2fa.body.user.role, "DISTRICT");
+  assert.equal(dist2fa.body.user.districtId, "alwar");
+});
+

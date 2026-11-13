@@ -31,14 +31,20 @@ before(async () => {
   });
   baseUrl = `http://127.0.0.1:${server.address().port}/api`;
 
-  // Authenticate as Admin
+  // Authenticate as Admin with 2FA OTP
   const loginRes = await fetch(`${baseUrl}/admin/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username: bootstrapUsername, password: bootstrapPassword })
   });
   const loginData = await loginRes.json();
-  adminToken = loginData.token;
+  const verifyRes = await fetch(`${baseUrl}/admin/verify-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tempToken: loginData.tempToken, otp: loginData.simulatedOtp })
+  });
+  const verifyData = await verifyRes.json();
+  adminToken = verifyData.token;
 });
 
 after(async () => {

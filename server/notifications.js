@@ -113,3 +113,50 @@ export async function batchDispatchCertificateNotifications(runners = []) {
 
   return { processed: runners.length, queued: true };
 }
+
+/**
+ * Dispatch Admin 2FA Login OTP via Live Gateway or Secure Simulation
+ */
+export async function sendAdminOtpNotification({ mobile, otp, username, role }) {
+  const cleanMobile = String(mobile || "").replace(/[^0-9]/g, "").slice(-10);
+  const smsText = `राजस्थान पुलिस मैराथन 2027: आपका एडमिन लॉगिन OTP है ${otp}। यह 5 मिनट के लिए मान्य है। कृपया इसे किसी के साथ साझा न करें। - PHQ कंट्रोल रूम`;
+
+  let delivered = false;
+  let simulated = !Boolean(SMS_API_KEY && process.env.SMS_GATEWAY_URL);
+  let gatewayResponse = "SIMULATED_LOCAL_DEV";
+
+  if (SMS_API_KEY && process.env.SMS_GATEWAY_URL && cleanMobile.length === 10) {
+    try {
+      const res = await fetch(process.env.SMS_GATEWAY_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${SMS_API_KEY}`
+        },
+        body: JSON.stringify({
+          sender: SMS_SENDER_ID,
+          numbers: cleanMobile,
+          message: smsText
+        })
+      });
+      const data = await res.json();
+      delivered = true;
+      gatewayResponse = JSON.stringify(data);
+    } catch (err) {
+      console.error("[Admin SMS Gateway Error]:", err.message);
+      gatewayResponse = `ERROR: ${err.message}`;
+    }
+  } else {
+    delivered = true;
+    gatewayResponse = `SUCCESS_SIMULATED: Sent to +91-${cleanMobile || 'ADMIN'}`;
+    console.log(`[ADMIN 2FA OTP] For ${username} (${role}): ${otp} to +91-${cleanMobile}`);
+  }
+
+  return {
+    success: delivered,
+    simulated,
+    smsText,
+    gatewayResponse
+  };
+}
+

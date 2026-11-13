@@ -208,6 +208,34 @@ export async function apiExpoLogin(operatorNameOrUser, counterIdOrPass, counterN
   }
 }
 
+export async function apiAdminVerifyOtp(tempToken, otp) {
+  try {
+    const res = await fetch(`${API_BASE}/admin/verify-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tempToken, otp })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiAdminVerifyOtp network error:", err);
+    return { success: false, error: "OTP सत्यापन सर्वर से कनेक्ट नहीं हो सका।" };
+  }
+}
+
+export async function apiAdminResendOtp(tempToken) {
+  try {
+    const res = await fetch(`${API_BASE}/admin/resend-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tempToken })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiAdminResendOtp network error:", err);
+    return { success: false, error: "OTP पुनः प्रेषण सर्वर से कनेक्ट नहीं हो सका।" };
+  }
+}
+
 export async function apiGetAdminParticipants(filters = {}) {
   try {
     const cleanFilters = {};
