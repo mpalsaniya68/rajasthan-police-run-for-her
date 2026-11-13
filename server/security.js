@@ -320,10 +320,14 @@ class OtpManager {
     const now = Date.now();
     const existing = this.store.get(clean);
 
-    // 45-second cooldown between requests for same mobile
-    if (existing && now - existing.sentAt < 45000) {
-      const waitSec = Math.ceil((45000 - (now - existing.sentAt)) / 1000);
-      return { success: false, waitSec, message: `कृपया ${waitSec} सेकंड बाद पुनः OTP का प्रयास करें।` };
+    // If an OTP was already generated and is still valid within cooldown, reuse active code
+    if (existing && now < existing.exp && (now - existing.sentAt < 45000)) {
+      return {
+        success: true,
+        code: existing.code,
+        expiresIn: Math.ceil((existing.exp - now) / 1000),
+        alreadyActive: true
+      };
     }
 
     // Cryptographically secure 6-digit OTP

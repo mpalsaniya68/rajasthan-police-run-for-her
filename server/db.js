@@ -86,7 +86,7 @@ export async function initDatabase(force = false) {
                 args: [
                   'vol-mwesytzg-1025',
                   'vol_rohan_3248',
-                  'a583fb4c3bada44945debba161e32458537d6b7e61c208cfb0fd14ef05e18ef2',
+                  'aa0fd805f03c38fd02fdc24363db6d273fcf1ecf41d468174fa42991912876b4',
                   'EXPO_VOLUNTEER',
                   'ROHAN',
                   '7023233248',
@@ -98,6 +98,12 @@ export async function initDatabase(force = false) {
                   'ACTIVE',
                   new Date().toISOString()
                 ]
+              });
+            } else {
+              // Ensure hash matches Expo@RajPol#2027
+              await db.execute({
+                sql: "UPDATE admin_users SET password_hash = 'aa0fd805f03c38fd02fdc24363db6d273fcf1ecf41d468174fa42991912876b4', status = 'ACTIVE' WHERE username = 'vol_rohan_3248';",
+                args: []
               });
             }
           } catch (e) {}
@@ -465,7 +471,7 @@ export async function initDatabase(force = false) {
           args: [
             'vol-mwesytzg-1025',
             'vol_rohan_3248',
-            'a583fb4c3bada44945debba161e32458537d6b7e61c208cfb0fd14ef05e18ef2',
+            'aa0fd805f03c38fd02fdc24363db6d273fcf1ecf41d468174fa42991912876b4',
             'EXPO_VOLUNTEER',
             'ROHAN',
             '7023233248',
@@ -479,6 +485,11 @@ export async function initDatabase(force = false) {
           ]
         });
         console.log("[DB] Core expo volunteer account (ROHAN - 7023233248) synchronized successfully.");
+      } else {
+        await db.execute({
+          sql: "UPDATE admin_users SET password_hash = 'aa0fd805f03c38fd02fdc24363db6d273fcf1ecf41d468174fa42991912876b4', status = 'ACTIVE' WHERE username = 'vol_rohan_3248';",
+          args: []
+        });
       }
     } catch (e) {
       console.warn("[DB] Note on volunteer sync:", e.message);
