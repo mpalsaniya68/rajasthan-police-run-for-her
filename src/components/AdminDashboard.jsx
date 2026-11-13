@@ -9,7 +9,7 @@ import {
   Zap, RefreshCw, ArrowLeft,
 
   PackageCheck, Trophy, QrCode, Users, Award, Eye, Mail, Check, HeartPulse,
-  Printer, Radio, History, Filter, X
+  Printer, Radio, Filter, X
 } from 'lucide-react';
 
 import { PoliceEmblem, OfficialGoldSeal, RunForHerBadge } from './Emblems';
@@ -30,7 +30,6 @@ import {
   apiGetCertificateStats,
   apiBatchGenerateCertificates,
   apiDispatchCertificate,
-  apiGetAuditLogs,
   apiSendBroadcast
 } from '../services/api';
 
@@ -114,11 +113,6 @@ export function AdminDashboard({
   });
   const [isSendingBroadcast, setIsSendingBroadcast] = useState(false);
   const [broadcastFeedback, setBroadcastFeedback] = useState(null);
-
-  // System Audit Trail Logs State
-  const [auditLogs, setAuditLogs] = useState([]);
-  const [isLoadingAuditLogs, setIsLoadingAuditLogs] = useState(false);
-  const [auditSearch, setAuditSearch] = useState("");
 
   // Mobile View Mode Switcher ('table' on desktop, 'cards' default on mobile)
   const [viewMode, setViewMode] = useState(() => {
@@ -230,27 +224,6 @@ export function AdminDashboard({
       setIsLoadingDb(false);
     }
   };
-
-  // Load audit logs for accountability trail
-  const loadAuditLogs = async () => {
-    setIsLoadingAuditLogs(true);
-    try {
-      const res = await apiGetAuditLogs(100);
-      if (res && res.success && Array.isArray(res.logs)) {
-        setAuditLogs(res.logs);
-      }
-    } catch (err) {
-      console.error("Failed to load audit logs:", err);
-    } finally {
-      setIsLoadingAuditLogs(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isOpen && adminTab === "audit_logs") {
-      loadAuditLogs();
-    }
-  }, [isOpen, adminTab]);
 
   const handleSendBroadcast = async (e) => {
     if (e) e.preventDefault();
@@ -1855,28 +1828,6 @@ export function AdminDashboard({
               </button>
             </>
           )}
-
-          {/* Audit Logs Tab Button (Command Staff) */}
-          <button
-            onClick={() => setAdminTab("audit_logs")}
-            style={{
-              padding: '12px 16px',
-              fontSize: '0.85rem',
-              fontWeight: adminTab === "audit_logs" ? 800 : 600,
-              background: 'transparent',
-              border: 'none',
-              borderBottom: adminTab === "audit_logs" ? '3px solid #7c3aed' : '3px solid transparent',
-              color: adminTab === "audit_logs" ? '#6d28d9' : '#475569',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            <History size={15} color={adminTab === "audit_logs" ? "#7c3aed" : "#64748b"} />
-            <span>🔐 एडमिन एक्सेस लॉग (Admin Access Log)</span>
-          </button>
         </div>
 
         {/* Admin Body (Mobile Responsive Scrollable) */}
@@ -5256,143 +5207,6 @@ export function AdminDashboard({
 
                 })}
 
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* TAB: ADMINISTRATIVE AUDIT TRAIL LOGS */}
-      {adminTab === "audit_logs" && (
-        <div className="gov-card" style={{ padding: '24px', background: '#ffffff', borderRadius: '10px', border: '1.5px solid var(--border-medium)', boxShadow: 'var(--shadow-md)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px', borderBottom: '2px solid var(--police-navy-100)', paddingBottom: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ background: '#f5f3ff', padding: '10px', borderRadius: '8px', border: '1px solid #ddd6fe' }}>
-                <History size={22} color="#7c3aed" />
-              </div>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                  🔐 प्रशासनिक एक्सेस व लॉगिन लेजर (Admin Access & Security Log)
-                </h3>
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                  केवल अधिकृत पुलिस अधिकारियों व ऑपरेटरों के लॉगिन, लॉगआउट एवं उच्च-स्तरीय प्रशासनिक आदेशों का सुरक्षा लेजर
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ position: 'relative', minWidth: '220px' }}>
-                <input
-                  type="text"
-                  placeholder="एक्सेस लॉग खोजें (Officer, IP, Role)..."
-                  value={auditSearch}
-                  onChange={(e) => setAuditSearch(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '7px 10px 7px 30px',
-                    borderRadius: '6px',
-                    border: '1px solid var(--border-strong)',
-                    fontSize: '0.82rem'
-                  }}
-                />
-                <Search size={14} color="var(--text-muted)" style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)' }} />
-              </div>
-
-              <button
-                type="button"
-                onClick={loadAuditLogs}
-                disabled={isLoadingAuditLogs}
-                style={{
-                  background: 'var(--police-navy-900)',
-                  color: '#ffffff',
-                  border: 'none',
-                  padding: '7px 14px',
-                  borderRadius: '6px',
-                  fontSize: '0.8rem',
-                  fontWeight: 800,
-                  cursor: isLoadingAuditLogs ? 'wait' : 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <RefreshCw size={13} className={isLoadingAuditLogs ? 'spin' : ''} />
-                <span>ताज़ा करें</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Logs Table */}
-          <div style={{ overflowX: 'auto', border: '1px solid var(--border-subtle)', borderRadius: '8px' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', color: 'var(--police-navy-900)', fontWeight: 800 }}>
-                  <th style={{ padding: '12px 14px', width: '70px' }}>लॉग ID</th>
-                  <th style={{ padding: '12px 14px', width: '170px' }}>समय (Timestamp)</th>
-                  <th style={{ padding: '12px 14px', width: '180px' }}>अधिकृत अधिकारी / ऑपरेटर</th>
-                  <th style={{ padding: '12px 14px', width: '160px' }}>एक्सेस प्रकार (Event)</th>
-                  <th style={{ padding: '12px 14px' }}>विवरण (Details)</th>
-                  <th style={{ padding: '12px 14px', width: '120px' }}>IP पता</th>
-                </tr>
-              </thead>
-              <tbody>
-                {auditLogs
-                  .filter(l => !auditSearch || (l.action || '').toLowerCase().includes(auditSearch.toLowerCase()) || (l.actor || '').toLowerCase().includes(auditSearch.toLowerCase()) || (l.details || '').toLowerCase().includes(auditSearch.toLowerCase()))
-                  .map((log, idx) => {
-                    const actionBadge = 
-                      log.action === 'ADMIN_LOGIN' ? { bg: '#ecfdf5', text: '#065f46', border: '#a7f3d0', label: '🟢 एडमिन लॉगिन' } :
-                      log.action === 'ADMIN_LOGOUT' ? { bg: '#f1f5f9', text: '#475569', border: '#cbd5e1', label: '⚪ एडमिन लॉगआउट' } :
-                      log.action === 'EXPO_VOLUNTEER_LOGIN' ? { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe', label: '🔵 काउंटर ऑपरेटर लॉगिन' } :
-                      log.action === 'GATE_MARSHAL_LOGIN' ? { bg: '#fefce8', text: '#854d0e', border: '#fef08a', label: '🟡 गेट मार्शल लॉगिन' } :
-                      log.action === 'CERTIFICATES_BATCH_GENERATED' ? { bg: '#faf5ff', text: '#7e22ce', border: '#e9d5ff', label: '🟣 बल्क प्रमाण पत्र जारी' } :
-                      log.action === 'MASS_BROADCAST_SENT' ? { bg: '#fff1f2', text: '#be123c', border: '#fecdd3', label: '📢 मास ब्रॉडकास्ट' } :
-                      log.action === 'VOLUNTEER_REGISTERED' ? { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0', label: '👤 ऑपरेटर आवंटन' } :
-                      { bg: '#f1f5f9', text: '#475569', border: '#cbd5e1', label: log.action };
-
-                    return (
-                      <tr key={log.id || idx} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? '#ffffff' : '#fafafa' }}>
-                        <td style={{ padding: '10px 14px', fontFamily: 'monospace', color: 'var(--text-muted)' }}>
-                          #{log.id || (idx + 1)}
-                        </td>
-                        <td style={{ padding: '10px 14px', whiteSpace: 'nowrap', color: '#475569', fontSize: '0.78rem' }}>
-                          {log.created_at ? new Date(log.created_at).toLocaleString('hi-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'आज'}
-                        </td>
-                        <td style={{ padding: '10px 14px', fontWeight: 800, color: 'var(--police-navy-950)' }}>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                            <Shield size={13} color="#1d4ed8" />
-                            {log.actor || 'ADMIN'}
-                          </span>
-                        </td>
-                        <td style={{ padding: '10px 14px' }}>
-                          <span style={{
-                            background: actionBadge.bg,
-                            color: actionBadge.text,
-                            border: `1px solid ${actionBadge.border}`,
-                            padding: '3px 9px',
-                            borderRadius: '4px',
-                            fontSize: '0.74rem',
-                            fontWeight: 800,
-                            display: 'inline-block'
-                          }}>
-                            {actionBadge.label}
-                          </span>
-                        </td>
-                        <td style={{ padding: '10px 14px', color: '#1e293b' }}>
-                          {log.details || '—'}
-                        </td>
-                        <td style={{ padding: '10px 14px', fontFamily: 'monospace', color: '#64748b', fontSize: '0.75rem' }}>
-                          {log.ip || '127.0.0.1'}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                {auditLogs.length === 0 && (
-                  <tr>
-                    <td colSpan={6} style={{ padding: '28px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                      कोई प्रशासनिक एक्सेस लॉग उपलब्ध नहीं है।
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
