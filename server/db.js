@@ -15,28 +15,42 @@ try {
 
 // Auto-load .env or .env.local file if present
 try {
-  if (process.env.NODE_ENV !== "test" && typeof process.loadEnvFile === "function") {
-    if (fs.existsSync(".env")) {
-      process.loadEnvFile(".env");
-    } else if (fs.existsSync(".env.local")) {
-      process.loadEnvFile(".env.local");
+  if (process.env.NODE_ENV !== "test") {
+    if (typeof process.loadEnvFile === "function") {
+      if (fs.existsSync(".env")) {
+        process.loadEnvFile(".env");
+      } else if (fs.existsSync(".env.local")) {
+        process.loadEnvFile(".env.local");
+      }
+    } else {
+      const envPath = fs.existsSync(".env") ? ".env" : (fs.existsSync(".env.local") ? ".env.local" : null);
+      if (envPath) {
+        const lines = fs.readFileSync(envPath, "utf8").split("\n");
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith("#")) continue;
+          const eqIdx = trimmed.indexOf("=");
+          if (eqIdx > 0) {
+            const key = trimmed.slice(0, eqIdx).trim();
+            const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, "");
+            if (!process.env[key]) process.env[key] = val;
+          }
+        }
+      }
     }
   }
 } catch (e) {
   // Ignore if not present
 }
 
-// Check for Turso Database URL; fallback to local persistent SQLite or writable /tmp on Vercel
-const defaultTursoUrl = (process.env.NODE_ENV !== "test") ? "libsql://rajpol-marathon-mpalsaniya68.aws-ap-south-1.turso.io" : "";
-const defaultTursoToken = (process.env.NODE_ENV !== "test") ? "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTMxMDI3MDksImlkIjoiMDFhMTdkM2UtODkwMS03MDJmLTg1NDktMTIxYTVjNjNjOTA2Iiwia2lkIjoiYjZQMlBaZ2lramdPWUpFVy01ME5WLTZDZWY5ZFptOXhTN0pHSEFjODhVOCIsInJpZCI6IjY0MDQ4OTVlLWU1YmUtNDJiMS05MGU4LTcwY2E0NDE0MDRmYSJ9.SMGy8PlDNGhVGpRPnvfYazomMSl8NVEQU7Sw9Bce5H-S7ZSo_KSsc_FKGyatty799K_Kd6PTVs5cdR8mO5QvDQ" : "";
-
-export const isProductionTurso = Boolean(process.env.TURSO_DATABASE_URL || defaultTursoUrl);
+// Database URL & Auth Token strictly loaded from environment variables (.env / Vercel secrets)
+export const isProductionTurso = Boolean(process.env.TURSO_DATABASE_URL && !process.env.TURSO_DATABASE_URL.startsWith("file:"));
 let fallbackUrl = "file:data/rajasthan_police_marathon.db";
 if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
   fallbackUrl = "file:/tmp/rajasthan_police_marathon.db";
 }
-const dbUrl = process.env.TURSO_DATABASE_URL || defaultTursoUrl || fallbackUrl;
-const dbAuthToken = process.env.TURSO_AUTH_TOKEN || defaultTursoToken || undefined;
+const dbUrl = process.env.TURSO_DATABASE_URL || fallbackUrl;
+const dbAuthToken = process.env.TURSO_AUTH_TOKEN || undefined;
 
 export const db = createClient({
   url: dbUrl,

@@ -243,7 +243,8 @@ export async function handleApiRequest(req, res) {
         success: true,
         message: "सुरक्षा OTP सफलतापूर्वक भेजा गया।",
         expiresIn: result.expiresIn,
-        code: result.code // Provided for instant demo verification & SMS dispatch
+        // In production, suppress plaintext OTP code from response to prevent DevTools / network inspection
+        ...(process.env.NODE_ENV !== "production" && { code: result.code })
       });
     }
 
@@ -362,7 +363,8 @@ export async function handleApiRequest(req, res) {
         message: `सुरक्षा OTP पंजीकृत मोबाइल ${maskMobile(r.mobile)} पर भेजा गया।`,
         maskedMobile: maskMobile(r.mobile),
         expiresIn: result.expiresIn,
-        code: result.code // For dev/demo testing
+        // In production, suppress plaintext OTP code from response to prevent DevTools / network inspection
+        ...(process.env.NODE_ENV !== "production" && { code: result.code })
       });
     }
 
