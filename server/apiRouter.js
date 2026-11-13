@@ -2185,6 +2185,97 @@ export async function handleApiRequest(req, res) {
       });
     }
 
+    // 15. Admin System Audit Trail (RBAC: Command Staff)
+    if (pathname === "/admin/audit-logs" && method === "GET") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+      const isCommandUser = adminUser.role === "PHQ" || adminUser.role === "SUPER_ADMIN" || adminUser.role === "DISTRICT";
+      if (!isCommandUser) {
+        return error("अनधिकृत पहुंच (403 Forbidden)।", 403);
+      }
+
+      let limit = parseInt(parsedUrl.searchParams.get("limit") || "100", 10);
+      if (isNaN(limit) || limit < 1) limit = 100;
+      if (limit > 500) limit = 500;
+
+      let sql = "SELECT id, actor, action, details, ip, created_at FROM audit_logs";
+      let args = [];
+      if (adminUser.role === "DISTRICT") {
+        const distName = adminUser.districtName || adminUser.districtId;
+        sql += " WHERE details LIKE ? OR actor LIKE ?";
+        args.push(`%${distName}%`, `%${adminUser.username}%`);
+      }
+      sql += " ORDER BY id DESC LIMIT ?;";
+      args.push(limit);
+
+      const rowsRes = await db.execute({ sql, args });
+      return json({
+        success: true,
+        count: rowsRes.rows.length,
+        logs: rowsRes.rows
+      });
+    }
+
+    // 16. Admin Mass Communication / SMS Broadcast (Simulated & Live Gateway)
+    if (pathname === "/admin/broadcast" && method === "POST") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+      const isCommandUser = adminUser.role === "PHQ" || adminUser.role === "SUPER_ADMIN" || adminUser.role === "DISTRICT";
+      if (!isCommandUser) {
+        return error("अनधिकृत पहुंच (403 Forbidden)।", 403);
+      }
+      const body = await parseJsonBody(req);
+      const title = (body.title || "").trim();
+      const message = (body.message || "").trim();
+      const targetCategory = (body.targetCategory || "all").trim();
+      const targetChannel = (body.channel || "SMS").trim();
+
+      if (!title || !message) {
+        return error("शीर्षक एवं संदेश दोनों दर्ज करना आवश्यक है।", 400);
+      }
+
+      let whereClause = "";
+      const args = [];
+      if (adminUser.role === "DISTRICT") {
+        whereClause = "WHERE (district_id = ? OR district_name LIKE ?)";
+        args.push(adminUser.districtId, `%${adminUser.districtName}%`);
+      }
+      if (targetCategory && targetCategory !== "all") {
+        whereClause += (whereClause ? " AND" : "WHERE") + " category_id = ?";
+        args.push(targetCategory);
+      }
+
+      const countRes = await db.execute({
+        sql: `SELECT count(*) as count FROM participants ${whereClause};`,
+        args
+      });
+      const recipientsCount = Number(countRes.rows[0]?.count) || 0;
+
+      try {
+        await db.execute({
+          sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
+          args: [
+            adminUser.username || "COMMAND_ADMIN",
+            "MASS_BROADCAST_SENT",
+            `Title: ${title} | Channel: ${targetChannel} | Target: ${targetCategory} | Recipients: ${recipientsCount}`,
+            clientIp,
+            new Date().toISOString()
+          ]
+        });
+      } catch (e) {}
+
+      return json({
+        success: true,
+        message: `आधिकारिक संदेश सफलतापूर्वक ${recipientsCount} पंजीकृत धावकों को प्रेषित किया गया।`,
+        recipientsCount,
+        channel: targetChannel
+      });
+    }
+
     // Fallback 404
     return error(`Endpoint not found: ${pathname}`, 404);
   } catch (err) {

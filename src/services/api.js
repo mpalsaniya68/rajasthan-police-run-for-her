@@ -372,3 +372,36 @@ export async function apiBatchGenerateCertificates(payload) {
   }
 }
 
+export async function apiGetAuditLogs(limit = 100) {
+  try {
+    const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
+    const res = await fetch(`${API_BASE}/admin/audit-logs?limit=${limit}`, {
+      headers: {
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
+      }
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiGetAuditLogs error:", err);
+    return { success: false, logs: [] };
+  }
+}
+
+export async function apiSendBroadcast(payload) {
+  try {
+    const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
+    const res = await fetch(`${API_BASE}/admin/broadcast`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiSendBroadcast error:", err);
+    return { success: false, error: "सामूहिक प्रसारण भेजने में त्रुटि हुई।" };
+  }
+}
+

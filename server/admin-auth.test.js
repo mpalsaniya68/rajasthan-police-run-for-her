@@ -164,3 +164,46 @@ test("database initialization preserves rotated passwords and removes seeded dem
   assert.equal(legacyVolunteerLogin.status, 401);
   assert.deepEqual(legacyUsers.rows, []);
 });
+
+test("admin audit logs and broadcast endpoints work with valid authorization", async () => {
+  const loginRes = await post("/admin/login", {
+    username: bootstrapUsername,
+    password: "rotated-test-admin-password-2026"
+  });
+  assert.equal(loginRes.status, 200);
+  const token = loginRes.body.token;
+
+  // 1. Audit Logs Endpoint
+  requestNumber += 1;
+  const logsRes = await fetch(`${baseUrl}/admin/audit-logs?limit=10`, {
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "x-forwarded-for": `198.51.100.${requestNumber}`
+    }
+  });
+  assert.equal(logsRes.status, 200);
+  const logsData = await logsRes.json();
+  assert.equal(logsData.success, true);
+  assert.ok(Array.isArray(logsData.logs));
+
+  // 2. Broadcast Announcement Endpoint
+  requestNumber += 1;
+  const broadcastRes = await fetch(`${baseUrl}/admin/broadcast`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+      "x-forwarded-for": `198.51.100.${requestNumber}`
+    },
+    body: JSON.stringify({
+      title: "रेस किट संग्रहण सूचना",
+      message: "सभी धावक 1 व 2 जनवरी को अल्बर्ट हॉल से अपनी किट प्राप्त करें।",
+      targetCategory: "all",
+      channel: "SMS"
+    })
+  });
+  assert.equal(broadcastRes.status, 200);
+  const broadcastData = await broadcastRes.json();
+  assert.equal(broadcastData.success, true);
+  assert.equal(broadcastData.channel, "SMS");
+});
