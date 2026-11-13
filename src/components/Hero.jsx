@@ -48,39 +48,43 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onOpenFindPass, total
 
       {/* Hero Content Wrapper */}
       <div style={{ position: 'relative', zIndex: 2 }}>
-        {/* Official State Notice Ticker (Dark Theme - High Contrast) */}
-        <div className="container" style={{ marginBottom: '20px' }}>
+        {/* Official State Notice Ticker (Full Width Edge-to-Edge with Enhanced Font) */}
+        <div style={{ width: '100%', marginBottom: '22px' }}>
           <div className="hero-ticker-container" style={{
+            width: '100%',
             background: 'rgba(5, 17, 38, 0.96)',
             backdropFilter: 'blur(12px)',
-            border: '1.5px solid rgba(212, 175, 55, 0.5)',
-            borderRadius: '10px',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+            borderTop: '1.5px solid rgba(212, 175, 55, 0.45)',
+            borderBottom: '1.5px solid rgba(212, 175, 55, 0.45)',
+            borderLeft: 'none',
+            borderRight: 'none',
+            borderRadius: '0',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
             display: 'flex',
             alignItems: 'center',
             overflow: 'hidden',
             position: 'relative',
-            height: '44px'
+            height: '48px'
           }}>
             {/* Badge */}
             <div className="hero-ticker-badge" style={{
               background: 'linear-gradient(135deg, #b91c1c 0%, #991b1b 100%)',
               color: '#ffffff',
-              padding: '0 16px',
+              padding: '0 18px',
               height: '100%',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
               fontWeight: 900,
-              fontSize: '0.78rem',
-              letterSpacing: '0.06em',
+              fontSize: '0.88rem',
+              letterSpacing: '0.05em',
               textTransform: 'uppercase',
               flexShrink: 0,
               zIndex: 3,
               boxShadow: '4px 0 12px rgba(0, 0, 0, 0.4)'
             }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fef08a', display: 'inline-block', boxShadow: '0 0 8px #fef08a' }}></span>
-              <Bell size={14} color="#fef08a" />
+              <Bell size={16} color="#fef08a" />
               <span style={{ color: '#ffffff', letterSpacing: '0.04em' }}>आधिकारिक बुलेटिन</span>
             </div>
 
@@ -91,20 +95,20 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onOpenFindPass, total
             }}>
               <div className="notice-ticker-track">
                 {notices.map((n, i) => (
-                  <div key={`n-${i}`} className="notice-item" style={{ color: '#ffffff' }}>
+                  <div key={`n-${i}`} className="notice-item" style={{ color: '#ffffff', fontSize: '0.96rem' }}>
                     <span style={{
                       background: 'rgba(212, 175, 55, 0.25)',
                       color: '#fef08a',
-                      padding: '2px 8px',
+                      padding: '3px 10px',
                       borderRadius: '4px',
-                      fontSize: '0.74rem',
+                      fontSize: '0.84rem',
                       fontWeight: 800,
                       border: '1px solid rgba(212, 175, 55, 0.5)'
                     }}>
                       {n.tag}
                     </span>
-                    <span style={{ color: '#ffffff', fontWeight: 600 }}>{n.text}</span>
-                    <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }}></span>
+                    <span style={{ color: '#ffffff', fontWeight: 600, fontSize: '0.96rem' }}>{n.text}</span>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }}></span>
                   </div>
                 ))}
               </div>
@@ -479,13 +483,13 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onOpenFindPass, total
           /* Maintain true triangle dual-tone on mobile as well */
 
           .hero-ticker-container {
-            height: 38px !important;
-            margin-bottom: 12px !important;
+            height: 42px !important;
+            margin-bottom: 14px !important;
           }
 
           .hero-ticker-badge {
-            padding: 0 10px !important;
-            font-size: 0.72rem !important;
+            padding: 0 12px !important;
+            font-size: 0.8rem !important;
           }
 
           .hero-crest-badge {
