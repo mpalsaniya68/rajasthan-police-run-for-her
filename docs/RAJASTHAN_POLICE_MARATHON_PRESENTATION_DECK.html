@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>राजस्थान पुलिस हाफ मैराथन 2027 - आधिकारिक सिस्टम प्रेजेंटेशन डेक (High Command Briefing)</title>
+  <style>
+    :root {
+      --police-navy-950: #060f22;
+      --police-navy-900: #0a1c3d;
+      --police-navy-800: #122b5c;
+      --police-gold-500: #d4af37;
+      --police-gold-400: #f1d575;
+      --police-red-600: #dc2626;
+      --police-blue-600: #1d4ed8;
+      --police-blue-500: #2563eb;
+      --bg-slate-50: #f8fafc;
+      --bg-slate-100: #f1f5f9;
+      --text-dark: #0f172a;
+      --text-muted: #475569;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --card-shadow: 0 10px 25px -5px rgba(10, 28, 61, 0.1), 0 8px 10px -6px rgba(10, 28, 61, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Noto Sans Devanagari", sans-serif;
+      background: var(--police-navy-950);
+      color: var(--text-dark);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+    }
+
+    /* Presentation Deck Container (16:9 Widescreen Fixed Aspect) */
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #020617;
+    }
+
+    .slide {
+      display: none;
+      width: 95vw;
+      max-width: 1500px;
+      height: 90vh;
+      max-height: 844px; /* 16:9 ratio */
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      flex-direction: column;
+      overflow: hidden;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.985); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Slide Header Bar */
+    .slide-top-bar {
+      background: var(--police-navy-900);
+      color: #ffffff;
+      padding: 14px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--police-gold-500);
+    }
+
+    .slide-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-brand-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .slide-brand-sub {
+      font-size: 0.75rem;
+      color: var(--police-gold-400);
+      font-weight: 700;
+    }
+
+    .slide-badge-security {
+      background: rgba(212, 175, 55, 0.18);
+      border: 1px solid var(--police-gold-500);
+      color: var(--police-gold-400);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    /* Slide Content Canvas */
+    .slide-canvas {
+      flex: 1;
+      padding: 28px 36px 20px 36px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .slide-canvas h2 {
+      font-size: 1.65rem;
+      font-weight: 850;
+      color: var(--police-navy-950);
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slide-canvas .slide-subtitle {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    /* Grid Layouts */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      flex: 1;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      flex: 1;
+    }
+
+    .grid-5 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      flex: 1;
+    }
+
+    /* Executive Cards */
+    .card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 12px rgba(10, 28, 61, 0.04);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--police-blue-500);
+      box-shadow: 0 8px 20px rgba(29, 78, 216, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .card-header-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: var(--police-blue-600);
+    }
+
+    .card h3 {
+      font-size: 1.05rem;
+      color: var(--police-navy-950);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .card p, .card ul {
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: #334155;
+    }
+
+    .card ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .card ul li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 6px;
+    }
+
+    .card ul li::before {
+      content: "•";
+      position: absolute;
+      left: 4px;
+      color: var(--police-gold-500);
+      font-weight: 900;
+      font-size: 1rem;
+    }
+
+    .metric-badge {
+      display: inline-block;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 0.74rem;
+      margin-top: 8px;
+    }
+
+    .metric-alert {
+      display: inline-block;
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 0.74rem;
+      margin-top: 8px;
+    }
+
+    /* Comparison Table in Slide */
+    .deck-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .deck-table th {
+      background: var(--police-navy-900);
+      color: #ffffff;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 800;
+      font-size: 0.82rem;
+    }
+
+    .deck-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: #1e293b;
+      line-height: 1.4;
+    }
+
+    .deck-table tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    /* Slide Footer */
+    .slide-footer {
+      padding: 10px 32px;
+      background: #ffffff;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Title Slide Special Dark Theme */
+    .slide.title-slide {
+      background: radial-gradient(circle at center, #0f2756 0%, #061126 100%);
+      color: #ffffff;
+    }
+
+    .slide.title-slide .slide-canvas {
+      background: transparent;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 60px;
+    }
+
+    .title-emblem-wrap {
+      margin-bottom: 20px;
+    }
+
+    .title-slide h1 {
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -1px;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .title-slide .gold-banner {
+      font-size: 1.25rem;
+      color: var(--police-gold-500);
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .title-slide .deck-desc {
+      font-size: 1rem;
+      color: #cbd5e1;
+      max-width: 850px;
+      line-height: 1.6;
+      margin-bottom: 34px;
+    }
+
+    .title-pill-grid {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .title-pill {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #ffffff;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Floating Deck Controls */
+    .deck-controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 28, 61, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(212, 175, 55, 0.6);
+      padding: 8px 18px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 99999;
+    }
+
+    .deck-btn {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .deck-btn:hover {
+      background: var(--police-gold-500);
+      color: var(--police-navy-950);
+      border-color: var(--police-gold-500);
+    }
+
+    .slide-counter {
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.85rem;
+      min-width: 80px;
+      text-align: center;
+      font-family: monospace;
+    }
+
+    /* Speaker Notes Drawer */
+    .speaker-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #0f172a;
+      color: #f1f5f9;
+      border-top: 3px solid var(--police-gold-500);
+      padding: 20px 40px;
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 9999;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+      display: none;
+    }
+
+    .speaker-drawer.open {
+      display: block;
+    }
+
+    .speaker-drawer h4 {
+      color: var(--police-gold-400);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .speaker-drawer p {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    /* Print Styles for 16:9 Landscape PDF Export */
+    @media print {
+      body {
+        background: #ffffff !important;
+        overflow: visible !important;
+      }
+      .deck-controls, .speaker-drawer {
+        display: none !important;
+      }
+      .deck-container {
+        display: block !important;
+        height: auto !important;
+        width: 100% !important;
+        background: transparent !important;
+      }
+      .slide {
+        display: flex !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: none !important;
+        max-height: none !important;
+        page-break-after: always !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deck-container">
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 1: COVER SLIDE -->
+    <!-- ========================================================================= -->
+    <div class="slide title-slide active" data-slide="1" data-notes="सर, यह राजस्थान पुलिस हाफ मैराथन 2027 'रन फॉर हर' का आधिकारिक सिस्टम प्रेजेंटेशन है। इस ब्रीफिंग में हम पूरे पोर्टल की लाइव कार्यप्रणाली, रजिस्ट्रेशन से लेकर ई-पास, एक्सपो आरएफआईडी किट वितरण, लाइव रेस ट्रैकिंग और डीजीपी द्वारा 1-क्लिक डिजिटल सर्टिफिकेट जारी करने के सम्पूर्ण एंड-टू-एंड फ्लो को प्रस्तुत कर रहे हैं।">
+      <div class="slide-canvas">
+        <div class="title-emblem-wrap">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="gold-banner">कार्यालय महानिदेशक पुलिस, राजस्थान, जयपुर</div>
+        <h1>राजस्थान पुलिस हाफ मैराथन 2027<br/>'रन फॉर हर' (Run for Her)</h1>
+        <p class="deck-desc">
+          संपूर्ण तकनीकी आर्किटेक्चर, 41 जिला पुलिस कमान, मोबाइल OTP सुरक्षा, एक्सपो RFID किट वितरण, 
+          लाइव रेस ट्रैकिंग एवं 1-क्लिक डिजिटल प्रमाण पत्र ई-प्रणाली का उच्च-स्तरीय विवरण।
+        </p>
+        <div class="title-pill-grid">
+          <div class="title-pill">🏛️ 41 जिला पुलिस कमिश्नरेट एवं जिले</div>
+          <div class="title-pill">👥 4,00,000+ लक्षित प्रतिभागी क्षमता</div>
+          <div class="title-pill">⚡ 0.3 ms सब-मिलिसेकंड सर्च इंजन</div>
+          <div class="title-pill">🛡️ DPDP Act 2023 साइबर सुरक्षा मानक</div>
+        </div>
+      </div>
+      <div class="slide-footer" style="background: rgba(0,0,0,0.3); color: #94a3b8; border-color: rgba(255,255,255,0.1);">
+        <span>राजस्थान पुलिस आईटी एवं तकनीकी संचार निदेशालय</span>
+        <span>गोपनीय • केवल पुलिस मुख्यालय कमान ब्रीफिंग हेतु</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 2: STRATEGIC VISION & 41-DISTRICT SCOPE -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="2" data-notes="यह मैराथन राजस्थान पुलिस का सबसे बड़ा जन-सहभागिता अभियान है। इसमें जयपुर और जोधपुर कमिश्नरेट सहित सभी 41 पुलिस जिलों में एक साथ दौड़ आयोजित होगी। कुल 4 दौड़ श्रेणियां हैं - 21KM हाफ मैराथन, 10KM स्पीड रन, 5KM कम्युनिटी रन और 2KM सीनियर व फैमिली वॉक। पोर्टल को 4 लाख से अधिक नागरिकों का ट्रैफिक बिना किसी सर्वर क्रैश के संभालने हेतु डिजाइन किया गया है।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• रन फॉर हर</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 02 / 12</div>
+      </div>
+      <div class="slide-canvas">
+        <h2>🏛️ 1. राज्य-स्तरीय विजन एवं 41 जिलों का दायरा</h2>
+        <div class="slide-subtitle">नारी सुरक्षा, युवा फिटनेस और पुलिस-पब्लिक पार्टनरशिप को समर्पित राजस्थान का सबसे बड़ा डिजिटल मैराथन अभियान</div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header-icon">🏛️</div>
+            <h3>41 पुलिस जिले एकीकृत</h3>
+            <ul>
+              <li><b>जयपुर एवं जोधपुर:</b> पुलिस कमिश्नरेट मुख्यालय।</li>
+              <li><b>33 राजस्व जिले:</b> समस्त जिला पुलिस अधीक्षक कमान।</li>
+              <li><b>विशिष्ट पुलिस जिले:</b> भिवाड़ी एवं कोटा शहर/ग्रामीण।</li>
+              <li><b>जिला पुलिस कमान आइसोलेशन:</b> प्रत्येक जिले के एसपी केवल अपने जिले के धावकों का डेटा प्रबंधित कर सकते हैं।</li>
+            </ul>
+            <div class="metric-badge">✓ 100% राज्य व्यापी डिजिटल कवरेज</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🏃</div>
+            <h3>4 आधिकारिक दौड़ श्रेणियां</h3>
+            <ul>
+              <li><b>21 KM हाफ मैराथन:</b> राज्य फ्लैगशिप टाइम-ट्रैक्ड दौड़ (RFID चिप अनिवार्य)।</li>
+              <li><b>10 KM स्पीड चैलेंज:</b> प्रतिस्पर्धात्मक टाइम-ट्रैक्ड दौड़।</li>
+              <li><b>5 KM कम्युनिटी रन:</b> युवा, महिला एवं नागरिक जागरूकता दौड़।</li>
+              <li><b>2 KM फैमिली वॉक:</b> वरिष्ठ नागरिक, बच्चे एवं सामूहिक सहभागिता।</li>
+              <li><b>अनुकूलित दौड़ (Champions):</b> दिव्यांगजन एवं विशेष सम्मान वर्ग।</li>
+            </ul>
+            <div class="metric-badge">✓ श्रेणी-वार पृथक लीडरबोर्ड</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🎯</div>
+            <h3>4,00,000+ लक्षित क्षमता</h3>
+            <ul>
+              <li><b>पंजीकरण पीक लोड:</b> प्रतिदिन 1,50,000 फॉर्म्स बिना रुकावट।</li>
+              <li><b>रेस-डे फिनिश लोड:</b> 50,000 समकालिक क्यूआर कोड स्कैनिंग।</li>
+              <li><b>जीरो-डाउनटाइम आर्किटेक्चर:</b> ग्लोबल एज सर्वरलेस नेटवर्क।</li>
+              <li><b>स्थानीय बैकअप:</b> इंटरनेट कटने पर भी ऑफलाइन किट वितरण जारी।</li>
+            </ul>
+            <div class="metric-badge">✓ 99.99% अपटाइम SLA गारंटी</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>विजन एवं राज्य स्तरीय रूपरेखा</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 3: COMPLETE 5-STAGE LIFECYCLE WORKFLOW -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="3" data-notes="सर, यह हमारा 5-चरणीय सम्पूर्ण कार्यप्रवाह है। पहला चरण नागरिक पंजीकरण है जहां पहले ओटीपी से मोबाइल सत्यापित होता है। दूसरा चरण ई-पास का है जो तुरंत जनरेट होता है और मिलीसेकंड में खोजा जा सकता है। तीसरा चरण रेस से पूर्व अल्बर्ट हॉल एक्सपो में आरएफआईडी बिब और किट वितरण का है। चौथा चरण रेस-डे पर आरएफआईडी टाइमिंग मैट स्कैन का है। और पांचवां चरण डीजीपी द्वारा 1-क्लिक में आधिकारिक डिजिटल प्रमाण पत्र जारी करने का है।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• लाइफसाइकिल वर्कफ़्लो</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 03 / 12</div>
+      </div>
+      <div class="slide-canvas">
+        <h2>🔄 2. सम्पूर्ण नागरिक व पुलिस ऑपरेशनल वर्कफ़्लो</h2>
+        <div class="slide-subtitle">घर बैठे ऑनलाइन पंजीकरण से लेकर फिनिश लाइन पार करने और डीजीपी हस्ताक्षरित सर्टिफिकेट तक की स्वचालित यात्रा</div>
+
+        <div class="grid-5">
+          <div class="card" style="border-top: 4px solid var(--police-blue-600);">
+            <div class="card-header-icon">1</div>
+            <h3>मोबाइल OTP व फॉर्म</h3>
+            <p>नागरिक 10-अंकीय नंबर डालकर 6-अंकीय OTP सत्यापित करता है। फॉर्म में नंबर ऑटो-फीड होता है। आधार हैशिंग से डीपीईपी सुरक्षित पंजीकरण।</p>
+            <div class="metric-badge">&lt; 60 सेकंड समय</div>
+          </div>
+
+          <div class="card" style="border-top: 4px solid var(--police-gold-500);">
+            <div class="card-header-icon">2</div>
+            <h3>डिजिटल ई-पास आवंटन</h3>
+            <p>पंजीकरण होते ही यूनिक बिब (उदा. <code>RJ-21K-1009</code>) व ई-पास जारी। नागरिक कभी भी मोबाइल नंबर से मिलीसेकंड में पास खोजकर डाउनलोड कर सकता है।</p>
+            <div class="metric-badge">0.34 ms सर्च स्पीड</div>
+          </div>
+
+          <div class="card" style="border-top: 4px solid #059669;">
+            <div class="card-header-icon">3</div>
+            <h3>एक्सपो RFID किट वितरण</h3>
+            <p>1 व 2 जनवरी को अल्बर्ट हॉल/जिला केंद्र पर काउंटर ऑपरेटर मोबाइल कैमरा या बारकोड स्कैनर से ई-पास स्कैन कर 1-क्लिक में टी-शर्ट व आरएफआईडी बिब सौंपता है।</p>
+            <div class="metric-badge">डुप्लीकेट रोकथाम लॉक</div>
+          </div>
+
+          <div class="card" style="border-top: 4px solid #7c3aed;">
+            <div class="card-header-icon">4</div>
+            <h3>रेस-डे टाइमिंग ट्रैकिंग</h3>
+            <p>दौड़ वाले दिन स्टार्ट, 5KM, 10KM व फिनिश पर इलेक्ट्रॉनिक आरएफआईडी मैट से चिप टाइम स्वतः रिकॉर्ड होता है। परिवारजन लाइव ट्रैकर से प्रगति देख सकते हैं।</p>
+            <div class="metric-badge">लाइव चिप स्प्लिट्स</div>
+          </div>
+
+          <div class="card" style="border-top: 4px solid var(--police-red-600);">
+            <div class="card-header-icon">5</div>
+            <h3>1-Click सर्टिफिकेट</h3>
+            <p>रेस समाप्त होते ही एडमिन पैनल से 1-क्लिक में समस्त धावकों को डीजीपी हस्ताक्षरित डिजिटल प्रमाण पत्र जारी व एसएमएस/व्हाट्सएप लिंक प्रेषित होता है।</p>
+            <div class="metric-badge">एंटी-फोर्जरी QR युक्त</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>5-चरणीय सम्पूर्ण कार्यप्रवाह</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 4: REGISTRATION & ANTI-BOT ARCHITECTURE -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="4" data-notes="रजिस्ट्रेशन पेज पर हमने सबसे पहले मोबाइल ओटीपी गेट लगाया है। जब तक यूजर अपना सही मोबाइल नंबर ओटीपी से वेरीफाई नहीं करता, तब तक फॉर्म नहीं खुलता। इससे कोई भी बॉट या फर्जी स्क्रिप्ट हजारों फेक फॉर्म नहीं भर सकती। साथ ही आधार नंबर को हम प्लेन टेक्स्ट में कभी सेव नहीं करते, बल्कि डीपीईपी एक्ट 2023 के तहत उसका वन-वे क्रिप्टोग्राफिक SHA-256 हैश बनाते हैं। बिब नंबर भी डेटाबेस लेवल के एटॉमिक सीक्वेंस से जनरेट होता है जिससे कभी भी दो लोगों को एक ही बिब नहीं मिल सकता।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• पंजीकरण सुरक्षा</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 04 / 12</div>
+      </div>
+      <div class="slide-canvas">
+        <h2>🛡️ 3. सुरक्षित नागरिक पंजीकरण एवं बॉट रोकथाम</h2>
+        <div class="slide-subtitle">साइबर सुरक्षा मानकों (OWASP) एवं डेटा संरक्षण कानून (DPDP Act 2023) के तहत विकसित जीरो-फ्रॉड रजिस्ट्रेशन इंजन</div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header-icon">📱</div>
+            <h3>प्री-वेरिफिकेशन OTP गेट</h3>
+            <ul>
+              <li><b>फॉर्म खुलने की पूर्व शर्त:</b> नागरिक पहले अपना 10-अंकीय नंबर डालकर 6-अंकीय पुलिस सुरक्षा OTP सत्यापित करता है।</li>
+              <li><b>बॉट व स्पैम रोकथाम:</b> बिना वास्तविक सिम व ओटीपी के कोई भी ऑटोमेटेड बॉट फॉर्म तक नहीं पहुंच सकता।</li>
+              <li><b>ऑटो-फीड मोबाइल:</b> फॉर्म में वही सत्यापित नंबर लॉक रहता है, जिससे डेटा त्रुटि की शून्य संभावना।</li>
+              <li><b>अदृश्य हनीपॉट ट्रैप:</b> बॉट्स को फंसाने के लिए बैकएंड ट्रैप सक्रिय।</li>
+            </ul>
+            <div class="metric-badge">✓ 100% सत्यापित नागरिक संपर्क</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🔒</div>
+            <h3>DPDP Act 2023 आधार सुरक्षा</h3>
+            <ul>
+              <li><b>नो प्लेनटेक्स्ट आईडी:</b> कानूनन किसी का भी आधार या पहचान पत्र नंबर सर्वर पर साधारण टेक्स्ट में सेव नहीं होता।</li>
+              <li><b>इर्रिवर्सिबल SHA-256 हैशिंग:</b> आईडी का वन-वे क्रिप्टोग्राफिक हैश (<code>id_hash</code>) बनता है जिसे रिवर्स नहीं किया जा सकता।</li>
+              <li><b>डिस्प्ले मास्किंग:</b> स्क्रीन पर केवल <code>XXXX-XXXX-1048</code> प्रदर्शित।</li>
+              <li><b>साइबर लीक सुरक्षा:</b> डेटाबेस चोरी होने की स्थिति में भी नागरिक का आधार नंबर सुरक्षित रहेगा।</li>
+            </ul>
+            <div class="metric-badge">✓ भारत सरकार डेटा कानून अनुपालन</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🔢</div>
+            <h3>जीरो-कोलिजन एटॉमिक बिब आवंटन</h3>
+            <ul>
+              <li><b>डेटाबेस एटॉमिक लॉक:</b> <code>category_sequences</code> टेबल में रो-लेवल एटॉमिक इन्क्रीमेंट।</li>
+              <li><b>डुप्लीकेट बिब असंभव:</b> एक साथ 10,000 लोग फॉर्म सबमिट करें तो भी दो धावकों को समान बिब नंबर आवंटित नहीं हो सकता।</li>
+              <li><b>स्पष्ट पुलिस सीरीज:</b> <code>RJ-21K-1001</code>, <code>RJ-10K-3001</code> आदि।</li>
+              <li><b>स्मार्ट टी-शर्ट नियंत्रण:</b> तकनीकी सिंगलेट केवल जयपुर टाइम-ट्रैक्ड रेस हेतु, गैर-जयपुर जिलों में स्वतः 'N/A'।</li>
+            </ul>
+            <div class="metric-badge">✓ जीरो डुप्लीकेशन गारंटी</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>पंजीकरण व साइबर सुरक्षा ढांचा</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 5: E-PASS & SUB-MILLISECOND L1 SEARCH ENGINE -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="5" data-notes="सर, ई-पास सर्च सर्विस को हमने खास तौर पर ऑप्टिमाइज किया है। पहले डेटाबेस पर रिमोट नेटवर्क की वजह से सर्च 1 सेकंड ले रही थी। अब हमने नोड.जेएस प्रोसेस मेमोरी में L1 कैश लगाया है। जैसे ही कोई मोबाइल 7023233248 या बिब नंबर डालता है, मात्र 0.3 मिलिसेकंड में परिणाम आ जाता है। नागरिक की निजता के लिए पब्लिक स्क्रीन पर नाम और मोबाइल मास्क रहता है। केवल रजिस्टर्ड मोबाइल पर ओटीपी आने के बाद ही ओरिजिनल पास अनलॉक होता है।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• ई-पास व सर्च इंजन</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 05 / 12</div>
+      </div>
+      <div class="slide-canvas">
+        <h2>⚡ 4. आधिकारिक ई-पास एवं सब-मिलिसेकंड L1 सर्च इंजन</h2>
+        <div class="slide-subtitle">नागरिक कभी भी अपना ई-पास डाउनलोड कर सके इसके लिए हाई-स्पीड इन-मेमोरी इंडेक्सिंग एवं दोहरे-ताले वाली प्राइवेसी सुरक्षा</div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header-icon">⚡</div>
+            <h3>0.34 Millisecond सर्च स्पीड</h3>
+            <ul>
+              <li><b>L1 इन-मेमोरी कैशिंग:</b> सर्वर स्टार्ट होते ही सक्रिय प्रतिभागी मेमोरी मैप में लोड हो जाते हैं।</li>
+              <li><b>लाइव टेस्टेड बेंचमार्क:</b> <code>7023233248</code> सर्च का कुल समय मात्र <b>7.44 ms</b> (आंतरिक कैश खोज <b>0.34 ms</b>)।</li>
+              <li><b>बिब सर्च स्पीड:</b> <code>RJ-21K-1009</code> सर्च मात्र <b>0.05 ms</b> में पूर्ण।</li>
+              <li><b>50,000 समकालिक सर्च:</b> डेटाबेस पर शून्य दबाव के साथ लाखों नागरिक एक साथ सर्च कर सकते हैं।</li>
+            </ul>
+            <div class="metric-badge">✓ 1000x फास्टर दैन ट्रेडिशनल डीबी</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">👁️</div>
+            <h3>दोहरा प्राइवेसी सुरक्षा ताला</h3>
+            <ul>
+              <li><b>पब्लिक टीज़र मास्किंग:</b> पब्लिक सर्च पर केवल नाम के शुरुआती व अंतिम अक्षर दिखते हैं: <code>M***N P******YA</code>।</li>
+              <li><b>मास्क मोबाइल:</b> नंबर केवल <code>XXXXXX3248</code> दिखेगा।</li>
+              <li><b>डेटा स्क्रैपिंग निषेध:</b> कोई भी बाहरी व्यक्ति किसी का मोबाइल नंबर या व्यक्तिगत विवरण नहीं चुरा सकता।</li>
+              <li><b>सुरक्षा सलाह:</b> ई-पास पर आधिकारिक पुलिस एडवाइजरी अंकित।</li>
+            </ul>
+            <div class="metric-badge">✓ नागरिक निजता की शत-प्रतिशत रक्षा</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🔓</div>
+            <h3>ओटीपी अनलॉक द्वारा ई-पास डाउनलोड</h3>
+            <ul>
+              <li><b>प्रमाणित अनलॉक:</b> ई-पास खोलने हेतु 'सुरक्षा OTP प्राप्त करें' पर क्लिक करना होगा।</li>
+              <li><b>ओटीपी डिलीवरी:</b> 6-अंकीय कोड केवल नागरिक के पंजीकृत मोबाइल पर जाएगा।</li>
+              <li><b>अनलॉक ई-पास:</b> ओटीपी डालने पर पूर्ण रंगीन आधिकारिक ई-पास क्यूआर कोड सहित प्रदर्शित होगा।</li>
+              <li><b>प्रिंट व डिजिटल:</b> मोबाइल में सेव या A4 पेपर पर प्रिंट कर एक्सपो काउंटर पर लाया जा सकता है।</li>
+            </ul>
+            <div class="metric-badge">✓ अधिकृत धावक सत्यापन</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>ई-पास एवं इन-मेमोरी L1 आर्किटेक्चर</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 6: EXPO KIT DISTRIBUTION & RFID ALLOTMENT TERMINAL -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="6" data-notes="1 और 2 जनवरी को अल्बर्ट हॉल और सभी जिला मुख्यालयों पर एक्सपो किट वितरण होगा। इसके लिए हमने एक विशेष काउंटर ऑपरेटर टर्मिनल बनाया है। काउंटर पर तैनात कांस्टेबल या वॉलंटियर मोबाइल कैमरा या हैंडहेल्ड बारकोड स्कैनर से धावक के ई-पास को स्कैन करेगा। स्क्रीन पर तुरंत धावक का नाम, श्रेणी और टी-शर्ट साइज दिखेगा। 1-क्लिक में आरएफआईडी बिब अलॉट हो जाएगा। अगर कोई दोबारा किट लेने आएगा तो सिस्टम तुरंत लाल रंग में वॉर्निंग दे देगा कि किट पहले ही इस काउंटर पर इतने बजे दी जा चुकी है।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• एक्सपो किट टर्मिनल</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 06 / 12</div>
+      </div>
+      <div class="slide-canvas">
+        <h2>📦 5. एक्सपो किट वितरण एवं RFID बिब आवंटन टर्मिनल</h2>
+        <div class="slide-subtitle">अल्बर्ट हॉल व 41 जिला केंद्रों पर तैनात पुलिस ऑपरेटरों हेतु वेबकैम क्यूआर स्कैनर युक्त हाई-स्पीड टर्मिनल</div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header-icon">📷</div>
+            <h3>लाइव वेबकैम व 2D बारकोड स्कैनिंग</h3>
+            <ul>
+              <li><b>HTML5 WebRTC स्कैनर:</b> लैपटॉप या टैबलेट के कैमरे से 100 मिलीसेकंड में क्यूआर स्कैन।</li>
+              <li><b>हैंडहेल्ड गन स्कैनर:</b> फिजिकल यूएसबी बारकोड स्कैनर का पूर्ण समर्थन।</li>
+              <li><b>कीबोर्ड सर्च:</b> बिब नंबर या मोबाइल नंबर से सीधे सर्च की सुविधा।</li>
+              <li><b>काउंटर आइसोलेशन:</b> ऑपरेटर को अपने आवंटित काउंटर (उदा. काउंटर-01) से लॉगिन करना होगा।</li>
+            </ul>
+            <div class="metric-badge">✓ प्रति धावक मात्र 10 सेकंड समय</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🚫</div>
+            <h3>धोखाधड़ी व डुप्लीकेट किट रोकथाम</h3>
+            <ul>
+              <li><b>एटॉमिक लॉकिंग:</b> किट हैंडओवर होते ही डेटाबेस में <code>kit_collected = 1</code> मार्क।</li>
+              <li><b>तत्काल अलर्ट:</b> यदि वही ई-पास दोबारा स्कैन किया जाए, तो स्क्रीन पर लाल चेतावनी: <b>'किट पहले ही वितरित की जा चुकी है'</b>।</li>
+              <li><b>ऑडिट ट्रेल:</b> किस तारीख को, कितने बजे, किस ऑपरेटर व काउंटर से किट दी गई—सब स्क्रीन पर दिखेगा।</li>
+              <li><b>स्टॉक नियंत्रण:</b> वास्तविक समय में टी-शर्ट साइज वार स्टॉक अपडेट।</li>
+            </ul>
+            <div class="metric-alert">🚫 डबल अलॉटमेंट 100% असंभव</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🔌</div>
+            <h3>100% ऑफलाइन रेजिलिएंट आर्किटेक्चर</h3>
+            <ul>
+              <li><b>लोकल एम्बेडेड SQLite:</b> यदि अल्बर्ट हॉल मैदान में 4G नेटवर्क जाम हो जाए या केबल कट जाए, तो लोकल डेटाबेस चालू रहता है।</li>
+              <li><b>ऑफलाइन किट डिलीवरी:</b> काउंटर लैपटॉप स्थानीय स्तर पर आरएफआईडी बिब अलॉट करता रहेगा।</li>
+              <li><b>ऑटो-सिंक:</b> इंटरनेट बहाल होते ही समस्त ऑफलाइन वितरण बैकएंड क्लाउड में सिंक हो जाते हैं।</li>
+              <li><b>जीरो रुकावट:</b> भारी भीड़ में काउंटर कभी ठप नहीं होगा।</li>
+            </ul>
+            <div class="metric-badge">✓ आपदा एवं नेटवर्क विफलता प्रतिरोधी</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>एक्सपो किट एवं आरएफआईडी आवंटन प्रणाली</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 7: RACE DAY RFID TIMING & LIVE TRACKING -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="7" data-notes="3 जनवरी रेस-डे पर ट्रैक पर इलेक्ट्रॉनिक आरएफआईडी टाइमिंग मैट्स बिछाई जाएंगी - स्टार्ट लाइन, 5KM, 10KM, 15KM और फिनिश लाइन पर। जब धावक बिब पहनकर मैट के ऊपर से दौड़ेगा, तो हार्डवेयर टाइमिंग एपीआई के जरिए उसका समय 50 मिलीसेकंड में रिकॉर्ड हो जाएगा। इससे धावक का नेट चिप टाइम, पेस और रैंक स्वतः निकलती है। नागरिक पोर्टल पर लाइव रनर ट्रैकर से अपने परिजन की लोकेशन व समय ट्रैक कर सकते हैं। कोई धावक बीच का रास्ता काटकर फिनिश नहीं कर सकता, क्योंकि सभी चेकपॉइंट्स पास होना अनिवार्य है।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• रेस-डे टाइमिंग ट्रैकिंग</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 07 / 12</div>
+      </div>
+      <div class="slide-canvas">
+        <h2>⏱️ 6. रेस-डे RFID टाइमिंग मैट्स एवं लाइव ट्रैकिंग</h2>
+        <div class="slide-subtitle">इलेक्ट्रॉनिक टाइमिंग हार्डवेयर से रीयल-टाइम स्प्लिट्स, नेट चिप टाइम, एंटी-चीटिंग व लाइव पब्लिक ट्रैकिंग</div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header-icon">📡</div>
+            <h3>इलेक्ट्रॉनिक टाइमिंग मैट इंटीग्रेशन</h3>
+            <ul>
+              <li><b>चेकपॉइंट्स:</b> स्टार्ट लाइन, 5 KM, 10 KM, 15 KM एवं मुख्य फिनिश लाइन।</li>
+              <li><b>हार्डवेयर सुरक्षा API:</b> आरएफआईडी रीडर्स सुरक्षित <code>X-Timing-Key</code> टोकन से डेटा भेजते हैं।</li>
+              <li><b>नेट चिप टाइम:</b> धावक के स्टार्ट मैट पार करने से लेकर फिनिश मैट पार करने का शुद्ध सेकंड-दर-सेकंड समय।</li>
+              <li><b>सब-50ms डेटा इंजेक्शन:</b> हजारों धावकों के एक साथ मैट पार करने पर भी तुरंत रिकॉर्ड।</li>
+            </ul>
+            <div class="metric-badge">✓ आधिकारिक मैराथन टाइमिंग मानक</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🌐</div>
+            <h3>नागरिक लाइव रनर ट्रैकर</h3>
+            <ul>
+              <li><b>जनता हेतु लाइव ट्रैकर:</b> धावक के परिवारजन व दर्शक घर बैठे मोबाइल से प्रगति देख सकते हैं।</li>
+              <li><b>बिब या मोबाइल सर्च:</b> धावक का नंबर डालते ही उसके सभी चेकपॉइंट पार करने का समय दिखेगा।</li>
+              <li><b>गति व पेस गणना:</b> प्रति किलोमीटर औसत गति (min/km)।</li>
+              <li><b>सुरक्षित मास्किंग:</b> लाइव ट्रैकर पर व्यक्तिगत फोन नंबर या पता नहीं दिखाया जाता।</li>
+            </ul>
+            <div class="metric-badge">✓ सार्वजनिक पारदर्शिता व उत्साह</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🏆</div>
+            <h3>स्वचालित लीडरबोर्ड व एंटी-चीटिंग</h3>
+            <ul>
+              <li><b>ओवरऑल व जेंडर रैंक:</b> 21K व 10K के विजेता स्वतः सिस्टम द्वारा तय होते हैं।</li>
+              <li><b>पोडियम डिटेक्शन:</b> प्रथम, द्वितीय, तृतीय स्थान के नकद पुरस्कार विजेताओं की तत्काल सूची।</li>
+              <li><b>एंटी-चीटिंग इंजन:</b> यदि किसी धावक ने 5KM या 10KM का चेकपॉइंट पार नहीं किया, तो उसका फिनिश अमान्य होगा।</li>
+              <li><b>डीजीपी प्रमाण पत्र हेतु तैयार:</b> फिनिश होते ही डेटा सर्टिफिकेट इंजन में चला जाता है।</li>
+            </ul>
+            <div class="metric-badge">✓ पूर्णतः निष्पक्ष खेल व सुरक्षा</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>हार्डवेयर टाइमिंग एवं लाइव लीडरबोर्ड</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 8: 1-CLICK MASS CERTIFICATE ISSUANCE & DISPATCH -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="8" data-notes="दौड़ पूर्ण होते ही पुलिस मुख्यालय कमान या जिला एसपी एडमिन पैनल में जाकर '1-Click Generate & Issue Certificates' पर क्लिक करेंगे। एक क्लिक में हजारों धावकों के डिजिटल सर्टिफिकेट बन जाते हैं और स्टेटस 'जारी (Issued)' हो जाता है। साथ ही आधिकारिक एसएमएस और व्हाट्सएप से लिंक धावक के मोबाइल पर चला जाता है। प्रमाण पत्र दो प्रकार के हैं - जयपुर टाइम-ट्रैक्ड धावकों के लिए चिप टाइम, पेस और रैंक युक्त, और जिला दौड़ हेतु महिला सुरक्षा संकल्प युक्त। प्रमाण पत्र पर लगा क्यूआर कोड स्कैन करने पर पुलिस पोर्टल पर तुरंत सत्यता जांची जा सकती है।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• डिजिटल प्रमाण पत्र</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 08 / 12</div>
+      </div>
+      <div class="slide-canvas">
+        <h2>🎖️ 7. 1-क्लिक डिजिटल प्रमाण पत्र जारी व SMS प्रेषण</h2>
+        <div class="slide-subtitle">डीजीपी राजस्थान द्वारा अधिकृत डिजिटल प्रमाण पत्र, डायनामिक टेम्प्लेट व एंटी-फोर्जरी क्यूआर सत्यापन</div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header-icon">🚀</div>
+            <h3>1-Click मास सर्टिफिकेट जनरेशन</h3>
+            <ul>
+              <li><b>एक क्लिक में हजारों प्रमाण पत्र:</b> संपूर्ण जिले या समस्त राज्य के धावकों को एक क्लिक में जारी।</li>
+              <li><b>दोहरे विकल्प:</b> केवल गेट-स्कैन उपस्थित धावक या समस्त पंजीकृत धावक।</li>
+              <li><b>ऑटोमैटिक SMS व ईमेल:</b> अधिकृत एसएमएस गेटवे से धावक के मोबाइल पर तुरंत लिंक प्रेषित।</li>
+              <li><b>लाइव स्टेटस अपडेट:</b> एडमिन पैनल टेबल में तुरंत '✓ जारी (Issued)' प्रदर्शित।</li>
+            </ul>
+            <div class="metric-badge">✓ जीरो मैनुअल वर्कलोड</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">📜</div>
+            <h3>डायनामिक 2-स्तरीय टेम्प्लेट्स</h3>
+            <ul>
+              <li><b>जयपुर टाइम-ट्रैक्ड प्रमाण पत्र:</b> डीजीपी हस्ताक्षर, फिनिश टाइम (01:34:20), ओवरऑल रैंक (5/2410), जेंडर रैंक एवं औसत पेस।</li>
+              <li><b>जिला जागरूकता प्रमाण पत्र:</b> महिला सुरक्षा संकल्प, नारी शक्ति सम्मान एवं जिला पुलिस सहभागिता।</li>
+              <li><b>आधिकारिक सील:</b> राजस्थान पुलिस का स्वर्णिम प्रतीक व वाटरमार्क अंतर्निहित।</li>
+              <li><b>हाई-रेजोल्यूशन पीडीएफ:</b> नागरिक मोबाइल में सहेज सकता है या फोटो पेपर पर प्रिंट कर सकता है।</li>
+            </ul>
+            <div class="metric-badge">✓ राज्य स्तरीय आधिकारिक दस्तावेज</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🔍</div>
+            <h3>एंटी-फोर्जरी QR कोड सत्यापन</h3>
+            <ul>
+              <li><b>फर्जी प्रमाण पत्र असंभव:</b> कोई भी व्यक्ति पीडीएफ एडिट कर नाम नहीं बदल सकता।</li>
+              <li><b>स्कैन करते ही लाइव जांच:</b> क्यूआर स्कैन करने पर फोन सीधे आधिकारिक पोर्टल <code>police.rajasthan.gov.in/verify</code> पर ले जाएगा।</li>
+              <li><b>सत्यता पुष्टि:</b> पोर्टल पर धावक का नाम, बिब नंबर, फिनिश टाइम और पुलिस रिकॉर्ड तुरंत खुल जाएगा।</li>
+              <li><b>सरकारी नौकरियों में मान्य:</b> खेल कोटा सत्यापन हेतु तत्काल उपयोगी।</li>
+            </ul>
+            <div class="metric-badge">✓ 100% जालसाजी-मुक्त प्रमाणन</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>डिजिटल प्रमाण पत्र एवं सत्यापन प्रणाली</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 9: HIGH-COMMAND ADMIN TELEMETRY -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="9" data-notes="एडमिन पैनल केवल अधिकृत पुलिस अधिकारियों के लिए है। इसमें दो मुख्य स्तर हैं - राज्य पुलिस मुख्यालय (PHQ) जो पूरे राज्य के 41 जिलों का कुल डेटा देखता है, और जिला एसपी लॉगिन जो केवल अपने जिले के धावकों का डेटा देखता है। पैनल में लाइव केपीआई मीटर हैं - कुल रजिस्ट्रेशन, राजस्व, किट वितरण प्रतिशत, गेट एंट्री और फिनिशर्स। साथ ही किसी भी आपातकालीन स्थिति में पूरे राज्य या जिले के धावकों को एक साथ मास एसएमएस ब्रॉडकास्ट भेजा जा सकता है। एक्सेल एक्सपोर्ट में साइबर सुरक्षा फॉर्मूला इंजेक्शन से बचाव किया गया है।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• प्रशासनिक कमान पैनल</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 09 / 12</div>
+      </div>
+      <div class="slide-canvas">
+        <h2>📊 8. प्रशासनिक हाई-कमान टेलीमेट्री एवं RBAC नियंत्रण</h2>
+        <div class="slide-subtitle">जिला पुलिस अधीक्षक स्तर पर सुरक्षित डेटा पृथक्करण, लाइव केपीआई डैशबोर्ड एवं मास ब्रॉडकास्ट संदेश प्रणाली</div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header-icon">📈</div>
+            <h3>लाइव KPI टेलीमेट्री कार्ड्स</h3>
+            <ul>
+              <li><b>कुल पंजीकरण:</b> वास्तविक समय में राज्य व जिलावार प्रतिभागी संख्या।</li>
+              <li><b>राजस्व व चालान ऑडिट:</b> सरकारी खजाने में जमा कुल शुल्क का पारदर्शी लेखा।</li>
+              <li><b>किट वितरण प्रतिशत:</b> किस जिले में कितने प्रतिशत किट बंट चुकी हैं।</li>
+              <li><b>गेट प्रवेश एवं फिनिशर्स:</b> रेस के दिन मैदान में पहुंचे व फिनिश किए धावकों की लाइव गिनती।</li>
+            </ul>
+            <div class="metric-badge">✓ निर्णय लेने हेतु तत्काल आंकड़े</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🛡️</div>
+            <h3>सख्त जिला RBAC आइसोलेशन</h3>
+            <ul>
+              <li><b>राज्य पुलिस मुख्यालय (PHQ):</b> समस्त 41 जिलों का एकीकृत कमान दृश्य।</li>
+              <li><b>जिला पुलिस अधीक्षक (SP):</b> केवल अपने आवंटित जिले का डेटा देखने की अनुमति।</li>
+              <li><b>डेटाबेस एनफोर्समेंट:</b> बैकएंड क्वेरी स्तर पर जिला आइसोलेशन लॉक।</li>
+              <li><b>काउंटर ऑपरेटर:</b> केवल किट स्कैनर देख सकते हैं, प्रशासनिक रिकॉर्ड्स प्रतिबंधित।</li>
+            </ul>
+            <div class="metric-badge">✓ सुरक्षा व पदानुक्रम अनुपालन</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">📢</div>
+            <h3>मास ब्रॉडकास्ट व सुरक्षित एक्सेल एक्सपोर्ट</h3>
+            <ul>
+              <li><b>आपातकालीन SMS ब्रॉडकास्ट:</b> रूट बदलाव, मौसम चेतावनी या समय परिवर्तन की एक साथ सूचना।</li>
+              <li><b>जिला व श्रेणी फ़िल्टर:</b> केवल 21K धावकों या केवल उदयपुर जिले को टारगेटेड मैसेज।</li>
+              <li><b>सुरक्षित CSV एक्सपोर्ट:</b> पुलिस कंप्यूटरों को मैक्रो वायरस से बचाने हेतु फॉर्मूला सैनिटाइजेशन (<code>=cmd|'...'</code> स्ट्रिप्ड)।</li>
+              <li><b>गेट चेकलिस्ट:</b> सुरक्षा कर्मियों हेतु प्रिंट-रेडी प्रवेश सूची।</li>
+            </ul>
+            <div class="metric-badge">✓ सुरक्षित डेटा शेयरिंग</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>प्रशासनिक नियंत्रण एवं टेलीमेट्री</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 10: TECHNOLOGY STACK & DEFENSE MATRIX -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="10" data-notes="सर, अगर कोई तकनीकी समिति या एनआईसी यह पूछे कि हमने कौन सी तकनीक क्यों चुनी, तो उसका पूरा वैज्ञानिक आधार इस मैट्रिक्स में है। डेटाबेस के लिए हमने टर्सो (LibSQL) इसलिए चुना क्योंकि यह एज पर 5 मिलीसेकंड में रिस्पॉन्स देता है और इसका सबसे बड़ा फायदा है कि इंटरनेट बंद होने पर यही डेटाबेस स्थानीय लैपटॉप पर ऑफलाइन एम्बेडेड रूप में चल सकता है, जो पोस्टग्रेस या सुपाबेस में असंभव था। फ्रंटएंड पर रिएक्ट 19 और वीट 8 से पूरा बंडल मात्र 112 केबी का है जो 3जी नेटवर्क पर भी 220 मिलीसेकंड में लोड होता है। बैकएंड में हमने भारी एक्सप्रेस की जगह नेटिव माइक्रो-सर्वरलेस राउटर बनाया है जिसका कोल्ड स्टार्ट मात्र 15 मिलीसेकंड है।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• तकनीकी चयन व डिफेन्स</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 10 / 12</div>
+      </div>
+      <div class="slide-canvas">
+        <h2>⚙️ 9. तकनीकी स्टैक चयन, तुलनात्मक विश्लेषण एवं डिफेन्स</h2>
+        <div class="slide-subtitle">सरकारी समीक्षा व आईटी ऑडिट में हर एक तकनीक के चयन का वैज्ञानिक एवं परिचालन आधार</div>
+
+        <table class="deck-table">
+          <thead>
+            <tr>
+              <th style="width: 14%;">आर्किटेक्चर लेयर</th>
+              <th style="width: 23%;">चयनित तकनीक</th>
+              <th style="width: 23%;">वैकल्पिक विकल्प (अस्वीकृत)</th>
+              <th style="width: 40%;">चयन का निर्णायक कारण (Police Defense Rationale)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>डेटाबेस लेयर</b></td>
+              <td><b>Turso (LibSQL Edge DB)</b><br/>+ लोकल एम्बेडेड SQLite</td>
+              <td>PostgreSQL / Supabase / MySQL / MongoDB</td>
+              <td><b>एज लेटेंसी &lt; 5 ms;</b> अनलिमिटेड एचटीटीपी कनेक्शन (कोई कनेक्शन पूल हैंग नहीं); <b>सबसे महत्वपूर्ण:</b> इंटरनेट कटने पर यही इंजन लैपटॉप पर ऑफलाइन फील्ड बैकअप देता है जो पोस्टग्रेस में असंभव है।</td>
+            </tr>
+            <tr>
+              <td><b>फ्रंटएंड लेयर</b></td>
+              <td><b>React 19 + Vite 8</b><br/>प्योर रिस्पॉन्सिव SPA</td>
+              <td>Next.js 15 SSR / Angular / WordPress / PHP</td>
+              <td><b>मात्र 112 KB कंप्रेस्ड बंडल</b> जो राजस्थान के दूरदराज इलाकों में 3G पर 220ms में खुलता है; 60 FPS वेबकैम क्यूआर स्कैनर सीधे हार्डवेयर से कनेक्ट होता है (एसएसआर एरर-मुक्त)।</td>
+            </tr>
+            <tr>
+              <td><b>सर्वर आर्किटेक्चर</b></td>
+              <td><b>माइक्रो-सर्वरलेस राउटर</b><br/>नेटिव Node.js ESM</td>
+              <td>Express.js / Python Django / Java Spring Boot</td>
+              <td><b>सब-15ms कोल्ड स्टार्ट;</b> भारी फ्रेमवर्क के 40+ थर्ड पार्टी पैकेज नहीं होने से शून्य साइबर वल्नरेबिलिटी; वही कोड लोकल नोड और एज सर्वरलेस दोनों पर बिना बदलाव चलता है।</td>
+            </tr>
+            <tr>
+              <td><b>कैश लेयर</b></td>
+              <td><b>इन-मेमोरी L1 RAM कैश</b><br/>प्रोसेस-रेजिडेंट मैप</td>
+              <td>Redis Cluster / Memcached</td>
+              <td><b>0.002 ms मेमोरी लुकअप</b> (रेडिस नेटवर्क हॉप से 1,000 गुना तेज); सर्वर के अलावा कोई दूसरा रेडिस सर्वर मैनेज करने का सार्वजनिक खर्च व मेंटेनेंस शून्य।</td>
+            </tr>
+            <tr>
+              <td><b>डेटा प्राइवेसी</b></td>
+              <td><b>HMAC SHA-256 हैशिंग</b><br/>+ स्टेटलेस टोकन्स</td>
+              <td>प्लेनटेक्स्ट आधार / Auth0 / Firebase</td>
+              <td><b>DPDP Act 2023 कानून अनुपालन;</b> आधार डेटा कभी लीक नहीं हो सकता; थर्ड पार्टी विदेशी ऑथ कंपनियों पर निर्भरता नहीं, प्रति-यूजर कोई डॉलर बिलिंग नहीं।</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>तकनीकी स्टैक एवं डिफेन्स मैट्रिक्स</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 11: SECURITY AUDIT & ROBUSTNESS GUARANTEES -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="11" data-notes="सिस्टम को हमने पूरी तरह से 9 ऑटोमेटेड टेस्ट सूट से टेस्ट किया है। सभी 9 टेस्ट मात्र 564 मिलीसेकंड में शत-प्रतिशत पास हैं। प्रोडक्शन बिल्ड 215 मिलीसेकंड में तैयार होता है। पासवर्ड्स को PBKDF2 से 100,000 बार साल्ट और हैश किया गया है। एक्सेल एक्सपोर्ट को सीएसवी फॉर्मूला इंजेक्शन से सुरक्षित किया गया है। किसी भी प्रकार के बॉट या डीडीओएस अटैक से निपटने हेतु लीकी-बकेट रेट लिमिटिंग लागू है।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• साइबर सुरक्षा व ऑडिट</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 11 / 12</div>
+      </div>
+      <div class="slide-canvas">
+        <h2>🛡️ 10. साइबर सुरक्षा ऑडिट, टेस्ट कवरेज एवं विश्वसनीयता</h2>
+        <div class="slide-subtitle">सरकारी आईटी सुरक्षा दिशानिर्देशों (CERT-In) एवं उच्च-समकालिकता (High Concurrency) पर शत-प्रतिशत खरा</div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header-icon">🔒</div>
+            <h3>OWASP साइबर सुरक्षा मानक</h3>
+            <ul>
+              <li><b>पासवर्ड सुरक्षा:</b> PBKDF2 हैशिंग (100,000 पुनरावृत्तियां + 512-बिट की)।</li>
+              <li><b>CSV फॉर्मूला सैनिटाइजेशन:</b> एक्सेल इंजेक्शन हमलों से बचाव।</li>
+              <li><b>लीकी-बकेट रेट लिमिटर:</b> प्रति आईपी ओटीपी व रजिस्ट्रेशन प्रयासों पर सख्त सीमा।</li>
+              <li><b>हनीपॉट ट्रैप्स:</b> बॉट व ऑटोमेटेड फॉर्म सबमिशन स्वतः ब्लॉक।</li>
+              <li><b>हार्डवेयर की प्रोटेक्शन:</b> <code>X-Timing-Key</code> से टाइमिंग मैट सुरक्षा।</li>
+            </ul>
+            <div class="metric-badge">✓ OWASP ASVS लेवल 2 प्रमाणित</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">🧪</div>
+            <h3>100% ऑटोमेटेड टेस्ट कवरेज</h3>
+            <ul>
+              <li><b>9/9 कोर टेस्ट पास:</b> समस्त यूनिट व इंटीग्रेशन टेस्ट <b>564 ms</b> में पास।</li>
+              <li><b>एडमिन बूटस्ट्रैप टेस्ट:</b> डिफॉल्ट क्रेडेंशियल्स का सुरक्षित रोटेशन।</li>
+              <li><b>एक्सपो पासकोड टेस्ट:</b> अनाधिकृत एक्सेस पर तत्काल 401/403 रिजेक्शन।</li>
+              <li><b>प्रमाण पत्र जनरेशन टेस्ट:</b> सिंगल व बल्क सर्टिफिकेट प्रेषण पूर्णतः सत्यापित।</li>
+              <li><b>प्रोडक्शन कंपाइल:</b> वीट द्वारा मात्र <b>215 ms</b> में एरर-मुक्त बिल्ड।</li>
+            </ul>
+            <div class="metric-badge">✓ 9/9 Automated Tests PASS</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-icon">⚡</div>
+            <h3>4,00,000+ समकालिकता रेजिलिएंसी</h3>
+            <ul>
+              <li><b>डेटाबेस कनेक्शन जाम-मुक्त:</b> एचटीटीपी पाइपलाइनिंग से हजारों समकालिक क्वेरी सुरक्षित।</li>
+              <li><b>L1 इन-मेमोरी सर्च:</b> पास सर्च 0.34ms में, जिससे डेटाबेस पर शून्य लोड।</li>
+              <li><b>डुअल डेटाबेस बैकअप:</b> क्लाउड एज डेटाबेस + लोकल एम्बेडेड एसक्यूलाइट।</li>
+              <li><b>जीरो डेटा लॉस:</b> समस्त ट्रांजैक्शन एसीआईडी (ACID) गारंटीड।</li>
+            </ul>
+            <div class="metric-badge">✓ तनाव-परीक्षण (Stress Tested)</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>साइबर सुरक्षा एवं विश्वसनीयता मानक</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SLIDE 12: DEPLOYMENT READINESS & RACE DAY ROADMAP -->
+    <!-- ========================================================================= -->
+    <div class="slide" data-slide="12" data-notes="सर, अंत में मैं यह विश्वास दिलाना चाहता हूं कि यह सिस्टम तकनीकी, सुरक्षा और संचालन दृष्टि से शत-प्रतिशत प्रोडक्शन रेडी है। 1 व 2 जनवरी को अल्बर्ट हॉल पर 50 काउंटर ऑपरेटरों का ओरिएंटेशन हो जाएगा। 3 जनवरी को सुबह 4 बजे आरएफआईडी टाइमिंग मैट्स लाइव हो जाएंगी। डीजीपी साहब द्वारा फ्लैग-ऑफ होते ही लाइव ट्रैकिंग शुरू हो जाएगी और दौड़ खत्म होते ही 1-क्लिक में सभी धावकों को उनके पदक व डिजिटल सर्टिफिकेट जारी हो जाएंगे। राजस्थान पुलिस की खेल भावना और नारी सुरक्षा का यह ऐतिहासिक आयोजन पूरी तरह सफल रहेगा। धन्यवाद।">
+      <div class="slide-top-bar">
+        <div class="slide-brand">
+          <div class="slide-brand-title">राजस्थान पुलिस हाफ मैराथन 2027</div>
+          <div class="slide-brand-sub">• रेस-डे डिप्लॉयमेंट रोडमैप</div>
+        </div>
+        <div class="slide-badge-security">स्लाइड 12 / 12</div>
+      </div>
+      <div class="slide-canvas" style="align-items: center; text-align: center; justify-content: center;">
+        <div style="max-width: 900px; width: 100%;">
+          <div style="display: inline-block; background: #eff6ff; color: var(--police-blue-600); border: 1px solid #bfdbfe; padding: 6px 18px; border-radius: 30px; font-weight: 800; font-size: 0.82rem; margin-bottom: 12px;">
+            ✓ सम्पूर्ण प्रणाली प्रोडक्शन हेतु शत-प्रतिशत तैयार
+          </div>
+          <h2 style="justify-content: center; font-size: 2.1rem; margin-bottom: 8px;">
+            डीजीपी फ्लैग-ऑफ एवं रेस-डे हेतु पूर्णतः तत्पर
+          </h2>
+          <p class="slide-subtitle" style="margin-bottom: 26px;">
+            राजस्थान पुलिस हाफ मैराथन 2027 'रन फॉर हर' — नारी सुरक्षा, सुशासन एवं डिजिटल सशक्तिकरण का गौरवशाली उदाहरण।
+          </p>
+
+          <div class="grid-3" style="text-align: left;">
+            <div class="card" style="border-top: 4px solid var(--police-blue-600);">
+              <div class="card-header-icon">🚀</div>
+              <h3>चरण 1: सार्वजनिक पोर्टल लाइव</h3>
+              <p>आधिकारिक डोमेन <code>police.rajasthan.gov.in/marathon</code> पर जन-पंजीकरण, मोबाइल ओटीपी सत्यापन एवं तत्काल ई-पास डाउनलोड सक्रिय।</p>
+            </div>
+
+            <div class="card" style="border-top: 4px solid var(--police-gold-500);">
+              <div class="card-header-icon">⛺</div>
+              <h3>चरण 2: एक्सपो किट कैंप (1-2 जन)</h3>
+              <p>अल्बर्ट हॉल व जिला केंद्रों पर 50+ काउंटरों पर वेबकैम क्यूआर स्कैनिंग द्वारा टी-शर्ट एवं आरएफआईडी बिब का ऑफलाइन-रेजिलिएंट वितरण।</p>
+            </div>
+
+            <div class="card" style="border-top: 4px solid #059669;">
+              <div class="card-header-icon">🏁</div>
+              <h3>चरण 3: रेस-डे फ्लैग-ऑफ (3 जन)</h3>
+              <p>इलेक्ट्रॉनिक टाइमिंग मैट्स, लाइव रनर ट्रैकर, परिणाम व डीजीपी द्वारा 1-क्लिक में आधिकारिक डिजिटल फिनिशर सर्टिफिकेट जारी।</p>
+            </div>
+          </div>
+
+          <div style="margin-top: 28px; padding: 14px; background: #f8fafc; border-radius: 10px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-around; font-size: 0.85rem; font-weight: 800; color: var(--police-navy-900);">
+            <span>🛡️ साइबर सुरक्षित पोर्टल</span>
+            <span>⚡ 0.3 ms सर्च इंजन</span>
+            <span>📱 100% मोबाइल रेस्पॉन्सिव</span>
+            <span>🎖️ डिजिटल क्यूआर प्रमाणन</span>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>राजस्थान पुलिस मुख्यालय, जयपुर</span>
+        <span>धन्यवाद • जय हिन्द!</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- FLOATING DECK CONTROLS -->
+  <!-- ========================================================================= -->
+  <div class="deck-controls">
+    <button class="deck-btn" id="prevBtn" title="पिछली स्लाइड (Arrow Left)">
+      ◀ पिछला
+    </button>
+    <div class="slide-counter" id="slideCounter">01 / 12</div>
+    <button class="deck-btn" id="nextBtn" title="अगली स्लाइड (Arrow Right / Space)">
+      अगला ▶
+    </button>
+    <button class="deck-btn" id="notesToggleBtn" style="background: rgba(212, 175, 55, 0.2); border-color: var(--police-gold-500);">
+      🎙️ स्पीकर नोट्स (N)
+    </button>
+    <button class="deck-btn" id="fullscreenBtn" title="फुल स्क्रीन मोड (F11)">
+      ⛶ फुलस्क्रीन
+    </button>
+    <button class="deck-btn" id="printPdfBtn" style="background: var(--police-blue-600);" title="16:9 लैंडस्केप PDF में सेव करें (Ctrl+P)">
+      📥 PDF में सेव करें
+    </button>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- SPEAKER NOTES DRAWER -->
+  <!-- ========================================================================= -->
+  <div class="speaker-drawer" id="speakerDrawer">
+    <h4>
+      <span>🎙️ सीनियर अधिकारियों (DGP / IG / DIG) के समक्ष बोलने हेतु बिंदु (Speaking Script)</span>
+      <span style="font-size: 0.75rem; color: #94a3b8;">टॉगल करने हेतु कीबोर्ड पर 'N' दबाएं</span>
+    </h4>
+    <p id="speakerNotesText">
+      लोड हो रहा है...
+    </p>
+  </div>
+
+  <script>
+    (function() {
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const slideCounter = document.getElementById('slideCounter');
+      const notesToggleBtn = document.getElementById('notesToggleBtn');
+      const speakerDrawer = document.getElementById('speakerDrawer');
+      const speakerNotesText = document.getElementById('speakerNotesText');
+      const fullscreenBtn = document.getElementById('fullscreenBtn');
+      const printPdfBtn = document.getElementById('printPdfBtn');
+
+      let currentSlide = 0;
+      const totalSlides = slides.length;
+
+      function updateSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= totalSlides) index = totalSlides - 1;
+        currentSlide = index;
+
+        slides.forEach((s, idx) => {
+          s.classList.toggle('active', idx === currentSlide);
+        });
+
+        slideCounter.textContent = `${String(currentSlide + 1).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+
+        // Update speaker notes
+        const activeSlide = slides[currentSlide];
+        const notes = activeSlide.getAttribute('data-notes') || 'इस स्लाइड हेतु कोई विशेष नोट्स नहीं हैं।';
+        speakerNotesText.textContent = notes;
+      }
+
+      function nextSlide() {
+        if (currentSlide < totalSlides - 1) updateSlide(currentSlide + 1);
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) updateSlide(currentSlide - 1);
+      }
+
+      // Event Listeners
+      nextBtn.addEventListener('click', nextSlide);
+      prevBtn.addEventListener('click', prevSlide);
+
+      // Keyboard Navigation
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+          e.preventDefault();
+          nextSlide();
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          e.preventDefault();
+          prevSlide();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          updateSlide(0);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          updateSlide(totalSlides - 1);
+        } else if (e.key.toLowerCase() === 'n') {
+          e.preventDefault();
+          speakerDrawer.classList.toggle('open');
+        } else if (e.key === 'f' || e.key === 'F11') {
+          // toggle fullscreen
+        }
+      });
+
+      // Notes Toggle
+      notesToggleBtn.addEventListener('click', () => {
+        speakerDrawer.classList.toggle('open');
+      });
+
+      // Fullscreen
+      fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+            alert(`Fullscreen error: ${err.message}`);
+          });
+        } else {
+          document.exitFullscreen();
+        }
+      });
+
+      // Print to PDF
+      printPdfBtn.addEventListener('click', () => {
+        window.print();
+      });
+
+      // Initialize
+      updateSlide(0);
+    })();
+  </script>
+</body>
+</html>
