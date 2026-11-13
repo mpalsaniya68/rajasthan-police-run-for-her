@@ -551,6 +551,29 @@ async function seedInitialParticipants() {
 async function syncCoreParticipants() {
   const coreList = [
     {
+      id: "P-2fdfdd3a",
+      bib: "RJ-21K-1009",
+      name: "मदन पल्सानिया (Madan Palsaniya)",
+      gender: "male",
+      dob: "2000-01-01",
+      mobile: "7023233248",
+      masked: "XXXXXX3248",
+      emergency: "7627002063",
+      relation: "अभिभावक (Guardian)",
+      blood: "B+",
+      catId: "21k",
+      catName: "21 KM Half Marathon",
+      distId: "jaipur_comm",
+      distName: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+      tshirt: "L",
+      certId: "RJ-POL-2027-03ABE3",
+      status: "CERT_ISSUED",
+      certificateIssued: 1,
+      overallRank: 5,
+      genderRank: 4,
+      finishTime: "01:34:20"
+    },
+    {
       id: "P-1005",
       bib: "RJ-21K-1005",
       name: "मदन (Madan)",

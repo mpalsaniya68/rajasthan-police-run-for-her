@@ -1,4 +1,4 @@
-import { handleApiRequest } from "./apiRouter.js";
+import { handleApiRequest, warmRunnerCache } from "./apiRouter.js";
 import { initDatabase } from "./db.js";
 
 /**
@@ -8,8 +8,10 @@ export function apiDevPlugin() {
   return {
     name: "rajasthan-police-api-dev",
     configureServer(server) {
-      // Initialize Database on server start
-      initDatabase().catch(console.error);
+      // Initialize Database & pre-warm in-memory L1 cache on server start
+      initDatabase()
+        .then(() => warmRunnerCache(true))
+        .catch(console.error);
 
       // Mount API middleware
       server.middlewares.use(async (req, res, next) => {
