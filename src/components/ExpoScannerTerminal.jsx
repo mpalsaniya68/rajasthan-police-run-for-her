@@ -96,9 +96,10 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
   // Volunteer Logged-in Operator Distribution & Scan History
   const [volunteerScans, setVolunteerScans] = useState([]);
+  const [counterRoster, setCounterRoster] = useState([]);
   const [isLoadingScans, setIsLoadingScans] = useState(false);
   const [historySearch, setHistorySearch] = useState("");
-  const [historyFilter, setHistoryFilter] = useState("all"); // 'all' | 'kit' | 'gate'
+  const [historyFilter, setHistoryFilter] = useState("all"); // 'all' | 'collected' | 'pending' | 'activity'
 
   // Fetch logged-in volunteer's scanned & distributed runners from API & local storage
   const fetchVolunteerHistory = async () => {
@@ -107,11 +108,16 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       const res = await apiGetVolunteerScans(currentUser?.counterId);
       if (res && res.success) {
         setVolunteerScans(res.scans || []);
+        if (res.roster && Array.isArray(res.roster)) {
+          setCounterRoster(res.roster);
+        }
         if (res.stats) {
           setCounterStats(prev => ({
             ...prev,
             myCounterKits: res.stats.myKitsDistributed !== undefined ? res.stats.myKitsDistributed : prev.myCounterKits,
-            totalGateEntries: res.stats.myGateEntries !== undefined ? res.stats.myGateEntries : prev.totalGateEntries
+            totalGateEntries: res.stats.myGateEntries !== undefined ? res.stats.myGateEntries : prev.totalGateEntries,
+            totalKitsDistributed: res.stats.totalCollected !== undefined ? res.stats.totalCollected : prev.totalKitsDistributed,
+            pendingKits: res.stats.totalPending !== undefined ? res.stats.totalPending : prev.pendingKits
           }));
         }
       }
@@ -667,8 +673,8 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         setScannedRunner(prev => ({
           ...prev,
           kitCollected: true,
-          kitCollectedAt: data.runner.kit_collected_at || nowStr,
-          collectedBy: data.runner.collected_by || operatorStr
+          kitCollectedAt: data?.runner?.kit_collected_at || nowStr,
+          collectedBy: data?.runner?.collected_by || operatorStr
         }));
         // Prepend to logged-in volunteer's live scan history list
         const newRecord = {
@@ -685,13 +691,26 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           operatorInfo: operatorStr,
           statusLabel: "किट हैंडओवर पूर्ण"
         };
-        setVolunteerScans(prev => [newRecord, ...prev]);
+        setVolunteerScans(prev => [newRecord, ...prev.filter(x => x.bibNumber !== scannedRunner.bibNumber)]);
+        setCounterRoster(prev => prev.map(r => {
+          if (r.id === scannedRunner.id || (r.bibNumber && r.bibNumber.toUpperCase() === scannedRunner.bibNumber.toUpperCase())) {
+            return {
+              ...r,
+              kitCollected: true,
+              kitCollectedAt: new Date().toISOString(),
+              collectedBy: operatorStr
+            };
+          }
+          return r;
+        }));
         setCounterStats(prev => ({
           ...prev,
-          myCounterKits: prev.myCounterKits + 1,
-          totalKitsDistributed: prev.totalKitsDistributed + 1
+          myCounterKits: (prev.myCounterKits || 0) + 1,
+          totalKitsDistributed: (prev.totalKitsDistributed || 0) + 1,
+          pendingKits: Math.max(0, (prev.pendingKits || 1) - 1)
         }));
         fetchStats();
+        fetchVolunteerHistory();
       } else {
         if (soundEnabled) playSound('success');
         setScanStatus('SUCCESS_HANDED_OVER');
@@ -702,11 +721,40 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           kitCollectedAt: nowStr,
           collectedBy: operatorStr
         }));
+        const newRecord = {
+          id: `kit_${Date.now()}_${scannedRunner.bibNumber}`,
+          type: "KIT_HANDOVER",
+          bibNumber: scannedRunner.bibNumber,
+          fullName: scannedRunner.fullName,
+          gender: scannedRunner.gender || "-",
+          categoryName: scannedRunner.categoryName,
+          districtName: scannedRunner.districtName || "जयपुर",
+          tshirtSize: scannedRunner.tshirtSize || "N/A",
+          rfidTagId: `RFID-${scannedRunner.bibNumber}`,
+          timestamp: new Date().toISOString(),
+          operatorInfo: operatorStr,
+          statusLabel: "किट हैंडओवर पूर्ण"
+        };
+        setVolunteerScans(prev => [newRecord, ...prev.filter(x => x.bibNumber !== scannedRunner.bibNumber)]);
+        setCounterRoster(prev => prev.map(r => {
+          if (r.id === scannedRunner.id || (r.bibNumber && r.bibNumber.toUpperCase() === scannedRunner.bibNumber.toUpperCase())) {
+            return {
+              ...r,
+              kitCollected: true,
+              kitCollectedAt: new Date().toISOString(),
+              collectedBy: operatorStr
+            };
+          }
+          return r;
+        }));
         setCounterStats(prev => ({
           ...prev,
           myCounterKits: (prev.myCounterKits || 0) + 1,
-          totalKitsDistributed: (prev.totalKitsDistributed || 0) + 1
+          totalKitsDistributed: (prev.totalKitsDistributed || 0) + 1,
+          pendingKits: Math.max(0, (prev.pendingKits || 1) - 1)
         }));
+        fetchStats();
+        fetchVolunteerHistory();
       }
     } catch (err) {
       setIsHandingOver(false);
@@ -720,11 +768,76 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         kitCollectedAt: nowStr,
         collectedBy: operatorStr
       }));
+      const newRecord = {
+        id: `kit_${Date.now()}_${scannedRunner.bibNumber}`,
+        type: "KIT_HANDOVER",
+        bibNumber: scannedRunner.bibNumber,
+        fullName: scannedRunner.fullName,
+        gender: scannedRunner.gender || "-",
+        categoryName: scannedRunner.categoryName,
+        districtName: scannedRunner.districtName || "जयपुर",
+        tshirtSize: scannedRunner.tshirtSize || "N/A",
+        rfidTagId: `RFID-${scannedRunner.bibNumber}`,
+        timestamp: new Date().toISOString(),
+        operatorInfo: operatorStr,
+        statusLabel: "किट हैंडओवर पूर्ण"
+      };
+      setVolunteerScans(prev => [newRecord, ...prev.filter(x => x.bibNumber !== scannedRunner.bibNumber)]);
+      setCounterRoster(prev => prev.map(r => {
+        if (r.id === scannedRunner.id || (r.bibNumber && r.bibNumber.toUpperCase() === scannedRunner.bibNumber.toUpperCase())) {
+          return {
+            ...r,
+            kitCollected: true,
+            kitCollectedAt: new Date().toISOString(),
+            collectedBy: operatorStr
+          };
+        }
+        return r;
+      }));
       setCounterStats(prev => ({
         ...prev,
         myCounterKits: (prev.myCounterKits || 0) + 1,
-        totalKitsDistributed: (prev.totalKitsDistributed || 0) + 1
+        totalKitsDistributed: (prev.totalKitsDistributed || 0) + 1,
+        pendingKits: Math.max(0, (prev.pendingKits || 1) - 1)
       }));
+      fetchStats();
+      fetchVolunteerHistory();
+    }
+  };
+
+  // Select runner directly from bottom table / roster
+  const handleSelectRunnerFromList = (runner) => {
+    if (!runner) return;
+    setScannedRunner({
+      id: runner.id,
+      bibNumber: runner.bibNumber,
+      fullName: runner.fullName,
+      categoryName: runner.categoryName,
+      districtName: runner.districtName,
+      tshirtSize: runner.tshirtSize,
+      bloodGroup: runner.bloodGroup || 'B+',
+      medicalCondition: 'सामान्य (Fit)',
+      kitCollected: runner.kitCollected,
+      kitCollectedAt: runner.kitCollectedAt,
+      collectedBy: runner.collectedBy,
+      mobile: runner.maskedMobile || runner.mobile || '',
+      rfidTagId: runner.rfidTagId || `RFID-${runner.bibNumber}`
+    });
+    setSearchQuery(runner.bibNumber);
+    if (runner.kitCollected) {
+      if (soundEnabled) playSound('duplicate');
+      setScanStatus('ALREADY_COLLECTED');
+      setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${runner.collectedBy || 'काउंटर'} द्वारा सुपुर्द की जा चुकी है।`);
+    } else {
+      if (soundEnabled) playSound('success');
+      setScanStatus('SUCCESS');
+      setStatusMessage(`✅ धावक सूची से चयनित (${runner.fullName})! कृपया टी-शर्ट साइज की पुष्टि कर किट हैंडओवर करें।`);
+    }
+    const el = document.getElementById('scanned-runner-details-card');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      window.scrollTo({ top: 350, behavior: 'smooth' });
     }
   };
 
@@ -1872,10 +1985,10 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               </div>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#0f172a' }}>
-                  आपके द्वारा स्कैन व किट वितरित धावकों की सूची (Scanned Runners History)
+                  धावक सूची एवं किट वितरण स्थिति (Runners Roster & Kit Status)
                 </h3>
                 <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: '2px' }}>
-                  इस सत्र में आपके काउंटर/गेट द्वारा सत्यापित व सुपुर्द की गई किटों का लाइव विवरण
+                  समस्त पंजीकृत धावक — किट दी गई (✅) एवं शेष (⏳) का लाइव विवरण
                 </div>
               </div>
             </div>
@@ -1886,7 +1999,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               <div style={{ position: 'relative', width: '220px' }}>
                 <input
                   type="text"
-                  placeholder="बिब या नाम से खोजें..."
+                  placeholder="बिब, नाम या मोबाइल से खोजें..."
                   value={historySearch}
                   onChange={(e) => setHistorySearch(e.target.value)}
                   style={{
@@ -1905,24 +2018,26 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               </div>
 
               {/* Filter Pills */}
-              <div style={{ display: 'flex', gap: '6px' }}>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {[
-                  { id: 'all', label: `सभी (${volunteerScans.length})` },
-                  { id: 'kit', label: `📦 किट (${volunteerScans.filter(s => s.type === 'KIT_HANDOVER').length})` },
-                  { id: 'gate', label: `🚪 गेट (${volunteerScans.filter(s => s.type === 'GATE_ENTRY').length})` }
+                  { id: 'all', label: `📋 समस्त धावक (${counterRoster.length || volunteerScans.length})` },
+                  { id: 'collected', label: `✅ किट दी गई (${counterRoster.length > 0 ? counterRoster.filter(r => r.kitCollected).length : volunteerScans.filter(s => s.type === 'KIT_HANDOVER').length})` },
+                  { id: 'pending', label: `⏳ किट शेष (${counterRoster.filter(r => !r.kitCollected).length})` },
+                  { id: 'activity', label: `⏱️ हालिया स्कैन लॉग (${volunteerScans.length})` }
                 ].map(f => (
                   <button
                     key={f.id}
                     onClick={() => setHistoryFilter(f.id)}
                     style={{
-                      padding: '5px 10px',
+                      padding: '5px 11px',
                       fontSize: '0.75rem',
                       fontWeight: historyFilter === f.id ? 800 : 600,
                       borderRadius: '5px',
                       border: historyFilter === f.id ? '1px solid #1d4ed8' : '1px solid #cbd5e1',
                       background: historyFilter === f.id ? '#1d4ed8' : '#ffffff',
                       color: historyFilter === f.id ? '#ffffff' : '#475569',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
                     }}
                   >
                     {f.label}
@@ -1953,30 +2068,34 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               </button>
 
               {/* Export CSV Button */}
-              {volunteerScans.length > 0 && (
+              {(counterRoster.length > 0 || volunteerScans.length > 0) && (
                 <button
                   onClick={() => {
                     const csvRows = [
-                      ["#", "Bib Number", "Runner Name", "Category", "T-Shirt Size", "RFID Tag", "Time", "Status", "Operator"].join(",")
+                      ["#", "Bib Number", "Runner Name", "Category", "T-Shirt Size", "Mobile", "District", "Status", "Handover Time", "Collected By"].join(",")
                     ];
-                    volunteerScans.forEach((s, idx) => {
+                    const exportItems = historyFilter === 'activity' 
+                      ? volunteerScans 
+                      : (counterRoster.length > 0 ? counterRoster : volunteerScans);
+                    exportItems.forEach((s, idx) => {
                       csvRows.push([
                         idx + 1,
                         `"${s.bibNumber || ''}"`,
                         `"${s.fullName || ''}"`,
                         `"${s.categoryName || ''}"`,
                         `"${s.tshirtSize || 'N/A'}"`,
-                        `"${s.rfidTagId || ''}"`,
-                        `"${s.timestamp ? new Date(s.timestamp).toLocaleTimeString('en-IN') : ''}"`,
-                        `"${s.statusLabel || ''}"`,
-                        `"${s.operatorInfo || ''}"`
+                        `"${s.mobile || ''}"`,
+                        `"${s.districtName || ''}"`,
+                        `"${s.kitCollected ? 'KIT_COLLECTED' : 'PENDING'}"`,
+                        `"${s.kitCollectedAt || s.timestamp ? new Date(s.kitCollectedAt || s.timestamp).toLocaleString('en-IN') : ''}"`,
+                        `"${s.collectedBy || s.operatorInfo || ''}"`
                       ].join(","));
                     });
                     const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvRows.join("\n")], { type: 'text/csv;charset=utf-8;' });
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement("a");
                     link.href = url;
-                    link.download = `RPM2027_My_Scans_${currentUser?.username || 'counter'}.csv`;
+                    link.download = `RPM2027_Expo_Roster_${currentUser?.username || 'counter'}.csv`;
                     link.click();
                   }}
                   style={{
@@ -1992,7 +2111,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                     fontWeight: 800,
                     cursor: 'pointer'
                   }}
-                  title="अपनी शिफ्ट की CSV डाउनलोड करें"
+                  title="वर्तमान सूची की CSV डाउनलोड करें"
                 >
                   <Download size={13} />
                   <span>CSV</span>
@@ -2002,60 +2121,73 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           </div>
 
           {/* Table Container */}
-          {isLoadingScans ? (
+          {isLoadingScans && counterRoster.length === 0 && volunteerScans.length === 0 ? (
             <div style={{ padding: '36px', textAlign: 'center', color: '#64748b' }}>
               <RefreshCw size={22} className="animate-spin" style={{ margin: '0 auto 8px' }} />
-              <div>आपका स्कैन रोस्टर लोड हो रहा है...</div>
+              <div>धावक सूची लोड हो रही है...</div>
             </div>
           ) : (() => {
-            const displayList = volunteerScans.filter(s => {
-              if (historyFilter === 'kit' && s.type !== 'KIT_HANDOVER') return false;
-              if (historyFilter === 'gate' && s.type !== 'GATE_ENTRY') return false;
-              if (historySearch.trim()) {
-                const q = historySearch.toLowerCase().trim();
-                const matchBib = (s.bibNumber || '').toLowerCase().includes(q);
-                const matchName = (s.fullName || '').toLowerCase().includes(q);
-                const matchCat = (s.categoryName || '').toLowerCase().includes(q);
-                return matchBib || matchName || matchCat;
+            let baseList = [];
+            if (historyFilter === 'activity') {
+              baseList = volunteerScans;
+            } else if (counterRoster.length > 0) {
+              if (historyFilter === 'collected') {
+                baseList = counterRoster.filter(r => r.kitCollected);
+              } else if (historyFilter === 'pending') {
+                baseList = counterRoster.filter(r => !r.kitCollected);
+              } else {
+                baseList = counterRoster;
               }
-              return true;
-            });
+            } else {
+              baseList = volunteerScans;
+            }
+
+            const q = historySearch.toLowerCase().trim();
+            const displayList = q ? baseList.filter(s => {
+              const matchBib = (s.bibNumber || '').toLowerCase().includes(q);
+              const matchName = (s.fullName || '').toLowerCase().includes(q);
+              const matchCat = (s.categoryName || '').toLowerCase().includes(q);
+              const matchDist = (s.districtName || '').toLowerCase().includes(q);
+              const matchMob = (s.mobile || '').toLowerCase().includes(q);
+              return matchBib || matchName || matchCat || matchDist || matchMob;
+            }) : baseList;
 
             if (displayList.length === 0) {
               return (
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: '#64748b' }}>
                   <PackageCheck size={36} color="#cbd5e1" style={{ margin: '0 auto 10px' }} />
                   <div style={{ fontSize: '0.96rem', fontWeight: 700, color: '#1e293b' }}>
-                    {historySearch ? 'खोज के अनुसार कोई रिकॉर्ड नहीं मिला' : 'वर्तमान में इस काउंटर से कोई स्कैन रिकॉर्ड नहीं है'}
+                    {historySearch ? 'खोज के अनुसार कोई रिकॉर्ड नहीं मिला' : 'इस फिल्टर के अंतर्गत कोई धावक नहीं है'}
                   </div>
                   <p style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '4px', maxWidth: '460px', marginInline: 'auto' }}>
-                    जैसे ही आप ऊपर दिए गए कैमरे अथवा बारकोड गन से धावक का QR कोड स्कैन कर किट हैंडओवर करेंगे, उनका विवरण तुरंत यहाँ जुड़ जाएगा।
+                    जैसे ही आप धावक का ई-पास अथवा बारकोड स्कैन करेंगे, या ऊपर दिए गए फिल्टर बदलेंगे, रिकॉर्ड प्रदर्शित हो जाएगा।
                   </p>
                 </div>
               );
             }
 
             return (
-              <div style={{ overflowX: 'auto', maxHeight: '420px', overflowY: 'auto' }}>
+              <div style={{ overflowX: 'auto', maxHeight: '460px', overflowY: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
                   <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
                     <tr style={{ background: '#f1f5f9', borderBottom: '2px solid #e2e8f0' }}>
-                      <th style={{ padding: '10px 14px', fontWeight: 800, color: '#334155', width: '50px' }}>#</th>
-                      <th style={{ padding: '10px 14px', fontWeight: 800, color: '#334155', width: '24%' }}>धावक का नाम व जिला</th>
-                      <th style={{ padding: '10px 14px', fontWeight: 800, color: '#334155', width: '16%' }}>बिब नंबर</th>
-                      <th style={{ padding: '10px 14px', fontWeight: 800, color: '#334155', width: '18%' }}>दौड़ श्रेणी (Category)</th>
-                      <th style={{ padding: '10px 14px', fontWeight: 800, color: '#334155', width: '10%', textAlign: 'center' }}>टी-शर्ट</th>
-                      <th style={{ padding: '10px 14px', fontWeight: 800, color: '#334155', width: '13%' }}>RFID चिप ID</th>
-                      <th style={{ padding: '10px 14px', fontWeight: 800, color: '#334155', width: '14%' }}>समय (Timestamp)</th>
-                      <th style={{ padding: '10px 14px', fontWeight: 800, color: '#334155', width: '15%', textAlign: 'right' }}>स्थिति</th>
+                      <th style={{ padding: '10px 12px', fontWeight: 800, color: '#334155', width: '45px' }}>#</th>
+                      <th style={{ padding: '10px 12px', fontWeight: 800, color: '#334155' }}>धावक का नाम व जिला</th>
+                      <th style={{ padding: '10px 12px', fontWeight: 800, color: '#334155', width: '130px' }}>बिब नंबर</th>
+                      <th style={{ padding: '10px 12px', fontWeight: 800, color: '#334155' }}>दौड़ श्रेणी (Category)</th>
+                      <th style={{ padding: '10px 12px', fontWeight: 800, color: '#334155', width: '75px', textAlign: 'center' }}>टी-शर्ट</th>
+                      <th style={{ padding: '10px 12px', fontWeight: 800, color: '#334155', width: '180px' }}>वितरण स्थिति</th>
+                      <th style={{ padding: '10px 12px', fontWeight: 800, color: '#334155', width: '120px', textAlign: 'right' }}>कार्रवाई</th>
                     </tr>
                   </thead>
                   <tbody>
                     {displayList.map((s, idx) => {
+                      const isCollected = Boolean(s.kitCollected || s.type === 'KIT_HANDOVER');
                       const isGate = s.type === 'GATE_ENTRY';
-                      const formattedTime = s.timestamp 
-                        ? new Date(s.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) 
-                        : "अभी-अभी";
+                      const handoverTime = s.kitCollectedAt || s.timestamp;
+                      const formattedTime = handoverTime 
+                        ? new Date(handoverTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) 
+                        : null;
 
                       return (
                         <tr 
@@ -2069,22 +2201,27 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                           onMouseLeave={(e) => { e.currentTarget.style.background = idx % 2 === 0 ? '#ffffff' : '#f8fafc'; }}
                         >
                           {/* Index */}
-                          <td style={{ padding: '10px 14px', color: '#64748b', fontWeight: 700 }}>
+                          <td style={{ padding: '10px 12px', color: '#64748b', fontWeight: 700 }}>
                             {idx + 1}
                           </td>
 
                           {/* Runner Name & District */}
-                          <td style={{ padding: '10px 14px' }}>
+                          <td style={{ padding: '10px 12px' }}>
                             <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.88rem' }}>
                               {s.fullName}
                             </div>
                             <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '1px' }}>
-                              {s.districtName || 'राजस्थान'}
+                              <span>{s.districtName || 'राजस्थान'}</span>
+                              {s.mobile && (
+                                <span style={{ marginLeft: '6px', color: '#475569', fontFamily: 'monospace' }}>
+                                  ({s.mobile})
+                                </span>
+                              )}
                             </div>
                           </td>
 
                           {/* Bib Number */}
-                          <td style={{ padding: '10px 14px' }}>
+                          <td style={{ padding: '10px 12px' }}>
                             <span style={{
                               fontFamily: 'monospace',
                               fontWeight: 800,
@@ -2093,14 +2230,15 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                               color: '#1d4ed8',
                               padding: '2px 8px',
                               borderRadius: '4px',
-                              border: '1px solid #bfdbfe'
+                              border: '1px solid #bfdbfe',
+                              display: 'inline-block'
                             }}>
-                              {s.bibNumber}
+                              {s.bibNumber || 'RJ-RUN'}
                             </span>
                           </td>
 
                           {/* Race Category */}
-                          <td style={{ padding: '10px 14px' }}>
+                          <td style={{ padding: '10px 12px' }}>
                             <span style={{
                               fontSize: '0.74rem',
                               fontWeight: 700,
@@ -2116,7 +2254,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                           </td>
 
                           {/* T-Shirt Size */}
-                          <td style={{ padding: '10px 14px', textAlign: 'center' }}>
+                          <td style={{ padding: '10px 12px', textAlign: 'center' }}>
                             <span style={{
                               fontWeight: 900,
                               fontSize: '0.82rem',
@@ -2129,37 +2267,114 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                             </span>
                           </td>
 
-                          {/* RFID Tag */}
-                          <td style={{ padding: '10px 14px' }}>
-                            <code style={{ fontSize: '0.76rem', color: '#475569', background: '#f8fafc', padding: '2px 6px', borderRadius: '3px' }}>
-                              {s.rfidTagId || '-'}
-                            </code>
+                          {/* Kit Status */}
+                          <td style={{ padding: '10px 12px' }}>
+                            {isGate ? (
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                padding: '3px 8px',
+                                borderRadius: '12px',
+                                fontSize: '0.72rem',
+                                fontWeight: 800,
+                                background: '#fef3c7',
+                                color: '#92400e',
+                                border: '1px solid #fde68a'
+                              }}>
+                                🚪 गेट अधिकृत {formattedTime ? `(${formattedTime})` : ''}
+                              </span>
+                            ) : isCollected ? (
+                              <div>
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  padding: '2px 8px',
+                                  borderRadius: '12px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  background: '#dcfce7',
+                                  color: '#15803d',
+                                  border: '1px solid #86efac'
+                                }}>
+                                  ✓ किट दी गई
+                                </span>
+                                {formattedTime && (
+                                  <div style={{ fontSize: '0.70rem', color: '#64748b', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                                    <Clock size={10} />
+                                    <span>{formattedTime}</span>
+                                    {s.collectedBy && (
+                                      <span style={{ maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={s.collectedBy}>
+                                        • {s.collectedBy}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                padding: '2px 8px',
+                                borderRadius: '12px',
+                                fontSize: '0.72rem',
+                                fontWeight: 800,
+                                background: '#fff7ed',
+                                color: '#c2410c',
+                                border: '1px solid #fed7aa'
+                              }}>
+                                ⏳ किट शेष (Pending)
+                              </span>
+                            )}
                           </td>
 
-                          {/* Time */}
-                          <td style={{ padding: '10px 14px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.76rem', color: '#475569' }}>
-                              <Clock size={12} color="#64748b" />
-                              <span>{formattedTime}</span>
-                            </div>
-                          </td>
-
-                          {/* Status Badge */}
-                          <td style={{ padding: '10px 14px', textAlign: 'right' }}>
-                            <span style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              padding: '3px 8px',
-                              borderRadius: '12px',
-                              fontSize: '0.72rem',
-                              fontWeight: 800,
-                              background: isGate ? '#fef3c7' : '#dcfce7',
-                              color: isGate ? '#92400e' : '#15803d',
-                              border: `1px solid ${isGate ? '#fde68a' : '#86efac'}`
-                            }}>
-                              {isGate ? '🚪 गेट अधिकृत' : '✅ किट हैंडओवर'}
-                            </span>
+                          {/* Action Button */}
+                          <td style={{ padding: '10px 12px', textAlign: 'right' }}>
+                            {!isCollected ? (
+                              <button
+                                onClick={() => handleSelectRunnerFromList(s)}
+                                style={{
+                                  background: '#2563eb',
+                                  color: '#ffffff',
+                                  border: 'none',
+                                  padding: '4px 10px',
+                                  borderRadius: '5px',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  boxShadow: '0 1px 2px rgba(37,99,235,0.2)'
+                                }}
+                                title="इस धावक को किट हैंडओवर हेतु ऊपर लोड करें"
+                              >
+                                <PackageCheck size={13} />
+                                <span>किट दें</span>
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleSelectRunnerFromList(s)}
+                                style={{
+                                  background: '#f1f5f9',
+                                  color: '#475569',
+                                  border: '1px solid #cbd5e1',
+                                  padding: '3px 8px',
+                                  borderRadius: '5px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '3px'
+                                }}
+                                title="विवरण देखें"
+                              >
+                                <span>विवरण</span>
+                              </button>
+                            )}
                           </td>
                         </tr>
                       );

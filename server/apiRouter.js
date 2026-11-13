@@ -2338,15 +2338,32 @@ export async function handleApiRequest(req, res) {
       }
 
       const counterFilter = parsedUrl.searchParams.get("counterId") || adminUser.counterId || "";
+      const counterName = adminUser.counterName || counterFilter;
+      const operatorName = adminUser.fullName || adminUser.username || "";
 
       const totalRes = await db.execute("SELECT count(*) as count FROM participants;");
       const kitRes = await db.execute("SELECT count(*) as count FROM participants WHERE kit_collected = 1;");
       
       let myCounterCount = 0;
-      if (counterFilter) {
+      if (counterFilter || counterName || operatorName) {
+        const numMatch = (counterFilter + " " + counterName).match(/\d+/);
+        const counterNum = numMatch ? numMatch[0] : "";
+
         const myRes = await db.execute({
-          sql: "SELECT count(*) as count FROM participants WHERE collected_by LIKE ?;",
-          args: [`%${counterFilter}%`]
+          sql: `SELECT count(*) as count FROM participants 
+                WHERE kit_collected = 1 
+                  AND (
+                    collected_by LIKE ? 
+                    OR collected_by LIKE ? 
+                    OR collected_by LIKE ?
+                    ${counterNum ? "OR collected_by LIKE ? OR collected_by LIKE ?" : ""}
+                  );`,
+          args: [
+            `%${counterFilter}%`,
+            `%${counterName}%`,
+            `%${operatorName}%`,
+            ...(counterNum ? [`%counter_${counterNum}%`, `%काउंटर-${counterNum}%`] : [])
+          ]
         });
         myCounterCount = Number(myRes.rows[0].count) || 0;
       }
@@ -2379,6 +2396,9 @@ export async function handleApiRequest(req, res) {
       // 1. Fetch kits handed over by this counter/operator
       let kitScans = [];
       try {
+        const numMatch = (counterFilter + " " + counterName).match(/\d+/);
+        const counterNum = numMatch ? numMatch[0] : "";
+
         const queryRes = await db.execute({
           sql: `SELECT id, bib_number, full_name, gender, category_name, district_name, tshirt_size, 
                        kit_collected, kit_collected_at, collected_by, rfid_tag_id
@@ -2388,11 +2408,20 @@ export async function handleApiRequest(req, res) {
                     collected_by LIKE ? 
                     OR collected_by LIKE ?
                     OR collected_by LIKE ?
+                    OR collected_by LIKE ?
+                    OR collected_by LIKE ?
                     OR ? = ''
                   )
                 ORDER BY kit_collected_at DESC 
-                LIMIT 200;`,
-          args: [`%${counterName}%`, `%${counterFilter}%`, `%${operatorName}%`, counterFilter]
+                LIMIT 300;`,
+          args: [
+            `%${counterName}%`,
+            `%${counterFilter}%`,
+            `%${operatorName}%`,
+            `%counter_${counterNum}%`,
+            `%काउंटर-${counterNum}%`,
+            counterFilter
+          ]
         });
 
         kitScans = queryRes.rows.map(r => ({
@@ -2453,6 +2482,35 @@ export async function handleApiRequest(req, res) {
         console.warn("[my-scans gate error]:", err);
       }
 
+      // 3. Counter Runner Checklist Roster ("किसको दी / किसको नहीं")
+      let roster = [];
+      try {
+        const rosterRes = await db.execute({
+          sql: `SELECT id, bib_number, full_name, gender, category_id, category_name, district_name, tshirt_size, 
+                       kit_collected, kit_collected_at, collected_by, rfid_tag_id, masked_mobile
+                FROM participants 
+                ORDER BY kit_collected DESC, kit_collected_at DESC, created_at DESC 
+                LIMIT 500;`
+        });
+        roster = rosterRes.rows.map(r => ({
+          id: r.id,
+          bibNumber: r.bib_number,
+          fullName: r.full_name,
+          gender: r.gender,
+          categoryId: r.category_id,
+          categoryName: r.category_name,
+          districtName: r.district_name,
+          tshirtSize: r.tshirt_size || "N/A",
+          rfidTagId: r.rfid_tag_id || `RFID-${r.bib_number}`,
+          kitCollected: Boolean(r.kit_collected),
+          kitCollectedAt: r.kit_collected_at,
+          collectedBy: r.collected_by,
+          maskedMobile: r.masked_mobile || ""
+        }));
+      } catch (err) {
+        console.warn("[my-scans roster error]:", err);
+      }
+
       // Combine and sort chronologically descending
       const combined = [...kitScans, ...gateScans].sort((a, b) => {
         const timeA = new Date(a.timestamp || 0).getTime();
@@ -2466,10 +2524,14 @@ export async function handleApiRequest(req, res) {
           myKitsDistributed: kitScans.length,
           myGateEntries: gateScans.length,
           myTotalScans: combined.length,
+          totalRoster: roster.length,
+          totalCollected: roster.filter(r => r.kitCollected).length,
+          totalPending: roster.filter(r => !r.kitCollected).length,
           stationName: counterName,
           operatorName: operatorName
         },
-        scans: combined
+        scans: combined,
+        roster
       });
     }
 
