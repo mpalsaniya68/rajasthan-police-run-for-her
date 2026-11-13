@@ -30,7 +30,7 @@ export async function dispatchGatewaySms({ mobile, message, templateId = "" }) {
   const dltEntityId = (process.env.SMS_DLT_ENTITY_ID || "").trim();
 
   // If live credentials provided, attempt real HTTP dispatch
-  if (gatewayUrl && (apiKey || (username && password))) {
+  if (isLiveSmsConfigured()) {
     try {
       let res;
       if (isRajSms) {
@@ -106,7 +106,7 @@ export async function dispatchGatewaySms({ mobile, message, templateId = "" }) {
       console.error(`[SMS Gateway Error]:`, err.message);
       return {
         success: false,
-        simulated: false,
+        simulated: true,
         gatewayResponse: `ERROR: ${err.message}`
       };
     }
@@ -235,3 +235,68 @@ export async function sendAdminOtpNotification({ mobile, otp, username, role }) 
     gatewayResponse: dispatchResult.gatewayResponse
   };
 }
+
+/**
+ * Check if a live, valid external SMS Gateway is configured with real non-placeholder credentials
+ */
+export function isLiveSmsConfigured() {
+  const gatewayUrl = (process.env.SMS_GATEWAY_URL || "").trim();
+  const apiKey = (process.env.SMS_API_KEY || "").trim();
+  const username = (process.env.SMS_USERNAME || "").trim();
+  const password = (process.env.SMS_PASSWORD || "").trim();
+
+  if (!gatewayUrl) return false;
+  if (!apiKey && (!username || !password)) return false;
+
+  const isPlaceholder = (val) => {
+    if (!val) return false;
+    const lower = val.toLowerCase();
+    return lower.includes("your_") || lower.includes("xxxx") || lower.includes("example") || lower.includes("sample");
+  };
+
+  if (isPlaceholder(apiKey) || isPlaceholder(password) || isPlaceholder(username)) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Dispatch Citizen Registration Verification OTP via Live Gateway or Secure Simulation
+ */
+export async function sendRegistrationOtpNotification({ mobile, otp }) {
+  const cleanMobile = String(mobile || "").replace(/\D/g, "").slice(-10);
+  const smsText = `राजस्थान पुलिस मैराथन 2027: आपका पंजीकरण सत्यापन OTP है ${otp}। यह 5 मिनट के लिए मान्य है। कृपया इसे किसी के साथ साझा न करें। - राजस्थान पुलिस`;
+
+  const dispatchResult = await dispatchGatewaySms({
+    mobile: cleanMobile,
+    message: smsText,
+    templateId: process.env.SMS_DLT_OTP_TEMPLATE_ID || ""
+  });
+
+  if (dispatchResult.simulated) {
+    console.log(`[REGISTRATION OTP SIMULATION] For +91-${cleanMobile}: ${otp}`);
+  }
+
+  return dispatchResult;
+}
+
+/**
+ * Dispatch E-Pass Unlock OTP via Live Gateway or Secure Simulation
+ */
+export async function sendPassOtpNotification({ mobile, otp, fullName = "धावक" }) {
+  const cleanMobile = String(mobile || "").replace(/\D/g, "").slice(-10);
+  const smsText = `राजस्थान पुलिस मैराथन 2027: नमस्ते ${fullName}, आपका ई-पास डाउनलोड सुरक्षा OTP है ${otp}। यह 5 मिनट के लिए मान्य है। - राजस्थान पुलिस`;
+
+  const dispatchResult = await dispatchGatewaySms({
+    mobile: cleanMobile,
+    message: smsText,
+    templateId: process.env.SMS_DLT_OTP_TEMPLATE_ID || ""
+  });
+
+  if (dispatchResult.simulated) {
+    console.log(`[PASS OTP SIMULATION] For ${fullName} (+91-${cleanMobile}): ${otp}`);
+  }
+
+  return dispatchResult;
+}
+

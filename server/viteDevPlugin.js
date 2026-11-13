@@ -27,6 +27,25 @@ export function apiDevPlugin() {
         }
         next();
       });
+    },
+    configurePreviewServer(server) {
+      initDatabase()
+        .then(() => warmRunnerCache(true))
+        .catch(console.error);
+
+      server.middlewares.use(async (req, res, next) => {
+        if (req.url && req.url.startsWith("/api")) {
+          try {
+            await handleApiRequest(req, res);
+          } catch (err) {
+            console.error("[Vite Preview API Plugin Error]:", err);
+            res.statusCode = 500;
+            res.end(JSON.stringify({ error: err.message }));
+          }
+          return;
+        }
+        next();
+      });
     }
   };
 }

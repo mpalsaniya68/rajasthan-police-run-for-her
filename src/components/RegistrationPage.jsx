@@ -275,8 +275,9 @@ export function RegistrationPage({
       if (res && res.success) {
         setPassOtpSent(true);
         setPassOtpTimer(45);
-        if (res.code) {
-          setPassOtpToast({ mobile: res.maskedMobile || targetPass.maskedMobile, otp: res.code });
+        const passCode = res.code || res.simulatedOtp;
+        if (passCode) {
+          setPassOtpToast({ mobile: res.maskedMobile || targetPass.maskedMobile, otp: passCode });
           setTimeout(() => setPassOtpToast(null), 12000);
         }
       } else if (targetPass._localData) {
@@ -555,12 +556,13 @@ export function RegistrationPage({
     try {
       const res = await apiSendOtp(clean);
       if (res && res.success) {
-        setServerOtp(res.code || '');
+        const otpCode = res.code || res.simulatedOtp;
+        setServerOtp(otpCode || '');
         setEnteredOtp('');
-        if (res.code) {
+        if (otpCode) {
           setOtpToast({
             mobile: clean,
-            otp: res.code
+            otp: otpCode
           });
         }
       } else {
@@ -2256,11 +2258,11 @@ export function RegistrationPage({
                       </button>
                     </div>
 
-                    {/* Dev Mode OTP Toast notice */}
-                    {otpToast && (
+                    {/* Sandbox / Dev Mode OTP Toast notice */}
+                    {(otpToast?.otp || serverOtp) && (
                       <div style={{
                         background: '#ecfdf5',
-                        border: '1px solid #86efac',
+                        border: '1.5px solid #86efac',
                         borderRadius: '8px',
                         padding: '10px 14px',
                         marginBottom: '14px',
@@ -2272,18 +2274,18 @@ export function RegistrationPage({
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#166534', fontSize: '0.84rem' }}>
                           <CheckCircle2 size={16} color="#16a34a" />
-                          <span>सैंडबॉक्स सुरक्षा OTP: <strong>{otpToast.otp}</strong></span>
+                          <span>सैंडबॉक्स सुरक्षा OTP: <strong style={{ fontSize: '1rem', letterSpacing: '1px' }}>{otpToast?.otp || serverOtp}</strong></span>
                         </div>
                         <button
                           type="button"
-                          onClick={() => setEnteredOtp(otpToast.otp)}
+                          onClick={() => setEnteredOtp(otpToast?.otp || serverOtp)}
                           style={{
                             background: '#16a34a',
                             color: '#ffffff',
                             border: 'none',
-                            padding: '4px 10px',
-                            borderRadius: '4px',
-                            fontSize: '0.76rem',
+                            padding: '5px 12px',
+                            borderRadius: '5px',
+                            fontSize: '0.78rem',
                             fontWeight: 800,
                             cursor: 'pointer'
                           }}

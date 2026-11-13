@@ -23,7 +23,15 @@ import {
   dispatchLimiter,
   sanitizeCsvCell
 } from "./security.js";
-import { sendRegistrationNotification, sendCertificateNotification, batchDispatchCertificateNotifications, sendAdminOtpNotification } from "./notifications.js";
+import {
+  sendRegistrationNotification,
+  sendCertificateNotification,
+  batchDispatchCertificateNotifications,
+  sendAdminOtpNotification,
+  sendRegistrationOtpNotification,
+  sendPassOtpNotification,
+  isLiveSmsConfigured
+} from "./notifications.js";
 
 const CATEGORY_NAMES = {
   "21k": "21 KM Half Marathon",
@@ -342,12 +350,21 @@ export async function handleApiRequest(req, res) {
         return error(result.message, 429);
       }
 
+      const notifRes = await sendRegistrationOtpNotification({ mobile, otp: result.code });
+      const liveConfigured = isLiveSmsConfigured();
+      const shouldProvideCode = !liveConfigured || notifRes.simulated || process.env.ENABLE_OTP_SIMULATION === "true" || process.env.NODE_ENV !== "production";
+
       return json({
         success: true,
-        message: "सुरक्षा OTP सफलतापूर्वक भेजा गया।",
+        message: notifRes.simulated
+          ? "सुरक्षा OTP सफलतापूर्वक भेजा गया (सैंडबॉक्स सिमुलेशन मोड)।"
+          : "सुरक्षा OTP आपके पंजीकृत मोबाइल नंबर पर SMS द्वारा भेजा गया।",
         expiresIn: result.expiresIn,
-        // In production, suppress plaintext OTP code from response to prevent DevTools / network inspection
-        ...(process.env.NODE_ENV !== "production" && { code: result.code })
+        simulated: notifRes.simulated,
+        ...(shouldProvideCode && {
+          code: result.code,
+          simulatedOtp: result.code
+        })
       });
     }
 
@@ -647,12 +664,26 @@ export async function handleApiRequest(req, res) {
         return error(result.message, 429);
       }
 
+      const notifRes = await sendPassOtpNotification({
+        mobile: r.mobile,
+        otp: result.code,
+        fullName: r.full_name || r.fullName
+      });
+      const liveConfigured = isLiveSmsConfigured();
+      const shouldProvideCode = !liveConfigured || notifRes.simulated || process.env.ENABLE_OTP_SIMULATION === "true" || process.env.NODE_ENV !== "production";
+
       return json({
         success: true,
-        message: `सुरक्षा OTP पंजीकृत मोबाइल ${maskMobile(r.mobile)} पर भेजा गया।`,
+        message: notifRes.simulated
+          ? `सुरक्षा OTP सैंडबॉक्स मोड में भेजा गया (${maskMobile(r.mobile)})।`
+          : `सुरक्षा OTP पंजीकृत मोबाइल ${maskMobile(r.mobile)} पर भेजा गया।`,
         maskedMobile: maskMobile(r.mobile),
         expiresIn: result.expiresIn,
-        ...(process.env.NODE_ENV !== "production" && { code: result.code })
+        simulated: notifRes.simulated,
+        ...(shouldProvideCode && {
+          code: result.code,
+          simulatedOtp: result.code
+        })
       });
     }
 
@@ -1544,13 +1575,15 @@ export async function handleApiRequest(req, res) {
         username: authenticatedUser.username,
         role: authenticatedUser.role
       });
+      const liveConfigured = isLiveSmsConfigured();
+      const shouldProvideAdminCode = !liveConfigured || notifRes.simulated || process.env.ENABLE_OTP_SIMULATION === "true" || process.env.NODE_ENV !== "production";
 
       return json({
         success: true,
         requireOtp: true,
         tempToken,
         maskedMobile: maskMobile(targetMobile),
-        simulatedOtp: notifRes.simulated ? generatedOtp : undefined
+        simulatedOtp: shouldProvideAdminCode ? generatedOtp : undefined
       });
     }
 
@@ -1632,12 +1665,14 @@ export async function handleApiRequest(req, res) {
         username: record.user.username,
         role: record.user.role
       });
+      const liveConfigured = isLiveSmsConfigured();
+      const shouldProvideAdminCode = !liveConfigured || notifRes.simulated || process.env.ENABLE_OTP_SIMULATION === "true" || process.env.NODE_ENV !== "production";
 
       return json({
         success: true,
         message: "नया OTP अधिकृत मोबाइल नंबर पर भेज दिया गया है।",
         maskedMobile: maskMobile(record.mobile),
-        simulatedOtp: notifRes.simulated ? newOtp : undefined
+        simulatedOtp: shouldProvideAdminCode ? newOtp : undefined
       });
     }
 
