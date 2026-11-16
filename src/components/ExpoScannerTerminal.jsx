@@ -624,6 +624,14 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           setIsSearching(false);
           return;
         }
+      } else if (res.status === 404 && parsedQr) {
+        // Anti-Fraud: If central DB confirms runner record DOES NOT exist, immediately invalidate forged QR pass!
+        if (soundEnabled) playSound('error');
+        setScanStatus('INVALID');
+        setStatusMessage(`🚨 अनधिकृत / फ़र्ज़ी ई-पास! यह बिब ("${targetBibOrQuery}") राजस्थान पुलिस केंद्रीय डेटाबेस में पंजीकृत नहीं है।`);
+        setScannedRunner(null);
+        setIsSearching(false);
+        return;
       }
     } catch (apiErr) {
       console.warn('Server background sync note:', apiErr);
