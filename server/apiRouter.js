@@ -1030,7 +1030,7 @@ export async function handleApiRequest(req, res) {
         ? verifyOtpVerificationToken(data.otpVerificationToken, data.mobile) 
         : false;
 
-      if (!isValidToken && process.env.NODE_ENV !== "test") {
+      if (!isValidToken) {
         return error("मोबाइल सत्यापन अनिवार्य है। कृपया पहले 6-अंकीय OTP सत्यापित करें।", 403);
       }
 
