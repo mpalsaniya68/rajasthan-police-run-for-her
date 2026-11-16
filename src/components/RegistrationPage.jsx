@@ -701,17 +701,17 @@ export function RegistrationPage({
     const medicalCondSummary = formData.hasMedicalIssue ? formData.medicalConditions.join(", ") : "None / Fully Fit";
 
     const payload = {
-      fullName: formData.fullName.trim(),
+      fullName: formData.fullName.trim().replace(/\s+/g, ' '),
       gender: formData.gender ? formData.gender.toLowerCase() : "female",
       dob: calculatedDob,
       mobile: cleanMobile,
-      email: formData.email.trim(),
+      email: formData.email.trim().toLowerCase(),
       emergencyContact: cleanEmergency,
-      emergencyRelation: formData.emergencyRelation?.trim() || "अभिभावक (Guardian)",
+      emergencyRelation: formData.emergencyRelation?.trim().replace(/\s+/g, ' ') || "अभिभावक (Guardian)",
       bloodGroup: formData.bloodGroup || "B+",
       hasMedicalIssue: formData.hasMedicalIssue,
       medicalCondition: medicalCondSummary,
-      medicalNotes: formData.medicalNotes?.trim() || "",
+      medicalNotes: formData.medicalNotes?.trim().replace(/\s+/g, ' ') || "",
       categoryId: category,
       districtId: selectedDistId,
       tshirtSize: venueType === "jaipur" ? (formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M") : "N/A",

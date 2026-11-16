@@ -14,9 +14,28 @@ function getAdminAuthHeaders() {
   return headers;
 }
 
+/**
+ * Safe fetch wrapper with automatic exponential backoff retry for transient mobile network hiccups.
+ * Retries up to 2 times on network errors before bubbling up.
+ */
+async function fetchWithRetry(url, options = {}, maxRetries = 2, delayMs = 600) {
+  let lastError;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fetch(url, options);
+    } catch (networkErr) {
+      lastError = networkErr;
+      if (attempt < maxRetries) {
+        await new Promise(res => setTimeout(res, delayMs * (attempt + 1)));
+      }
+    }
+  }
+  throw lastError;
+}
+
 export async function apiSendOtp(mobile) {
   try {
-    const res = await fetch(`${API_BASE}/otp/send`, {
+    const res = await fetchWithRetry(`${API_BASE}/otp/send`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mobile })
@@ -30,7 +49,7 @@ export async function apiSendOtp(mobile) {
 
 export async function apiVerifyOtp(mobile, otp) {
   try {
-    const res = await fetch(`${API_BASE}/otp/verify`, {
+    const res = await fetchWithRetry(`${API_BASE}/otp/verify`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mobile, otp })
@@ -44,7 +63,7 @@ export async function apiVerifyOtp(mobile, otp) {
 
 export async function apiRegister(payload) {
   try {
-    const res = await fetch(`${API_BASE}/register`, {
+    const res = await fetchWithRetry(`${API_BASE}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -59,7 +78,7 @@ export async function apiRegister(payload) {
 
 export async function apiBulkRegister(payload) {
   try {
-    const res = await fetch(`${API_BASE}/bulk-register`, {
+    const res = await fetchWithRetry(`${API_BASE}/bulk-register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -73,7 +92,7 @@ export async function apiBulkRegister(payload) {
 
 export async function apiTrackRunner(query) {
   try {
-    const res = await fetch(`${API_BASE}/tracker?q=${encodeURIComponent(query)}`);
+    const res = await fetchWithRetry(`${API_BASE}/tracker?q=${encodeURIComponent(query)}`);
     return await res.json();
   } catch (err) {
     console.error("apiTrackRunner error:", err);
@@ -83,7 +102,7 @@ export async function apiTrackRunner(query) {
 
 export async function apiSearchPass(query) {
   try {
-    const res = await fetch(`${API_BASE}/pass/search`, {
+    const res = await fetchWithRetry(`${API_BASE}/pass/search`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query })
@@ -97,7 +116,7 @@ export async function apiSearchPass(query) {
 
 export async function apiSendPassOtp(passId, query) {
   try {
-    const res = await fetch(`${API_BASE}/pass/send-otp`, {
+    const res = await fetchWithRetry(`${API_BASE}/pass/send-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ passId, query })
@@ -111,7 +130,7 @@ export async function apiSendPassOtp(passId, query) {
 
 export async function apiVerifyPassOtp(passId, query, otp) {
   try {
-    const res = await fetch(`${API_BASE}/pass/verify-otp`, {
+    const res = await fetchWithRetry(`${API_BASE}/pass/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ passId, query, otp })
@@ -125,7 +144,7 @@ export async function apiVerifyPassOtp(passId, query, otp) {
 
 export async function apiSimulateScan(scanData) {
   try {
-    const res = await fetch(`${API_BASE}/tracking/scan`, {
+    const res = await fetchWithRetry(`${API_BASE}/tracking/scan`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(scanData)
@@ -139,7 +158,7 @@ export async function apiSimulateScan(scanData) {
 
 export async function apiVerifyCertificate(certId) {
   try {
-    const res = await fetch(`${API_BASE}/certificates/verify?id=${encodeURIComponent(certId)}`);
+    const res = await fetchWithRetry(`${API_BASE}/certificates/verify?id=${encodeURIComponent(certId)}`);
     return await res.json();
   } catch (err) {
     console.error("apiVerifyCertificate error:", err);
@@ -149,7 +168,7 @@ export async function apiVerifyCertificate(certId) {
 
 export async function apiDispatchCertificate(payload) {
   try {
-    const res = await fetch(`${API_BASE}/certificates/dispatch`, {
+    const res = await fetchWithRetry(`${API_BASE}/certificates/dispatch`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -163,7 +182,7 @@ export async function apiDispatchCertificate(payload) {
 
 export async function apiAdminLogin(username, password) {
   try {
-    const res = await fetch(`${API_BASE}/admin/login`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
@@ -202,7 +221,7 @@ export async function apiExpoLogin(operatorNameOrUser, counterIdOrPass, counterN
   }
 
   try {
-    const res = await fetch(`${API_BASE}/expo/login`, {
+    const res = await fetchWithRetry(`${API_BASE}/expo/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -222,7 +241,7 @@ export async function apiExpoLogin(operatorNameOrUser, counterIdOrPass, counterN
 
 export async function apiAdminVerifyOtp(tempToken, otp) {
   try {
-    const res = await fetch(`${API_BASE}/admin/verify-otp`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tempToken, otp })
@@ -236,7 +255,7 @@ export async function apiAdminVerifyOtp(tempToken, otp) {
 
 export async function apiAdminResendOtp(tempToken) {
   try {
-    const res = await fetch(`${API_BASE}/admin/resend-otp`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/resend-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tempToken })
@@ -259,7 +278,7 @@ export async function apiGetAdminParticipants(filters = {}) {
     const params = new URLSearchParams(cleanFilters);
     const qs = params.toString();
     const url = qs ? `${API_BASE}/admin/participants?${qs}` : `${API_BASE}/admin/participants`;
-    const res = await fetch(url, {
+    const res = await fetchWithRetry(url, {
       headers: getAdminAuthHeaders()
     });
     return await res.json();
@@ -289,7 +308,7 @@ export async function apiGetAdminStats(district = "") {
     const url = cleanDist
       ? `${API_BASE}/admin/stats?district=${cleanDist}`
       : `${API_BASE}/admin/stats`;
-    const res = await fetch(url, {
+    const res = await fetchWithRetry(url, {
       headers: getAdminAuthHeaders()
     });
     return await res.json();
@@ -301,7 +320,7 @@ export async function apiGetAdminStats(district = "") {
 
 export async function apiDistributeKit(payload) {
   try {
-    const res = await fetch(`${API_BASE}/admin/kit-distribution`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/kit-distribution`, {
       method: "POST",
       headers: getAdminAuthHeaders(),
       body: JSON.stringify(payload)
@@ -316,7 +335,7 @@ export async function apiDistributeKit(payload) {
 export async function apiGetLeaderboard(filters = {}) {
   try {
     const params = new URLSearchParams(filters);
-    const res = await fetch(`${API_BASE}/leaderboard?${params.toString()}`);
+    const res = await fetchWithRetry(`${API_BASE}/leaderboard?${params.toString()}`);
     return await res.json();
   } catch (err) {
     console.error("apiGetLeaderboard error:", err);
@@ -327,7 +346,7 @@ export async function apiGetLeaderboard(filters = {}) {
 
 export async function apiGetVolunteers() {
   try {
-    const res = await fetch(`${API_BASE}/admin/volunteers`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/volunteers`, {
       headers: getAdminAuthHeaders()
     });
     return await res.json();
@@ -339,7 +358,7 @@ export async function apiGetVolunteers() {
 
 export async function apiCreateVolunteer(data) {
   try {
-    const res = await fetch(`${API_BASE}/admin/volunteers`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/volunteers`, {
       method: "POST",
       headers: getAdminAuthHeaders(),
       body: JSON.stringify(data)
@@ -353,7 +372,7 @@ export async function apiCreateVolunteer(data) {
 
 export async function apiUpdateVolunteer(id, data) {
   try {
-    const res = await fetch(`${API_BASE}/admin/volunteers/update`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/volunteers/update`, {
       method: "POST",
       headers: getAdminAuthHeaders(),
       body: JSON.stringify({ id, ...data })
@@ -367,7 +386,7 @@ export async function apiUpdateVolunteer(id, data) {
 
 export async function apiDeleteVolunteer(id) {
   try {
-    const res = await fetch(`${API_BASE}/admin/volunteers/delete`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/volunteers/delete`, {
       method: "POST",
       headers: getAdminAuthHeaders(),
       body: JSON.stringify({ id })
@@ -384,7 +403,7 @@ export async function apiGetVolunteerScans(counterId = "") {
   try {
     const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
     const url = counterId ? `${API_BASE}/expo/my-scans?counterId=${encodeURIComponent(counterId)}` : `${API_BASE}/expo/my-scans`;
-    const res = await fetch(url, {
+    const res = await fetchWithRetry(url, {
       headers: token ? { "Authorization": `Bearer ${token}` } : {}
     });
     return await res.json();
@@ -401,7 +420,7 @@ export async function apiGetCertificateStats(district = "") {
       ? encodeURIComponent(district)
       : "";
     const url = cleanDist ? `${API_BASE}/admin/certificates/stats?district=${cleanDist}` : `${API_BASE}/admin/certificates/stats`;
-    const res = await fetch(url, {
+    const res = await fetchWithRetry(url, {
       headers: token ? { "Authorization": `Bearer ${token}` } : {}
     });
     return await res.json();
@@ -418,7 +437,7 @@ export async function apiBatchGenerateCertificates(payload = {}) {
     if (!cleanPayload.districtId || cleanPayload.districtId === "undefined" || cleanPayload.districtId === "null") {
       cleanPayload.districtId = "all";
     }
-    const res = await fetch(`${API_BASE}/admin/certificates/batch-generate`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/certificates/batch-generate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -436,7 +455,7 @@ export async function apiBatchGenerateCertificates(payload = {}) {
 export async function apiGetAuditLogs(limit = 100) {
   try {
     const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
-    const res = await fetch(`${API_BASE}/admin/audit-logs?limit=${limit}`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/audit-logs?limit=${limit}`, {
       headers: {
         ...(token ? { "Authorization": `Bearer ${token}` } : {})
       }
@@ -451,7 +470,7 @@ export async function apiGetAuditLogs(limit = 100) {
 export async function apiSendBroadcast(payload) {
   try {
     const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
-    const res = await fetch(`${API_BASE}/admin/broadcast`, {
+    const res = await fetchWithRetry(`${API_BASE}/admin/broadcast`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

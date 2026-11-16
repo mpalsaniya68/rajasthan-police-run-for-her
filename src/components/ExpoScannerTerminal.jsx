@@ -10,8 +10,20 @@ import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { PoliceEmblem } from './Emblems';
 import { isJaipurDistrict } from '../data/mockData';
 
-// Built-in Web Audio API Synthesizer (No external MP3 files needed)
+// Built-in Web Audio API Synthesizer + Mobile Haptic Feedback (No external MP3 files needed)
 const playSound = (type = 'success') => {
+  // 1. Mobile Physical Haptic Feedback (Vibration) for noisy marathon expo halls
+  try {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      if (type === 'success') {
+        navigator.vibrate(60); // Crisp single tap vibration for successful kit handover
+      } else if (type === 'duplicate' || type === 'error') {
+        navigator.vibrate([120, 70, 180]); // Distinct double-pulse warning vibration for duplicate claims
+      }
+    }
+  } catch (vibErr) {}
+
+  // 2. Audio Tone Synthesis
   try {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return;
