@@ -166,6 +166,24 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         setVolunteerScans(res.scans || []);
         if (res.roster && Array.isArray(res.roster)) {
           setCounterRoster(res.roster);
+
+          // Auto-reconcile client cache with central server authoritative truth
+          try {
+            const storedKits = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
+            let cacheChanged = false;
+            res.roster.forEach(r => {
+              const bib = (r.bibNumber || '').toUpperCase();
+              if (bib && !r.kitCollected && storedKits[bib]) {
+                delete storedKits[bib];
+                cacheChanged = true;
+              }
+            });
+            if (cacheChanged) {
+              localStorage.setItem('rpm_collected_kits', JSON.stringify(storedKits));
+            }
+          } catch (cacheErr) {
+            console.warn('Roster cache reconciliation note:', cacheErr);
+          }
         }
         if (res.stats) {
           setCounterStats(prev => ({
@@ -522,8 +540,34 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
     let initialFound = null;
 
-    // 🚀 ULTRA-FAST OPTIMISTIC PATH 1: Instant (< 5ms) hydration directly from QR payload
-    if (parsedQr && parsedQr.bib) {
+    // 🚀 ULTRA-FAST OPTIMISTIC PATH 1: Instant (< 5ms) hydration
+    const cleanLower = targetBibOrQuery.toLowerCase();
+    const rawCleanLower = clean.toLowerCase();
+    const foundInRoster = counterRoster.find(r => 
+      (r.bibNumber && r.bibNumber.toLowerCase() === cleanLower) ||
+      (r.bibNumber && r.bibNumber.toLowerCase() === rawCleanLower) ||
+      (r.id && r.id.toLowerCase() === cleanLower) ||
+      (r.maskedMobile && r.maskedMobile.includes(targetBibOrQuery))
+    );
+
+    if (foundInRoster) {
+      const isColl = Boolean(foundInRoster.kitCollected || foundInRoster.kit_collected);
+      initialFound = {
+        id: foundInRoster.id,
+        bibNumber: foundInRoster.bibNumber || targetBibOrQuery.toUpperCase(),
+        fullName: foundInRoster.fullName,
+        categoryName: foundInRoster.categoryName,
+        districtName: foundInRoster.districtName,
+        tshirtSize: foundInRoster.tshirtSize,
+        bloodGroup: foundInRoster.bloodGroup || 'B+',
+        medicalCondition: 'सामान्य (Fit)',
+        kitCollected: isColl,
+        kitCollectedAt: isColl ? (foundInRoster.kitCollectedAt || null) : null,
+        collectedBy: isColl ? (foundInRoster.collectedBy || null) : null,
+        mobile: foundInRoster.maskedMobile || foundInRoster.mobile || '',
+        rfidTagId: foundInRoster.rfidTagId || `RFID-${foundInRoster.bibNumber}`
+      };
+    } else if (parsedQr && parsedQr.bib) {
       const bibUpper = String(parsedQr.bib).toUpperCase();
       const collectedKits = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
       const isLocallyCollected = !!collectedKits[bibUpper];
@@ -549,8 +593,6 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       try {
         const saved = localStorage.getItem('rpm_registrations');
         const list = saved ? JSON.parse(saved) : [];
-        const cleanLower = targetBibOrQuery.toLowerCase();
-        const rawCleanLower = clean.toLowerCase();
 
         const foundLocal = list.find(r => 
           (r.bibNumber && r.bibNumber.toLowerCase() === cleanLower) ||
@@ -622,19 +664,33 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         const data = await res.json();
         if (data.success && data.runner) {
           const dbRunner = data.runner;
+          // Central DB is the authoritative source of truth for kit collection
           const isCollectedInDb = Boolean(
             dbRunner.kitCollected || 
-            dbRunner.kit_collected || 
-            initialFound?.kitCollected
+            dbRunner.kit_collected
           );
-          const dbCollectedAt = dbRunner.kitCollectedAt || dbRunner.kit_collected_at || initialFound?.kitCollectedAt;
-          const dbCollectedBy = dbRunner.collectedBy || dbRunner.collected_by || initialFound?.collectedBy;
+          const dbCollectedAt = isCollectedInDb ? (dbRunner.kitCollectedAt || dbRunner.kit_collected_at) : null;
+          const dbCollectedBy = isCollectedInDb ? (dbRunner.collectedBy || dbRunner.collected_by) : null;
+
+          // Reconcile client cache with central server truth
+          try {
+            const bibKey = (dbRunner.bibNumber || dbRunner.bib_number || targetBibOrQuery).toUpperCase();
+            const collectedKits = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
+            if (!isCollectedInDb) {
+              if (collectedKits[bibKey]) {
+                delete collectedKits[bibKey];
+                localStorage.setItem('rpm_collected_kits', JSON.stringify(collectedKits));
+              }
+            } else {
+              collectedKits[bibKey] = { time: dbCollectedAt || 'पूर्व में', by: dbCollectedBy || 'काउंटर' };
+              localStorage.setItem('rpm_collected_kits', JSON.stringify(collectedKits));
+            }
+          } catch (cacheErr) {
+            console.warn('Cache reconciliation error:', cacheErr);
+          }
 
           setScannedRunner(prev => {
             const base = prev || {};
-            const finalCollected = Boolean(isCollectedInDb || base.kitCollected || base.kit_collected || initialFound?.kitCollected);
-            const finalCollectedAt = dbCollectedAt || base.kitCollectedAt || initialFound?.kitCollectedAt;
-            const finalCollectedBy = dbCollectedBy || base.collectedBy || initialFound?.collectedBy;
             return {
               ...base,
               id: dbRunner.id || base.id,
@@ -646,24 +702,35 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               bloodGroup: dbRunner.bloodGroup || dbRunner.blood_group || base.bloodGroup,
               medicalCondition: dbRunner.medicalCondition || dbRunner.medical_condition || base.medicalCondition,
               mobile: dbRunner.maskedMobile || dbRunner.masked_mobile || base.mobile,
-              kitCollected: finalCollected,
-              kit_collected: finalCollected,
-              kitCollectedAt: finalCollectedAt,
-              kit_collected_at: finalCollectedAt,
-              collectedBy: finalCollectedBy,
-              collected_by: finalCollectedBy,
+              kitCollected: isCollectedInDb,
+              kit_collected: isCollectedInDb,
+              kitCollectedAt: dbCollectedAt,
+              kit_collected_at: dbCollectedAt,
+              collectedBy: dbCollectedBy,
+              collected_by: dbCollectedBy,
               rfidTagId: dbRunner.rfidTagId || dbRunner.rfid_tag_id || base.rfidTagId
             };
           });
 
-          if (isCollectedInDb || initialFound?.kitCollected) {
-            if (soundEnabled) playSound('duplicate');
-            setScanStatus('ALREADY_COLLECTED');
-            setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${dbCollectedBy || initialFound?.collectedBy || 'अन्य काउंटर'} द्वारा ${dbCollectedAt || initialFound?.kitCollectedAt || 'पूर्व में'} सौंपी जा चुकी है।`);
-          } else if (!initialFound) {
-            if (soundEnabled) playSound('success');
-            setScanStatus('SUCCESS');
-            setStatusMessage('✅ धावक केंद्रीय डेटाबेस से सत्यापित! कृपया नीचे दिए गए टी-शर्ट साइज की पुष्टि कर किट सुपुर्द करें।');
+          if (terminalMode === 'gate') {
+            const isGateEntered = Boolean(dbRunner.gate_entered || dbRunner.gateEntered);
+            if (isGateEntered) {
+              if (soundEnabled) playSound('duplicate');
+              setScanStatus('GATE_ALREADY_ENTERED');
+              setStatusMessage(`⚠️ पूर्व में प्रवेशित! यह धावक पहले ही ${dbRunner.gate_entry_time || 'गेट'} पर प्रवेश ले चुका है।`);
+            } else if (!initialFound) {
+              handleApproveGateEntry(dbRunner);
+            }
+          } else {
+            if (isCollectedInDb) {
+              if (soundEnabled) playSound('duplicate');
+              setScanStatus('ALREADY_COLLECTED');
+              setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${dbCollectedBy || 'अन्य काउंटर'} द्वारा ${dbCollectedAt || 'पूर्व में'} सौंपी जा चुकी है।`);
+            } else {
+              if (soundEnabled && scanStatus !== 'SUCCESS') playSound('success');
+              setScanStatus('SUCCESS');
+              setStatusMessage('✅ धावक केंद्रीय डेटाबेस से सत्यापित! कृपया नीचे दिए गए टी-शर्ट साइज की पुष्टि कर किट सुपुर्द करें।');
+            }
           }
           setIsSearching(false);
           return;
@@ -1013,6 +1080,23 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     const collectedAt = runner.kitCollectedAt || runner.kit_collected_at;
     const collectedBy = runner.collectedBy || runner.collected_by;
 
+    // Reset handover verification state when selecting a new runner
+    resetHandoverVerification();
+
+    if (!isCollected && runner.bibNumber) {
+      // Purge any stale optimistic cache for this runner
+      try {
+        const stored = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
+        const bibKey = runner.bibNumber.toUpperCase();
+        if (stored[bibKey]) {
+          delete stored[bibKey];
+          localStorage.setItem('rpm_collected_kits', JSON.stringify(stored));
+        }
+      } catch (cacheErr) {
+        console.warn('Cache clear note:', cacheErr);
+      }
+    }
+
     setScannedRunner({
       id: runner.id,
       bibNumber: runner.bibNumber,
@@ -1024,10 +1108,10 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       medicalCondition: 'सामान्य (Fit)',
       kitCollected: isCollected,
       kit_collected: isCollected,
-      kitCollectedAt: collectedAt,
-      kit_collected_at: collectedAt,
-      collectedBy: collectedBy,
-      collected_by: collectedBy,
+      kitCollectedAt: isCollected ? collectedAt : null,
+      kit_collected_at: isCollected ? collectedAt : null,
+      collectedBy: isCollected ? collectedBy : null,
+      collected_by: isCollected ? collectedBy : null,
       mobile: runner.maskedMobile || runner.mobile || '',
       rfidTagId: runner.rfidTagId || `RFID-${runner.bibNumber}`
     });
@@ -1121,17 +1205,8 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
   const isKitAlreadyHandedOver = Boolean(
     scannedRunner?.kitCollected || 
     scannedRunner?.kit_collected || 
-    scannedRunner?.bibCollected || 
     scanStatus === 'ALREADY_COLLECTED' || 
-    scanStatus === 'SUCCESS_HANDED_OVER' ||
-    (scannedRunner?.bibNumber && (() => {
-      try {
-        const stored = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
-        return Boolean(stored[scannedRunner.bibNumber.toUpperCase()]);
-      } catch (e) {
-        return false;
-      }
-    })())
+    scanStatus === 'SUCCESS_HANDED_OVER'
   );
 
   return (
