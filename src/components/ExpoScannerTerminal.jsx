@@ -566,32 +566,44 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         const data = await res.json();
         if (data.success && data.runner) {
           const dbRunner = data.runner;
-          const isCollectedInDb = Boolean(dbRunner.kit_collected);
+          const isCollectedInDb = Boolean(
+            dbRunner.kitCollected || 
+            dbRunner.kit_collected || 
+            initialFound?.kitCollected
+          );
+          const dbCollectedAt = dbRunner.kitCollectedAt || dbRunner.kit_collected_at || initialFound?.kitCollectedAt;
+          const dbCollectedBy = dbRunner.collectedBy || dbRunner.collected_by || initialFound?.collectedBy;
 
           setScannedRunner(prev => {
             const base = prev || {};
+            const finalCollected = Boolean(isCollectedInDb || base.kitCollected || base.kit_collected || initialFound?.kitCollected);
+            const finalCollectedAt = dbCollectedAt || base.kitCollectedAt || initialFound?.kitCollectedAt;
+            const finalCollectedBy = dbCollectedBy || base.collectedBy || initialFound?.collectedBy;
             return {
               ...base,
               id: dbRunner.id || base.id,
-              bibNumber: dbRunner.bib_number || base.bibNumber,
-              fullName: dbRunner.full_name || base.fullName,
-              categoryName: dbRunner.category_name || base.categoryName,
-              districtName: dbRunner.district_name || base.districtName,
-              tshirtSize: (!isJaipurDistrict(dbRunner.district_id, dbRunner.district_name) || dbRunner.tshirt_size === 'N/A') ? 'N/A' : (dbRunner.tshirt_size || 'M').toUpperCase(),
-              bloodGroup: dbRunner.blood_group || base.bloodGroup,
-              medicalCondition: dbRunner.medical_condition || base.medicalCondition,
-              mobile: dbRunner.masked_mobile || base.mobile,
-              kitCollected: isCollectedInDb,
-              kitCollectedAt: dbRunner.kit_collected_at || base.kitCollectedAt,
-              collectedBy: dbRunner.collected_by || base.collectedBy,
-              rfidTagId: dbRunner.rfid_tag_id || base.rfidTagId
+              bibNumber: dbRunner.bibNumber || dbRunner.bib_number || base.bibNumber,
+              fullName: dbRunner.fullName || dbRunner.full_name || base.fullName,
+              categoryName: dbRunner.categoryName || dbRunner.category_name || base.categoryName,
+              districtName: dbRunner.districtName || dbRunner.district_name || base.districtName,
+              tshirtSize: (!isJaipurDistrict(dbRunner.districtId || dbRunner.district_id, dbRunner.districtName || dbRunner.district_name) || dbRunner.tshirtSize === 'N/A' || dbRunner.tshirt_size === 'N/A') ? 'N/A' : (dbRunner.tshirtSize || dbRunner.tshirt_size || base.tshirtSize || 'M').toUpperCase(),
+              bloodGroup: dbRunner.bloodGroup || dbRunner.blood_group || base.bloodGroup,
+              medicalCondition: dbRunner.medicalCondition || dbRunner.medical_condition || base.medicalCondition,
+              mobile: dbRunner.maskedMobile || dbRunner.masked_mobile || base.mobile,
+              kitCollected: finalCollected,
+              kit_collected: finalCollected,
+              kitCollectedAt: finalCollectedAt,
+              kit_collected_at: finalCollectedAt,
+              collectedBy: finalCollectedBy,
+              collected_by: finalCollectedBy,
+              rfidTagId: dbRunner.rfidTagId || dbRunner.rfid_tag_id || base.rfidTagId
             };
           });
 
-          if (isCollectedInDb) {
+          if (isCollectedInDb || initialFound?.kitCollected) {
             if (soundEnabled) playSound('duplicate');
             setScanStatus('ALREADY_COLLECTED');
-            setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${dbRunner.collected_by || 'अन्य काउंटर'} द्वारा ${dbRunner.kit_collected_at || 'पूर्व में'} सौंपी जा चुकी है।`);
+            setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${dbCollectedBy || initialFound?.collectedBy || 'अन्य काउंटर'} द्वारा ${dbCollectedAt || initialFound?.kitCollectedAt || 'पूर्व में'} सौंपी जा चुकी है।`);
           } else if (!initialFound) {
             if (soundEnabled) playSound('success');
             setScanStatus('SUCCESS');
@@ -618,6 +630,10 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
   // Handover Execution
   const handleHandoverKit = async () => {
     if (!scannedRunner) return;
+    if (scannedRunner.kitCollected || scannedRunner.kit_collected || scanStatus === 'ALREADY_COLLECTED') {
+      alert("⚠️ यह किट पूर्व में ही वितरित की जा चुकी है! पुनः वितरण प्रतिबंधित है।");
+      return;
+    }
     setIsHandingOver(true);
     const token = sessionStorage.getItem('rajpol_admin_token');
 
@@ -634,7 +650,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       const list = saved ? JSON.parse(saved) : [];
       const updated = list.map(r => {
         if (r.id === scannedRunner.id || (r.bibNumber && r.bibNumber.toUpperCase() === scannedRunner.bibNumber.toUpperCase())) {
-          return { ...r, kitCollected: true, bibCollected: true, kitCollectedAt: nowStr, collectedBy: operatorStr };
+          return { ...r, kitCollected: true, kit_collected: true, bibCollected: true, kitCollectedAt: nowStr, collectedBy: operatorStr };
         }
         return r;
       });
@@ -663,18 +679,34 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       const data = await res.json();
       setIsHandingOver(false);
 
+      if (data.alreadyCollected || !data.success || res.status === 409) {
+        if (soundEnabled) playSound('duplicate');
+        setScanStatus('ALREADY_COLLECTED');
+        setStatusMessage(data.error || data.message || `⚠️ पूर्व में वितरित! यह किट पहले ही सौंपी जा चुकी है।`);
+        const rColl = data.runner || {};
+        setScannedRunner(prev => ({
+          ...prev,
+          kitCollected: true,
+          kit_collected: true,
+          kitCollectedAt: rColl.kitCollectedAt || rColl.kit_collected_at || prev?.kitCollectedAt || nowStr,
+          collectedBy: rColl.collectedBy || rColl.collected_by || prev?.collectedBy || operatorStr
+        }));
+        return;
+      }
+
       const sizeText = (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? ` • साइज ${scannedRunner.tshirtSize}` : '';
       const defaultSuccessMsg = `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName}${sizeText})`;
 
-      if (data.success && data.runner) {
+      if (data.success) {
         if (soundEnabled) playSound('success');
         setScanStatus('SUCCESS_HANDED_OVER');
         setStatusMessage(data.message || defaultSuccessMsg);
         setScannedRunner(prev => ({
           ...prev,
           kitCollected: true,
-          kitCollectedAt: data?.runner?.kit_collected_at || nowStr,
-          collectedBy: data?.runner?.collected_by || operatorStr
+          kit_collected: true,
+          kitCollectedAt: data?.runner?.kitCollectedAt || data?.runner?.kit_collected_at || nowStr,
+          collectedBy: data?.runner?.collectedBy || data?.runner?.collected_by || operatorStr
         }));
         // Prepend to logged-in volunteer's live scan history list
         const newRecord = {
@@ -808,6 +840,10 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
   // Select runner directly from bottom table / roster
   const handleSelectRunnerFromList = (runner) => {
     if (!runner) return;
+    const isCollected = Boolean(runner.kitCollected || runner.kit_collected);
+    const collectedAt = runner.kitCollectedAt || runner.kit_collected_at;
+    const collectedBy = runner.collectedBy || runner.collected_by;
+
     setScannedRunner({
       id: runner.id,
       bibNumber: runner.bibNumber,
@@ -817,17 +853,20 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       tshirtSize: runner.tshirtSize,
       bloodGroup: runner.bloodGroup || 'B+',
       medicalCondition: 'सामान्य (Fit)',
-      kitCollected: runner.kitCollected,
-      kitCollectedAt: runner.kitCollectedAt,
-      collectedBy: runner.collectedBy,
+      kitCollected: isCollected,
+      kit_collected: isCollected,
+      kitCollectedAt: collectedAt,
+      kit_collected_at: collectedAt,
+      collectedBy: collectedBy,
+      collected_by: collectedBy,
       mobile: runner.maskedMobile || runner.mobile || '',
       rfidTagId: runner.rfidTagId || `RFID-${runner.bibNumber}`
     });
     setSearchQuery(runner.bibNumber);
-    if (runner.kitCollected) {
+    if (isCollected) {
       if (soundEnabled) playSound('duplicate');
       setScanStatus('ALREADY_COLLECTED');
-      setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${runner.collectedBy || 'काउंटर'} द्वारा सुपुर्द की जा चुकी है।`);
+      setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${collectedBy || 'काउंटर'} द्वारा ${collectedAt ? `(${collectedAt}) ` : ''}सुपुर्द की जा चुकी है।`);
     } else {
       if (soundEnabled) playSound('success');
       setScanStatus('SUCCESS');
@@ -907,6 +946,23 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       inputSearchRef.current.focus();
     }
   };
+
+  // Robust status check: ensures duplicate handover button NEVER appears if kit is already given
+  const isKitAlreadyHandedOver = Boolean(
+    scannedRunner?.kitCollected || 
+    scannedRunner?.kit_collected || 
+    scannedRunner?.bibCollected || 
+    scanStatus === 'ALREADY_COLLECTED' || 
+    scanStatus === 'SUCCESS_HANDED_OVER' ||
+    (scannedRunner?.bibNumber && (() => {
+      try {
+        const stored = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
+        return Boolean(stored[scannedRunner.bibNumber.toUpperCase()]);
+      } catch (e) {
+        return false;
+      }
+    })())
+  );
 
   return (
     <div style={{
@@ -1469,8 +1525,8 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           }}>
             {/* T-Shirt Size Giant Visual Banner */}
             <div style={{
-              background: scannedRunner.kitCollected ? '#f8fafc' : '#eff6ff',
-              border: `2px solid ${scannedRunner.kitCollected ? '#cbd5e1' : '#3b82f6'}`,
+              background: isKitAlreadyHandedOver ? '#fef2f2' : '#eff6ff',
+              border: `2px solid ${isKitAlreadyHandedOver ? '#f87171' : '#3b82f6'}`,
               borderRadius: '8px',
               padding: '16px 20px',
               display: 'flex',
@@ -1485,7 +1541,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                   width: '64px',
                   height: '64px',
                   borderRadius: '10px',
-                  background: (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? (scannedRunner.kitCollected ? '#94a3b8' : '#1e40af') : '#e2e8f0',
+                  background: (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? (isKitAlreadyHandedOver ? '#dc2626' : '#1e40af') : '#e2e8f0',
                   color: (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? '#ffffff' : '#64748b',
                   display: 'flex',
                   alignItems: 'center',
@@ -1524,23 +1580,23 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '6px 14px',
+                  padding: '7px 16px',
                   borderRadius: '20px',
-                  fontSize: '0.85rem',
+                  fontSize: '0.88rem',
                   fontWeight: 800,
-                  background: scannedRunner.kitCollected ? '#fee2e2' : '#dcfce7',
-                  color: scannedRunner.kitCollected ? '#991b1b' : '#166534',
-                  border: `1.5px solid ${scannedRunner.kitCollected ? '#f87171' : '#86efac'}`
+                  background: isKitAlreadyHandedOver ? '#fee2e2' : '#dcfce7',
+                  color: isKitAlreadyHandedOver ? '#991b1b' : '#166534',
+                  border: `1.5px solid ${isKitAlreadyHandedOver ? '#f87171' : '#86efac'}`
                 }}>
-                  {scannedRunner.kitCollected ? (
-                    <>⚠️ किट पूर्व में सुपुर्द (Handed Over)</>
+                  {isKitAlreadyHandedOver ? (
+                    <>⚠️ किट पूर्व में सुपुर्द (Kit Already Handed Over)</>
                   ) : (
                     <>✓ किट वितरण हेतु लंबित (Ready for Handover)</>
                   )}
                 </span>
-                {scannedRunner.kitCollected && scannedRunner.collectedBy && (
-                  <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '4px' }}>
-                    हस्तांतरण: {scannedRunner.collectedBy} ({scannedRunner.kitCollectedAt || ''})
+                {isKitAlreadyHandedOver && (scannedRunner.collectedBy || scannedRunner.kitCollectedAt) && (
+                  <div style={{ fontSize: '0.75rem', color: '#991b1b', marginTop: '5px', fontWeight: 700 }}>
+                    हस्तांतरण: {scannedRunner.collectedBy || 'काउंटर'} {scannedRunner.kitCollectedAt ? `(${scannedRunner.kitCollectedAt})` : ''}
                   </div>
                 )}
               </div>
@@ -1632,7 +1688,22 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                   ✕ रीसेट (Clear)
                 </button>
 
-                {!scannedRunner.kitCollected && (
+                {isKitAlreadyHandedOver ? (
+                  <div style={{
+                    background: '#fee2e2',
+                    color: '#991b1b',
+                    border: '1.5px solid #f87171',
+                    padding: '11px 18px',
+                    borderRadius: '6px',
+                    fontSize: '0.92rem',
+                    fontWeight: 800,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <span>⚠️ किट पूर्व में सुपुर्द की जा चुकी है (पुनः हैंडओवर अक्षम)</span>
+                  </div>
+                ) : (
                   <button
                     type="button"
                     onClick={handleHandoverKit}
@@ -1665,7 +1736,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                   type="button"
                   onClick={handleScanNextRunner}
                   style={{
-                    background: scannedRunner.kitCollected ? '#047857' : '#0a1c3d',
+                    background: isKitAlreadyHandedOver ? '#047857' : '#0a1c3d',
                     color: '#ffffff',
                     border: 'none',
                     padding: '12px 26px',
@@ -1676,7 +1747,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '10px',
-                    boxShadow: '0 4px 12px rgba(10, 28, 61, 0.25)'
+                    boxShadow: isKitAlreadyHandedOver ? '0 4px 14px rgba(4, 120, 87, 0.35)' : '0 4px 12px rgba(10, 28, 61, 0.25)'
                   }}
                 >
                   <Camera size={19} />

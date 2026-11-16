@@ -2369,9 +2369,12 @@ export async function handleApiRequest(req, res) {
           categoryId: r.category_id,
           districtName: r.district_name,
           tshirtSize: r.tshirt_size || "M",
-          kitCollected: !!r.kit_collected,
+          kitCollected: Boolean(r.kit_collected),
+          kit_collected: Boolean(r.kit_collected),
           kitCollectedAt: r.kit_collected_at || null,
+          kit_collected_at: r.kit_collected_at || null,
           collectedBy: r.collected_by || null,
+          collected_by: r.collected_by || null,
           rfidTagId: r.rfid_tag_id || null,
           certificateId: r.certificate_id
         }
@@ -2417,8 +2420,12 @@ export async function handleApiRequest(req, res) {
             fullName: runner.full_name,
             bibNumber: runner.bib_number,
             tshirtSize: runner.tshirt_size,
+            kitCollected: true,
+            kit_collected: true,
             kitCollectedAt: runner.kit_collected_at,
-            collectedBy: runner.collected_by
+            kit_collected_at: runner.kit_collected_at,
+            collectedBy: runner.collected_by,
+            collected_by: runner.collected_by
           }
         }, 409);
       }
@@ -2450,9 +2457,13 @@ export async function handleApiRequest(req, res) {
         message: `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${runner.full_name}${runnerSizeMsg})`,
         runner: {
           ...runner,
+          kitCollected: true,
           kit_collected: 1,
+          kitCollectedAt: now,
           kit_collected_at: now,
           rfid_tag_id: tag,
+          rfidTagId: tag,
+          collectedBy: collectorRecord,
           collected_by: collectorRecord
         }
       });
