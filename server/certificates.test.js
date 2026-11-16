@@ -57,8 +57,8 @@ after(async () => {
 });
 
 test("certificate verify correctly distinguishes Jaipur Flagship Timed vs District Awareness Run", async () => {
-  // 1. Verify Jaipur Timed runner (RJ-21K-1005)
-  const jaipurRes = await fetch(`${baseUrl}/certificates/verify?id=RJ-21K-1005`);
+  // 1. Verify Jaipur Timed runner (RJ-21K-1009)
+  const jaipurRes = await fetch(`${baseUrl}/certificates/verify?id=RJ-21K-1009`);
   const jaipurData = await jaipurRes.json();
 
   assert.equal(jaipurData.success, true);

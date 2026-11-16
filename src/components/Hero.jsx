@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Calendar, MapPin, Users, Award, Bell, ArrowRight } from 'lucide-react';
 
-export function Hero({ onOpenRegister, onOpenBulkRegister, onOpenFindPass, totalRegistered = 18450 }) {
+export function Hero({ onOpenRegister, onOpenBulkRegister, onOpenFindPass, totalRegistered = "1000+" }) {
   // Live Countdown logic strictly targeted to 3 January 2027, 06:00:00 AM IST
   const TARGET_DATE = new Date(2027, 0, 3, 6, 0, 0); // 3 January 2027, 06:00:00 local IST
 
@@ -355,7 +355,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onOpenFindPass, total
                   <Users size={20} color="#fef08a" />
                 </div>
                 <div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#fde68a' }}>{totalRegistered.toLocaleString()}+</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#fde68a' }}>{typeof totalRegistered === 'number' ? `${totalRegistered.toLocaleString()}+` : totalRegistered}</div>
                   <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>पंजीकृत नागरिक व पुलिस धावक</div>
                 </div>
               </div>

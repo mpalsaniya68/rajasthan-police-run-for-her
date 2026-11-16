@@ -1517,10 +1517,10 @@ export function AdminDashboard({
                 <Users size={15} color="#2563eb" />
               </div>
               <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-950)', lineHeight: 1.1 }}>
-                {(liveStats?.total || (registrations.length + 18450)).toLocaleString()}
+                {(liveStats?.total || registrations.length).toLocaleString()}
               </div>
               <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '4px' }}>
-                {isDistrictRole ? `${adminUser.districtName?.split(' ')[0] || 'जिला'} आवंटित सूची` : `जयपुर: ${(registrations.filter(r => r.venueType === 'jaipur').length + 11200).toLocaleString()} • अन्य जिले: ${(registrations.length + 7250).toLocaleString()}`}
+                {isDistrictRole ? `${adminUser.districtName?.split(' ')[0] || 'जिला'} आवंटित सूची` : `जयपुर: ${registrations.filter(r => r.venueType === 'jaipur').length.toLocaleString()} • अन्य जिले: ${registrations.filter(r => r.venueType !== 'jaipur').length.toLocaleString()}`}
               </div>
             </div>
 
@@ -1539,9 +1539,9 @@ export function AdminDashboard({
                 <Shirt size={15} color="#f97316" />
               </div>
               <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#9a3412', lineHeight: 1.1 }}>
-                {(liveStats?.kitsDistributed || 4320).toLocaleString()}
+                {(liveStats?.kitsDistributed ?? registrations.filter(r => r.bibCollected).length).toLocaleString()}
                 <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#ea580c', marginLeft: '6px' }}>
-                  ({Math.min(100, Math.round(((liveStats?.kitsDistributed || 4320) / (liveStats?.total || (registrations.length + 18450))) * 100))}%)
+                  ({(liveStats?.total || registrations.length) > 0 ? Math.min(100, Math.round(((liveStats?.kitsDistributed ?? registrations.filter(r => r.bibCollected).length) / (liveStats?.total || registrations.length)) * 100)) : 0}%)
                 </span>
               </div>
               <div style={{
@@ -1554,7 +1554,7 @@ export function AdminDashboard({
                 <div style={{
                   height: '100%',
                   background: '#f97316',
-                  width: `${Math.min(100, Math.round(((liveStats?.kitsDistributed || 4320) / (liveStats?.total || (registrations.length + 18450))) * 100))}%`
+                  width: `${(liveStats?.total || registrations.length) > 0 ? Math.min(100, Math.round(((liveStats?.kitsDistributed ?? registrations.filter(r => r.bibCollected).length) / (liveStats?.total || registrations.length)) * 100)) : 0}%`
                 }} />
               </div>
             </div>
@@ -1952,7 +1952,7 @@ export function AdminDashboard({
 
               <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
 
-                डेटाबेस में कुल {registrations.length + 18450} राज्यव्यापी धावक पंजीकृत हैं
+                डेटाबेस में कुल {liveStats?.total || registrations.length} राज्यव्यापी धावक पंजीकृत हैं
 
               </span>
 
@@ -2294,7 +2294,7 @@ export function AdminDashboard({
 
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>कुल पंजीयन (Total)</div>
 
-                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>{registrations.length + 18450}</div>
+                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>{liveStats?.total || registrations.length}</div>
 
                 <div style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 600 }}>Active Statewide Entries</div>
 
@@ -2308,7 +2308,7 @@ export function AdminDashboard({
 
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--crimson-600)' }}>
 
-                  {registrations.filter(r => r.venueType === 'jaipur').length + 11200}
+                  {registrations.filter(r => r.venueType === 'jaipur').length}
 
                 </div>
 
@@ -2324,7 +2324,7 @@ export function AdminDashboard({
 
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-gold-700)' }}>
 
-                  {registrations.filter(r => r.venueType !== 'jaipur').length + 7250}
+                  {registrations.filter(r => r.venueType !== 'jaipur').length}
 
                 </div>
 
@@ -3757,7 +3757,7 @@ export function AdminDashboard({
 
               <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-950)' }}>
 
-                {liveStats?.kitsDistributed || 4320}
+                {liveStats?.kitsDistributed ?? registrations.filter(r => r.bibCollected).length}
 
               </div>
 
@@ -3781,7 +3781,7 @@ export function AdminDashboard({
 
               <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#b45309' }}>
 
-                {liveStats?.kitsPending || 14130}
+                {liveStats?.kitsPending ?? registrations.filter(r => !r.bibCollected).length}
 
               </div>
 

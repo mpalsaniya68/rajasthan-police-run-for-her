@@ -336,7 +336,7 @@ export default function App() {
 
               onOpenFindPass={handleOpenFindPass}
 
-              totalRegistered={registrations.length + 18450}
+              totalRegistered="1000+"
 
             />
 
