@@ -591,6 +591,9 @@ export function RegistrationPage({
         setIsMobileVerified(true);
         if (res.verificationToken) {
           setOtpVerificationToken(res.verificationToken);
+          try {
+            sessionStorage.setItem('rpm_otp_token', res.verificationToken);
+          } catch (e) {}
         }
         setOtpSent(false);
         setOtpError('');
@@ -629,6 +632,9 @@ export function RegistrationPage({
     setOtpError('');
     setOtpTimer(0);
     setOtpVerificationToken('');
+    try {
+      sessionStorage.removeItem('rpm_otp_token');
+    } catch (e) {}
   };
 
   const handleDobChange = (e) => {
@@ -720,7 +726,7 @@ export function RegistrationPage({
       idLast4: cleanId.slice(-4),
       cleanId: cleanId,
       cleanEmergency: cleanEmergency,
-      otpVerificationToken: otpVerificationToken || undefined,
+      otpVerificationToken: otpVerificationToken || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('rpm_otp_token') : '') || undefined,
       botTrap: formData.botTrap || ""
     };
 
@@ -734,6 +740,7 @@ export function RegistrationPage({
     setIsSubmitting(true);
     setErrorMessage("");
 
+    const activeOtpToken = pendingPayload.otpVerificationToken || otpVerificationToken || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('rpm_otp_token') : '') || undefined;
     const feeAmount = category === "21k" ? 499 : category === "10k" ? 399 : 199;
     const finalPayload = {
       fullName: pendingPayload.fullName,
@@ -753,6 +760,8 @@ export function RegistrationPage({
       idType: pendingPayload.idType,
       idNumber: pendingPayload.idNumber,
       idLast4: pendingPayload.idLast4,
+      otpVerificationToken: activeOtpToken,
+      botTrap: pendingPayload.botTrap || "",
       feeAmount: paymentData?.feeAmount || paymentData?.amount || feeAmount,
       orderId: paymentData?.orderId || `ORD2027-${Date.now().toString().slice(-6)}`,
       transactionId: paymentData?.transactionId || `TXN-RAJPOL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
