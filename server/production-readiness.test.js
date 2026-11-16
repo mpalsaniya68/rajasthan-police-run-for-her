@@ -205,8 +205,8 @@ test("FULL PRODUCTION LIFECYCLE AUDIT: Registration -> E-Pass -> Expo Handover -
   assert.equal(runnerQueryData.runner.bibNumber, runnerBib);
   assert.equal(runnerQueryData.runner.kitCollected, false);
 
-  // 11. Expo Kit Handover Confirmation
-  const handoverRes = await fetch(`${baseUrl}/expo/handover`, {
+  // 11a. Expo Kit Handover Rejection when Unverified (Zero Bypass)
+  const unverifiedRes = await fetch(`${baseUrl}/expo/handover`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -218,6 +218,56 @@ test("FULL PRODUCTION LIFECYCLE AUDIT: Registration -> E-Pass -> Expo Handover -
       counterName: "काउंटर-01 (21KM हाफ मैराथन - पुरुष)",
       operatorName: "Constable Mahendra",
       rfidTagId: `RFID-${runnerBib}`
+    })
+  });
+  assert.equal(unverifiedRes.status, 403);
+
+  // 11b. Send Handover OTP
+  const sendHandoverOtpRes = await fetch(`${baseUrl}/expo/handover-otp/send`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${expoToken}`
+    },
+    body: JSON.stringify({ bibNumber: runnerBib })
+  });
+  assert.equal(sendHandoverOtpRes.status, 200);
+
+  // Retrieve handover OTP from database
+  const handoverOtpRow = await db.execute({
+    sql: "SELECT code FROM otp_codes WHERE mobile = ? LIMIT 1",
+    args: [`HANDOVER:${runnerBib}`]
+  });
+  assert.ok(handoverOtpRow.rows.length > 0);
+  const handoverOtp = handoverOtpRow.rows[0].code;
+
+  // 11c. Verify Handover OTP
+  const verifyHandoverOtpRes = await fetch(`${baseUrl}/expo/handover-otp/verify`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${expoToken}`
+    },
+    body: JSON.stringify({ bibNumber: runnerBib, otp: handoverOtp })
+  });
+  assert.equal(verifyHandoverOtpRes.status, 200);
+  const verifyHandoverOtpData = await verifyHandoverOtpRes.json();
+  assert.ok(verifyHandoverOtpData.verificationToken);
+
+  // 11d. Expo Kit Handover Confirmation with Valid Verification Token
+  const handoverRes = await fetch(`${baseUrl}/expo/handover`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${expoToken}`
+    },
+    body: JSON.stringify({
+      bibNumber: runnerBib,
+      counterId: "counter_01",
+      counterName: "काउंटर-01 (21KM हाफ मैराथन - पुरुष)",
+      operatorName: "Constable Mahendra",
+      rfidTagId: `RFID-${runnerBib}`,
+      verificationToken: verifyHandoverOtpData.verificationToken
     })
   });
   assert.equal(handoverRes.status, 200);

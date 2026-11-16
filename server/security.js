@@ -308,6 +308,52 @@ export function verifyOtpVerificationToken(token, expectedMobile) {
 }
 
 /**
+ * 7b. Server-Side Expo Kit Handover Verification Tokens
+ * Cryptographically certifies that a runner's kit handover was authenticated
+ * via Runner Mobile OTP. Valid for 20 minutes to finalize kit/RFID issuance.
+ */
+export function createHandoverVerificationToken(bibNumber) {
+  const clean = (bibNumber || "").trim().toUpperCase();
+  const payload = {
+    bib: clean,
+    verifiedAt: Date.now(),
+    exp: Date.now() + 20 * 60 * 1000
+  };
+  const b64Payload = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const signature = crypto
+    .createHmac("sha256", APP_SECRET)
+    .update(`HANDOVER:${clean}:${b64Payload}`)
+    .digest("base64url");
+  return `${b64Payload}.${signature}`;
+}
+
+export function verifyHandoverVerificationToken(token, expectedBib) {
+  if (!token || typeof token !== "string" || !token.includes(".")) return false;
+  const parts = token.split(".");
+  if (parts.length !== 2) return false;
+  const [b64Payload, signature] = parts;
+  const clean = (expectedBib || "").trim().toUpperCase();
+
+  const expectedSig = crypto
+    .createHmac("sha256", APP_SECRET)
+    .update(`HANDOVER:${clean}:${b64Payload}`)
+    .digest("base64url");
+
+  if (signature.length !== expectedSig.length) return false;
+  try {
+    const isValidSig = crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig));
+    if (!isValidSig) return false;
+
+    const payload = JSON.parse(Buffer.from(b64Payload, "base64url").toString("utf8"));
+    if (payload.bib !== clean) return false;
+    if (!payload.exp || Date.now() > payload.exp) return false;
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
  * 8. In-Memory OTP Store & Lifecycle Manager
  */
 class OtpManager {

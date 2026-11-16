@@ -18,6 +18,8 @@ import {
   otpRequestLimiter,
   verifyOtpVerificationToken,
   createOtpVerificationToken,
+  createHandoverVerificationToken,
+  verifyHandoverVerificationToken,
   getAppSecret,
   registrationLimiter,
   bulkRegistrationLimiter,
@@ -2372,7 +2374,110 @@ export async function handleApiRequest(req, res) {
       });
     }
 
-    // 7e. Expo Kit Handover (with anti-duplicate check)
+    // 7c. Expo Kit Handover - Send OTP to Runner's Registered Mobile
+    if (pathname === "/expo/handover-otp/send" && method === "POST") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+
+      const body = await parseJsonBody(req);
+      const bibNumber = (body.bibNumber || body.id || "").trim().toUpperCase();
+
+      if (!bibNumber) {
+        return error("बिब नंबर अथवा धावक ID आवश्यक है।", 400);
+      }
+
+      const findRes = await db.execute({
+        sql: "SELECT id, bib_number, full_name, mobile, masked_mobile, kit_collected, category_name FROM participants WHERE UPPER(bib_number) = ? OR UPPER(id) = ? LIMIT 1",
+        args: [bibNumber, bibNumber]
+      });
+
+      if (findRes.rows.length === 0) {
+        return error(`धावक बिब ("${bibNumber}") डेटाबेस में नहीं मिला।`, 404);
+      }
+
+      const runner = findRes.rows[0];
+      if (runner.kit_collected) {
+        return error("यह किट पूर्व में ही वितरित की जा चुकी है! पुनः वितरण हेतु OTP प्रेषण वर्जित है।", 409);
+      }
+
+      // Generate 6-digit random code
+      const code = String(crypto.randomInt(100000, 999999));
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
+      const sentAt = new Date().toISOString();
+      const otpKey = `HANDOVER:${runner.bib_number.toUpperCase()}`;
+
+      await db.execute({
+        sql: `INSERT OR REPLACE INTO otp_codes (mobile, code, expires_at, attempts, sent_at)
+              VALUES (?, ?, ?, 0, ?)`,
+        args: [otpKey, code, expiresAt, sentAt]
+      });
+
+      console.log(`[EXPO HANDOVER OTP] For ${runner.full_name} (${runner.bib_number}): ${code} to +91-${runner.mobile}`);
+
+      return json({
+        success: true,
+        message: `सत्यापन कोड धावक के पंजीकृत मोबाइल (+91 ${runner.masked_mobile || ("XXXXXX" + (runner.mobile || "0000").slice(-4))}) पर भेजा गया।`,
+        maskedMobile: runner.masked_mobile || ("XXXXXX" + (runner.mobile || "0000").slice(-4)),
+        expiresInSeconds: 600
+      });
+    }
+
+    // 7d. Expo Kit Handover - Verify Runner's OTP
+    if (pathname === "/expo/handover-otp/verify" && method === "POST") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+
+      const body = await parseJsonBody(req);
+      const bibNumber = (body.bibNumber || body.id || "").trim().toUpperCase();
+      const code = String(body.otp || body.code || "").trim();
+
+      if (!bibNumber || !code) {
+        return error("बिब नंबर एवं 6-अंकीय OTP आवश्यक है।", 400);
+      }
+
+      const otpKey = `HANDOVER:${bibNumber}`;
+      const otpRow = await db.execute({
+        sql: "SELECT code, expires_at, attempts FROM otp_codes WHERE mobile = ? LIMIT 1",
+        args: [otpKey]
+      });
+
+      if (otpRow.rows.length === 0) {
+        return error("OTP नहीं मिला अथवा समाप्त हो चुका है। कृपया 'पुनः OTP भेजें' पर क्लिक करें।", 400);
+      }
+
+      const { code: savedCode, expires_at: expiresAt, attempts } = otpRow.rows[0];
+
+      if (new Date() > new Date(expiresAt)) {
+        await db.execute({ sql: "DELETE FROM otp_codes WHERE mobile = ?", args: [otpKey] });
+        return error("OTP की समय सीमा समाप्त (Expired) हो चुकी है। कृपया नया OTP प्राप्त करें।", 400);
+      }
+
+      if (attempts >= 5) {
+        await db.execute({ sql: "DELETE FROM otp_codes WHERE mobile = ?", args: [otpKey] });
+        return error("अत्यधिक विफल प्रयास (5+)। सुरक्षा कारणों से यह OTP रद्द कर दिया गया है। कृपया नया OTP भेजें अथवा मूल पहचान पत्र का उपयोग करें।", 429);
+      }
+
+      if (savedCode !== code) {
+        await db.execute({ sql: "UPDATE otp_codes SET attempts = attempts + 1 WHERE mobile = ?", args: [otpKey] });
+        return error("अमान्य OTP कोड! कृपया धावक के मोबाइल पर आया सही 6-अंकीय कोड दर्ज करें।", 400);
+      }
+
+      // Valid OTP: delete OTP and create cryptographic handover verification token
+      await db.execute({ sql: "DELETE FROM otp_codes WHERE mobile = ?", args: [otpKey] });
+      const verificationToken = createHandoverVerificationToken(bibNumber);
+
+      return json({
+        success: true,
+        message: "✅ धावक का मोबाइल OTP सफलतापूर्वक सत्यापित!",
+        verificationToken
+      });
+    }
+
+    // 7e. Expo Kit Handover (with Smart Hybrid OTP / Govt ID verification & anti-duplicate check)
     if (pathname === "/expo/handover" && method === "POST") {
       const adminUser = extractAdminUser(req, parsedUrl);
       if (!adminUser) {
@@ -2381,7 +2486,7 @@ export async function handleApiRequest(req, res) {
 
       const body = await parseJsonBody(req);
       const runnerId = (body.runnerId || body.id || "").trim();
-      const bibNumber = (body.bibNumber || "").trim();
+      const bibNumber = (body.bibNumber || "").trim().toUpperCase();
       const rfidTag = (body.rfidTagId || "").trim();
       const operatorName = (body.operatorName || adminUser.fullName || "वॉलंटियर").trim();
       const counterName = (body.counterName || adminUser.counterName || "एक्सपो काउंटर").trim();
@@ -2391,8 +2496,8 @@ export async function handleApiRequest(req, res) {
       }
 
       const findRes = await db.execute({
-        sql: "SELECT * FROM participants WHERE id = ? OR bib_number = ? LIMIT 1",
-        args: [runnerId || bibNumber, bibNumber || runnerId]
+        sql: "SELECT * FROM participants WHERE UPPER(id) = ? OR UPPER(bib_number) = ? LIMIT 1",
+        args: [(runnerId || bibNumber).toUpperCase(), (bibNumber || runnerId).toUpperCase()]
       });
 
       if (findRes.rows.length === 0) {
@@ -2421,6 +2526,35 @@ export async function handleApiRequest(req, res) {
         }, 409);
       }
 
+      // Smart Hybrid Verification: Must be verified via Runner OTP Token OR Physical Govt ID Override
+      const verificationToken = (body.verificationToken || "").trim();
+      const idOverride = Boolean(body.idOverride);
+      const idLast4 = (body.idLast4 || "").trim();
+      const overrideReason = (body.overrideReason || "").trim();
+
+      let verificationMode = "UNVERIFIED";
+      let verificationDetail = "";
+
+      if (verificationToken) {
+        const isTokenValid = verifyHandoverVerificationToken(verificationToken, runner.bib_number);
+        if (!isTokenValid) {
+          return error("अमान्य अथवा समाप्त (Expired) हैंडओवर टोकन। कृपया पुनः धावक का OTP सत्यापित करें।", 403);
+        }
+        verificationMode = "RUNNER_OTP_VERIFIED";
+        verificationDetail = "प्रमाणित 6-अंकीय मोबाइल OTP द्वारा";
+      } else if (idOverride) {
+        if (!idLast4 || idLast4.length < 4) {
+          return error("पहचान पत्र ओवरराइड हेतु मूल ID के अंतिम 4 अंक दर्ज करना अनिवार्य है।", 400);
+        }
+        if (!overrideReason) {
+          return error("पहचान पत्र ओवरराइड का कारण (Reason) दर्ज करना अनिवार्य है।", 400);
+        }
+        verificationMode = "PHYSICAL_GOVT_ID_OVERRIDE";
+        verificationDetail = `मूल पहचान पत्र अंतिम-4: ${idLast4}, कारण: ${overrideReason}`;
+      } else {
+        return error("किट सुपुर्दगी से पूर्व धावक का मोबाइल OTP अथवा मूल पहचान पत्र सत्यापन अनिवार्य है।", 403);
+      }
+
       const now = new Date().toISOString();
       const tag = rfidTag || `RFID-${runner.bib_number}`;
       const collectorRecord = `${counterName} [${operatorName}]`;
@@ -2435,11 +2569,11 @@ export async function handleApiRequest(req, res) {
         args: [now, tag, collectorRecord, runner.id]
       });
 
-      // Immutable Audit Log
+      // Immutable Audit Log with Verification Mode & Details
       const sizeNote = (runner.tshirt_size && runner.tshirt_size !== 'N/A') ? `, Size: ${runner.tshirt_size}` : '';
       await db.execute({
         sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-        args: [operatorName, "KIT_HANDOVER_SUCCESS", `Bib: ${runner.bib_number}${sizeNote}, Counter: ${counterName}, RFID: ${tag}`, clientIp, now]
+        args: [operatorName, "KIT_HANDOVER_SUCCESS", `Bib: ${runner.bib_number}${sizeNote}, Mode: ${verificationMode} (${verificationDetail}), Counter: ${counterName}, RFID: ${tag}`, clientIp, now]
       });
 
       const runnerSizeMsg = (runner.tshirt_size && runner.tshirt_size !== 'N/A') ? ` • साइज ${runner.tshirt_size}` : '';

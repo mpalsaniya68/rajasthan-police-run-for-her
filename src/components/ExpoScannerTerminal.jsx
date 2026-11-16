@@ -3,7 +3,7 @@ import {
   Shield, QrCode, Search, CheckCircle2, AlertTriangle, PackageCheck, 
   RefreshCw, LogOut, Camera, CameraOff, Volume2, VolumeX, 
   UserCheck, AlertOctagon, Upload, RotateCcw,
-  Download, Clock, ClipboardList
+  Download, Clock, ClipboardList, Lock, KeyRound, Smartphone, Check, FileText
 } from 'lucide-react';
 import { apiGetVolunteerScans } from '../services/api';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
@@ -82,6 +82,50 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
   const [scanStatus, setScanStatus] = useState(null); // 'SUCCESS', 'ALREADY_COLLECTED', 'INVALID', 'GATE_APPROVED', 'GATE_ALREADY_ENTERED'
   const [statusMessage, setStatusMessage] = useState('');
   const [isHandingOver, setIsHandingOver] = useState(false);
+
+  // Smart Handover Verification States (Runner Mobile OTP & Physical Govt ID Override)
+  const [handoverVerification, setHandoverVerification] = useState({
+    verified: false,
+    mode: null, // 'OTP' | 'GOVT_ID'
+    token: null,
+    idLast4: '',
+    reason: ''
+  });
+  const [verifyTab, setVerifyTab] = useState('otp'); // 'otp' | 'govt_id'
+  const [handoverOtpInput, setHandoverOtpInput] = useState('');
+  const [isSendingHandoverOtp, setIsSendingHandoverOtp] = useState(false);
+  const [isVerifyingHandoverOtp, setIsVerifyingHandoverOtp] = useState(false);
+  const [handoverOtpSent, setHandoverOtpSent] = useState(false);
+  const [handoverOtpCountdown, setHandoverOtpCountdown] = useState(0);
+  const [handoverOtpError, setHandoverOtpError] = useState('');
+  const [handoverOtpSuccess, setHandoverOtpSuccess] = useState('');
+  const [overrideIdLast4, setOverrideIdLast4] = useState('');
+  const [overrideReason, setOverrideReason] = useState('नेटवर्क / SMS समस्या');
+  const [overrideError, setOverrideError] = useState('');
+
+  // 60-second OTP resend countdown timer
+  useEffect(() => {
+    let timer;
+    if (handoverOtpCountdown > 0) {
+      timer = setInterval(() => {
+        setHandoverOtpCountdown(prev => (prev > 1 ? prev - 1 : 0));
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [handoverOtpCountdown]);
+
+  const resetHandoverVerification = () => {
+    setHandoverVerification({ verified: false, mode: null, token: null, idLast4: '', reason: '' });
+    setVerifyTab('otp');
+    setHandoverOtpInput('');
+    setHandoverOtpSent(false);
+    setHandoverOtpCountdown(0);
+    setHandoverOtpError('');
+    setHandoverOtpSuccess('');
+    setOverrideIdLast4('');
+    setOverrideReason('नेटवर्क / SMS समस्या');
+    setOverrideError('');
+  };
 
   // Counter Statistics
   const [counterStats, setCounterStats] = useState({
@@ -647,11 +691,109 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     setIsSearching(false);
   };
 
+  // Smart Handover Verification Handlers
+  const handleSendHandoverOtp = async () => {
+    if (!scannedRunner) return;
+    setIsSendingHandoverOtp(true);
+    setHandoverOtpError('');
+    setHandoverOtpSuccess('');
+    const token = sessionStorage.getItem('rajpol_admin_token');
+
+    try {
+      const res = await fetch('/api/expo/handover-otp/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ bibNumber: scannedRunner.bibNumber })
+      });
+      const data = await res.json();
+      setIsSendingHandoverOtp(false);
+
+      if (res.ok && data.success) {
+        setHandoverOtpSent(true);
+        setHandoverOtpCountdown(60);
+        setHandoverOtpSuccess(data.message || `सत्यापन कोड धावक के पंजीकृत मोबाइल (+91 ${data.maskedMobile}) पर प्रेषित किया गया।`);
+      } else {
+        setHandoverOtpError(data.error || 'OTP प्रेषण में त्रुटि। कृपया पुनः प्रयास करें।');
+      }
+    } catch (e) {
+      setIsSendingHandoverOtp(false);
+      setHandoverOtpError('सर्वर से संपर्क नहीं हो सका।');
+    }
+  };
+
+  const handleVerifyHandoverOtp = async () => {
+    if (!scannedRunner || !handoverOtpInput || handoverOtpInput.trim().length < 6) {
+      setHandoverOtpError('कृपया धावक द्वारा बताया गया 6-अंकीय OTP दर्ज करें।');
+      return;
+    }
+    setIsVerifyingHandoverOtp(true);
+    setHandoverOtpError('');
+    setHandoverOtpSuccess('');
+    const token = sessionStorage.getItem('rajpol_admin_token');
+
+    try {
+      const res = await fetch('/api/expo/handover-otp/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          bibNumber: scannedRunner.bibNumber,
+          otp: handoverOtpInput.trim()
+        })
+      });
+      const data = await res.json();
+      setIsVerifyingHandoverOtp(false);
+
+      if (res.ok && data.success && data.verificationToken) {
+        setHandoverVerification({
+          verified: true,
+          mode: 'OTP',
+          token: data.verificationToken,
+          idLast4: '',
+          reason: ''
+        });
+        setHandoverOtpSuccess('✅ OTP सफलतापूर्वक सत्यापित! किट सुपुर्दगी अनलॉक हो गई है।');
+        if (soundEnabled) playSound('success');
+      } else {
+        setHandoverOtpError(data.error || 'अमान्य OTP! कृपया सही 6-अंकीय कोड पुनः दर्ज करें।');
+        if (soundEnabled) playSound('duplicate');
+      }
+    } catch (e) {
+      setIsVerifyingHandoverOtp(false);
+      setHandoverOtpError('सत्यापन सर्वर से संपर्क नहीं हो सका।');
+    }
+  };
+
+  const handleAuthorizeByIdOverride = () => {
+    if (!overrideIdLast4 || overrideIdLast4.trim().length < 4) {
+      setOverrideError('कृपया मूल पहचान पत्र (Aadhaar/Voter/DL) के अंतिम 4 अंक दर्ज करें।');
+      return;
+    }
+    setOverrideError('');
+    setHandoverVerification({
+      verified: true,
+      mode: 'GOVT_ID',
+      token: null,
+      idLast4: overrideIdLast4.trim(),
+      reason: overrideReason
+    });
+    if (soundEnabled) playSound('success');
+  };
+
   // Handover Execution
   const handleHandoverKit = async () => {
     if (!scannedRunner) return;
     if (scannedRunner.kitCollected || scannedRunner.kit_collected || scanStatus === 'ALREADY_COLLECTED') {
       alert("⚠️ यह किट पूर्व में ही वितरित की जा चुकी है! पुनः वितरण प्रतिबंधित है।");
+      return;
+    }
+    if (!handoverVerification.verified) {
+      alert("⚠️ किट सुपुर्दगी से पूर्व धावक का मोबाइल OTP अथवा मूल पहचान पत्र सत्यापित करना अनिवार्य है।");
       return;
     }
     setIsHandingOver(true);
@@ -692,7 +834,11 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           bibNumber: scannedRunner.bibNumber,
           rfidTagId: `RFID-${scannedRunner.bibNumber}`,
           operatorName: currentUser?.fullName || 'वॉलंटियर',
-          counterName: currentUser?.counterName || 'काउंटर-01'
+          counterName: currentUser?.counterName || 'काउंटर-01',
+          verificationToken: handoverVerification.token || undefined,
+          idOverride: handoverVerification.mode === 'GOVT_ID',
+          idLast4: handoverVerification.idLast4 || undefined,
+          overrideReason: handoverVerification.reason || undefined
         })
       });
 
@@ -704,6 +850,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         setScanStatus('ALREADY_COLLECTED');
         setStatusMessage(data.error || data.message || `⚠️ पूर्व में वितरित! यह किट पहले ही सौंपी जा चुकी है।`);
         const rColl = data.runner || {};
+        resetHandoverVerification();
         setScannedRunner(prev => ({
           ...prev,
           kitCollected: true,
@@ -721,6 +868,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         if (soundEnabled) playSound('success');
         setScanStatus('SUCCESS_HANDED_OVER');
         setStatusMessage(data.message || defaultSuccessMsg);
+        resetHandoverVerification();
         setScannedRunner(prev => ({
           ...prev,
           kitCollected: true,
@@ -767,6 +915,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         if (soundEnabled) playSound('success');
         setScanStatus('SUCCESS_HANDED_OVER');
         setStatusMessage(defaultSuccessMsg);
+        resetHandoverVerification();
         setScannedRunner(prev => ({
           ...prev,
           kitCollected: true,
@@ -962,6 +1111,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     setScanStatus(null);
     setStatusMessage('');
     setSearchQuery('');
+    resetHandoverVerification();
     if (inputSearchRef.current) {
       inputSearchRef.current.focus();
     }
@@ -1676,6 +1826,318 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               </div>
             </div>
 
+            {/* Smart Handover Security Verification Box (Only shown when pending handover) */}
+            {!isKitAlreadyHandedOver && (
+              <div style={{
+                background: handoverVerification.verified ? '#f0fdf4' : '#ffffff',
+                border: `1.5px solid ${handoverVerification.verified ? '#10b981' : '#cbd5e1'}`,
+                borderRadius: '8px',
+                padding: '16px',
+                marginBottom: '20px',
+                boxShadow: handoverVerification.verified ? '0 2px 10px rgba(16,185,129,0.1)' : '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                {handoverVerification.verified ? (
+                  /* State: Verified & Authorized */
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{
+                        width: '38px',
+                        height: '38px',
+                        borderRadius: '50%',
+                        background: '#dcfce7',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#15803d'
+                      }}>
+                        <Check size={22} strokeWidth={3} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '1rem', fontWeight: 900, color: '#166534' }}>
+                          सत्यापन सफल (Handover Authorized) ✓
+                        </div>
+                        <div style={{ fontSize: '0.82rem', color: '#15803d', marginTop: '2px' }}>
+                          माध्यम: <strong>{handoverVerification.mode === 'OTP' ? '📲 धावक मोबाइल OTP (6-अंकीय कोड)' : `🪪 मूल पहचान पत्र ओवरराइड (अंतिम 4: ${handoverVerification.idLast4} • कारण: ${handoverVerification.reason})`}</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={resetHandoverVerification}
+                      style={{
+                        background: '#ffffff',
+                        border: '1px solid #86efac',
+                        color: '#15803d',
+                        padding: '6px 14px',
+                        borderRadius: '6px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      री-वेरीफाई / बदलें (Re-verify)
+                    </button>
+                  </div>
+                ) : (
+                  /* State: Pending Verification */
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Lock size={18} color="#0a1c3d" />
+                        <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0a1c3d' }}>
+                          किट सुपुर्दगी पूर्व सुरक्षा सत्यापन (Handover Verification)
+                        </span>
+                      </div>
+
+                      {/* Tab Switcher */}
+                      <div style={{ display: 'flex', gap: '6px', background: '#f1f5f9', padding: '3px', borderRadius: '6px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setVerifyTab('otp')}
+                          style={{
+                            background: verifyTab === 'otp' ? '#ffffff' : 'transparent',
+                            color: verifyTab === 'otp' ? '#0a1c3d' : '#64748b',
+                            border: 'none',
+                            padding: '6px 14px',
+                            borderRadius: '4px',
+                            fontSize: '0.8rem',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            boxShadow: verifyTab === 'otp' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                          }}
+                        >
+                          <Smartphone size={14} />
+                          <span>1. मोबाइल OTP</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setVerifyTab('govt_id')}
+                          style={{
+                            background: verifyTab === 'govt_id' ? '#ffffff' : 'transparent',
+                            color: verifyTab === 'govt_id' ? '#b45309' : '#64748b',
+                            border: 'none',
+                            padding: '6px 14px',
+                            borderRadius: '4px',
+                            fontSize: '0.8rem',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            boxShadow: verifyTab === 'govt_id' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                          }}
+                        >
+                          <FileText size={14} />
+                          <span>2. मूल ID ओवरराइड</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Tab 1: Runner Mobile OTP */}
+                    {verifyTab === 'otp' && (
+                      <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ fontSize: '0.84rem', color: '#475569', marginBottom: '10px' }}>
+                          धावक के पंजीकृत मोबाइल (<strong>+91 {scannedRunner.mobile ? (scannedRunner.mobile.slice(0, 6) + 'XXXX') : 'XXXXXX3248'}</strong>) पर 6-अंकीय हैंडओवर OTP भेजकर पुष्टि करें:
+                        </div>
+
+                        {!handoverOtpSent ? (
+                          <button
+                            type="button"
+                            onClick={handleSendHandoverOtp}
+                            disabled={isSendingHandoverOtp}
+                            style={{
+                              background: '#0a1c3d',
+                              color: '#ffffff',
+                              border: 'none',
+                              padding: '10px 20px',
+                              borderRadius: '6px',
+                              fontSize: '0.88rem',
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '8px'
+                            }}
+                          >
+                            <KeyRound size={16} />
+                            <span>{isSendingHandoverOtp ? 'OTP भेजा जा रहा है...' : '📲 हैंडओवर OTP भेजें (Send OTP)'}</span>
+                          </button>
+                        ) : (
+                          <div>
+                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                maxLength={6}
+                                value={handoverOtpInput}
+                                onChange={e => {
+                                  const val = e.target.value.replace(/\D/g, '');
+                                  setHandoverOtpInput(val);
+                                  if (handoverOtpError) setHandoverOtpError('');
+                                }}
+                                placeholder="6-अंकीय OTP"
+                                style={{
+                                  padding: '10px 14px',
+                                  fontSize: '1.1rem',
+                                  fontWeight: 800,
+                                  fontFamily: 'monospace',
+                                  letterSpacing: '3px',
+                                  border: '2px solid #0a1c3d',
+                                  borderRadius: '6px',
+                                  width: '170px',
+                                  textAlign: 'center',
+                                  outline: 'none'
+                                }}
+                              />
+
+                              <button
+                                type="button"
+                                onClick={handleVerifyHandoverOtp}
+                                disabled={isVerifyingHandoverOtp || handoverOtpInput.length < 6}
+                                style={{
+                                  background: handoverOtpInput.length === 6 ? '#047857' : '#94a3b8',
+                                  color: '#ffffff',
+                                  border: 'none',
+                                  padding: '11px 22px',
+                                  borderRadius: '6px',
+                                  fontSize: '0.9rem',
+                                  fontWeight: 800,
+                                  cursor: handoverOtpInput.length === 6 ? 'pointer' : 'not-allowed',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '8px'
+                                }}
+                              >
+                                <Check size={16} />
+                                <span>{isVerifyingHandoverOtp ? 'जांच जारी...' : '✓ OTP सत्यापित करें (Verify)'}</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={handleSendHandoverOtp}
+                                disabled={handoverOtpCountdown > 0 || isSendingHandoverOtp}
+                                style={{
+                                  background: 'transparent',
+                                  border: 'none',
+                                  color: handoverOtpCountdown > 0 ? '#94a3b8' : '#2563eb',
+                                  fontSize: '0.82rem',
+                                  fontWeight: 700,
+                                  cursor: handoverOtpCountdown > 0 ? 'default' : 'pointer',
+                                  textDecoration: 'underline'
+                                }}
+                              >
+                                {handoverOtpCountdown > 0 ? `पुनः OTP भेजें (${handoverOtpCountdown}s)` : 'पुनः OTP भेजें (Resend OTP)'}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {handoverOtpSuccess && (
+                          <div style={{ color: '#059669', fontSize: '0.82rem', fontWeight: 700, marginTop: '8px' }}>
+                            {handoverOtpSuccess}
+                          </div>
+                        )}
+                        {handoverOtpError && (
+                          <div style={{ color: '#dc2626', fontSize: '0.82rem', fontWeight: 700, marginTop: '8px' }}>
+                            ⚠️ {handoverOtpError}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Tab 2: Physical Govt ID Override */}
+                    {verifyTab === 'govt_id' && (
+                      <div style={{ background: '#fffbeb', padding: '14px', borderRadius: '6px', border: '1px solid #fef3c7' }}>
+                        <div style={{ fontSize: '0.84rem', color: '#92400e', marginBottom: '10px' }}>
+                          ⚠️ <strong>नेटवर्क या फोन डिस्चार्ज की स्थिति में:</strong> धावक का मूल भौतिक पहचान पत्र (Aadhaar / Voter ID / DL) देखकर अंतिम 4 अंक दर्ज करें:
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <div>
+                            <input
+                              type="text"
+                              maxLength={4}
+                              value={overrideIdLast4}
+                              onChange={e => {
+                                setOverrideIdLast4(e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase());
+                                if (overrideError) setOverrideError('');
+                              }}
+                              placeholder="ID के अंतिम 4 अंक"
+                              style={{
+                                padding: '10px 12px',
+                                fontSize: '0.95rem',
+                                fontWeight: 800,
+                                fontFamily: 'monospace',
+                                border: '1.5px solid #d97706',
+                                borderRadius: '6px',
+                                width: '150px',
+                                outline: 'none'
+                              }}
+                            />
+                          </div>
+
+                          <div>
+                            <select
+                              value={overrideReason}
+                              onChange={e => setOverrideReason(e.target.value)}
+                              style={{
+                                padding: '10px 12px',
+                                fontSize: '0.88rem',
+                                fontWeight: 600,
+                                border: '1.5px solid #d97706',
+                                borderRadius: '6px',
+                                background: '#ffffff',
+                                color: '#78350f',
+                                outline: 'none'
+                              }}
+                            >
+                              <option value="नेटवर्क / SMS समस्या">नेटवर्क / SMS समस्या (Network Delay)</option>
+                              <option value="फ़ोन स्विच ऑफ / बैटरी खत्म">फ़ोन स्विच ऑफ / बैटरी खत्म (Phone Dead)</option>
+                              <option value="पारिवारिक प्रतिनिधि / अधिकृत संग्रह">पारिवारिक प्रतिनिधि (Family Representative)</option>
+                              <option value="वरिष्ठ नागरिक / कीपैड फोन">वरिष्ठ नागरिक / सामान्य फोन (Feature Phone)</option>
+                            </select>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={handleAuthorizeByIdOverride}
+                            disabled={overrideIdLast4.length < 4}
+                            style={{
+                              background: overrideIdLast4.length >= 4 ? '#b45309' : '#cbd5e1',
+                              color: '#ffffff',
+                              border: 'none',
+                              padding: '11px 20px',
+                              borderRadius: '6px',
+                              fontSize: '0.88rem',
+                              fontWeight: 800,
+                              cursor: overrideIdLast4.length >= 4 ? 'pointer' : 'not-allowed',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px'
+                            }}
+                          >
+                            <Check size={16} />
+                            <span>✓ ID से प्रमाणित करें (Authorize)</span>
+                          </button>
+                        </div>
+
+                        {overrideError && (
+                          <div style={{ color: '#dc2626', fontSize: '0.82rem', fontWeight: 700, marginTop: '8px' }}>
+                            ⚠️ {overrideError}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Anti-Fraud RFID Kit Handover Action */}
             <div style={{ 
               display: 'flex', 
@@ -1727,26 +2189,26 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                   <button
                     type="button"
                     onClick={handleHandoverKit}
-                    disabled={isHandingOver}
+                    disabled={isHandingOver || !handoverVerification.verified}
                     style={{
-                      background: '#047857',
+                      background: handoverVerification.verified ? '#047857' : '#94a3b8',
                       color: '#ffffff',
                       border: 'none',
                       padding: '12px 28px',
                       borderRadius: '6px',
                       fontSize: '0.98rem',
                       fontWeight: 900,
-                      cursor: 'pointer',
+                      cursor: handoverVerification.verified ? 'pointer' : 'not-allowed',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '10px',
-                      boxShadow: '0 4px 12px rgba(4, 120, 87, 0.25)',
+                      boxShadow: handoverVerification.verified ? '0 4px 12px rgba(4, 120, 87, 0.25)' : 'none',
                       opacity: isHandingOver ? 0.7 : 1
                     }}
                   >
                     <PackageCheck size={20} />
                     <span>
-                      {isHandingOver ? 'वितरण दर्ज हो रहा है...' : '✓ किट व RFID बिब हैंडओवर करें (Confirm Delivery)'}
+                      {isHandingOver ? 'वितरण दर्ज हो रहा है...' : (handoverVerification.verified ? '✓ किट व RFID बिब हैंडओवर करें (Confirm Delivery)' : '🔒 सत्यापन प्रतीक्षित (Verify OTP / ID First)')}
                     </span>
                   </button>
                 )}
