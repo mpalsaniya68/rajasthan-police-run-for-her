@@ -43,21 +43,56 @@ try {
   // Ignore if not present
 }
 
+// -------------------------------------------------------------
+// Universal Database Engine & Multi-Cloud Adapter Resolver
+// Supports:
+// 1. DATABASE_URL / TURSO_DATABASE_URL (Standard cloud edge, self-hosted sqld, or local SQLite)
+// 2. DATABASE_AUTH_TOKEN / TURSO_AUTH_TOKEN (Cloud authentication JWT)
+// 3. Zero-Config Switching: Change 1 line in .env and the entire project updates automatically!
+// -------------------------------------------------------------
+const rawDbUrl = (process.env.DATABASE_URL || process.env.TURSO_DATABASE_URL || "").trim();
+const rawAuthToken = (process.env.DATABASE_AUTH_TOKEN || process.env.TURSO_AUTH_TOKEN || "").trim();
+
+const isCloudEnv = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === "production");
+
 // Official Turso Cloud Edge DB Fallback for Cloud/Serverless Deployments
 const OFFICIAL_TURSO_URL = "libsql://rajpol-marathon-mpalsaniya68.aws-ap-south-1.turso.io";
 const OFFICIAL_TURSO_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTMxMDI3MDksImlkIjoiMDFhMTdkM2UtODkwMS03MDJmLTg1NDktMTIxYTVjNjNjOTA2Iiwia2lkIjoiYjZQMlBaZ2lramdPWUpFVy01ME5WLTZDZWY5ZFptOXhTN0pHSEFjODhVOCIsInJpZCI6IjY0MDQ4OTVlLWU1YmUtNDJiMS05MGU4LTcwY2E0NDE0MDRmYSJ9.SMGy8PlDNGhVGpRPnvfYazomMSl8NVEQU7Sw9Bce5H-S7ZSo_KSsc_FKGyatty799K_Kd6PTVs5cdR8mO5QvDQ";
 
-const isCloudEnv = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === "production");
-const dbUrl = process.env.TURSO_DATABASE_URL || (isCloudEnv ? OFFICIAL_TURSO_URL : "file:data/rajasthan_police_marathon.db");
-const dbAuthToken = process.env.TURSO_AUTH_TOKEN || (dbUrl === OFFICIAL_TURSO_URL ? OFFICIAL_TURSO_TOKEN : undefined);
-export const isProductionTurso = Boolean(dbUrl && !dbUrl.startsWith("file:"));
+let dbUrl;
+let dbAuthToken;
+
+if (rawDbUrl) {
+  // If user provided a specific database URL in .env, honor it 100%
+  if (
+    rawDbUrl.startsWith("libsql://") ||
+    rawDbUrl.startsWith("https://") ||
+    rawDbUrl.startsWith("http://") ||
+    rawDbUrl.startsWith("file:") ||
+    rawDbUrl === ":memory:"
+  ) {
+    dbUrl = rawDbUrl;
+  } else {
+    // Relative or local SQLite path (e.g. "data/marathon.db")
+    dbUrl = `file:${rawDbUrl}`;
+  }
+  // Token resolution: use user token, or if pointing to official URL use official token
+  dbAuthToken = rawAuthToken || (dbUrl === OFFICIAL_TURSO_URL ? OFFICIAL_TURSO_TOKEN : undefined);
+} else {
+  // Fallback if no DATABASE_URL or TURSO_DATABASE_URL is set
+  dbUrl = isCloudEnv ? OFFICIAL_TURSO_URL : "file:data/rajasthan_police_marathon.db";
+  dbAuthToken = isCloudEnv ? OFFICIAL_TURSO_TOKEN : undefined;
+}
+
+export const isProductionTurso = Boolean(dbUrl && !dbUrl.startsWith("file:") && dbUrl !== ":memory:");
 
 export const db = createClient({
   url: dbUrl,
   authToken: dbAuthToken
 });
 
-console.log(`[DB] Connected to: ${isProductionTurso ? "Turso Cloud Edge DB" : "Local SQLite (data/rajasthan_police_marathon.db)"}`);
+const safeLogUrl = dbUrl.startsWith("file:") ? dbUrl : dbUrl.replace(/\/\/[^@]+@/, "//***@").split("?")[0];
+console.log(`[DB] Engine: ${isProductionTurso ? "Cloud Edge DB" : (dbUrl === ":memory:" ? "In-Memory DB" : "Local SQLite")} | Connected to: ${safeLogUrl}`);
 
 let isDbInitialized = false;
 
