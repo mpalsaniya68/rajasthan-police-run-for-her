@@ -1,5 +1,4 @@
 import React from 'react';
-import { Trophy, Sparkles } from 'lucide-react';
 
 export function PrizePodiumSection({ onOpenRegister }) {
   return (
@@ -42,43 +41,26 @@ export function PrizePodiumSection({ onOpenRegister }) {
             position: 'relative'
           }}>
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
-                <span style={{
-                  background: '#0f172a',
-                  color: '#ffffff',
-                  fontWeight: 900,
-                  fontSize: '0.78rem',
-                  padding: '4px 10px',
-                  borderRadius: '6px'
-                }}>
-                  21.097 KM • COMPETITIVE TIMED
-                </span>
-              </div>
-
-              <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 6px 0' }}>
+              <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 20px 0' }}>
                 21 KM हाफ मैराथन
               </h3>
-              <p style={{ fontSize: '0.86rem', color: '#64748b', marginBottom: '18px' }}>
-                अनुभवी एथलीट्स, पुलिस बल एवं मैराथन धावकों हेतु शीर्ष ओपन पोडियम
-              </p>
 
-              {/* Podium Breakdown (Dark Black Theme) */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+              {/* Podium Breakdown (Clean White Theme) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   padding: '11px 14px',
                   borderRadius: '8px',
-                  background: '#0f172a',
-                  border: '1.5px solid #0f172a',
-                  color: '#ffffff'
+                  background: '#ffffff',
+                  border: '1.5px solid #0f172a'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, fontSize: '0.94rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥇</span>
                     <span>1st Prize (प्रथम विजेता)</span>
                   </div>
-                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fde047' }}>To Be Announced</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
 
                 <div style={{
@@ -87,7 +69,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                   justifyContent: 'space-between',
                   padding: '10px 14px',
                   borderRadius: '8px',
-                  background: '#f8fafc',
+                  background: '#ffffff',
                   border: '1.5px solid #0f172a'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
@@ -103,7 +85,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                   justifyContent: 'space-between',
                   padding: '10px 14px',
                   borderRadius: '8px',
-                  background: '#f8fafc',
+                  background: '#ffffff',
                   border: '1.5px solid #0f172a'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
@@ -112,11 +94,6 @@ export function PrizePodiumSection({ onOpenRegister }) {
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
-              </div>
-
-              {/* Included Perks */}
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px', fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
-                ✔ RFID टाइमिंग चिप बिब • ✔ आधिकारिक फिनिशर मेडल • ✔ ड्राई-फिट टी-शर्ट • ✔ DGP सर्टिफिकेट • ✔ ब्रेकफास्ट
               </div>
             </div>
           </div>
@@ -135,43 +112,26 @@ export function PrizePodiumSection({ onOpenRegister }) {
             position: 'relative'
           }}>
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
-                <span style={{
-                  background: '#0f172a',
-                  color: '#ffffff',
-                  fontWeight: 900,
-                  fontSize: '0.78rem',
-                  padding: '4px 10px',
-                  borderRadius: '6px'
-                }}>
-                  10.0 KM • SPEED CHALLENGE
-                </span>
-              </div>
-
-              <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 6px 0' }}>
+              <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 20px 0' }}>
                 10 KM स्पीड रन
               </h3>
-              <p style={{ fontSize: '0.86rem', color: '#64748b', marginBottom: '18px' }}>
-                युवा धावकों, कॉलेज एथलीट्स एवं फिटनेस उत्साही लोगों के लिए टाइमड रन
-              </p>
 
-              {/* Podium Breakdown (Dark Black Theme) */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+              {/* Podium Breakdown (Clean White Theme) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   padding: '11px 14px',
                   borderRadius: '8px',
-                  background: '#0f172a',
-                  border: '1.5px solid #0f172a',
-                  color: '#ffffff'
+                  background: '#ffffff',
+                  border: '1.5px solid #0f172a'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, fontSize: '0.94rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥇</span>
                     <span>1st Prize (प्रथम विजेता)</span>
                   </div>
-                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fde047' }}>To Be Announced</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
 
                 <div style={{
@@ -180,7 +140,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                   justifyContent: 'space-between',
                   padding: '10px 14px',
                   borderRadius: '8px',
-                  background: '#f8fafc',
+                  background: '#ffffff',
                   border: '1.5px solid #0f172a'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
@@ -196,7 +156,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                   justifyContent: 'space-between',
                   padding: '10px 14px',
                   borderRadius: '8px',
-                  background: '#f8fafc',
+                  background: '#ffffff',
                   border: '1.5px solid #0f172a'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
@@ -205,11 +165,6 @@ export function PrizePodiumSection({ onOpenRegister }) {
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
-              </div>
-
-              {/* Included Perks */}
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px', fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
-                ✔ RFID टाइमिंग चिप बिब • ✔ आधिकारिक फिनिशर मेडल • ✔ ड्राई-फिट टी-शर्ट • ✔ ई-सर्टिफिकेट • ✔ हाइड्रेशन
               </div>
             </div>
           </div>
@@ -228,69 +183,38 @@ export function PrizePodiumSection({ onOpenRegister }) {
             position: 'relative'
           }}>
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
-                <span style={{
-                  background: '#0f172a',
-                  color: '#ffffff',
-                  fontWeight: 900,
-                  fontSize: '0.78rem',
-                  padding: '4px 10px',
-                  borderRadius: '6px'
-                }}>
-                  5K • 2K RUN
-                </span>
-                <span style={{
-                  background: '#f1f5f9',
-                  color: '#0f172a',
-                  fontWeight: 800,
-                  fontSize: '0.76rem',
-                  padding: '4px 10px',
-                  borderRadius: '20px',
-                  border: '1px solid #cbd5e1'
-                }}>
-                  प्रतिभागी किट
-                </span>
-              </div>
-
-              <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 6px 0' }}>
+              <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 20px 0' }}>
                 5K एवं 2K फन रन
               </h3>
-              <p style={{ fontSize: '0.86rem', color: '#64748b', marginBottom: '18px' }}>
-                कम्युनिटी, परिवार, महिलाएं एवं युवा धावक (Fitness & Pledge Run)
-              </p>
 
-              {/* Perks Highlights Box (Dark Black Theme) */}
+              {/* Perks Highlights Box (Clean White Theme) */}
               <div style={{
-                background: '#f8fafc',
+                background: '#ffffff',
                 border: '1.5px solid #0f172a',
                 borderRadius: '10px',
                 padding: '16px',
-                marginBottom: '20px',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '12px'
+                gap: '14px'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '1.5rem', background: '#ffffff', padding: '6px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>🥇</span>
-                  <div>
-                    <div style={{ fontWeight: 900, color: '#0f172a', fontSize: '0.96rem' }}>आधिकारिक फिनिशर मेडल (Medal)</div>
-                    <div style={{ fontSize: '0.76rem', color: '#475569' }}>प्रत्येक फिनिशर को समापन पर गौरव पदक</div>
+                  <span style={{ fontSize: '1.35rem' }}>🥇</span>
+                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.96rem' }}>
+                    फिनिशर मेडल (Finisher Medal)
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '1.5rem', background: '#ffffff', padding: '6px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>👕</span>
-                  <div>
-                    <div style={{ fontWeight: 900, color: '#0f172a', fontSize: '0.96rem' }}>ड्राई-फिट टी-शर्ट (Official T-Shirt)</div>
-                    <div style={{ fontSize: '0.76rem', color: '#475569' }}>जयपुर फ्लैगशिप एक्सपो से आधिकारिक टी-शर्ट</div>
+                  <span style={{ fontSize: '1.35rem' }}>👕</span>
+                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.96rem' }}>
+                    ड्राई-फिट टी-शर्ट (Dry-Fit T-Shirt)
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '1.5rem', background: '#ffffff', padding: '6px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>🥪</span>
-                  <div>
-                    <div style={{ fontWeight: 900, color: '#0f172a', fontSize: '0.96rem' }}>पोस्ट-रन रिफ्रेशमेंट्स (Refreshments)</div>
-                    <div style={{ fontSize: '0.76rem', color: '#475569' }}>एनर्जी ब्रेकफास्ट, हाइड्रेशन एवं मेडिकल सपोर्ट</div>
+                  <span style={{ fontSize: '1.35rem' }}>🥪</span>
+                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.96rem' }}>
+                    पोस्ट-रन रिफ्रेशमेंट्स (Refreshments)
                   </div>
                 </div>
               </div>
