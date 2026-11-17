@@ -22,6 +22,8 @@ export const registrationSchema = z.object({
   hasMedicalIssue: z.boolean().optional().default(false),
   medicalCondition: z.string().max(200).optional().default(""),
   medicalNotes: z.string().max(300).optional().default(""),
+  hasPreviousParticipation: z.boolean().optional().default(false),
+  previousParticipationDetails: z.string().max(500).optional().default(""),
   categoryId: z.enum(["21k", "10k", "5k", "3k", "2k", "inclusive", "adapted"]),
   districtId: z.string().min(2).max(50),
   tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL", "N/A"]).default("N/A"),

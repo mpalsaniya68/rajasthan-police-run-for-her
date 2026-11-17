@@ -1084,6 +1084,11 @@ export async function handleApiRequest(req, res) {
       const paymentMethod = data.paymentMethod || "FREE_ENTRY";
       const paymentStatus = "FREE";
 
+      const priorRaceNotes = data.hasPreviousParticipation && data.previousParticipationDetails 
+        ? `[पूर्व मैराथन अनुभव: ${data.previousParticipationDetails.trim()}]` 
+        : "";
+      const finalMedicalNotes = [data.medicalNotes || "", priorRaceNotes].filter(Boolean).join(" | ");
+
       await db.execute({
         sql: `INSERT INTO participants (
           id, bib_number, full_name, gender, dob, mobile, masked_mobile, email, emergency_contact, emergency_relation, blood_group,
@@ -1105,7 +1110,7 @@ export async function handleApiRequest(req, res) {
           data.emergencyRelation,
           data.bloodGroup,
           data.medicalCondition || "",
-          data.medicalNotes || "",
+          finalMedicalNotes,
           data.categoryId,
           catName,
           data.districtId,

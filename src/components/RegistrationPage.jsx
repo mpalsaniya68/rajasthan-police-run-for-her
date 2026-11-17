@@ -76,6 +76,8 @@ export function RegistrationPage({
     hasMedicalIssue: false,
     medicalConditions: [],
     medicalNotes: "",
+    hasPreviousParticipation: false,
+    previousParticipationDetails: "",
     tshirtSize: "M",
     emergencyContactName: "",
     emergencyRelation: "अभिभावक (Guardian)",
@@ -716,6 +718,8 @@ export function RegistrationPage({
       hasMedicalIssue: formData.hasMedicalIssue,
       medicalCondition: medicalCondSummary,
       medicalNotes: formData.medicalNotes?.trim().replace(/\s+/g, ' ') || "",
+      hasPreviousParticipation: formData.hasPreviousParticipation || false,
+      previousParticipationDetails: formData.hasPreviousParticipation ? (formData.previousParticipationDetails?.trim() || "") : "",
       categoryId: category,
       districtId: selectedDistId,
       tshirtSize: venueType === "jaipur" ? (formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M") : "N/A",
@@ -745,6 +749,8 @@ export function RegistrationPage({
       hasMedicalIssue: payload.hasMedicalIssue,
       medicalCondition: payload.medicalCondition,
       medicalNotes: payload.medicalNotes,
+      hasPreviousParticipation: payload.hasPreviousParticipation,
+      previousParticipationDetails: payload.previousParticipationDetails,
       categoryId: payload.categoryId,
       districtId: payload.districtId,
       tshirtSize: payload.tshirtSize,
@@ -2905,7 +2911,7 @@ export function RegistrationPage({
                 </div>
               </div>
 
-              {/* SECTION 3: स्वास्थ्य, रक्त समूह एवं पूर्व बीमारी विवरण (HEALTH & MEDICAL DECLARATION - USER REQUEST) */}
+              {/* SECTION 3: पूर्व मैराथन सहभागिता विवरण (PREVIOUS RACE PARTICIPATION) */}
               <div style={{ marginBottom: '32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', borderBottom: '2px solid var(--police-navy-50)', paddingBottom: '8px' }}>
                   <span style={{
@@ -2920,6 +2926,121 @@ export function RegistrationPage({
                     fontSize: '0.82rem',
                     fontWeight: 900
                   }}>3</span>
+                  <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
+                    पूर्व मैराथन / दौड़ सहभागिता (Previous Running Experience)
+                  </h3>
+                </div>
+
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid var(--border-medium)',
+                  borderRadius: '10px',
+                  padding: '18px 20px'
+                }}>
+                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--police-navy-950)', marginBottom: '8px' }}>
+                    क्या आपने पहले कभी किसी मैराथन या आधिकारिक दौड़ में भाग लिया है? (Have you participated in any marathon/race before?)
+                  </label>
+
+                  <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginTop: '10px' }}>
+                    <label style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '10px 22px',
+                      borderRadius: '8px',
+                      border: !formData.hasPreviousParticipation ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
+                      background: !formData.hasPreviousParticipation ? 'var(--police-navy-50)' : '#ffffff',
+                      cursor: 'pointer',
+                      fontWeight: 700,
+                      fontSize: '0.92rem',
+                      color: 'var(--police-navy-950)',
+                      transition: 'all 0.15s ease'
+                    }}>
+                      <input
+                        type="radio"
+                        name="hasPreviousParticipation"
+                        checked={!formData.hasPreviousParticipation}
+                        onChange={() => setFormData(prev => ({ ...prev, hasPreviousParticipation: false, previousParticipationDetails: "" }))}
+                        style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
+                      />
+                      <span>नहीं (No)</span>
+                    </label>
+
+                    <label style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '10px 22px',
+                      borderRadius: '8px',
+                      border: formData.hasPreviousParticipation ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
+                      background: formData.hasPreviousParticipation ? 'var(--police-navy-50)' : '#ffffff',
+                      cursor: 'pointer',
+                      fontWeight: 700,
+                      fontSize: '0.92rem',
+                      color: 'var(--police-navy-950)',
+                      transition: 'all 0.15s ease'
+                    }}>
+                      <input
+                        type="radio"
+                        name="hasPreviousParticipation"
+                        checked={formData.hasPreviousParticipation}
+                        onChange={() => setFormData(prev => ({ ...prev, hasPreviousParticipation: true }))}
+                        style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
+                      />
+                      <span>हाँ (Yes)</span>
+                    </label>
+                  </div>
+
+                  {formData.hasPreviousParticipation && (
+                    <div style={{
+                      marginTop: '16px',
+                      background: '#f8fafc',
+                      padding: '16px',
+                      borderRadius: '8px',
+                      border: '1.5px solid var(--police-navy-200)'
+                    }}>
+                      <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                        पूर्व दौड़ / मैराथन का विवरण (कहाँ, कब, दूरी एवं समय) <span style={{ color: '#ef4444' }}>*</span>:
+                      </label>
+                      <textarea
+                        rows={3}
+                        required={formData.hasPreviousParticipation}
+                        placeholder="उदा. जयपुर मैराथन 2025 (10KM - 52 मिनट), वेदांता दिल्ली हाफ मैराथन 2024 (21KM) आदि"
+                        value={formData.previousParticipationDetails}
+                        onChange={(e) => setFormData(prev => ({ ...prev, previousParticipationDetails: e.target.value }))}
+                        style={{
+                          width: '100%',
+                          padding: '10px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border-medium)',
+                          fontSize: '0.92rem',
+                          resize: 'vertical',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                      <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                        कृपया पूर्व में भाग ली गई मैराथन का स्थान (कहाँ), वर्ष/माह (कब), श्रेणी एवं समय दर्ज करें।
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* SECTION 4: स्वास्थ्य, रक्त समूह एवं पूर्व बीमारी विवरण (HEALTH & MEDICAL DECLARATION - USER REQUEST) */}
+              <div style={{ marginBottom: '32px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', borderBottom: '2px solid var(--police-navy-50)', paddingBottom: '8px' }}>
+                  <span style={{
+                    background: 'var(--police-navy-900)',
+                    color: '#ffffff',
+                    width: '26px',
+                    height: '26px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.82rem',
+                    fontWeight: 900
+                  }}>4</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
                       स्वास्थ्य, रक्त समूह एवं आपातकालीन विवरण (Medical & Emergency Safety)
