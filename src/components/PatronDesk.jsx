@@ -93,20 +93,14 @@ export function PatronDesk() {
                 <span className="badge-gold">आयोजन संरक्षक संदेश</span>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700 }}>आधिकारिक वक्तव्य</span>
               </div>
-              <h2 style={{ fontSize: 'clamp(1.4rem, 2.5vw, 1.85rem)', fontWeight: 900, color: 'var(--police-navy-950)', margin: '0 0 16px 0', lineHeight: 1.25 }}>
-                "यह केवल 21 किलोमीटर की दौड़ नहीं, बल्कि राजस्थान के हर नागरिक का नारी सुरक्षा के प्रति साझा संकल्प है।"
-              </h2>
-
-              <div style={{ fontSize: '0.94rem', color: 'var(--text-body)', lineHeight: 1.7, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <p style={{ margin: 0 }}>
-                  राजस्थान पुलिस सदैव आमजन में विश्वास और अपराधियों में भय के मूलमंत्र पर कार्य करती रही है। आज समाज में महिलाओं और बेटियों को केवल सुरक्षा का आश्वासन नहीं, बल्कि यह अटूट विश्वास दिलाना आवश्यक है कि प्रदेश का प्रत्येक मार्ग उनके लिए निर्भय और सुरक्षित है।
-                </p>
-                <p style={{ margin: 0 }}>
-                  <strong>'RUN FOR HER'</strong> इसी विचार की अभिव्यक्ति है। 3 जनवरी 2027 को गुलाबी नगरी जयपुर के ऐतिहासिक अल्बर्ट हॉल से लेकर प्रदेश के समस्त पुलिस जिलों में एक साथ यह महा-आयोजन होगा। इसमें पुलिस के जवान, अधिकारी, खिलाड़ी, छात्र, शिक्षक, चिकित्सक और आम नागरिक एक साथ दौड़ेंगे।
-                </p>
-                <p style={{ margin: 0, fontWeight: 700, color: 'var(--police-navy-900)' }}>
-                  मैं राजस्थान के समस्त नागरिकों से सादर अपील करता हूँ कि 3 जनवरी 2027 को अपने जूते बांधिए, अपने परिवार के साथ आइए और नारी सम्मान के इस महायज्ञ में भागीदार बनिए।
-                </p>
+              {/* DGP Official Written Message Area - Left blank per instructions */}
+              <div style={{
+                minHeight: '210px',
+                background: 'rgba(255, 255, 255, 0.7)',
+                borderRadius: '12px',
+                border: '1.5px dashed var(--border-medium)',
+                margin: '18px 0'
+              }}>
               </div>
 
               {/* Official Stamp & Sign Off */}
