@@ -1086,12 +1086,12 @@ export function RegistrationPage({
 
       ctx.fillStyle = "#065f46";
       ctx.font = "bold 18px sans-serif";
-      ctx.fillText("✓ आधिकारिक निःशुल्क डिजिटल ई-पास (OFFICIAL FREE ENTRY PASS)", 60, 598);
+      ctx.fillText("✓ आधिकारिक डिजिटल ई-पास (OFFICIAL DIGITAL ENTRY PASS)", 60, 598);
 
       ctx.fillStyle = "#047857";
       ctx.font = "15px sans-serif";
-      const feeText = `प्रवेश: 100% निःशुल्क (Free Public Initiative)  |  पास आईडी: ${p.orderId || p.certificateId || 'RPM2027'}  |  श्रेणी: ${p.categoryName || 'Rajasthan Police Marathon 2027'}`;
-      ctx.fillText(feeText, 60, 624);
+      const passInfoText = `पास आईडी: ${p.orderId || p.certificateId || 'RPM2027'}  |  श्रेणी: ${p.categoryName || 'Rajasthan Police Marathon 2027'}  |  आयोजन स्थल: ${p.districtName || 'जयपुर'}`;
+      ctx.fillText(passInfoText, 60, 624);
 
       // 7. Official Bottom Footer
       ctx.fillStyle = "#0a1c3d";
@@ -1162,7 +1162,7 @@ export function RegistrationPage({
       `🎯 श्रेणी: ${registeredParticipant.categoryName}\n` +
       `📍 स्थान: ${registeredParticipant.districtName}\n` +
       `📅 तिथि: 3 जनवरी 2027, प्रातः 06:00 बजे\n\n` +
-      `हर कदम नारी सुरक्षा और सम्मान के लिए! आप भी निःशुल्क रजिस्टर करें:\n${window.location.origin}/#register`
+      `हर कदम नारी सुरक्षा और सम्मान के लिए! आप भी आज ही रजिस्टर करें:\n${window.location.origin}/#register`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
@@ -2670,20 +2670,6 @@ export function RegistrationPage({
                               <span>🏆 1st: {cat.prizes[0].amount} • 2nd: {cat.prizes[1].amount} • 3rd: {cat.prizes[2].amount}</span>
                             </div>
                           )}
-
-                          <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                            borderTop: '1px solid #e2e8f0',
-                            paddingTop: '8px'
-                          }}>
-                            <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>पंजीकरण शुल्क:</span>
-                            <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#047857', background: '#ecfdf5', padding: '2px 8px', borderRadius: '4px', border: '1px solid #a7f3d0' }}>
-                              निःशुल्क (FREE)
-                            </span>
-                          </div>
                         </div>
                       );
                     })}
@@ -3161,36 +3147,8 @@ export function RegistrationPage({
                 </div>
               </div>
 
-              {/* Government Official Fee Summary Row */}
-                <div style={{
-                  background: '#f8fafc',
-                  border: '1.5px solid #cbd5e1',
-                  borderRadius: '8px',
-                  padding: '16px 20px',
-                  marginBottom: '20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '12px',
-                  textAlign: 'left'
-                }}>
-                  <div>
-                    <div style={{ fontSize: '0.76rem', color: '#065f46', fontWeight: 700 }}>
-                      पंजीकरण शुल्क (Registration Fee):
-                    </div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#047857', marginTop: '2px' }}>
-                      ₹0.00 (100% निःशुल्क जन-सहभागिता)
-                    </div>
-                  </div>
-                  <div style={{ fontSize: '0.78rem', color: '#065f46', textAlign: 'right' }}>
-                    <div>अभियान: <strong>"Run for Her" नारी सुरक्षा, सम्मान व सशक्तिकरण</strong></div>
-                    <div style={{ color: '#047857', fontWeight: 800, marginTop: '2px' }}>✓ राजस्थान पुलिस द्वारा पूर्णतः निःशुल्क राज्यव्यापी जन-अभियान</div>
-                  </div>
-                </div>
-
                 {/* Submit CTA Bar */}
-                <div style={{ textAlign: 'center' }}>
+                <div style={{ textAlign: 'center', marginTop: '24px' }}>
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -3208,7 +3166,7 @@ export function RegistrationPage({
                     {isSubmitting ? (
                       <span>पंजीकरण प्रक्रियाधीन है... कृपया प्रतीक्षा करें</span>
                     ) : (
-                      <span>निःशुल्क पंजीकरण पूर्ण करें (Submit Free Registration) &rarr;</span>
+                      <span>पंजीकरण करें (Register Now) &rarr;</span>
                     )}
                   </button>
                 <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '10px' }}>
