@@ -2,7 +2,7 @@ import React from 'react';
 import { RACE_CATEGORIES } from '../data/mockData';
 import { Zap, Flame, Users, HeartHandshake, Sparkles, Check, Clock, ArrowRight, Timer, Trophy } from 'lucide-react';
 
-export function Categories({ onSelectCategory, onOpenBulkRegister }) {
+export function Categories({ onSelectCategory }) {
   const getIcon = (name) => {
     switch (name) {
       case 'Zap': return <Zap size={24} color="var(--police-navy-900)" />;
@@ -221,41 +221,6 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Institutional Bulk Registration CTA Bar */}
-        <div style={{
-          marginTop: '36px',
-          background: 'linear-gradient(135deg, var(--police-navy-50) 0%, #ffffff 100%)',
-          border: '2px dashed var(--police-gold-500)',
-          borderRadius: 'var(--radius-md)',
-          padding: '24px 28px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '18px'
-        }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-              <span style={{ background: 'var(--police-navy-800)', color: '#ffffff', fontSize: '0.78rem', fontWeight: 800, padding: '3px 10px', borderRadius: '4px' }}>
-                INSTITUTIONAL
-              </span>
-              <h4 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--police-navy-900)', fontWeight: 800 }}>
-                🏢 कॉलेज, स्कूल, RPA, RAC बटालियन व ग्रुप हेतु बल्क रजिस्ट्रेशन
-              </h4>
-            </div>
-            <p style={{ margin: 0, fontSize: '0.96rem', color: 'var(--text-body)', maxWidth: '720px', lineHeight: '1.6' }}>
-              क्या आप अपनी संस्था के 50+ या 500+ धावकों को एक साथ रजिस्टर करना चाहते हैं? आधिकारिक CSV/एक्सेल टेम्पलेट डाउनलोड करें और सिंगल क्लिक में ऑटो-बिब जनरेट करें।
-            </p>
-          </div>
-          <button 
-            onClick={onOpenBulkRegister}
-            className="btn-gold"
-            style={{ padding: '13px 26px', fontSize: '1rem', whiteSpace: 'nowrap', borderRadius: '50px', fontWeight: 800 }}
-          >
-            बल्क रजिस्ट्रेशन पोर्टल खोलें &rarr;
-          </button>
         </div>
       </div>
     </section>

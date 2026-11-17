@@ -1223,66 +1223,9 @@ export async function handleApiRequest(req, res) {
       });
     }
 
-    // 3. Bulk / Institutional Registration
+    // 3. Bulk / Institutional Registration (Disabled - Single Registration Portal Active)
     if (pathname === "/bulk-register" && method === "POST") {
-      if (bulkRegistrationLimiter.isRateLimited(clientIp)) {
-        return error("अत्यधिक बल्क पंजीकरण अनुरोध। कृपया 1 मिनट बाद पुनः प्रयास करें।", 429);
-      }
-
-      const body = await parseJsonBody(req);
-      const parsed = bulkRegistrationSchema.safeParse(body);
-      if (!parsed.success) {
-        const msg = parsed.error.issues?.[0]?.message || parsed.error.errors?.[0]?.message || "अमान्य बल्क डेटा";
-        return error(msg, 422);
-      }
-
-      const { institution, districtId, runners } = parsed.data;
-      const distName = DISTRICT_NAMES[districtId] || districtId;
-      const isJaipur = isJaipurDistrict(districtId, distName);
-      const batchId = `BATCH-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
-      const now = new Date().toISOString();
-      const registeredRunners = [];
-
-      for (let i = 0; i < runners.length; i++) {
-        const r = runners[i];
-        const finalTshirtSize = isJaipur ? (r.tshirtSize && r.tshirtSize !== 'N/A' ? r.tshirtSize : 'M') : 'N/A';
-        const countRes = await db.execute({
-          sql: "SELECT count(*) as count FROM participants WHERE category_id = ?",
-          args: [r.categoryId]
-        });
-        const counter = (Number(countRes.rows[0].count) || 0) + 1001;
-        const bibNumber = generateBibNumber(r.categoryId, counter);
-        const certId = generateCertificateId();
-        const pId = `P-BLK-${crypto.randomBytes(4).toString("hex")}`;
-        const catName = CATEGORY_NAMES[r.categoryId] || r.categoryId;
-
-        await db.execute({
-          sql: `INSERT INTO participants (
-            id, bib_number, full_name, gender, dob, mobile, masked_mobile, emergency_contact, emergency_relation, blood_group,
-            category_id, category_name, district_id, district_name, tshirt_size, institution, batch_id, certificate_id, qr_token, status, created_at
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
-          args: [
-            pId, bibNumber, r.fullName, r.gender, r.dob, r.mobile, maskMobile(r.mobile),
-            r.emergencyContact, r.emergencyRelation, r.bloodGroup, r.categoryId, catName,
-            districtId, distName, finalTshirtSize, institution, batchId, certId, `QR-${bibNumber}`, now
-          ]
-        });
-
-        registeredRunners.push({ bibNumber, fullName: r.fullName, categoryName: catName, tshirtSize: finalTshirtSize });
-      }
-
-      await db.execute({
-        sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-        args: [institution, "BULK_REGISTER", `Batch: ${batchId}, Count: ${runners.length}`, clientIp, now]
-      });
-
-      return json({
-        success: true,
-        batchId,
-        institution,
-        count: registeredRunners.length,
-        runners: registeredRunners
-      });
+      return error("बल्क पंजीकरण सुविधा अक्षम कर दी गई है। कृपया व्यक्तिगत पंजीकरण पोर्टल का उपयोग करें।", 404);
     }
 
     // 4. Live Runner Tracker Query

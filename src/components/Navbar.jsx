@@ -4,7 +4,6 @@ import { Shield, UserPlus, Menu, X, Phone, PackageCheck, LogOut } from 'lucide-r
 
 export function Navbar({ 
   onOpenRegister, 
-  onOpenBulkRegister, 
   onOpenFindPass,
   activePage = 'home', 
   onNavigate, 
@@ -423,21 +422,6 @@ export function Navbar({
             }}
           >
             🔍 ई-पास / बिब खोजें (Find E-Pass)
-          </button>
-
-          <button
-            onClick={() => { setMobileMenuOpen(false); onOpenBulkRegister(); }}
-            className="btn-gold"
-            style={{
-              padding: '11px',
-              textAlign: 'center',
-              fontWeight: 800,
-              fontSize: '0.88rem',
-              justifyContent: 'center',
-              marginTop: '4px'
-            }}
-          >
-            संस्थागत एवं ग्रुप बल्क रजिस्ट्रेशन (RPA / कॉलेज)
           </button>
 
           <button

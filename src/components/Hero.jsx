@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Calendar, MapPin, Users, Award, Bell, ArrowRight } from 'lucide-react';
 
-export function Hero({ onOpenRegister, onOpenBulkRegister, onOpenFindPass, totalRegistered = "1000+" }) {
+export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+" }) {
   // Live Countdown logic strictly targeted to 3 January 2027, 06:00:00 AM IST
   const TARGET_DATE = new Date(2027, 0, 3, 6, 0, 0); // 3 January 2027, 06:00:00 local IST
 
@@ -34,7 +34,7 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onOpenFindPass, total
     { text: "अल्बर्ट हॉल, जयपुर एवं प्रदेश के समस्त पुलिस जिलों में एक साथ भव्य आयोजन", tag: "वेन्यू" },
     { text: "प्रातः 06:00 बजे फ्लैग-ऑफ पुलिस महानिदेशक (DGP) राजीव शर्मा (IPS) द्वारा", tag: "फ्लैग-ऑफ" },
     { text: "21K, 10K, 5K एवं 2K श्रेणियों हेतु आधिकारिक ऑनलाइन पंजीकरण जारी है", tag: "पंजीकरण" },
-    { text: "संस्थाओं, कॉलेजों व RPA बटालियनों हेतु बल्क / ग्रुप रजिस्ट्रेशन उपलब्ध", tag: "ग्रुप पोर्टल" },
+    { text: "आधिकारिक डिजिटल ई-पास व क्यूआर कोड तुरंत डाउनलोड करें", tag: "ई-पास पोर्टल" },
     { text: "महिला सुरक्षा हेल्पलाइन 1090 (गरिमा) एवं 112 चौबीसों घंटे आपकी सेवा में तत्पर", tag: "सुरक्षा" }
   ];
 
@@ -226,39 +226,6 @@ export function Hero({ onOpenRegister, onOpenBulkRegister, onOpenFindPass, total
               >
                 <span>रजिस्ट्रेशन (Register Now)</span>
                 <ArrowRight size={18} />
-              </button>
-
-              <button 
-                onClick={onOpenBulkRegister} 
-                style={{
-                  background: 'linear-gradient(135deg, #0a1c3d 0%, #152e5a 100%)',
-                  color: '#ffffff',
-                  border: '1.5px solid var(--police-gold-500)',
-                  padding: '14px 26px',
-                  borderRadius: '50px',
-                  fontSize: '0.95rem',
-                  fontWeight: 800,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  cursor: 'pointer',
-                  boxShadow: '0 6px 20px rgba(10, 28, 61, 0.45)',
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = '#1e3a8a';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(10, 28, 61, 0.6)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(135deg, #0a1c3d 0%, #152e5a 100%)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(10, 28, 61, 0.45)';
-                }}
-                title="ग्रुप व बल्क रजिस्ट्रेशन"
-              >
-                <Shield size={18} color="#fde68a" />
-                <span>ग्रुप / संस्थागत पंजीकरण (Bulk Entry)</span>
               </button>
 
               <button 

@@ -20,8 +20,6 @@ import { ScheduleExpo } from './components/ScheduleExpo';
 
 import { CertificateHub } from './components/CertificateHub';
 
-import { BulkRegistrationModal } from './components/BulkRegistrationModal';
-
 import { Footer } from './components/Footer';
 
 import { AdminDashboard } from './components/AdminDashboard';
@@ -106,7 +104,6 @@ export default function App() {
     }
   });
 
-  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [selectedCategoryForModal, setSelectedCategoryForModal] = useState("21k");
   const [selectedDistrictForRegister, setSelectedDistrictForRegister] = useState("JPR-COMM");
   const [selectedRegTab, setSelectedRegTab] = useState("register");
@@ -247,12 +244,6 @@ export default function App() {
 
   };
 
-  const handleBulkRegisterSuccess = (newBatch) => {
-
-    setRegistrations(prev => [...newBatch, ...prev]);
-
-  };
-
   const handleUpdateRegistration = (updatedRecord) => {
 
     setRegistrations(prev => prev.map(r => r.id === updatedRecord.id ? updatedRecord : r));
@@ -285,7 +276,6 @@ export default function App() {
             {/* Official Top Navbar with Page Tabs */}
       <Navbar
         onOpenRegister={() => openRegisterModalWithCat(selectedCategoryForModal)}
-        onOpenBulkRegister={() => setIsBulkModalOpen(true)}
         onOpenFindPass={handleOpenFindPass}
         activePage={activePage}
         onNavigate={navigateToPage}
@@ -331,8 +321,6 @@ export default function App() {
             <Hero
 
               onOpenRegister={() => openRegisterModalWithCat(selectedCategoryForModal)}
-
-              onOpenBulkRegister={() => setIsBulkModalOpen(true)}
 
               onOpenFindPass={handleOpenFindPass}
 
@@ -387,8 +375,6 @@ export default function App() {
             <Categories 
 
               onSelectCategory={openRegisterModalWithCat}
-
-              onOpenBulkRegister={() => setIsBulkModalOpen(true)} 
 
             />
 
@@ -695,18 +681,6 @@ export default function App() {
       {/* Footer with Helpline Matrix & Quick Page Navigation */}
 
       <Footer onNavigate={navigateToPage} />
-
-      {/* Top Rec 1: Institutional & Bulk Registration Portal (RPA / Battalion / Colleges) */}
-
-      <BulkRegistrationModal
-
-        isOpen={isBulkModalOpen}
-
-        onClose={() => setIsBulkModalOpen(false)}
-
-        onBulkRegisterSuccess={handleBulkRegisterSuccess}
-
-      />
 
       {/* Rajasthan Police 24x7 Women Safety & Emergency Mobile Quick Dial Bar */}
       <MobileQuickSosBar />

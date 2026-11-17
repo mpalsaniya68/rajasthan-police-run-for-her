@@ -76,20 +76,6 @@ export async function apiRegister(payload) {
   }
 }
 
-export async function apiBulkRegister(payload) {
-  try {
-    const res = await fetchWithRetry(`${API_BASE}/bulk-register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    return await res.json();
-  } catch (err) {
-    console.error("apiBulkRegister error:", err);
-    return { success: false, error: "बल्क रजिस्ट्रेशन में त्रुटि हुई।" };
-  }
-}
-
 export async function apiTrackRunner(query) {
   try {
     const res = await fetchWithRetry(`${API_BASE}/tracker?q=${encodeURIComponent(query)}`);

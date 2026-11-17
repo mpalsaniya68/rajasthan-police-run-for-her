@@ -2777,9 +2777,6 @@ export function RegistrationPage({
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     />
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                      आधिकारिक ई-प्रमाण पत्र एवं ई-पास सीधे इसी ईमेल पर प्रेषित किए जाएंगे।
-                    </div>
                   </div>
 
                   {/* Photo ID Proof Type */}
@@ -2879,6 +2876,7 @@ export function RegistrationPage({
                     >
                       <option value="Citizen Runner">सामान्य नागरिक धावक (Citizen)</option>
                       <option value="Police Officer / Personnel">पुलिस कर्मी / अधिकारी (Police Personnel)</option>
+                      <option value="Government Employee">सरकारी कर्मचारी / अधिकारी (Govt. Employee)</option>
                       <option value="College / School Student">छात्र / युवा धावक (Student)</option>
                       <option value="NCC / NSS / Scouts Cadet">NCC / NSS / स्काउट्स कैडेट</option>
                       <option value="Corporate / NGO Runner">संस्थागत / कॉर्पोरेट धावक</option>
