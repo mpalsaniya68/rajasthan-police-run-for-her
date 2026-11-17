@@ -8,8 +8,6 @@ import { Navbar } from './components/Navbar';
 
 import { Hero } from './components/Hero';
 
-import { Categories } from './components/Categories';
-
 import { InteractiveRoute } from './components/InteractiveRoute';
 
 import { SafetyPledge } from './components/SafetyPledge';
@@ -81,13 +79,13 @@ class ErrorBoundary extends React.Component {
 
 export default function App() {
 
-  // Active Page State ('home', 'register', 'categories', 'route-schedule', 'districts', 'certificates', 'photos', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal')
+  // Active Page State ('home', 'register', 'route-schedule', 'districts', 'certificates', 'photos', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal')
   const [activePage, setActivePage] = useState(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.replace(/^#\/?/, '');
       const search = new URLSearchParams(window.location.search).get('page');
       const target = hash || search;
-      if (['home', 'register', 'categories', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'].includes(target)) {
+      if (['home', 'register', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'].includes(target)) {
         return target;
       }
     }
@@ -133,7 +131,7 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace(/^#\/?/, '');
-      if (['home', 'register', 'categories', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'].includes(hash)) {
+      if (['home', 'register', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'].includes(hash)) {
         setActivePage(hash);
       }
     };
@@ -343,47 +341,9 @@ export default function App() {
             />
 
           </div>
-
         )}
 
-        {/* 2. CATEGORIES & REGISTRATION PAGE */}
-
-        {activePage === 'categories' && (
-
-          <div id="page-categories">
-
-            <div className="no-print" style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
-
-              <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-
-                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
-
-                  <span>/</span>
-
-                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>दौड़ श्रेणियां एवं रजिस्ट्रेशन</span>
-
-                </div>
-
-                <span className="badge-gov">आधिकारिक पंजीकरण खुला है</span>
-
-              </div>
-
-            </div>
-
-            <Categories 
-
-              onSelectCategory={openRegisterModalWithCat}
-
-            />
-
-          </div>
-
-        )}
-
-        {/* 3. ROUTE & SCHEDULE EXPO PAGE */}
-
+        {/* 2. ROUTE & SCHEDULE EXPO PAGE */}
         {activePage === 'route-schedule' && (
 
           <div id="page-route-schedule">

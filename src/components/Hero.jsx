@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Calendar, MapPin, Users, Award, Bell, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Users, Award, Bell, ArrowRight } from 'lucide-react';
 
 export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+" }) {
   // Live Countdown logic strictly targeted to 3 January 2027, 06:00:00 AM IST
@@ -97,29 +97,6 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
         </div>
 
         <div className="container">
-          {/* Official Organizing Body Crest Badge */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '14px' }}>
-            <div className="hero-crest-badge" style={{
-              background: 'rgba(5, 17, 38, 0.88)',
-              backdropFilter: 'blur(10px)',
-              color: '#fde68a',
-              padding: '6px 20px',
-              borderRadius: '6px',
-              fontSize: '0.82rem',
-              fontWeight: 800,
-              border: '1.5px solid rgba(212, 175, 55, 0.45)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.35)',
-              letterSpacing: '0.03em',
-              textAlign: 'center'
-            }}>
-              <Shield size={15} color="#fde68a" />
-              <span>राजस्थान पुलिस मुख्यालय, जयपुर | राज्यव्यापी जन-अभियान • 3 जनवरी 2027</span>
-            </div>
-          </div>
-
           {/* Hero Headings - Majestic, Authoritative & Grounded */}
           <div style={{ textAlign: 'center', maxWidth: '960px', margin: '0 auto' }}>
             
@@ -149,7 +126,7 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
             </h1>
 
             {/* Slogan Banner */}
-            <div style={{ width: '100%', marginBottom: '16px' }}>
+            <div style={{ width: '100%', marginBottom: '24px' }}>
               <div className="hero-slogan-wrap" style={{
                 background: '#b91c1c',
                 border: '1px solid #991b1b',
@@ -168,18 +145,6 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
                 </span>
               </div>
             </div>
-
-            {/* Core Descriptive Text */}
-            <p className="hero-desc-text" style={{
-              fontSize: 'clamp(0.94rem, 1.8vw, 1.15rem)',
-              color: '#f1f5f9',
-              maxWidth: '820px',
-              margin: '0 auto 26px auto',
-              lineHeight: 1.6,
-              textShadow: '0 2px 10px rgba(0,0,0,0.6)'
-            }}>
-              <strong>3 जनवरी 2027</strong> को जयपुर के ऐतिहासिक अल्बर्ट हॉल से 10,000+ नागरिकों का फ्लैगशिप रन एवं प्रदेश के सभी 41 पुलिस जिलों व कमिश्नरेट में एक साथ 5KM/10KM कम्युनिटी रन।
-            </p>
 
             {/* Action CTAs - Responsive Full-Width on Mobile, Thumb Reachable */}
             <div className="hero-cta-group">

@@ -101,11 +101,15 @@ async function main() {
       },
       {
         id: '04_Race_Categories_and_Prizes',
-        title: 'दौड़ श्रेणियां (Race Categories) व नकद पुरस्कार विवरण',
-        desc: '21 KM हाफ मैराथन (ओपन), 10 KM पुलिस प्राइड रन एवं 5 KM महिला सुरक्षा जन-जागरूकता दौड़ का दूरी, पात्रता, रूट व ₹15+ लाख के पुरस्कार।',
-        url: 'http://127.0.0.1:3000/#categories',
+        title: 'पुरस्कार एवं सम्मान (Prizes & Rewards Podium)',
+        desc: '21 KM हाफ मैराथन एवं 10 KM स्पीड रन हेतु प्रथम, द्वितीय एवं तृतीय विजेताओं का आधिकारिक पोडियम सम्मान।',
+        url: 'http://127.0.0.1:3000/#home',
         action: async (p) => {
-          await p.evaluate(() => window.scrollTo(0, 150));
+          await p.evaluate(() => {
+            const el = document.getElementById('prizes') || document.querySelector('section:nth-of-type(3)');
+            if (el) el.scrollIntoView({ behavior: 'instant', block: 'center' });
+            else window.scrollTo(0, 1500);
+          });
           await new Promise(r => setTimeout(r, 1000));
         }
       },

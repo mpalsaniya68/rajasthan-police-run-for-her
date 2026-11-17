@@ -44,7 +44,6 @@ export function Footer({ onNavigate }) {
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', color: '#e2e8f0' }}>
               <li><a href="#home" onClick={(e) => handleNav(e, 'home')}>मुख्य पृष्ठ (Home)</a></li>
-              <li><a href="#categories" onClick={(e) => handleNav(e, 'categories')}>दौड़ श्रेणियां (21K / 10K / 5K / 2K)</a></li>
               <li><a href="#route-schedule" onClick={(e) => handleNav(e, 'route-schedule')}>कोर्स रूट एवं समय-सारणी (Route & Schedule)</a></li>
               <li><a href="#districts" onClick={(e) => handleNav(e, 'districts')}>राजस्थान के समस्त पुलिस जिले</a></li>
               <li><a href="#certificates" onClick={(e) => handleNav(e, 'certificates')}>फिनिशर सर्टिफिकेट एवं सत्यापन</a></li>

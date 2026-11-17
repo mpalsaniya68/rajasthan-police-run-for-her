@@ -222,7 +222,6 @@ export function Navbar({
               { id: 'home', label: 'मुख्य पृष्ठ' },
               { id: 'register', label: 'रजिस्ट्रेशन (e-Pass)', isGold: true },
               { id: 'find-pass', label: '🔍 ई-पास खोजें', isFindPass: true },
-              { id: 'categories', label: 'दौड़ श्रेणियां' },
               { id: 'route-schedule', label: 'रूट व एक्सपो' },
               { id: 'certificates', label: 'ई-प्रमाण पत्र' },
               { id: 'pledge-safety', label: 'सुरक्षा संकल्प' }
@@ -364,7 +363,6 @@ export function Navbar({
           {[
             { id: 'home', label: 'मुख्य पृष्ठ (Home)' },
             { id: 'register', label: 'ऑनलाइन रजिस्ट्रेशन (e-Pass Form)', color: 'var(--police-gold-700)' },
-            { id: 'categories', label: 'दौड़ श्रेणियां व दूरी (Categories)' },
             { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी (Route & Schedule)' },
 
             { id: 'certificates', label: 'फिनिशर सर्टिफिकेट व सत्यापन (Certificates)', color: 'var(--police-gold-700)' },
