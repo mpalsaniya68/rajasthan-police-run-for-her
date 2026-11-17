@@ -92,26 +92,6 @@ export const RACE_CATEGORIES = [
     ],
     color: "#10ac84",
     iconName: "HeartHandshake"
-  },
-  {
-    id: "inclusive",
-    name: "Adapted Course (Inclusive & Champions Run)",
-    badge: "Accessible Route",
-    distance: "Adapted Course",
-    minAge: 8,
-    flagOff: "07:00 AM",
-    cutOffTime: "1 घंटा (सुबह 08:00 AM)",
-    reporting: "05:45 AM",
-    description: "Specially dedicated adapted category for differently-abled athletes and senior citizens with volunteer escort support.",
-    perks: [
-      "विशेष चैंपियंस मेडल 🥇",
-      "आधिकारिक इवेंट टी-शर्ट 👕",
-      "विशेष हाइड्रेशन व रिफ्रेशमेंट्स 🥪",
-      "असिस्टेड केयर व सपोर्ट",
-      "सम्मान ई-प्रमाण पत्र"
-    ],
-    color: "#a55eea",
-    iconName: "Sparkles"
   }
 ];
 

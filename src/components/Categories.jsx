@@ -28,7 +28,11 @@ export function Categories({ onSelectCategory }) {
           </p>
         </div>
 
-        <div className="grid-3" style={{ gap: '24px' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))',
+          gap: '24px'
+        }}>
           {RACE_CATEGORIES.map((cat) => (
             <div 
               key={cat.id} 

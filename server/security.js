@@ -126,9 +126,6 @@ export function generateBibNumber(categoryId, counter) {
       return `RJ-03K-${pad}`;
     case "2k":
       return `RJ-02K-${pad}`;
-    case "inclusive":
-    case "adapted":
-      return `RJ-INC-${pad}`;
     default:
       return `RJ-GEN-${pad}`;
   }

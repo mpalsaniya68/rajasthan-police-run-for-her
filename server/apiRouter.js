@@ -41,18 +41,14 @@ const CATEGORY_NAMES = {
   "21k": "21 KM Half Marathon",
   "10k": "10 KM Speed Challenge",
   "5k": "5 KM Community Run",
-  "2k": "2 KM Family & Senior Run",
-  "inclusive": "Adapted Course (Inclusive & Champions Run)",
-  "adapted": "Adapted Course (Inclusive & Champions Run)"
+  "2k": "2 KM Family & Senior Run"
 };
 
 export const CATEGORY_FEES = {
   "21k": 0,
   "10k": 0,
   "5k": 0,
-  "2k": 0,
-  "inclusive": 0,
-  "adapted": 0
+  "2k": 0
 };
 
 export const isJaipurDistrict = (districtId, districtName = '') => {

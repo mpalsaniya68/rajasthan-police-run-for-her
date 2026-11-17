@@ -233,7 +233,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
             </div>
           </div>
 
-          {/* CARD 3: 5KM, 2KM & Adapted Course (Inclusive) */}
+          {/* CARD 3: 5KM & 2KM Community & Family Run */}
           <div style={{
             background: '#ffffff',
             borderRadius: '14px',
@@ -256,7 +256,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                   padding: '4px 10px',
                   borderRadius: '6px'
                 }}>
-                  5K • 2K • ADAPTED COURSE
+                  5K • 2K RUN
                 </span>
                 <span style={{
                   background: '#f1f5f9',
@@ -272,10 +272,10 @@ export function PrizePodiumSection({ onOpenRegister }) {
               </div>
 
               <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 6px 0' }}>
-                5K / 2K व Adapted Course
+                5K एवं 2K फन रन
               </h3>
               <p style={{ fontSize: '0.86rem', color: '#64748b', marginBottom: '18px' }}>
-                कम्युनिटी, परिवार, महिलाएं एवं दिव्यांग चैंपियंस (Inclusive Run)
+                कम्युनिटी, परिवार, महिलाएं एवं युवा धावक (Fitness & Pledge Run)
               </p>
 
               {/* Perks Highlights Box (Dark Black Theme) */}
@@ -312,12 +312,6 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <div style={{ fontSize: '0.76rem', color: '#475569' }}>एनर्जी ब्रेकफास्ट, हाइड्रेशन एवं मेडिकल सपोर्ट</div>
                   </div>
                 </div>
-              </div>
-
-              {/* Special Note for Adapted Course */}
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px', fontSize: '0.8rem', color: '#0f172a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Sparkles size={14} color="#0f172a" />
-                <span>Adapted Course: दिव्यांग धावकों हेतु विशेष वालंटियर एस्कॉर्ट व सुरक्षित ट्रैक</span>
               </div>
             </div>
           </div>
