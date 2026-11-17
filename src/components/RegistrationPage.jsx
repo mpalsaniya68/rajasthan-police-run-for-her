@@ -61,7 +61,9 @@ export function RegistrationPage({
     return OTHER_DISTRICTS[0]?.id || "JDH-COMM";
   });
   const [category, setCategory] = useState(initialCategory);
-  const [runnerType, setRunnerType] = useState("Citizen Runner");
+  const [isPolicePersonnel, setIsPolicePersonnel] = useState(false);
+  const [nonPoliceCategory, setNonPoliceCategory] = useState("अन्य (Other)");
+  const [runnerType, setRunnerType] = useState("अन्य (Other)");
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -670,28 +672,7 @@ export function RegistrationPage({
       return;
     }
 
-    const cleanId = formData.idNumber.replace(/\s+/g, "").toUpperCase();
-    if (!cleanId) {
-      alert("कृपया अपने पहचान पत्र (Govt ID) की संख्या दर्ज करें।");
-      return;
-    }
-    if (formData.idType === "Aadhaar") {
-      const digits = cleanId.replace(/\D/g, "");
-      if (digits.length !== 12) {
-        alert("कृपया वैध 12-अंकीय आधार कार्ड संख्या दर्ज करें।");
-        return;
-      }
-    } else if (formData.idType === "PAN") {
-      if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(cleanId)) {
-        alert("कृपया वैध 10-अक्षरीय पैन कार्ड संख्या दर्ज करें (उदा. ABCDE1234F)।");
-        return;
-      }
-    } else if (formData.idType === "Voter ID") {
-      if (cleanId.length < 8 || cleanId.length > 16) {
-        alert("कृपया वैध मतदाता पहचान पत्र (Voter ID) संख्या दर्ज करें।");
-        return;
-      }
-    }
+    const cleanId = formData.idNumber ? formData.idNumber.replace(/\s+/g, "").toUpperCase() : "N/A";
 
     const cleanEmergency = (formData.emergencyContactPhone || formData.mobile).replace(/\D/g, "");
     if (!/^[6-9]\d{9}$/.test(cleanEmergency)) {
@@ -2048,100 +2029,17 @@ export function RegistrationPage({
             boxShadow: 'var(--shadow-lg)',
             overflow: 'hidden'
           }}>
-            {/* Gateway Header Banner */}
+            {/* Gateway Header Banner - Single Line Title */}
             <div style={{
               background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
               color: '#ffffff',
-              padding: '28px 24px',
+              padding: '20px 24px',
               borderBottom: '3px solid var(--police-gold-500)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '16px'
+              textAlign: 'center'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <PoliceEmblem size={52} />
-                <div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--police-gold-400)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    राजस्थान पुलिस मुख्यालय, जयपुर | राज्यव्यापी जन-अभियान • 3 जनवरी 2027
-                  </div>
-                  <h1 style={{ fontSize: 'clamp(1.35rem, 2.6vw, 1.85rem)', margin: '4px 0', color: '#ffffff', fontWeight: 900 }}>
-                    ऑनलाइन धावक पंजीकरण पोर्टल (Run for Her)
-                  </h1>
-                  <div style={{ fontSize: '0.88rem', color: '#cbd5e1' }}>
-                    चरण 1: आधिकारिक मोबाइल सत्यापन गेटवे (Mobile Verification Gateway)
-                  </div>
-                </div>
-              </div>
-              <div style={{ textAlign: 'right' }} className="d-tablet-block">
-                <div style={{ fontSize: '0.82rem', color: '#fef08a', fontWeight: 700 }}>इवेंट तिथि: 3 जनवरी 2027</div>
-              </div>
-            </div>
-
-            {/* Step Progress Tracker */}
-            <div style={{
-              background: '#f8fafc',
-              borderBottom: '1px solid var(--border-medium)',
-              padding: '16px 24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 'clamp(12px, 3vw, 36px)',
-              flexWrap: 'wrap'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{
-                  background: 'var(--police-navy-900)',
-                  color: '#fde68a',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 900,
-                  fontSize: '0.88rem',
-                  boxShadow: '0 2px 6px rgba(10,28,61,0.2)'
-                }}>
-                  1
-                </span>
-                <div>
-                  <div style={{ fontSize: '0.86rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
-                    मोबाइल सत्यापन (Security OTP)
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--police-navy-700)', fontWeight: 600 }}>
-                    वर्तमान चरण • अनिवार्य
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ color: '#cbd5e1', fontWeight: 900 }}>➔</div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', opacity: 0.55 }}>
-                <span style={{
-                  background: '#e2e8f0',
-                  color: '#64748b',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 800,
-                  fontSize: '0.88rem'
-                }}>
-                  2
-                </span>
-                <div>
-                  <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#64748b' }}>
-                    धावक विवरण एवं ई-पास
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-                    सत्यापन उपरांत खुलेगा
-                  </div>
-                </div>
-              </div>
+              <h1 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', margin: 0, color: '#ffffff', fontWeight: 900, letterSpacing: '0.02em' }}>
+                Runner Registration Form
+              </h1>
             </div>
 
             {/* Gateway Card Content */}
@@ -2436,34 +2334,17 @@ export function RegistrationPage({
             overflow: 'hidden'
           }}>
 
-            {/* Form Top Branding Banner */}
+            {/* Form Top Branding Banner - Single Line Title */}
             <div style={{
               background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
               color: '#ffffff',
-              padding: '28px 24px',
+              padding: '20px 24px',
               borderBottom: '3px solid var(--police-gold-500)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '16px'
+              textAlign: 'center'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <PoliceEmblem size={52} />
-                <div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--police-gold-400)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    राजस्थान पुलिस मुख्यालय, जयपुर | राज्यव्यापी जन-अभियान • 3 जनवरी 2027
-                  </div>
-                  <h1 style={{ fontSize: 'clamp(1.35rem, 2.6vw, 1.85rem)', margin: '4px 0', color: '#ffffff', fontWeight: 900 }}>
-                    ऑनलाइन धावक पंजीकरण पोर्टल (Run for Her)
-                  </h1>
-                  <div style={{ fontSize: '0.88rem', color: '#cbd5e1' }}>
-                    हर कदम नारी सुरक्षा, सम्मान व सशक्तिकरण के लिए • अधिकृत ई-पास एवं आरएफआईडी बिब
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ textAlign: 'right' }} className="d-tablet-block"><div style={{ fontSize: '0.82rem', color: '#fef08a', fontWeight: 700 }}>इवेंट तिथि: 3 जनवरी 2027</div></div>
+              <h1 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', margin: 0, color: '#ffffff', fontWeight: 900, letterSpacing: '0.02em' }}>
+                Runner Registration Form
+              </h1>
             </div>
 
             {/* Error Callout if any (Accessible WCAG Alert) */}
@@ -2546,10 +2427,7 @@ export function RegistrationPage({
                       />
                       <div>
                         <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          जयपुर मुख्य फ्लैगशिप रन (Albert Hall)
-                        </div>
-                        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                          अल्बर्ट हॉल से जेएलएन मार्ग • डीजीपी राजस्थान द्वारा फ्लैग-ऑफ
+                          जयपुर (Jaipur)
                         </div>
                       </div>
                     </div>
@@ -2577,10 +2455,7 @@ export function RegistrationPage({
                       />
                       <div>
                         <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          अन्य जिला पुलिस लाइन ({OTHER_DISTRICTS.length} जिले)
-                        </div>
-                        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                          अपने स्थानीय ज़िला मुख्यालय / पुलिस लाइन में एक साथ रन
+                          अन्य जिले (Other Districts)
                         </div>
                       </div>
                     </div>
@@ -2589,7 +2464,7 @@ export function RegistrationPage({
                   {venueType === "district" && (
                     <div style={{ marginTop: '12px', background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
                       <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                        अपना जिला / पुलिस यूनिट चुनें:
+                        अपना जिला चुनें (Select District):
                       </label>
                       <select
                         value={selectedDistrict}
@@ -2659,23 +2534,7 @@ export function RegistrationPage({
                             </div>
                           </div>
 
-                          {/* Flagship Prize Money or Perks Badge (ONLY for Jaipur - Dark Black Theme) */}
-                          {venueType === "jaipur" && cat.prizes && (
-                            <div style={{
-                              marginBottom: '10px',
-                              padding: '6px 10px',
-                              background: '#0f172a',
-                              borderRadius: '6px',
-                              fontSize: '0.74rem',
-                              fontWeight: 800,
-                              color: '#ffffff',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '6px'
-                            }}>
-                              <span>🏆 1st: {cat.prizes[0].amount} • 2nd: {cat.prizes[1].amount} • 3rd: {cat.prizes[2].amount}</span>
-                            </div>
-                          )}
+
                         </div>
                       );
                     })}
@@ -2773,7 +2632,7 @@ export function RegistrationPage({
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      आधिकारिक ईमेल पता (Email Address) <span style={{ color: '#ef4444' }}>*</span>:
+                      ईमेल पता (Email Address) <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <input
                       type="email"
@@ -2785,108 +2644,84 @@ export function RegistrationPage({
                     />
                   </div>
 
-                  {/* Photo ID Proof Type */}
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      पहचान पत्र प्रकार (Govt Photo ID Proof) <span style={{ color: '#ef4444' }}>*</span>:
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
+                      क्या आप राजस्थान पुलिस में सेवारत कर्मी हैं? (Are you a serving personnel in Rajasthan Police?) <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
-                    <select
-                      value={formData.idType}
-                      onChange={(e) => {
-                        setShowAadhaar(false);
-                        setFormData({ ...formData, idType: e.target.value, idNumber: "" });
-                      }}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
-                    >
-                      <option value="Aadhaar">आधार कार्ड (Aadhaar Card)</option>
-                      <option value="PAN">पैन कार्ड (PAN Card)</option>
-                      <option value="Voter ID">मतदाता पहचान पत्र (Voter ID)</option>
-                    </select>
-                  </div>
-
-                  {/* Photo ID Number */}
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      {formData.idType === "Aadhaar" ? "आधार कार्ड संख्या" : formData.idType === "PAN" ? "पैन कार्ड संख्या" : "मतदाता पहचान पत्र संख्या"} <span style={{ color: '#ef4444' }}>*</span>:
-                    </label>
-
-                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                      <input
-                        type="text"
-                        required
-                        maxLength={formData.idType === "Aadhaar" ? 14 : 16}
-                        placeholder={formData.idType === "Aadhaar" ? "XXXX XXXX 1048" : formData.idType === "PAN" ? "उदा. ABCDE1234F" : "उदा. RJ01234567"}
-                        value={
-                          formData.idType === "Aadhaar"
-                            ? formatAadhaarDisplay(formData.idNumber, showAadhaar)
-                            : formData.idNumber
-                        }
-                        onChange={(e) => {
-                          let val = e.target.value;
-                          if (formData.idType === "Aadhaar") {
-                            const newRaw = deriveRawAadhaar(formData.idNumber, val, showAadhaar);
-                            setFormData({ ...formData, idNumber: newRaw });
-                          } else {
-                            val = val.toUpperCase().trim();
-                            setFormData({ ...formData, idNumber: val });
-                          }
-                        }}
-                        style={{
-                          width: '100%',
-                          padding: formData.idType === "Aadhaar" ? '10px 85px 10px 12px' : '10px 12px',
-                          borderRadius: '8px',
-                          border: '1px solid var(--border-medium)',
-                          fontSize: '0.94rem',
-                          fontFamily: 'monospace',
-                          letterSpacing: formData.idType === "Aadhaar" ? '0.08em' : 'normal',
-                          background: '#ffffff'
-                        }}
-                      />
-                      {formData.idType === "Aadhaar" && (
-                        <button
-                          type="button"
-                          onClick={() => setShowAadhaar(!showAadhaar)}
-                          title={showAadhaar ? "आधार संख्या मास्क करें (Mask)" : "आधार संख्या देखें (Show)"}
-                          aria-label={showAadhaar ? "आधार संख्या मास्क करें" : "आधार संख्या देखें"}
-                          style={{
-                            position: 'absolute',
-                            right: '8px',
-                            background: '#f1f5f9',
-                            border: '1px solid #cbd5e1',
-                            cursor: 'pointer',
-                            color: '#334155',
-                            padding: '4px 8px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            borderRadius: '5px',
-                            fontSize: '0.72rem',
-                            fontWeight: 700
+                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: isPolicePersonnel ? '0' : '10px' }}>
+                      <label style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '10px 20px',
+                        borderRadius: '8px',
+                        border: isPolicePersonnel ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
+                        background: isPolicePersonnel ? 'var(--police-navy-50)' : '#ffffff',
+                        cursor: 'pointer',
+                        fontWeight: 700,
+                        fontSize: '0.92rem',
+                        color: 'var(--police-navy-950)'
+                      }}>
+                        <input
+                          type="radio"
+                          name="isPolicePersonnel"
+                          checked={isPolicePersonnel}
+                          onChange={() => {
+                            setIsPolicePersonnel(true);
+                            setRunnerType("पुलिस कर्मी / अधिकारी (Police Personnel)");
                           }}
-                        >
-                          {showAadhaar ? <EyeOff size={14} /> : <Eye size={14} />}
-                          <span>{showAadhaar ? "छिपाएं" : "देखें"}</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                          style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
+                        />
+                        <span>हाँ (Yes)</span>
+                      </label>
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      धावक वर्गीकरण (Runner Classification):
-                    </label>
-                    <select
-                      value={runnerType}
-                      onChange={(e) => setRunnerType(e.target.value)}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
-                    >
-                      <option value="Citizen Runner">सामान्य नागरिक धावक (Citizen)</option>
-                      <option value="Police Officer / Personnel">पुलिस कर्मी / अधिकारी (Police Personnel)</option>
-                      <option value="Government Employee">सरकारी कर्मचारी / अधिकारी (Govt. Employee)</option>
-                      <option value="College / School Student">छात्र / युवा धावक (Student)</option>
-                      <option value="NCC / NSS / Scouts Cadet">NCC / NSS / स्काउट्स कैडेट</option>
-                      <option value="Corporate / NGO Runner">संस्थागत / कॉर्पोरेट धावक</option>
-                    </select>
+                      <label style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '10px 20px',
+                        borderRadius: '8px',
+                        border: !isPolicePersonnel ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
+                        background: !isPolicePersonnel ? 'var(--police-navy-50)' : '#ffffff',
+                        cursor: 'pointer',
+                        fontWeight: 700,
+                        fontSize: '0.92rem',
+                        color: 'var(--police-navy-950)'
+                      }}>
+                        <input
+                          type="radio"
+                          name="isPolicePersonnel"
+                          checked={!isPolicePersonnel}
+                          onChange={() => {
+                            setIsPolicePersonnel(false);
+                            setRunnerType(nonPoliceCategory || "अन्य (Other)");
+                          }}
+                          style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
+                        />
+                        <span>नहीं (No)</span>
+                      </label>
+                    </div>
+
+                    {!isPolicePersonnel && (
+                      <div style={{ marginTop: '12px', maxWidth: '400px' }}>
+                        <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                          श्रेणी चुनें (Select Category):
+                        </label>
+                        <select
+                          value={nonPoliceCategory}
+                          onChange={(e) => {
+                            setNonPoliceCategory(e.target.value);
+                            setRunnerType(e.target.value);
+                          }}
+                          style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
+                        >
+                          <option value="सेवानिवृत्त पुलिस कर्मी (Retired Police Personnel)">सेवानिवृत्त पुलिस कर्मी (Retired Police Personnel)</option>
+                          <option value="कॉलेज / यूनिवर्सिटी / स्कूल (College / University / School)">कॉलेज / यूनिवर्सिटी / स्कूल (College / University / School)</option>
+                          <option value="NCC / NSS / स्काउट्स (NCC / NSS / Scouts)">NCC / NSS / स्काउट्स (NCC / NSS / Scouts)</option>
+                          <option value="अन्य (Other)">अन्य (Other)</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
 
                   {venueType === "jaipur" && (
@@ -3026,7 +2861,7 @@ export function RegistrationPage({
                 </div>
               </div>
 
-              {/* SECTION 4: स्वास्थ्य, रक्त समूह एवं पूर्व बीमारी विवरण (HEALTH & MEDICAL DECLARATION - USER REQUEST) */}
+              {/* SECTION 4: रक्त समूह एवं आपातकालीन संपर्क विवरण (BLOOD GROUP & EMERGENCY CONTACT) */}
               <div style={{ marginBottom: '32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', borderBottom: '2px solid var(--police-navy-50)', paddingBottom: '8px' }}>
                   <span style={{
@@ -3043,7 +2878,7 @@ export function RegistrationPage({
                   }}>4</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                      स्वास्थ्य, रक्त समूह एवं आपातकालीन विवरण (Medical & Emergency Safety)
+                      रक्त समूह एवं आपातकालीन विवरण (Blood Group & Emergency Contact)
                     </h3>
                   </div>
                 </div>
@@ -3081,102 +2916,6 @@ export function RegistrationPage({
                   <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '6px' }}>
                     * यह जानकारी आपातकालीन स्थिति में 108 एम्बुलेंस और ऑन-ट्रैक मेडिकल टीम के लिए अनिवार्य है।
                   </div>
-                </div>
-
-                {/* Pre-existing Medical Condition / Illness Toggle */}
-                <div style={{
-                  background: '#f8fafc',
-                  border: '1.5px solid var(--border-subtle)',
-                  borderRadius: '12px',
-                  padding: '18px',
-                  marginBottom: '20px'
-                }}>
-                  <div style={{ marginBottom: '8px' }}>
-                    <label style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-                      क्या आपको पूर्व से कोई स्वास्थ्य संबंधी समस्या या बीमारी है? (Pre-existing Health Condition):
-                    </label>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '20px', marginBottom: '14px' }}>
-                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.92rem', fontWeight: 700, color: '#16a34a' }}>
-                      <input
-                        type="radio"
-                        name="hasMedicalIssue"
-                        checked={!formData.hasMedicalIssue}
-                        onChange={() => setFormData({ ...formData, hasMedicalIssue: false, medicalConditions: [], medicalNotes: "" })}
-                      />
-                      नहीं, मैं पूर्णतः स्वस्थ एवं फिट हूँ (No Condition / Fully Fit)
-                    </label>
-
-                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.92rem', fontWeight: 700, color: '#dc2626' }}>
-                      <input
-                        type="radio"
-                        name="hasMedicalIssue"
-                        checked={formData.hasMedicalIssue}
-                        onChange={() => setFormData({ ...formData, hasMedicalIssue: true })}
-                      />
-                      हाँ, मुझे पूर्व स्वास्थ्य स्थिति है (Yes, I have a condition)
-                    </label>
-                  </div>
-
-                  {formData.hasMedicalIssue && (
-                    <div style={{
-                      marginTop: '12px',
-                      padding: '16px',
-                      background: '#ffffff',
-                      border: '1.5px solid #fecaca',
-                      borderRadius: '8px',
-                      animation: 'fadeIn 0.2s ease-in'
-                    }}>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#991b1b', marginBottom: '10px' }}>
-                        लागू होने वाली स्वास्थ्य स्थितियों पर टिक करें (Select all that apply):
-                      </div>
-
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', marginBottom: '14px' }}>
-                        {medicalConditionOptions.map(opt => {
-                          const isChecked = formData.medicalConditions.includes(opt.label);
-                          return (
-                            <label
-                              key={opt.id}
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                padding: '8px 12px',
-                                borderRadius: '6px',
-                                border: isChecked ? '1.5px solid #dc2626' : '1px solid var(--border-medium)',
-                                background: isChecked ? '#fef2f2' : '#ffffff',
-                                cursor: 'pointer',
-                                fontSize: '0.82rem',
-                                fontWeight: isChecked ? 800 : 600,
-                                color: isChecked ? '#991b1b' : 'var(--text-body)'
-                              }}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={() => handleConditionToggle(opt.label)}
-                              />
-                              {opt.label}
-                            </label>
-                          );
-                        })}
-                      </div>
-
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                          विशेष चिकित्सकीय निर्देश / दवा विवरण (Medical Notes / Allergies / Inhaler Details):
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="उदा. दमा हेतु इनहेलर हमेशा साथ रहता है / पेनिसिलिन से एलर्जी"
-                          value={formData.medicalNotes}
-                          onChange={(e) => setFormData({ ...formData, medicalNotes: e.target.value })}
-                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.88rem' }}
-                        />
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Emergency Kin Contact Row */}
@@ -3229,43 +2968,6 @@ export function RegistrationPage({
                 </div>
               </div>
 
-              {/* SECTION 4: आधिकारिक कानूनी एवं चिकित्सा फिटनेस घोषणा (LEGAL & MEDICAL INDEMNITY DECLARATION) */}
-              <div style={{
-                background: 'var(--police-navy-50)',
-                border: '1.5px solid var(--border-medium)',
-                borderRadius: '10px',
-                padding: '18px 20px',
-                marginBottom: '24px'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '14px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
-                  <input
-                    type="checkbox"
-                    id="fitness-indemnity-check"
-                    required
-                    checked={formData.acceptedFitness}
-                    onChange={(e) => setFormData({ ...formData, acceptedFitness: e.target.checked })}
-                    style={{ marginTop: '3px', cursor: 'pointer', width: '18px', height: '18px' }}
-                  />
-                  <label htmlFor="fitness-indemnity-check" style={{ fontSize: '0.83rem', color: 'var(--police-navy-950)', lineHeight: 1.55, cursor: 'pointer' }}>
-                    <strong>शारीरिक स्वास्थ्य एवं कानूनी क्षतिपूर्ति घोषणा (Athlete Medical Indemnity) *:</strong> मैं प्रमाणित करता/करती हूँ कि मैं शारीरिक रूप से पूर्णतः स्वस्थ हूँ और इस मैराथन में भाग लेने हेतु चिकित्सकीय रूप से सक्षम हूँ। दौड़ के दौरान स्वास्थ्य कारणों से होने वाली किसी भी अप्रिय स्थिति के लिए मैं स्वयं उत्तरदायी रहूँगा/रहूँगी। मैं समझता/समझती हूँ कि निर्धारित कट-ऑफ समय के बाद रूट पर सामान्य यातायात बहाल कर दिया जाएगा।
-                  </label>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <input
-                    type="checkbox"
-                    id="pledge-check"
-                    required
-                    checked={formData.acceptedPledge}
-                    onChange={(e) => setFormData({ ...formData, acceptedPledge: e.target.checked })}
-                    style={{ marginTop: '3px', cursor: 'pointer', width: '18px', height: '18px' }}
-                  />
-                  <label htmlFor="pledge-check" style={{ fontSize: '0.83rem', color: '#7c2d12', lineHeight: 1.55, cursor: 'pointer' }}>
-                    <strong>महिला सुरक्षा व सम्मान संकल्प (Run for Her Pledge) *:</strong> मैं राजस्थान पुलिस के राज्यव्यापी 'Run for Her' अभियान से जुड़कर यह दृढ़ संकल्प लेता/लेती हूँ कि मैं समाज में प्रत्येक महिला, बेटी एवं बहन के सम्मान, गरिमा तथा भयमुक्त परिवेश के निर्माण में सदैव सक्रिय योगदान दूंगा/दूंगी।
-                  </label>
-                </div>
-              </div>
-
                 {/* Submit CTA Bar */}
                 <div style={{ textAlign: 'center', marginTop: '24px' }}>
                   <button
@@ -3288,9 +2990,6 @@ export function RegistrationPage({
                       <span>पंजीकरण करें (Register Now) &rarr;</span>
                     )}
                   </button>
-                <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '10px' }}>
-                  पंजीकरण उपरांत आधिकारिक डिजिटल ई-पास व क्यूआर कोड तुरंत जारी किया जाएगा।
-                </div>
               </div>
 
             </form>

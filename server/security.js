@@ -27,8 +27,8 @@ export const registrationSchema = z.object({
   categoryId: z.enum(["21k", "10k", "5k", "3k", "2k", "inclusive", "adapted"]),
   districtId: z.string().min(2).max(50),
   tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL", "N/A"]).default("N/A"),
-  idType: z.enum(["Aadhaar", "PAN", "Voter ID"]).default("Aadhaar"),
-  idNumber: z.string().min(5, "पहचान पत्र संख्या आवश्यक है").max(30).trim(),
+  idType: z.string().optional().default("Aadhaar"),
+  idNumber: z.string().optional().default("NOT_REQUIRED"),
   idLast4: z.string().optional(),
   orderId: z.string().optional().default(""),
   transactionId: z.string().optional().default(""),
@@ -58,7 +58,7 @@ export function maskMobile(mobile) {
 }
 
 export function maskIdNumber(idType, idNumber) {
-  if (!idNumber || typeof idNumber !== "string") return "XXXX-XXXX";
+  if (!idNumber || typeof idNumber !== "string" || idNumber === "NOT_REQUIRED") return "N/A";
   const clean = idNumber.replace(/\s+/g, "").toUpperCase();
   if (idType === "Aadhaar") {
     const digits = clean.replace(/\D/g, "");
@@ -106,7 +106,7 @@ export function maskName(fullName) {
  * Ensures duplicate check without storing raw Aadhaar in plaintext.
  */
 export function hashIdNumber(idType, idNumber) {
-  if (!idNumber || typeof idNumber !== "string") return "";
+  if (!idNumber || typeof idNumber !== "string" || idNumber === "NOT_REQUIRED") return "";
   const clean = idNumber.replace(/\s+/g, "").toUpperCase();
   return crypto.createHmac("sha256", APP_SECRET).update(`${idType}:${clean}`).digest("hex");
 }

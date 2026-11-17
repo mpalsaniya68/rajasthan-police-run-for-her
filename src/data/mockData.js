@@ -103,17 +103,16 @@ export const isJaipurDistrict = (districtId, districtName = '') => {
 
 export const RAJASTHAN_POLICE_DISTRICTS = [
   // 1. State Capital / Flagship Host
-  { id: "JPR-COMM", name: "Jaipur Police Commissionerate (Flagship Host)", zone: "Jaipur", flagship: true, nodalOfficer: "Addl. CP (HQ), Jaipur", flagOffVenue: "Albert Hall Museum, Ram Niwas Garden" },
+  { id: "JPR-COMM", name: "Jaipur", zone: "Jaipur", flagship: true, nodalOfficer: "Addl. CP (HQ), Jaipur", flagOffVenue: "Albert Hall Museum, Ram Niwas Garden" },
   
-  // 2. Jodhpur Commissionerate
-  { id: "JDH-COMM", name: "Jodhpur Police Commissionerate", zone: "Jodhpur", nodalOfficer: "DCP (HQ), Jodhpur", flagOffVenue: "Umaid Stadium, Jodhpur" },
+  // 2. Jodhpur
+  { id: "JDH-COMM", name: "Jodhpur", zone: "Jodhpur", nodalOfficer: "DCP (HQ), Jodhpur", flagOffVenue: "Umaid Stadium, Jodhpur" },
   
-  // 3. Kota Units
-  { id: "KTA-CITY", name: "Kota City", zone: "Kota", nodalOfficer: "SP Kota City", flagOffVenue: "Kishore Sagar Talab Promenade, Kota" },
-  { id: "KTA-RURAL", name: "Kota Rural", zone: "Kota", nodalOfficer: "SP Kota Rural", flagOffVenue: "Police Lines Ground, Kota" },
+  // 3. Kota
+  { id: "KTA-CITY", name: "Kota", zone: "Kota", nodalOfficer: "SP Kota", flagOffVenue: "Kishore Sagar Talab Promenade, Kota" },
   
   // 4. Industrial Police District
-  { id: "BHW", name: "Bhiwadi (Police District)", zone: "Jaipur", nodalOfficer: "SP Bhiwadi", flagOffVenue: "Police Lines Ground, Bhiwadi" },
+  { id: "BHW", name: "Bhiwadi", zone: "Jaipur", nodalOfficer: "SP Bhiwadi", flagOffVenue: "Police Lines Ground, Bhiwadi" },
   
   // 5. Ajmer Range
   { id: "AJM", name: "Ajmer", zone: "Ajmer", nodalOfficer: "SP Ajmer", flagOffVenue: "Ana Sagar Chaupati, Ajmer" },
