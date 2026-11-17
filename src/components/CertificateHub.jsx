@@ -541,12 +541,10 @@ export function CertificateHub({ registrations = [] }) {
   return (
     <section id="certificates" className="section-padding" style={{ position: 'relative', background: '#f8fafc', borderTop: '1px solid var(--border-subtle)' }}>
       <div className="container">
-        <div className="section-header no-print">
-          <span className="badge-gold">Official Finisher Honors</span>
-          <h2>डिजिटल फिनिशर सर्टिफिकेट एवं ऑटो-डिस्पैच हब</h2>
-          <p>
-            रेस पूरी होते ही तय दूरी के आधार पर राजस्थान पुलिस मुख्यालय द्वारा अधिकृत डिजिटल सर्टिफिकेट स्वतः जनरेट होकर धावक के मोबाइल (SMS/WhatsApp) व ईमेल पर प्रेषित हो जाता है।
-          </p>
+        <div className="section-header no-print" style={{ marginBottom: '28px', textAlign: 'center' }}>
+          <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', color: 'var(--police-navy-950)', margin: '0 0 8px 0', fontWeight: 800 }}>
+            Marathon Certificate (मैराथन ई-प्रमाण पत्र)
+          </h2>
         </div>
 
         {/* Runner Selector & Quick Search Bar */}

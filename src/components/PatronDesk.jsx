@@ -1,5 +1,4 @@
 import React from 'react';
-import { PoliceEmblem } from './Emblems';
 
 export function PatronDesk() {
   return (
@@ -15,29 +14,6 @@ export function PatronDesk() {
           overflow: 'hidden',
           marginBottom: '0'
         }}>
-          {/* Official Top Bar */}
-          <div style={{
-            background: 'var(--police-navy-950)',
-            color: '#ffffff',
-            padding: '12px 24px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '10px',
-            borderBottom: '3px solid var(--police-gold-500)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <PoliceEmblem size={28} />
-              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#fde68a', letterSpacing: '0.04em' }}>
-                राजस्थान पुलिस मुख्यालय, जयपुर | HEADQUARTERS DESK
-              </span>
-            </div>
-            <div style={{ fontSize: '0.74rem', color: '#fef08a', fontWeight: 700 }}>
-              ★ सेवार्थ कटिबद्धता ★
-            </div>
-          </div>
-
           <div style={{ padding: 'clamp(24px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '36px', alignItems: 'center' }}>
             {/* DGP Portrait & Designation */}
             <div style={{ textAlign: 'center', maxWidth: '340px', margin: '0 auto' }}>
@@ -120,18 +96,6 @@ export function PatronDesk() {
                   <div style={{ fontSize: '0.78rem', color: 'var(--police-gold-700)', fontWeight: 700 }}>
                     महानिदेशक पुलिस, राजस्थान
                   </div>
-                </div>
-
-                <div style={{
-                  background: 'var(--crimson-50)',
-                  border: '1px solid var(--crimson-200)',
-                  padding: '8px 14px',
-                  borderRadius: '6px',
-                  fontSize: '0.78rem',
-                  color: 'var(--crimson-700)',
-                  fontWeight: 800
-                }}>
-                  ★ मुख्य अतिथि (शाम 06:00 बजे): माननीय मुख्यमंत्री, राजस्थान
                 </div>
               </div>
             </div>
