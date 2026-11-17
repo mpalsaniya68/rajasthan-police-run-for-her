@@ -165,11 +165,8 @@ export function Navbar({
                 }}>
                   RUN FOR HER
                 </span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--police-gold-700)', fontWeight: 800 }}>
-                  ★ सेवार्थ कटिबद्धता ★
-                </span>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }} className="d-tablet-inline">
-                  • Every Step for Her Safety
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }} className="d-tablet-inline">
+                  • Every Step for Women Safety
                 </span>
               </div>
             </div>

@@ -2748,7 +2748,7 @@ export function RegistrationPage({
                   {/* Row 4, Col 2: राजस्थान पुलिस सेवारत कर्मी */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      राजस्थान पुलिस कर्मी? <span style={{ color: '#ef4444' }}>*</span>:
+                      क्या आप राजस्थान पुलिस में कार्यरत हैं? <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <label style={{

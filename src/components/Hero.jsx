@@ -29,73 +29,16 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
     return () => clearInterval(timer);
   }, []);
 
-  const notices = [
-    { text: "राजस्थान पुलिस मैराथन 'RUN FOR HER' — रेस दिवस: 3 जनवरी 2027", tag: "इवेंट तिथि" },
-    { text: "अल्बर्ट हॉल, जयपुर एवं प्रदेश के समस्त पुलिस जिलों में एक साथ भव्य आयोजन", tag: "वेन्यू" },
-    { text: "प्रातः 06:00 बजे फ्लैग-ऑफ ऐतिहासिक अल्बर्ट हॉल, जयपुर से", tag: "फ्लैग-ऑफ" },
-    { text: "21K, 10K, 5K एवं 2K श्रेणियों हेतु आधिकारिक ऑनलाइन पंजीकरण जारी है", tag: "पंजीकरण" },
-    { text: "आधिकारिक डिजिटल ई-पास व क्यूआर कोड तुरंत डाउनलोड करें", tag: "ई-पास पोर्टल" },
-    { text: "महिला सुरक्षा हेल्पलाइन 1090 (गरिमा) एवं 112 चौबीसों घंटे आपकी सेवा में तत्पर", tag: "सुरक्षा" }
-  ];
-
   return (
     <section id="hero" className="hero-section">
-      {/* 0. Background Photo Layer (Crisply framed and responsive on mobile & desktop) */}
+      {/* 0. Background Photo Layer */}
       <div className="hero-bg-photo" />
 
-      {/* 1. Neutral Subtle Dark Contrast Tint (Zero Color Cast - Keeps photo 100% natural) */}
+      {/* 1. Neutral Subtle Dark Contrast Tint */}
       <div className="hero-base-tint" />
 
       {/* Hero Content Wrapper */}
       <div style={{ position: 'relative', zIndex: 2 }}>
-        {/* Official State Notice Ticker (Full Width Edge-to-Edge with Enhanced Font) */}
-        <div style={{ width: '100%', marginBottom: '22px' }}>
-          <div className="hero-ticker-container" style={{
-            width: '100%',
-            background: 'rgba(5, 17, 38, 0.96)',
-            backdropFilter: 'blur(12px)',
-            borderTop: '1.5px solid rgba(212, 175, 55, 0.45)',
-            borderBottom: '1.5px solid rgba(212, 175, 55, 0.45)',
-            borderLeft: 'none',
-            borderRight: 'none',
-            borderRadius: '0',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
-            display: 'flex',
-            alignItems: 'center',
-            overflow: 'hidden',
-            position: 'relative',
-            height: '48px'
-          }}>
-
-
-            {/* Marquee Track */}
-            <div className="notice-ticker-track-container" style={{
-              maskImage: 'linear-gradient(90deg, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%)',
-              WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%)'
-            }}>
-              <div className="notice-ticker-track">
-                {notices.map((n, i) => (
-                  <div key={`n-${i}`} className="notice-item" style={{ color: '#ffffff', fontSize: '0.96rem' }}>
-                    <span style={{
-                      background: 'rgba(212, 175, 55, 0.25)',
-                      color: '#fef08a',
-                      padding: '3px 10px',
-                      borderRadius: '4px',
-                      fontSize: '0.84rem',
-                      fontWeight: 800,
-                      border: '1px solid rgba(212, 175, 55, 0.5)'
-                    }}>
-                      {n.tag}
-                    </span>
-                    <span style={{ color: '#ffffff', fontWeight: 600, fontSize: '0.96rem' }}>{n.text}</span>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }}></span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div className="container">
           {/* Hero Headings - Majestic, Authoritative & Grounded */}
           <div style={{ textAlign: 'center', maxWidth: '960px', margin: '0 auto' }}>
@@ -256,12 +199,12 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
           overflow: hidden;
           background-image: url('/images/marathon_hero_jaipur.jpg');
           background-size: cover;
-          background-position: center 25%;
+          background-position: center center;
           background-repeat: no-repeat;
           color: #ffffff;
           border-bottom: 1px solid var(--border-subtle);
-          padding-top: 20px;
-          padding-bottom: 56px;
+          padding-top: 48px;
+          padding-bottom: 64px;
         }
 
         .hero-bg-photo {
@@ -269,7 +212,7 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
           inset: 0;
           background-image: url('/images/marathon_hero_jaipur.jpg');
           background-size: cover;
-          background-position: center 25%;
+          background-position: center center;
           background-repeat: no-repeat;
           z-index: 0;
           pointer-events: none;
@@ -278,7 +221,7 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
         .hero-base-tint {
           position: absolute;
           inset: 0;
-          background: rgba(0, 0, 0, 0.45);
+          background: rgba(0, 0, 0, 0.35);
           z-index: 1;
           pointer-events: none;
         }
