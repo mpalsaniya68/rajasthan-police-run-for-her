@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Users, Award, Bell, ArrowRight } from 'lucide-react';
+import { Timer, Bell, ArrowRight } from 'lucide-react';
 
 export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+" }) {
   // Live Countdown logic strictly targeted to 3 January 2027, 06:00:00 AM IST
@@ -205,111 +205,43 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
               </button>
             </div>
 
-            {/* Official Countdown Card (Glassmorphic Dignified White Surface) */}
+            {/* Transparent Glassmorphic Countdown Card */}
             <div className="hero-countdown-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '14px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--police-navy-900)', fontWeight: 800, fontSize: '0.9rem' }}>
-                  <Calendar size={18} color="var(--police-navy-900)" />
-                  <span>RACE DAY COUNTDOWN • 03 JAN 2027</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <div style={{ fontSize: '0.86rem', color: 'var(--crimson-600)', fontWeight: 800 }}>
-                    3 जनवरी 2027, प्रातः 06:00 बजे IST
-                  </div>
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#fde68a', fontWeight: 800, fontSize: '0.94rem', marginBottom: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.15)', paddingBottom: '10px' }}>
+                <Timer size={18} color="#fde68a" />
+                <span style={{ letterSpacing: '0.04em' }}>इवेंट काउंटडाउन</span>
               </div>
 
-              <div className="hero-countdown-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', textAlign: 'center' }}>
+              <div className="hero-countdown-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', textAlign: 'center' }}>
                 {[
-                  { label: 'दिन (DAYS)', val: String(timeLeft.days).padStart(2, '0') },
-                  { label: 'घंटे (HOURS)', val: String(timeLeft.hours).padStart(2, '0') },
-                  { label: 'मिनट (MINS)', val: String(timeLeft.minutes).padStart(2, '0') },
-                  { label: 'सेकंड (SECS)', val: String(timeLeft.seconds).padStart(2, '0') }
+                  { label: 'दिन', val: String(timeLeft.days).padStart(2, '0') },
+                  { label: 'घंटे', val: String(timeLeft.hours).padStart(2, '0') },
+                  { label: 'मिनट', val: String(timeLeft.minutes).padStart(2, '0') },
+                  { label: 'सेकंड', val: String(timeLeft.seconds).padStart(2, '0') }
                 ].map((item, idx) => (
                   <div key={idx} className="hero-countdown-box" style={{
-                    background: '#0a1c3d',
-                    borderRadius: '10px',
-                    padding: '12px 6px',
-                    border: '1.5px solid #d4af37',
-                    boxShadow: '0 4px 14px rgba(10, 28, 61, 0.25)'
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    padding: '14px 8px',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)'
                   }}>
                     <div className="hero-countdown-val" style={{
-                      fontSize: 'clamp(1.7rem, 3.8vw, 2.6rem)',
+                      fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
                       fontWeight: 900,
                       color: '#fde68a',
                       lineHeight: 1,
-                      textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                      textShadow: '0 2px 8px rgba(0,0,0,0.4)'
                     }}>
                       {item.val}
                     </div>
-                    <div className="hero-countdown-lbl" style={{ fontSize: '0.72rem', color: '#f1f5f9', fontWeight: 800, letterSpacing: '0.04em', marginTop: '6px' }}>
+                    <div className="hero-countdown-lbl" style={{ fontSize: '0.78rem', color: '#f8fafc', fontWeight: 800, letterSpacing: '0.04em', marginTop: '6px' }}>
                       {item.label}
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            {/* Key Administrative Facts Strip */}
-            <div className="hero-facts-grid">
-              <div className="hero-fact-card" style={{
-                background: '#0a1c3d',
-                border: '1.5px solid rgba(212, 175, 55, 0.4)',
-                boxShadow: 'var(--shadow-sm)',
-                borderRadius: '8px',
-                padding: '14px 18px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                textAlign: 'left'
-              }}>
-                <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Users size={20} color="#fef08a" />
-                </div>
-                <div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#fde68a' }}>{typeof totalRegistered === 'number' ? `${totalRegistered.toLocaleString()}+` : totalRegistered}</div>
-                  <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>पंजीकृत नागरिक व पुलिस धावक</div>
-                </div>
-              </div>
-
-              <div className="hero-fact-card" style={{
-                background: '#0a1c3d',
-                border: '1.5px solid rgba(212, 175, 55, 0.4)',
-                boxShadow: 'var(--shadow-sm)',
-                borderRadius: '8px',
-                padding: '14px 18px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                textAlign: 'left'
-              }}>
-                <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <MapPin size={20} color="#fca5a5" />
-                </div>
-                <div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff' }}>समस्त पुलिस जिले</div>
-                  <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>एक साथ 5K/10K का राज्यव्यापी आयोजन</div>
-                </div>
-              </div>
-
-              <div className="hero-fact-card" style={{
-                background: '#0a1c3d',
-                border: '1.5px solid rgba(212, 175, 55, 0.4)',
-                boxShadow: 'var(--shadow-sm)',
-                borderRadius: '8px',
-                padding: '14px 18px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                textAlign: 'left'
-              }}>
-                <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Award size={20} color="#86efac" />
-                </div>
-                <div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#86efac' }}>माननीय मुख्यमंत्री</div>
-                  <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>शाम 06:00 बजे पदक वितरण समारोह</div>
-                </div>
               </div>
             </div>
 
@@ -363,20 +295,16 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
         }
 
         .hero-countdown-card {
-          max-width: 720px;
-          margin: 0 auto 34px auto;
-          padding: 22px 28px;
-          border-radius: 12px;
-          background: #ffffff;
-          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-          border: 2px solid rgba(212, 175, 55, 0.5);
-          color: var(--police-navy-950);
-        }
-
-        .hero-facts-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-          gap: 14px;
+          max-width: 680px;
+          margin: 0 auto;
+          padding: 20px 24px;
+          border-radius: 16px;
+          background: rgba(10, 28, 61, 0.4);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          color: #ffffff;
         }
 
         /* Mobile Specific Responsive Optimization (< 768px) */
