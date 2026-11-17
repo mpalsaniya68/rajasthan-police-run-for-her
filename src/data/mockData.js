@@ -3,7 +3,7 @@
 export const RACE_CATEGORIES = [
   {
     id: "21k",
-    name: "21 KM Half Marathon",
+    name: "21 KM हाफ मैराथन",
     badge: "Competitive Timed",
     distance: "21.097 KM",
     minAge: 18,
@@ -29,7 +29,7 @@ export const RACE_CATEGORIES = [
   },
   {
     id: "10k",
-    name: "10 KM Speed Run",
+    name: "10 KM स्पीड रन",
     badge: "Competitive Timed",
     distance: "10.0 KM",
     minAge: 15,
@@ -55,7 +55,7 @@ export const RACE_CATEGORIES = [
   },
   {
     id: "5k",
-    name: "5 KM Community Run",
+    name: "5 KM कम्युनिटी रन",
     badge: "Statewide Mass Run",
     distance: "5.0 KM",
     minAge: 10,
@@ -75,7 +75,7 @@ export const RACE_CATEGORIES = [
   },
   {
     id: "2k",
-    name: "2 KM Family & Youth Walk/Run",
+    name: "2 KM फैमिली वॉक",
     badge: "Awareness & Family",
     distance: "2.0 KM",
     minAge: 6,

@@ -220,7 +220,7 @@ export function Navbar({
           <nav aria-label="मुख्य नेविगेशन मेन्यू (Main Navigation)" style={{ display: 'none', alignItems: 'center', gap: '4px' }} className="desktop-nav-items">
             {[
               { id: 'home', label: 'मुख्य पृष्ठ' },
-              { id: 'register', label: 'रजिस्ट्रेशन (e-Pass)', isGold: true },
+              { id: 'register', label: 'पंजीकरण (ई-पास)', isGold: true },
               { id: 'find-pass', label: '🔍 ई-पास खोजें', isFindPass: true },
               { id: 'route-schedule', label: 'रूट व एक्सपो' },
               { id: 'certificates', label: 'ई-प्रमाण पत्र' },
@@ -361,12 +361,12 @@ export function Navbar({
           overflowY: 'auto'
         }}>
           {[
-            { id: 'home', label: 'मुख्य पृष्ठ (Home)' },
-            { id: 'register', label: 'ऑनलाइन रजिस्ट्रेशन (e-Pass Form)', color: 'var(--police-gold-700)' },
-            { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी (Route & Schedule)' },
+            { id: 'home', label: 'मुख्य पृष्ठ' },
+            { id: 'register', label: 'ऑनलाइन पंजीकरण (ई-पास)', color: 'var(--police-gold-700)' },
+            { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी' },
 
-            { id: 'certificates', label: 'फिनिशर सर्टिफिकेट व सत्यापन (Certificates)', color: 'var(--police-gold-700)' },
-            { id: 'pledge-safety', label: 'महिला सुरक्षा संकल्प (Safety Protocol)', color: 'var(--crimson-600)' }
+            { id: 'certificates', label: 'फिनिशर सर्टिफिकेट व सत्यापन', color: 'var(--police-gold-700)' },
+            { id: 'pledge-safety', label: 'महिला सुरक्षा संकल्प', color: 'var(--crimson-600)' }
           ].map(tab => {
             const isActive = activePage === tab.id;
             return (

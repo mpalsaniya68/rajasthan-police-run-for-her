@@ -169,7 +169,7 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
                 onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 title="ऑनलाइन पंजीकरण पोर्टल"
               >
-                <span>रजिस्ट्रेशन (Register Now)</span>
+                <span>पंजीकरण करें</span>
                 <ArrowRight size={18} />
               </button>
 

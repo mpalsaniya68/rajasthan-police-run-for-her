@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trophy, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
+import { Trophy, Sparkles } from 'lucide-react';
 
 export function PrizePodiumSection({ onOpenRegister }) {
   return (
@@ -297,47 +297,6 @@ export function PrizePodiumSection({ onOpenRegister }) {
             </div>
           </div>
 
-        </div>
-
-        {/* Bottom Banner Note & CTA */}
-        <div style={{
-          background: '#0f172a',
-          borderRadius: '12px',
-          padding: '16px 24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '14px',
-          color: '#ffffff'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <ShieldCheck size={24} color="#fde047" />
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#fde047' }}>
-                ★ आधिकारिक नियम: नकद पुरस्कार केवल जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल) ओपन पोडियम हेतु मान्य
-              </div>
-              <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-                पुरस्कार राशि महिला व पुरुष दोनों वर्गों के संयुक्त ओपन परिणाम पर पोडियम पर वितरित की जाएगी।
-              </div>
-            </div>
-          </div>
-          <button
-            onClick={onOpenRegister}
-            className="btn-gold"
-            style={{
-              padding: '10px 22px',
-              fontSize: '0.92rem',
-              borderRadius: '50px',
-              fontWeight: 900,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <span>जयपुर फ्लैगशिप रन में रजिस्टर करें</span>
-            <ArrowRight size={16} />
-          </button>
         </div>
       </div>
     </section>

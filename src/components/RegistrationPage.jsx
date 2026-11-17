@@ -82,7 +82,7 @@ export function RegistrationPage({
     previousParticipationDetails: "",
     tshirtSize: "M",
     emergencyContactName: "",
-    emergencyRelation: "अभिभावक (Guardian)",
+    emergencyRelation: "अभिभावक",
     emergencyContactPhone: "",
     acceptedPledge: true,
     acceptedFitness: true
@@ -2073,7 +2073,7 @@ export function RegistrationPage({
                 boxShadow: '0 4px 14px rgba(10, 28, 61, 0.06)'
               }}>
                 <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
-                  अपना 10-अंकीय मोबाइल नंबर दर्ज करें (Enter Mobile Number) <span style={{ color: '#ef4444' }}>*</span>:
+                  अपना 10-अंकीय मोबाइल नंबर दर्ज करें <span style={{ color: '#ef4444' }}>*</span>:
                 </label>
 
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'stretch', flexWrap: 'wrap' }}>
@@ -2212,7 +2212,7 @@ export function RegistrationPage({
                             cursor: 'pointer'
                           }}
                         >
-                          ऑटो-भरें (Auto-Fill)
+                          ऑटो-भरें
                         </button>
                       </div>
                     ) : (
@@ -2394,14 +2394,14 @@ export function RegistrationPage({
                     fontWeight: 900
                   }}>1</span>
                   <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                    दौड़ श्रेणी एवं आयोजन स्थल चुनें (Race Category & Venue)
+                    दौड़ श्रेणी एवं आयोजन स्थल चुनें
                   </h3>
                 </div>
 
                 {/* Venue Toggle */}
                 <div style={{ marginBottom: '18px' }}>
                   <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
-                    आप कहाँ दौड़ना चाहते हैं? (Select Participation Location):
+                    आप कहाँ दौड़ना चाहते हैं?:
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
                     <div
@@ -2427,7 +2427,7 @@ export function RegistrationPage({
                       />
                       <div>
                         <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          जयपुर (Jaipur)
+                          जयपुर
                         </div>
                       </div>
                     </div>
@@ -2455,7 +2455,7 @@ export function RegistrationPage({
                       />
                       <div>
                         <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          अन्य जिले (Other Districts)
+                          अन्य जिले
                         </div>
                       </div>
                     </div>
@@ -2464,7 +2464,7 @@ export function RegistrationPage({
                   {venueType === "district" && (
                     <div style={{ marginTop: '12px', background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
                       <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                        अपना जिला चुनें (Select District):
+                        अपना जिला चुनें:
                       </label>
                       <select
                         value={selectedDistrict}
@@ -2485,7 +2485,7 @@ export function RegistrationPage({
                 {/* Race Category Cards Grid */}
                 <div>
                   <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
-                    दौड़ श्रेणी चुनें (Select Race Distance):
+                    दौड़ श्रेणी चुनें:
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
                     {availableCategories.map(cat => {
@@ -2542,7 +2542,7 @@ export function RegistrationPage({
                 </div>
               </div>
 
-              {/* SECTION 2: व्यक्तिगत विवरण (PERSONAL DETAILS) */}
+              {/* SECTION 2: धावक का व्यक्तिगत विवरण */}
               <div style={{ marginBottom: '32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', borderBottom: '2px solid var(--police-navy-50)', paddingBottom: '8px' }}>
                   <span style={{
@@ -2558,43 +2558,46 @@ export function RegistrationPage({
                     fontWeight: 900
                   }}>2</span>
                   <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                    धावक का व्यक्तिगत विवरण (Runner Personal Information)
+                    धावक का व्यक्तिगत विवरण
                   </h3>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                  {/* Row 1, Col 1: पूरा नाम */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      पूरा नाम (Full Name) <span style={{ color: '#ef4444' }}>*</span>:
+                      पूरा नाम <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="उदा. सुनीता चौधरी (Sunita Choudhary)"
+                      placeholder="उदा. सुनीता चौधरी"
                       value={formData.fullName}
                       onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     />
                   </div>
 
+                  {/* Row 1, Col 2: लिंग */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      लिंग (Gender) <span style={{ color: '#ef4444' }}>*</span>:
+                      लिंग <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <select
                       value={formData.gender}
                       onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     >
-                      <option value="Female">महिला (Female)</option>
-                      <option value="Male">पुरुष (Male)</option>
-                      <option value="Other">अन्य (Other)</option>
+                      <option value="Female">महिला</option>
+                      <option value="Male">पुरुष</option>
+                      <option value="Other">अन्य</option>
                     </select>
                   </div>
 
+                  {/* Row 1, Col 3: मोबाइल नंबर */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      मोबाइल नंबर (Mobile Number) <span style={{ color: '#ef4444' }}>*</span>:
+                      सत्यापित मोबाइल नंबर <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <input
                       type="tel"
@@ -2605,14 +2608,16 @@ export function RegistrationPage({
                         padding: '10px 12px',
                         borderRadius: '8px',
                         border: '1px solid var(--border-medium)',
-                        fontSize: '0.92rem'
+                        fontSize: '0.92rem',
+                        background: '#f8fafc'
                       }}
                     />
                   </div>
 
+                  {/* Row 2, Col 1: जन्म तिथि */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      जन्म तिथि (Date of Birth) <span style={{ color: '#ef4444' }}>*</span>
+                      जन्म तिथि <span style={{ color: '#ef4444' }}>*</span>
                       {formData.age ? (
                         <span style={{ marginLeft: '8px', color: '#475569', fontWeight: 600, fontSize: '0.82rem' }}>
                           (आयु: {formData.age} वर्ष)
@@ -2630,9 +2635,10 @@ export function RegistrationPage({
                     />
                   </div>
 
+                  {/* Row 2, Col 2: ईमेल पता */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      ईमेल पता (Email Address) <span style={{ color: '#ef4444' }}>*</span>:
+                      ईमेल पता <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <input
                       type="email"
@@ -2644,316 +2650,89 @@ export function RegistrationPage({
                     />
                   </div>
 
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
-                      क्या आप राजस्थान पुलिस में सेवारत कर्मी हैं? (Are you a serving personnel in Rajasthan Police?) <span style={{ color: '#ef4444' }}>*</span>:
-                    </label>
-                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: isPolicePersonnel ? '0' : '10px' }}>
-                      <label style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '10px 20px',
-                        borderRadius: '8px',
-                        border: isPolicePersonnel ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
-                        background: isPolicePersonnel ? 'var(--police-navy-50)' : '#ffffff',
-                        cursor: 'pointer',
-                        fontWeight: 700,
-                        fontSize: '0.92rem',
-                        color: 'var(--police-navy-950)'
-                      }}>
-                        <input
-                          type="radio"
-                          name="isPolicePersonnel"
-                          checked={isPolicePersonnel}
-                          onChange={() => {
-                            setIsPolicePersonnel(true);
-                            setRunnerType("पुलिस कर्मी / अधिकारी (Police Personnel)");
-                          }}
-                          style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
-                        />
-                        <span>हाँ (Yes)</span>
-                      </label>
-
-                      <label style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '10px 20px',
-                        borderRadius: '8px',
-                        border: !isPolicePersonnel ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
-                        background: !isPolicePersonnel ? 'var(--police-navy-50)' : '#ffffff',
-                        cursor: 'pointer',
-                        fontWeight: 700,
-                        fontSize: '0.92rem',
-                        color: 'var(--police-navy-950)'
-                      }}>
-                        <input
-                          type="radio"
-                          name="isPolicePersonnel"
-                          checked={!isPolicePersonnel}
-                          onChange={() => {
-                            setIsPolicePersonnel(false);
-                            setRunnerType(nonPoliceCategory || "अन्य (Other)");
-                          }}
-                          style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
-                        />
-                        <span>नहीं (No)</span>
-                      </label>
-                    </div>
-
-                    {!isPolicePersonnel && (
-                      <div style={{ marginTop: '12px', maxWidth: '400px' }}>
-                        <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                          श्रेणी चुनें (Select Category):
-                        </label>
-                        <select
-                          value={nonPoliceCategory}
-                          onChange={(e) => {
-                            setNonPoliceCategory(e.target.value);
-                            setRunnerType(e.target.value);
-                          }}
-                          style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
-                        >
-                          <option value="सेवानिवृत्त पुलिस कर्मी (Retired Police Personnel)">सेवानिवृत्त पुलिस कर्मी (Retired Police Personnel)</option>
-                          <option value="कॉलेज / यूनिवर्सिटी / स्कूल (College / University / School)">कॉलेज / यूनिवर्सिटी / स्कूल (College / University / School)</option>
-                          <option value="NCC / NSS / स्काउट्स (NCC / NSS / Scouts)">NCC / NSS / स्काउट्स (NCC / NSS / Scouts)</option>
-                          <option value="अन्य (Other)">अन्य (Other)</option>
-                        </select>
-                      </div>
-                    )}
-                  </div>
-
-                  {venueType === "jaipur" && (
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                        टी-शर्ट साइज़ (Official Dry-Fit Tee) <span style={{ color: '#ef4444' }}>*</span>:
-                      </label>
-                      <select
-                        value={formData.tshirtSize}
-                        onChange={(e) => setFormData({ ...formData, tshirtSize: e.target.value })}
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
-                      >
-                        <option value="XS">XS (Chest 34")</option>
-                        <option value="S">S (Chest 36")</option>
-                        <option value="M">M (Chest 38")</option>
-                        <option value="L">L (Chest 40")</option>
-                        <option value="XL">XL (Chest 42")</option>
-                        <option value="XXL">XXL (Chest 44")</option>
-                      </select>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* SECTION 3: पूर्व मैराथन सहभागिता विवरण (PREVIOUS RACE PARTICIPATION) */}
-              <div style={{ marginBottom: '32px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', borderBottom: '2px solid var(--police-navy-50)', paddingBottom: '8px' }}>
-                  <span style={{
-                    background: 'var(--police-navy-900)',
-                    color: '#ffffff',
-                    width: '26px',
-                    height: '26px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.82rem',
-                    fontWeight: 900
-                  }}>3</span>
-                  <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                    पूर्व मैराथन / दौड़ सहभागिता (Previous Running Experience)
-                  </h3>
-                </div>
-
-                <div style={{
-                  background: '#ffffff',
-                  border: '1px solid var(--border-medium)',
-                  borderRadius: '10px',
-                  padding: '18px 20px'
-                }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--police-navy-950)', marginBottom: '8px' }}>
-                    क्या आपने पहले कभी किसी मैराथन या आधिकारिक दौड़ में भाग लिया है? (Have you participated in any marathon/race before?)
-                  </label>
-
-                  <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginTop: '10px' }}>
-                    <label style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '10px 22px',
-                      borderRadius: '8px',
-                      border: !formData.hasPreviousParticipation ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
-                      background: !formData.hasPreviousParticipation ? 'var(--police-navy-50)' : '#ffffff',
-                      cursor: 'pointer',
-                      fontWeight: 700,
-                      fontSize: '0.92rem',
-                      color: 'var(--police-navy-950)',
-                      transition: 'all 0.15s ease'
-                    }}>
-                      <input
-                        type="radio"
-                        name="hasPreviousParticipation"
-                        checked={!formData.hasPreviousParticipation}
-                        onChange={() => setFormData(prev => ({ ...prev, hasPreviousParticipation: false, previousParticipationDetails: "" }))}
-                        style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
-                      />
-                      <span>नहीं (No)</span>
-                    </label>
-
-                    <label style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '10px 22px',
-                      borderRadius: '8px',
-                      border: formData.hasPreviousParticipation ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
-                      background: formData.hasPreviousParticipation ? 'var(--police-navy-50)' : '#ffffff',
-                      cursor: 'pointer',
-                      fontWeight: 700,
-                      fontSize: '0.92rem',
-                      color: 'var(--police-navy-950)',
-                      transition: 'all 0.15s ease'
-                    }}>
-                      <input
-                        type="radio"
-                        name="hasPreviousParticipation"
-                        checked={formData.hasPreviousParticipation}
-                        onChange={() => setFormData(prev => ({ ...prev, hasPreviousParticipation: true }))}
-                        style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
-                      />
-                      <span>हाँ (Yes)</span>
-                    </label>
-                  </div>
-
-                  {formData.hasPreviousParticipation && (
-                    <div style={{
-                      marginTop: '16px',
-                      background: '#f8fafc',
-                      padding: '16px',
-                      borderRadius: '8px',
-                      border: '1.5px solid var(--police-navy-200)'
-                    }}>
-                      <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                        पूर्व दौड़ / मैराथन का विवरण (कहाँ, कब, दूरी एवं समय) <span style={{ color: '#ef4444' }}>*</span>:
-                      </label>
-                      <textarea
-                        rows={3}
-                        required={formData.hasPreviousParticipation}
-                        placeholder="उदा. जयपुर मैराथन 2025 (10KM - 52 मिनट), वेदांता दिल्ली हाफ मैराथन 2024 (21KM) आदि"
-                        value={formData.previousParticipationDetails}
-                        onChange={(e) => setFormData(prev => ({ ...prev, previousParticipationDetails: e.target.value }))}
-                        style={{
-                          width: '100%',
-                          padding: '10px 12px',
-                          borderRadius: '8px',
-                          border: '1px solid var(--border-medium)',
-                          fontSize: '0.92rem',
-                          resize: 'vertical',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                      <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                        कृपया पूर्व में भाग ली गई मैराथन का स्थान (कहाँ), वर्ष/माह (कब), श्रेणी एवं समय दर्ज करें।
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* SECTION 4: रक्त समूह एवं आपातकालीन संपर्क विवरण (BLOOD GROUP & EMERGENCY CONTACT) */}
-              <div style={{ marginBottom: '32px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', borderBottom: '2px solid var(--police-navy-50)', paddingBottom: '8px' }}>
-                  <span style={{
-                    background: 'var(--police-navy-900)',
-                    color: '#ffffff',
-                    width: '26px',
-                    height: '26px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.82rem',
-                    fontWeight: 900
-                  }}>4</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                      रक्त समूह एवं आपातकालीन विवरण (Blood Group & Emergency Contact)
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Blood Group Selection - Dropdown Menu */}
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
-                    रक्त समूह (Blood Group) <span style={{ color: '#ef4444' }}>*</span>:
-                  </label>
-                  <select
-                    value={formData.bloodGroup}
-                    onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value })}
-                    required
-                    style={{
-                      width: '100%',
-                      maxWidth: '360px',
-                      padding: '10px 14px',
-                      borderRadius: '8px',
-                      border: '1.5px solid var(--border-medium)',
-                      fontSize: '0.94rem',
-                      fontWeight: 700,
-                      color: 'var(--police-navy-900)',
-                      background: '#ffffff',
-                      outline: 'none',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <option value="">-- रक्त समूह चुनें (Select Blood Group) --</option>
-                    {bloodGroupOptions.map(bg => (
-                      <option key={bg} value={bg}>
-                        {bg}
-                      </option>
-                    ))}
-                  </select>
-                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '6px' }}>
-                    * यह जानकारी आपातकालीन स्थिति में 108 एम्बुलेंस और ऑन-ट्रैक मेडिकल टीम के लिए अनिवार्य है।
-                  </div>
-                </div>
-
-                {/* Emergency Kin Contact Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                  {/* Row 2, Col 3: टी-शर्ट साइज़ */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      आपातकालीन संपर्क व्यक्ति का नाम (Kin Name) <span style={{ color: '#ef4444' }}>*</span>:
+                      टी-शर्ट साइज़ <span style={{ color: '#ef4444' }}>*</span>:
+                    </label>
+                    <select
+                      value={formData.tshirtSize}
+                      onChange={(e) => setFormData({ ...formData, tshirtSize: e.target.value })}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
+                    >
+                      <option value="XS">XS (चेस्ट 34")</option>
+                      <option value="S">S (चेस्ट 36")</option>
+                      <option value="M">M (चेस्ट 38")</option>
+                      <option value="L">L (चेस्ट 40")</option>
+                      <option value="XL">XL (चेस्ट 42")</option>
+                      <option value="XXL">XXL (चेस्ट 44")</option>
+                    </select>
+                  </div>
+
+                  {/* Row 3, Col 1: रक्त समूह */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                      रक्त समूह <span style={{ color: '#ef4444' }}>*</span>:
+                    </label>
+                    <select
+                      value={formData.bloodGroup}
+                      onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value })}
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid var(--border-medium)',
+                        fontSize: '0.92rem',
+                        fontWeight: 700,
+                        color: 'var(--police-navy-900)',
+                        background: '#ffffff'
+                      }}
+                    >
+                      <option value="">-- रक्त समूह चुनें --</option>
+                      {bloodGroupOptions.map(bg => (
+                        <option key={bg} value={bg}>{bg}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Row 3, Col 2: आपातकालीन संपर्क व्यक्ति का नाम */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                      आपातकालीन संपर्क व्यक्ति का नाम <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="उदा. रमेश चौधरी (पिता)"
+                      placeholder="उदा. रमेश चौधरी"
                       value={formData.emergencyContactName}
                       onChange={(e) => setFormData({ ...formData, emergencyContactName: e.target.value })}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     />
                   </div>
 
+                  {/* Row 3, Col 3: संबंध */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      संबंध (Relationship):
+                      संबंध:
                     </label>
                     <select
                       value={formData.emergencyRelation}
                       onChange={(e) => setFormData({ ...formData, emergencyRelation: e.target.value })}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     >
-                      <option value="पिता (Father)">पिता (Father)</option>
-                      <option value="माता (Mother)">माता (Mother)</option>
-                      <option value="पति/पत्नी (Spouse)">पति / पत्नी (Spouse)</option>
-                      <option value="भाई/बहन (Sibling)">भाई / बहन (Sibling)</option>
-                      <option value="अभिभावक/मित्र (Guardian/Friend)">अभिभावक / मित्र (Guardian / Friend)</option>
+                      <option value="पिता">पिता</option>
+                      <option value="माता">माता</option>
+                      <option value="पति / पत्नी">पति / पत्नी</option>
+                      <option value="भाई / बहन">भाई / बहन</option>
+                      <option value="अभिभावक / मित्र">अभिभावक / मित्र</option>
                     </select>
                   </div>
 
+                  {/* Row 4, Col 1: आपातकालीन 10-अंकीय मोबाइल नंबर */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      आपातकालीन 10-अंकीय मोबाइल नंबर <span style={{ color: '#ef4444' }}>*</span>:
+                      आपातकालीन मोबाइल नंबर <span style={{ color: '#ef4444' }}>*</span>:
                     </label>
                     <input
                       type="tel"
@@ -2965,10 +2744,195 @@ export function RegistrationPage({
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     />
                   </div>
+
+                  {/* Row 4, Col 2: राजस्थान पुलिस सेवारत कर्मी */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                      राजस्थान पुलिस कर्मी? <span style={{ color: '#ef4444' }}>*</span>:
+                    </label>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <label style={{
+                        flex: 1,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        padding: '10px 8px',
+                        borderRadius: '8px',
+                        border: isPolicePersonnel ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
+                        background: isPolicePersonnel ? 'var(--police-navy-50)' : '#ffffff',
+                        cursor: 'pointer',
+                        fontWeight: 700,
+                        fontSize: '0.88rem',
+                        color: 'var(--police-navy-950)'
+                      }}>
+                        <input
+                          type="radio"
+                          name="isPolicePersonnel"
+                          checked={isPolicePersonnel}
+                          onChange={() => {
+                            setIsPolicePersonnel(true);
+                            setRunnerType("पुलिस कर्मी / अधिकारी");
+                          }}
+                          style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
+                        />
+                        <span>हाँ</span>
+                      </label>
+
+                      <label style={{
+                        flex: 1,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        padding: '10px 8px',
+                        borderRadius: '8px',
+                        border: !isPolicePersonnel ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
+                        background: !isPolicePersonnel ? 'var(--police-navy-50)' : '#ffffff',
+                        cursor: 'pointer',
+                        fontWeight: 700,
+                        fontSize: '0.88rem',
+                        color: 'var(--police-navy-950)'
+                      }}>
+                        <input
+                          type="radio"
+                          name="isPolicePersonnel"
+                          checked={!isPolicePersonnel}
+                          onChange={() => {
+                            setIsPolicePersonnel(false);
+                            setRunnerType(nonPoliceCategory || "सामान्य नागरिक");
+                          }}
+                          style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
+                        />
+                        <span>नहीं</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Row 4, Col 3: प्रतिभागी वर्ग / श्रेणी */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                      प्रतिभागी श्रेणी <span style={{ color: '#ef4444' }}>*</span>:
+                    </label>
+                    <select
+                      disabled={isPolicePersonnel}
+                      value={isPolicePersonnel ? "पुलिस कर्मी / अधिकारी" : nonPoliceCategory}
+                      onChange={(e) => {
+                        setNonPoliceCategory(e.target.value);
+                        setRunnerType(e.target.value);
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid var(--border-medium)',
+                        fontSize: '0.92rem',
+                        background: isPolicePersonnel ? '#f1f5f9' : '#ffffff',
+                        cursor: isPolicePersonnel ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      {isPolicePersonnel ? (
+                        <option value="पुलिस कर्मी / अधिकारी">पुलिस कर्मी / अधिकारी</option>
+                      ) : (
+                        <>
+                          <option value="सामान्य नागरिक">सामान्य नागरिक</option>
+                          <option value="सेवानिवृत्त पुलिस कर्मी">सेवानिवृत्त पुलिस कर्मी</option>
+                          <option value="कॉलेज / यूनिवर्सिटी / स्कूल">कॉलेज / यूनिवर्सिटी / स्कूल</option>
+                          <option value="NCC / NSS / स्काउट्स">NCC / NSS / स्काउट्स</option>
+                          <option value="अन्य">अन्य</option>
+                        </>
+                      )}
+                    </select>
+                  </div>
+
+                  {/* Row 5: पूर्व मैराथन सहभागिता */}
+                  <div style={{
+                    gridColumn: '1 / -1',
+                    background: '#f8fafc',
+                    padding: '14px 16px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-medium)',
+                    marginTop: '4px'
+                  }}>
+                    <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: 'var(--police-navy-950)', marginBottom: '8px' }}>
+                      क्या आपने पहले कभी किसी मैराथन या आधिकारिक दौड़ में भाग लिया है?
+                    </label>
+                    <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+                      <label style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 18px',
+                        borderRadius: '6px',
+                        border: !formData.hasPreviousParticipation ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
+                        background: !formData.hasPreviousParticipation ? 'var(--police-navy-50)' : '#ffffff',
+                        cursor: 'pointer',
+                        fontWeight: 700,
+                        fontSize: '0.9rem',
+                        color: 'var(--police-navy-950)'
+                      }}>
+                        <input
+                          type="radio"
+                          name="hasPreviousParticipation"
+                          checked={!formData.hasPreviousParticipation}
+                          onChange={() => setFormData(prev => ({ ...prev, hasPreviousParticipation: false, previousParticipationDetails: "" }))}
+                          style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
+                        />
+                        <span>नहीं</span>
+                      </label>
+
+                      <label style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 18px',
+                        borderRadius: '6px',
+                        border: formData.hasPreviousParticipation ? '2px solid var(--police-navy-900)' : '1px solid var(--border-medium)',
+                        background: formData.hasPreviousParticipation ? 'var(--police-navy-50)' : '#ffffff',
+                        cursor: 'pointer',
+                        fontWeight: 700,
+                        fontSize: '0.9rem',
+                        color: 'var(--police-navy-950)'
+                      }}>
+                        <input
+                          type="radio"
+                          name="hasPreviousParticipation"
+                          checked={formData.hasPreviousParticipation}
+                          onChange={() => setFormData(prev => ({ ...prev, hasPreviousParticipation: true }))}
+                          style={{ accentColor: 'var(--police-navy-900)', cursor: 'pointer' }}
+                        />
+                        <span>हाँ</span>
+                      </label>
+                    </div>
+
+                    {formData.hasPreviousParticipation && (
+                      <div style={{ marginTop: '12px' }}>
+                        <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
+                          पूर्व दौड़ का विवरण (कहाँ, कब, दूरी एवं समय) <span style={{ color: '#ef4444' }}>*</span>:
+                        </label>
+                        <textarea
+                          rows={2}
+                          required={formData.hasPreviousParticipation}
+                          placeholder="उदा. जयपुर मैराथन 2025 (10KM - 52 मिनट) आदि"
+                          value={formData.previousParticipationDetails}
+                          onChange={(e) => setFormData(prev => ({ ...prev, previousParticipationDetails: e.target.value }))}
+                          style={{
+                            width: '100%',
+                            padding: '10px 12px',
+                            borderRadius: '8px',
+                            border: '1px solid var(--border-medium)',
+                            fontSize: '0.92rem',
+                            resize: 'vertical',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-                {/* Submit CTA Bar */}
+              {/* Submit CTA Bar */}
                 <div style={{ textAlign: 'center', marginTop: '24px' }}>
                   <button
                     type="submit"
@@ -2987,7 +2951,7 @@ export function RegistrationPage({
                     {isSubmitting ? (
                       <span>पंजीकरण प्रक्रियाधीन है... कृपया प्रतीक्षा करें</span>
                     ) : (
-                      <span>पंजीकरण करें (Register Now) &rarr;</span>
+                      <span>पंजीकरण करें &rarr;</span>
                     )}
                   </button>
               </div>
