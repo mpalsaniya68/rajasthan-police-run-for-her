@@ -34,7 +34,11 @@ import {
   sendAdminOtpNotification,
   sendRegistrationOtpNotification,
   sendPassOtpNotification,
-  isLiveSmsConfigured
+  isLiveSmsConfigured,
+  dispatchGatewaySms,
+  dispatchGatewayWhatsApp,
+  BROADCAST_TEMPLATES,
+  resolveMessagePlaceholders
 } from "./notifications.js";
 
 const CATEGORY_NAMES = {
@@ -3307,7 +3311,7 @@ export async function handleApiRequest(req, res) {
       });
     }
 
-    // 16. Admin Mass Communication / SMS Broadcast (Simulated & Live Gateway)
+    // 16. Admin Mass Communication / WhatsApp & SMS Broadcast Command Center
     if (pathname === "/admin/broadcast" && method === "POST") {
       const adminUser = extractAdminUser(req, parsedUrl);
       if (!adminUser) {
@@ -3318,31 +3322,63 @@ export async function handleApiRequest(req, res) {
         return error("अनधिकृत पहुंच (403 Forbidden)।", 403);
       }
       const body = await parseJsonBody(req);
-      const title = (body.title || "").trim();
-      const message = (body.message || "").trim();
-      const targetCategory = (body.targetCategory || "all").trim();
-      const targetChannel = (body.channel || "SMS").trim();
+      const templateType = (body.templateType || body.campaignType || "CUSTOM").toUpperCase();
+      const rawChannel = (body.channel || "SMS").trim();
+      const targetChannel = rawChannel.toUpperCase(); // "SMS", "WHATSAPP", "BOTH"
+      const targetAudience = (body.targetAudience || body.audience || "all").toLowerCase(); // "all", "kit_pending", "kit_collected", "single"
+      const targetCategory = (body.targetCategory || body.category || "all").toLowerCase();
+      const targetDistrict = (body.targetDistrict || body.district || "all").trim();
+      const searchQuery = (body.searchQuery || body.q || "").trim();
+
+      const baseTemplate = BROADCAST_TEMPLATES[templateType] || BROADCAST_TEMPLATES.CUSTOM;
+      const title = (body.title || baseTemplate.title || "आधिकारिक प्रसारण संदेश").trim();
+      const message = (body.message || baseTemplate.text || "").trim();
 
       if (!title || !message) {
         return error("शीर्षक एवं संदेश दोनों दर्ज करना आवश्यक है।", 400);
       }
 
-      let whereClause = "";
+      let whereClause = "WHERE 1=1";
       const args = [];
       if (adminUser.role === "DISTRICT") {
-        whereClause = "WHERE (district_id = ? OR district_name LIKE ?)";
+        whereClause += " AND (district_id = ? OR district_name LIKE ?)";
         args.push(adminUser.districtId, `%${adminUser.districtName}%`);
+      } else if (targetDistrict && targetDistrict !== "all") {
+        whereClause += " AND (district_id = ? OR district_name LIKE ?)";
+        args.push(targetDistrict, `%${targetDistrict}%`);
       }
+
       if (targetCategory && targetCategory !== "all") {
-        whereClause += (whereClause ? " AND" : "WHERE") + " category_id = ?";
+        whereClause += " AND category_id = ?";
         args.push(targetCategory);
       }
 
+      if (targetAudience === "kit_pending") {
+        whereClause += " AND (kit_collected = 0 OR kit_collected IS NULL)";
+      } else if (targetAudience === "kit_collected") {
+        whereClause += " AND kit_collected = 1";
+      } else if (targetAudience === "single" && searchQuery) {
+        whereClause += " AND (bib_number = ? OR mobile = ? OR masked_mobile = ?)";
+        args.push(searchQuery, searchQuery, searchQuery);
+      }
+
       const countRes = await db.execute({
-        sql: `SELECT count(*) as count FROM participants ${whereClause};`,
+        sql: `SELECT id, bib_number, full_name, mobile, category_name, district_name, tshirt_size, certificate_id, kit_collected FROM participants ${whereClause} LIMIT 5000;`,
         args
       });
-      const recipientsCount = Number(countRes.rows[0]?.count) || 0;
+      const runners = countRes.rows || [];
+      const recipientsCount = runners.length;
+
+      const sampleRunner = runners[0] || {
+        fullName: "सुनीता चौधरी",
+        bibNumber: "RJ-21K-1009",
+        categoryName: "21 KM Half Marathon",
+        districtName: "जयपुर पुलिस कमिश्नरेट",
+        tshirtSize: "M",
+        certificateId: "CERT-2027-DEMO"
+      };
+      const samplePreview = resolveMessagePlaceholders(message, sampleRunner);
+      const now = new Date().toISOString();
 
       try {
         await db.execute({
@@ -3350,18 +3386,48 @@ export async function handleApiRequest(req, res) {
           args: [
             adminUser.username || "COMMAND_ADMIN",
             "MASS_BROADCAST_SENT",
-            `Title: ${title} | Channel: ${targetChannel} | Target: ${targetCategory} | Recipients: ${recipientsCount}`,
+            `Campaign: ${templateType} | Channel: ${rawChannel} | Target: ${targetAudience}/${targetCategory} | Count: ${recipientsCount} | Title: ${title}`,
             clientIp,
-            new Date().toISOString()
+            now
           ]
         });
       } catch (e) {}
+
+      // Non-blocking dispatch
+      for (const r of runners.slice(0, 50)) {
+        const personalMsg = resolveMessagePlaceholders(message, r);
+        if (targetChannel === "WHATSAPP" || targetChannel === "BOTH") {
+          dispatchGatewayWhatsApp({ mobile: r.mobile, message: personalMsg });
+        }
+        if (targetChannel === "SMS" || targetChannel === "BOTH") {
+          dispatchGatewaySms({ mobile: r.mobile, message: personalMsg });
+        }
+      }
 
       return json({
         success: true,
         message: `आधिकारिक संदेश सफलतापूर्वक ${recipientsCount} पंजीकृत धावकों को प्रेषित किया गया।`,
         recipientsCount,
-        channel: targetChannel
+        channel: rawChannel,
+        templateType,
+        samplePreview,
+        dispatchedAt: now
+      });
+    }
+
+    // 16b. Admin Broadcast History Logs
+    if (pathname === "/admin/broadcast-history" && method === "GET") {
+      const adminUser = extractAdminUser(req, parsedUrl);
+      if (!adminUser) {
+        return error("अनधिकृत पहुंच (401 Unauthorized)।", 401);
+      }
+      const logsRes = await db.execute({
+        sql: `SELECT id, actor, action, details, ip, created_at FROM audit_logs WHERE action = 'MASS_BROADCAST_SENT' ORDER BY id DESC LIMIT 50;`
+      });
+
+      return json({
+        success: true,
+        logs: logsRes.rows || []
       });
     }
 

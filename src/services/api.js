@@ -471,3 +471,18 @@ export async function apiSendBroadcast(payload) {
   }
 }
 
+export async function apiGetBroadcastHistory() {
+  try {
+    const token = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("rajpol_admin_token") : null;
+    const res = await fetchWithRetry(`${API_BASE}/admin/broadcast-history`, {
+      headers: {
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
+      }
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("apiGetBroadcastHistory error:", err);
+    return { success: false, logs: [] };
+  }
+}
+

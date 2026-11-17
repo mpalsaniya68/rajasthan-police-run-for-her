@@ -300,3 +300,128 @@ export async function sendPassOtpNotification({ mobile, otp, fullName = "धा�
   return dispatchResult;
 }
 
+/**
+ * Check if a live, valid external WhatsApp Gateway is configured
+ */
+export function isLiveWhatsAppConfigured() {
+  const waUrl = (process.env.WHATSAPP_API_URL || "").trim();
+  const waToken = (process.env.WHATSAPP_API_TOKEN || "").trim();
+  if (!waUrl || !waToken) return false;
+  const isPlaceholder = (val) => {
+    const lower = val.toLowerCase();
+    return lower.includes("your_") || lower.includes("xxxx") || lower.includes("example");
+  };
+  return !isPlaceholder(waToken);
+}
+
+/**
+ * Unified WhatsApp Gateway Dispatcher with Meta Cloud API & Commercial Gateway Support
+ */
+export async function dispatchGatewayWhatsApp({ mobile, message, templateName = "" }) {
+  const cleanMobile = String(mobile || "").replace(/\D/g, "").slice(-10);
+  if (cleanMobile.length !== 10) {
+    return { success: false, error: "Invalid 10-digit mobile number", simulated: true };
+  }
+
+  const waUrl = (process.env.WHATSAPP_API_URL || "").trim();
+  const waToken = (process.env.WHATSAPP_API_TOKEN || "").trim();
+
+  if (isLiveWhatsAppConfigured()) {
+    try {
+      const res = await fetch(waUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${waToken}`
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: `91${cleanMobile}`,
+          type: "text",
+          text: { body: message }
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      console.log(`[WHATSAPP Gateway (Live)]: Sent to +91-${cleanMobile} | Status: ${res.status}`);
+      return {
+        success: res.ok,
+        simulated: false,
+        gatewayResponse: typeof data === "object" ? JSON.stringify(data) : String(data)
+      };
+    } catch (err) {
+      console.error(`[WHATSAPP Gateway Error]:`, err.message);
+      return {
+        success: false,
+        simulated: true,
+        gatewayResponse: `ERROR: ${err.message}`
+      };
+    }
+  }
+
+  // Secure Simulation Mode
+  console.log(`[WHATSAPP SIMULATION] To +91-${cleanMobile}: ${message.slice(0, 75).replace(/\n/g, ' ')}...`);
+  return {
+    success: true,
+    simulated: true,
+    gatewayResponse: `SUCCESS_SIMULATED: WhatsApp to +91-${cleanMobile}`
+  };
+}
+
+/**
+ * Standard Government Campaign Templates
+ */
+export const BROADCAST_TEMPLATES = {
+  CONFIRMATION: {
+    id: "CONFIRMATION",
+    title: "आधिकारिक पंजीकरण एवं ई-पास पुष्टि",
+    defaultChannel: "BOTH",
+    text: `🏛️ राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'\n\nप्रिय {name},\nआपका आधिकारिक पंजीकरण सफल रहा है!\n\n🏷️ बिब नंबर: {bib}\n🏃 दौड़ श्रेणी: {category}\n📍 स्थान: {district}\n\n📲 अपना आधिकारिक डिजिटल ई-पास व क्यूआर कोड तुरंत डाउनलोड करें:\n👉 https://police.rajasthan.gov.in/epass/{certId}\n\nहेल्पलाइन: 112 / 1090\n- राजस्थान पुलिस मुख्यालय`
+  },
+  PROMOTION: {
+    id: "PROMOTION",
+    title: "नारी सुरक्षा जन-आंदोलन एवं मैराथन आमंत्रण",
+    defaultChannel: "WHATSAPP",
+    text: `🌸 राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'\n\nनमस्ते {name},\n"हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के लिए"\n\n3 जनवरी 2027 को अल्बर्ट हॉल, जयपुर एवं प्रदेश के समस्त 41 जिलों में आयोजित होने वाली ऐतिहासिक मैराथन में भाग लें। अपने परिजनों एवं मित्रों को भी इस राज्यव्यापी अभियान से जोड़ें।\n\nपंजीकरण पोर्टल:\n👉 https://police.rajasthan.gov.in/marathon\n\n- पुलिस महानिदेशक कार्यालय, राजस्थान पुलिस`
+  },
+  EXPO_KIT_REMINDER: {
+    id: "EXPO_KIT_REMINDER",
+    title: "एक्सपो किट (टी-शर्ट एवं RFID बिब) संग्रह रिमाइंडर",
+    defaultChannel: "BOTH",
+    text: `👕 राजस्थान पुलिस मैराथन 2027 — आधिकारिक किट सूचना\n\nआदरणीय {name},\nआपकी आधिकारिक प्रतिभागी किट (साइज: {tshirtSize} एवं बिब #{bib}) तैयार है।\n\n📅 किट वितरण: 1 एवं 2 जनवरी 2027\n⏰ समय: प्रातः 10:00 AM से सायं 07:00 PM\n📍 स्थान: अल्बर्ट हॉल मैराथन एक्सपो काउंटर, जेएलएन मार्ग, जयपुर\n\nकृपया अपना ई-पास अथवा एसएमएस दिखाकर किट अवश्य प्राप्त करें।\n- राजस्थान पुलिस एक्सपो समिति`
+  },
+  RACE_REMINDER: {
+    id: "RACE_REMINDER",
+    title: "रेस दिवस फ्लैग-ऑफ समय एवं रूट/पार्किंग एडवाइजरी",
+    defaultChannel: "BOTH",
+    text: `⚡ राजस्थान पुलिस मैराथन 2027 — रेस दिवस एडवाइजरी\n\nप्रिय धावक {name},\nमैराथन दिवस में केवल कुछ घंटे शेष हैं!\n\n⏰ रिपोर्टिंग समय: प्रातः 05:00 AM (3 जनवरी)\n🏁 फ्लैग-ऑफ: प्रातः 06:00 AM\n📍 वेन्यू: अल्बर्ट हॉल, रामनिवास बाग, जयपुर\n🅿️ पार्किंग: रामनिवास बाग अंडरपास (निःशुल्क)\n\nकृपया अपना बिब #{bib} सीने पर अवश्य लगाएं।\n- कंट्रोल रूम, राजस्थान पुलिस`
+  },
+  CUSTOM: {
+    id: "CUSTOM",
+    title: "विशेष आधिकारिक संदेश (Custom Broadcast)",
+    defaultChannel: "BOTH",
+    text: `राजस्थान पुलिस मैराथन 2027: प्रिय {name}, आपका बिब नंबर {bib} है। कृपया समय पर रिपोर्ट करें। - राजस्थान पुलिस`
+  }
+};
+
+/**
+ * Helper to substitute dynamic runner fields into templates
+ */
+export function resolveMessagePlaceholders(templateText, runner = {}) {
+  if (!templateText) return "";
+  const name = runner.fullName || runner.full_name || "धावक";
+  const bib = runner.bibNumber || runner.bib_number || "RJ-21K-XXXX";
+  const cat = runner.categoryName || runner.category_name || "21 KM Half Marathon";
+  const dist = runner.districtName || runner.district_name || "जयपुर";
+  const cert = runner.certificateId || runner.certificate_id || "CERT-XXXX";
+  const size = runner.tshirtSize || runner.tshirt_size || "M";
+
+  return templateText
+    .replace(/\{name\}/g, name)
+    .replace(/\{bib\}/g, bib)
+    .replace(/\{category\}/g, cat)
+    .replace(/\{district\}/g, dist)
+    .replace(/\{certId\}/g, cert)
+    .replace(/\{tshirtSize\}/g, size);
+}
+
+

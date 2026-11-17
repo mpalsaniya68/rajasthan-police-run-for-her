@@ -230,6 +230,32 @@ async function main() {
           await p.evaluate(() => window.scrollTo(0, 0));
           await new Promise(r => setTimeout(r, 1200));
         }
+      },
+      {
+        id: '14_Admin_Broadcast_Command_Center',
+        title: 'समर्पित WhatsApp एवं SMS प्रसारण कमांड सेंटर (Broadcast Studio)',
+        desc: 'पुलिस मुख्यालय (PHQ) कमान हेतु समर्पित WhatsApp व SMS प्रसारण स्टूडियो — 5 आधिकारिक अभियान श्रेणियां (ई-पास, एक्सपो किट पिक-अप, रेस 24H एडवाइजरी, कस्टम संदेश), स्मार्टफ़ोन लाइव प्रीव्यू व ऑडिट ट्रेल्स।',
+        url: 'http://127.0.0.1:3000/#admin',
+        preNav: async (p) => {
+          await p.evaluateOnNewDocument(() => {
+            sessionStorage.setItem('rajpol_admin_auth', 'true');
+            sessionStorage.setItem('rajpol_admin_token', 'mock_phq_token');
+            sessionStorage.setItem('rajpol_admin_user', JSON.stringify({
+              username: 'phq_admin',
+              fullName: 'राज्य नोडल अधिकारी (PHQ)',
+              role: 'SUPER_ADMIN',
+              district: 'ALL'
+            }));
+          });
+        },
+        action: async (p) => {
+          await p.evaluate(() => {
+            const buttons = Array.from(document.querySelectorAll('button'));
+            const b = buttons.find(btn => btn.textContent.includes('संदेश प्रसारण'));
+            if (b) b.click();
+          });
+          await new Promise(r => setTimeout(r, 1200));
+        }
       }
     ];
 

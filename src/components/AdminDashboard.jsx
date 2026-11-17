@@ -14,6 +14,7 @@ import {
 
 import { PoliceEmblem, OfficialGoldSeal, RunForHerBadge } from './Emblems';
 import { VolunteerRosterManager } from './VolunteerRosterManager';
+import { BroadcastCommandCenter } from './BroadcastCommandCenter';
 
 import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 
@@ -1450,11 +1451,11 @@ export function AdminDashboard({
 
               <button
                 type="button"
-                onClick={() => setIsBroadcastOpen(true)}
+                onClick={() => setAdminTab("broadcast")}
                 style={{
-                  background: '#fef3c7',
-                  border: '1.5px solid #f59e0b',
-                  color: '#92400e',
+                  background: '#d1fae5',
+                  border: '1.5px solid #10b981',
+                  color: '#065f46',
                   padding: '6px 14px',
                   borderRadius: '6px',
                   fontSize: '0.78rem',
@@ -1465,10 +1466,10 @@ export function AdminDashboard({
                   cursor: 'pointer',
                   boxShadow: 'var(--shadow-sm)'
                 }}
-                title="धावकों को आधिकारिक SMS/व्हाट्सएप प्रसारण भेजें"
+                title="धावकों को आधिकारिक WhatsApp एवं SMS प्रसारण कमांड सेंटर खोलें"
               >
-                <Radio size={14} color="#b45309" />
-                <span>📢 सामूहिक SMS प्रसारण</span>
+                <Radio size={14} color="#059669" />
+                <span>📢 WhatsApp व SMS प्रसारण</span>
               </button>
 
               <button
@@ -1781,6 +1782,39 @@ export function AdminDashboard({
                 <Award size={16} color={adminTab === "certificates" ? "#d97706" : "#64748b"} />
                 <span>🎖️ ई-प्रमाण पत्र प्रबंधन</span>
               </button>
+
+              {/* Point 5: Dedicated WhatsApp & SMS Broadcast Command Center */}
+              <button
+                onClick={() => setAdminTab("broadcast")}
+                style={{
+                  padding: '12px 16px',
+                  fontSize: '0.85rem',
+                  fontWeight: adminTab === "broadcast" ? 800 : 600,
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: adminTab === "broadcast" ? '3px solid #059669' : '3px solid transparent',
+                  color: adminTab === "broadcast" ? '#047857' : '#475569',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                <Send size={15} color={adminTab === "broadcast" ? "#059669" : "#64748b"} />
+                <span>📢 संदेश प्रसारण (WhatsApp & SMS)</span>
+                <span style={{
+                  background: adminTab === "broadcast" ? '#d1fae5' : '#f1f5f9',
+                  color: adminTab === "broadcast" ? '#065f46' : '#64748b',
+                  fontSize: '0.65rem',
+                  padding: '2px 7px',
+                  borderRadius: '10px',
+                  border: '1px solid #a7f3d0',
+                  fontWeight: 800
+                }}>
+                  कमांड सेंटर
+                </span>
+              </button>
             </>
           ) : (
             <>
@@ -1825,6 +1859,27 @@ export function AdminDashboard({
               >
                 <HeartPulse size={15} color={adminTab === "district_medical" ? "#dc2626" : "#64748b"} />
                 <span>🚑 स्थानीय सुरक्षा व मेडिकल सूची</span>
+              </button>
+
+              <button
+                onClick={() => setAdminTab("broadcast")}
+                style={{
+                  padding: '12px 16px',
+                  fontSize: '0.85rem',
+                  fontWeight: adminTab === "broadcast" ? 800 : 600,
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: adminTab === "broadcast" ? '3px solid #059669' : '3px solid transparent',
+                  color: adminTab === "broadcast" ? '#047857' : '#475569',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                <Send size={15} color={adminTab === "broadcast" ? "#059669" : "#64748b"} />
+                <span>📢 जिला संदेश प्रसारण (WhatsApp & SMS)</span>
               </button>
             </>
           )}
@@ -5211,6 +5266,15 @@ export function AdminDashboard({
             </table>
           </div>
         </div>
+      )}
+
+      {/* TAB: DEDICATED WHATSAPP & SMS BROADCAST COMMAND CENTER */}
+      {adminTab === "broadcast" && (
+        <BroadcastCommandCenter
+          adminUser={adminUser}
+          participants={participants}
+          onRefresh={loadParticipants}
+        />
       )}
 
     </div>
