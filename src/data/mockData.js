@@ -24,7 +24,7 @@ export const RACE_CATEGORIES = [
       "DGP हस्ताक्षरित ई-सर्टिफिकेट",
       "एनर्जी रिफ्रेशमेंट्स व ब्रेकफास्ट 🥪"
     ],
-    fee: "₹499",
+    fee: "निःशुल्क (FREE)",
     color: "#ff2e63",
     iconName: "Zap"
   },
@@ -51,7 +51,7 @@ export const RACE_CATEGORIES = [
       "नेट टाइमिंग ई-प्रमाण पत्र",
       "एनर्जी रिफ्रेशमेंट्स व हाइड्रेशन 🥪"
     ],
-    fee: "₹399",
+    fee: "निःशुल्क (FREE)",
     color: "#d4af37",
     iconName: "Flame"
   },
@@ -72,7 +72,7 @@ export const RACE_CATEGORIES = [
       "डिजिटल सहभागिता ई-प्रमाण पत्र",
       "महिला सुरक्षा जागरूकता किट"
     ],
-    fee: "₹199",
+    fee: "निःशुल्क (FREE)",
     color: "#00d2d3",
     iconName: "Users"
   },
@@ -93,7 +93,7 @@ export const RACE_CATEGORIES = [
       "डिजिटल सहभागिता प्रमाण पत्र",
       "'Run for Her' कैप व बैज"
     ],
-    fee: "₹199",
+    fee: "निःशुल्क (FREE)",
     color: "#10ac84",
     iconName: "HeartHandshake"
   },
@@ -114,7 +114,7 @@ export const RACE_CATEGORIES = [
       "असिस्टेड केयर व सपोर्ट",
       "सम्मान ई-प्रमाण पत्र"
     ],
-    fee: "₹199",
+    fee: "निःशुल्क (FREE)",
     color: "#a55eea",
     iconName: "Sparkles"
   }

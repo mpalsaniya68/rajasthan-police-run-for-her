@@ -22,7 +22,6 @@ import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
 import confetti from 'canvas-confetti';
 import QRCode from 'qrcode';
 import { apiRegister, apiSendOtp, apiVerifyOtp, apiSearchPass, apiSendPassOtp, apiVerifyPassOtp } from '../services/api';
-import { GovPaymentModal } from './GovPaymentModal';
 
 const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
 
@@ -33,7 +32,6 @@ export function RegistrationPage({
   onNavigate,
   onRegisterSuccess
 }) {
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [pendingPayload, setPendingPayload] = useState(null);
   const [venueType, setVenueType] = useState(() => (initialDistrict && initialDistrict !== "JPR-COMM" && initialDistrict !== "jaipur_comm") ? "district" : "jaipur");
 
@@ -730,43 +728,36 @@ export function RegistrationPage({
       botTrap: formData.botTrap || ""
     };
 
-    setPendingPayload(payload);
-    setIsPaymentModalOpen(true);
-  };
-
-  const handlePaymentSuccess = async (paymentData) => {
-    if (!pendingPayload) return;
-    setIsPaymentModalOpen(false);
+    // 100% Free Public Initiative - Direct Registration without Payment Gateway
     setIsSubmitting(true);
     setErrorMessage("");
 
-    const activeOtpToken = pendingPayload.otpVerificationToken || otpVerificationToken || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('rpm_otp_token') : '') || undefined;
-    const feeAmount = category === "21k" ? 499 : category === "10k" ? 399 : 199;
+    const activeOtpToken = payload.otpVerificationToken || otpVerificationToken || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('rpm_otp_token') : '') || undefined;
     const finalPayload = {
-      fullName: pendingPayload.fullName,
-      gender: pendingPayload.gender,
-      dob: pendingPayload.dob,
-      mobile: pendingPayload.mobile,
-      email: pendingPayload.email,
-      emergencyContact: pendingPayload.emergencyContact,
-      emergencyRelation: pendingPayload.emergencyRelation,
-      bloodGroup: pendingPayload.bloodGroup,
-      hasMedicalIssue: pendingPayload.hasMedicalIssue,
-      medicalCondition: pendingPayload.medicalCondition,
-      medicalNotes: pendingPayload.medicalNotes,
-      categoryId: pendingPayload.categoryId,
-      districtId: pendingPayload.districtId,
-      tshirtSize: pendingPayload.tshirtSize,
-      idType: pendingPayload.idType,
-      idNumber: pendingPayload.idNumber,
-      idLast4: pendingPayload.idLast4,
+      fullName: payload.fullName,
+      gender: payload.gender,
+      dob: payload.dob,
+      mobile: payload.mobile,
+      email: payload.email,
+      emergencyContact: payload.emergencyContact,
+      emergencyRelation: payload.emergencyRelation,
+      bloodGroup: payload.bloodGroup,
+      hasMedicalIssue: payload.hasMedicalIssue,
+      medicalCondition: payload.medicalCondition,
+      medicalNotes: payload.medicalNotes,
+      categoryId: payload.categoryId,
+      districtId: payload.districtId,
+      tshirtSize: payload.tshirtSize,
+      idType: payload.idType,
+      idNumber: payload.idNumber,
+      idLast4: payload.idLast4,
       otpVerificationToken: activeOtpToken,
-      botTrap: pendingPayload.botTrap || "",
-      feeAmount: paymentData?.feeAmount || paymentData?.amount || feeAmount,
-      orderId: paymentData?.orderId || `ORD2027-${Date.now().toString().slice(-6)}`,
-      transactionId: paymentData?.transactionId || `TXN-RAJPOL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-      paymentMethod: paymentData?.paymentMethod || "UPI_QR",
-      paymentStatus: "PAID"
+      botTrap: payload.botTrap || "",
+      feeAmount: 0,
+      orderId: `FREE-${Date.now().toString().slice(-6)}`,
+      transactionId: `TXN-FREE-RAJPOL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+      paymentMethod: "FREE_ENTRY",
+      paymentStatus: "FREE"
     };
 
     const res = await apiRegister(finalPayload);
@@ -779,7 +770,6 @@ export function RegistrationPage({
     }
 
     const p = res.participant;
-    const cleanId = pendingPayload.cleanId;
     const maskedIdVal = p.idMasked || getMaskedId(formData.idType, cleanId);
     const fullRecord = {
       id: p.id,
@@ -802,16 +792,16 @@ export function RegistrationPage({
       districtName: p.districtName || (venueType === "jaipur" ? "जयपुर पुलिस कमिश्नरेट (Albert Hall Flagship)" : currentDistrictObj.name),
       runnerType: runnerType,
       tshirtSize: venueType === "jaipur" ? (formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M") : "N/A",
-      emergencyContact: `${formData.emergencyContactName || 'Family'} (${formData.emergencyRelation || 'Kin'}: ${pendingPayload.cleanEmergency})`,
+      emergencyContact: `${formData.emergencyContactName || 'Family'} (${formData.emergencyRelation || 'Kin'}: ${cleanEmergency})`,
       registeredAt: new Date().toLocaleString(),
       bibCollected: false,
       isCompleted: false,
       pledgeTaken: true,
-      feeAmount: finalPayload.feeAmount,
+      feeAmount: 0,
       orderId: finalPayload.orderId,
       transactionId: finalPayload.transactionId,
-      paymentMethod: finalPayload.paymentMethod,
-      paymentStatus: "PAID"
+      paymentMethod: "FREE_ENTRY",
+      paymentStatus: "FREE"
     };
 
     try {
@@ -1096,11 +1086,11 @@ export function RegistrationPage({
 
       ctx.fillStyle = "#065f46";
       ctx.font = "bold 18px sans-serif";
-      ctx.fillText("✓ ई-चालान एवं शासकीय शुल्क रसीद (PAYMENT CONFIRMED)", 60, 598);
+      ctx.fillText("✓ आधिकारिक निःशुल्क डिजिटल ई-पास (OFFICIAL FREE ENTRY PASS)", 60, 598);
 
       ctx.fillStyle = "#047857";
       ctx.font = "15px sans-serif";
-      const feeText = `शुल्क राशि: ₹${p.feeAmount || 199}  |  ऑर्डर आईडी: ${p.orderId || 'ORD2027'}  |  ट्रांजैक्शन: ${p.transactionId || 'TXN-RAJPOL-PAID'}  |  माध्यम: ${p.paymentMethod || 'UPI_QR'}`;
+      const feeText = `प्रवेश: 100% निःशुल्क (Free Public Initiative)  |  पास आईडी: ${p.orderId || p.certificateId || 'RPM2027'}  |  श्रेणी: ${p.categoryName || 'Rajasthan Police Marathon 2027'}`;
       ctx.fillText(feeText, 60, 624);
 
       // 7. Official Bottom Footer
@@ -2689,9 +2679,9 @@ export function RegistrationPage({
                             borderTop: '1px solid #e2e8f0',
                             paddingTop: '8px'
                           }}>
-                            <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>निर्धारित शुल्क:</span>
-                            <span style={{ fontSize: '1rem', fontWeight: 900, color: '#0a1c3d' }}>
-                              {cat.fee || (cat.id === '21k' ? '₹499' : cat.id === '10k' ? '₹399' : '₹199')}
+                            <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>पंजीकरण शुल्क:</span>
+                            <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#047857', background: '#ecfdf5', padding: '2px 8px', borderRadius: '4px', border: '1px solid #a7f3d0' }}>
+                              निःशुल्क (FREE)
                             </span>
                           </div>
                         </div>
@@ -3186,16 +3176,16 @@ export function RegistrationPage({
                   textAlign: 'left'
                 }}>
                   <div>
-                    <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 600 }}>
-                      निर्धारित शासकीय पंजीकरण शुल्क (Payable Application Fee):
+                    <div style={{ fontSize: '0.76rem', color: '#065f46', fontWeight: 700 }}>
+                      पंजीकरण शुल्क (Registration Fee):
                     </div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0a1c3d', marginTop: '2px' }}>
-                      {category === '21k' ? '₹499.00' : category === '10k' ? '₹399.00' : '₹199.00'}
+                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#047857', marginTop: '2px' }}>
+                      ₹0.00 (100% निःशुल्क जन-सहभागिता)
                     </div>
                   </div>
-                  <div style={{ fontSize: '0.76rem', color: '#475569', textAlign: 'right' }}>
-                    <div>स्वीकृत माध्यम: <strong>UPI / Bharat QR / NetBanking / Cards</strong></div>
-                    <div style={{ color: '#059669', fontWeight: 700, marginTop: '2px' }}>✓ e-Gras / SBI ePay शासकीय गेटवे (0% अतिरिक्त शुल्क)</div>
+                  <div style={{ fontSize: '0.78rem', color: '#065f46', textAlign: 'right' }}>
+                    <div>अभियान: <strong>"Run for Her" नारी सुरक्षा, सम्मान व सशक्तिकरण</strong></div>
+                    <div style={{ color: '#047857', fontWeight: 800, marginTop: '2px' }}>✓ राजस्थान पुलिस द्वारा पूर्णतः निःशुल्क राज्यव्यापी जन-अभियान</div>
                   </div>
                 </div>
 
@@ -3216,13 +3206,13 @@ export function RegistrationPage({
                     }}
                   >
                     {isSubmitting ? (
-                      <span>प्रक्रियाधीन है... कृपया प्रतीक्षा करें</span>
+                      <span>पंजीकरण प्रक्रियाधीन है... कृपया प्रतीक्षा करें</span>
                     ) : (
-                      <span>पंजीकरण एवं ऑनलाइन शुल्क भुगतान करें (Pay Fee & Register) &rarr;</span>
+                      <span>निःशुल्क पंजीकरण पूर्ण करें (Submit Free Registration) &rarr;</span>
                     )}
                   </button>
                 <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '10px' }}>
-                  पंजीकरण उपरांत आधिकारिक डिजिटल ई-पास व रसीद जारी की जाएगी।
+                  पंजीकरण उपरांत आधिकारिक डिजिटल ई-पास व क्यूआर कोड तुरंत जारी किया जाएगा।
                 </div>
               </div>
 
@@ -3251,15 +3241,6 @@ export function RegistrationPage({
           }
         }
       `}</style>
-      {/* Official Government Electronic Payment Gateway Modal */}
-      <GovPaymentModal
-        isOpen={isPaymentModalOpen}
-        onClose={() => setIsPaymentModalOpen(false)}
-        onPaymentSuccess={handlePaymentSuccess}
-        runnerData={formData}
-        categoryName={currentCatObj?.name || "राजस्थान पुलिस मैराथन 2027"}
-        feeAmount={category === "21k" ? 499 : category === "10k" ? 399 : 199}
-      />
     </div>
   );
 }

@@ -47,12 +47,12 @@ const CATEGORY_NAMES = {
 };
 
 export const CATEGORY_FEES = {
-  "21k": 499,
-  "10k": 399,
-  "5k": 199,
-  "2k": 199,
-  "inclusive": 199,
-  "adapted": 199
+  "21k": 0,
+  "10k": 0,
+  "5k": 0,
+  "2k": 0,
+  "inclusive": 0,
+  "adapted": 0
 };
 
 export const isJaipurDistrict = (districtId, districtName = '') => {
@@ -1081,12 +1081,12 @@ export async function handleApiRequest(req, res) {
       const maskedId = maskIdNumber(data.idType, data.idNumber);
       const maskedMob = maskMobile(data.mobile);
 
-      // Server-side strict fee calculation (Tamper-proof)
-      const feeAmount = CATEGORY_FEES[data.categoryId] || 199;
-      const orderId = data.orderId || `ORD2027-${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
-      const transactionId = data.transactionId || `TXN-RAJPOL-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
-      const paymentMethod = data.paymentMethod || "UPI_QR";
-      const paymentStatus = "PAID";
+      // 100% Free Public Participation Initiative (No Payment Required)
+      const feeAmount = 0;
+      const orderId = data.orderId || `FREE-${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+      const transactionId = data.transactionId || `FREE-ENTRY-RAJPOL-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+      const paymentMethod = data.paymentMethod || "FREE_ENTRY";
+      const paymentStatus = "FREE";
 
       await db.execute({
         sql: `INSERT INTO participants (
@@ -1194,15 +1194,13 @@ export async function handleApiRequest(req, res) {
     }
 
     
-    // 2b. Create Payment Order (₹499 for 21K, ₹399 for 10K, ₹199 for 5K/2K)
+    // 2b. Create Free Registration Order (100% Free Entry - No Payment Gateway Required)
     if (pathname === "/payment/create-order" && method === "POST") {
       const body = await parseJsonBody(req);
       const categoryId = body.categoryId || "21k";
-      const feeAmount = CATEGORY_FEES[categoryId] || 199;
-      const orderId = `ORD2027-${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
+      const feeAmount = 0;
+      const orderId = `FREE-${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
       const catName = CATEGORY_NAMES[categoryId] || "Rajasthan Police Marathon";
-
-      const upiPayload = `upi://pay?pa=rajasthanpolice.marathon@sbi&pn=Rajasthan%20Police%20Marathon%202027&am=${feeAmount}&cu=INR&tn=RPM2027-${orderId}`;
 
       return json({
         success: true,
@@ -1210,14 +1208,16 @@ export async function handleApiRequest(req, res) {
         amount: feeAmount,
         categoryId,
         categoryName: catName,
-        upiPayload
+        isFree: true,
+        message: "यह आयोजन 100% निःशुल्क है। किसी भुगतान की आवश्यकता नहीं है।"
       });
     }
 
-    // 2c. Get Pricing Matrix
+    // 2c. Get Pricing Matrix (100% Free Entry)
     if (pathname === "/payment/pricing" && method === "GET") {
       return json({
         success: true,
+        isFree: true,
         fees: CATEGORY_FEES,
         categories: CATEGORY_NAMES
       });

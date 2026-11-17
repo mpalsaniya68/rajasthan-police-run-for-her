@@ -83,66 +83,66 @@ class ErrorBoundary extends React.Component {
 
 export default function App() {
 
-  // Active Page State ('home', 'register', 'categories', 'route-schedule', 'districts', 'certificates', 'photos', 'pledge-safety')
-
-  const [activePage, setActivePage] = useState('home');
+  // Active Page State ('home', 'register', 'categories', 'route-schedule', 'districts', 'certificates', 'photos', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal')
+  const [activePage, setActivePage] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace(/^#\/?/, '');
+      const search = new URLSearchParams(window.location.search).get('page');
+      const target = hash || search;
+      if (['home', 'register', 'categories', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'].includes(target)) {
+        return target;
+      }
+    }
+    return 'home';
+  });
 
   // Persistent registrations state
-
   const [registrations, setRegistrations] = useState(() => {
-
     try {
-
       const saved = localStorage.getItem('rpm_registrations');
-
       return saved ? JSON.parse(saved) : INITIAL_REGISTRATIONS;
-
     } catch (e) {
-
       return INITIAL_REGISTRATIONS;
-
     }
-
   });
 
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
-
   const [selectedCategoryForModal, setSelectedCategoryForModal] = useState("21k");
-
   const [selectedDistrictForRegister, setSelectedDistrictForRegister] = useState("JPR-COMM");
-
   const [selectedRegTab, setSelectedRegTab] = useState("register");
 
-  
-
   // Single Access Admin States & RBAC Credentials
-
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
-
-    return sessionStorage.getItem('rajpol_admin_auth') === 'true';
-
+    return typeof sessionStorage !== 'undefined' && sessionStorage.getItem('rajpol_admin_auth') === 'true';
   });
 
   const [adminUser, setAdminUser] = useState(() => {
-
     try {
-
-      const saved = sessionStorage.getItem('rajpol_admin_user');
-
+      const saved = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('rajpol_admin_user') : null;
       return saved ? JSON.parse(saved) : null;
-
     } catch (e) {
-
       return null;
-
     }
-
   });
 
   const navigateToPage = (pageId) => {
     setActivePage(pageId);
+    if (typeof window !== 'undefined') {
+      window.location.hash = pageId;
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace(/^#\/?/, '');
+      if (['home', 'register', 'categories', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'].includes(hash)) {
+        setActivePage(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const handleOpenAdminTrigger = () => {
     if (sessionStorage.getItem('rajpol_admin_auth') === 'true') {

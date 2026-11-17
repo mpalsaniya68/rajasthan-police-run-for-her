@@ -211,7 +211,9 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
                   paddingTop: '14px'
                 }}>
                   <span style={{ fontSize: '0.95rem', color: '#475569', fontWeight: 700 }}>पंजीकरण शुल्क (Registration Fee):</span>
-                  <span style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-950)' }}>{cat.fee}</span>
+                  <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#047857', background: '#ecfdf5', padding: '4px 12px', borderRadius: '6px', border: '1px solid #a7f3d0' }}>
+                    {cat.fee || 'निःशुल्क (FREE)'}
+                  </span>
                 </div>
                 <button 
                   onClick={() => onSelectCategory(cat.id)}
@@ -226,7 +228,7 @@ export function Categories({ onSelectCategory, onOpenBulkRegister }) {
                     gap: '8px'
                   }}
                 >
-                  <span>पंजीकरण करें (Register Now)</span>
+                  <span>निःशुल्क पंजीकरण करें (Register Free)</span>
                   <ArrowRight size={17} />
                 </button>
               </div>
