@@ -416,7 +416,7 @@ export function Navbar({
               cursor: 'pointer'
             }}
           >
-            🔍 ई-पास / बिब खोजें (Find E-Pass)
+            🔍 ई-पास खोजें (Find E-Pass)
           </button>
 
           <button

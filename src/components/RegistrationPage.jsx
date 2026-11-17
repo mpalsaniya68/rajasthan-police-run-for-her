@@ -2660,12 +2660,12 @@ export function RegistrationPage({
                       onChange={(e) => setFormData({ ...formData, tshirtSize: e.target.value })}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     >
-                      <option value="XS">XS (चेस्ट 34")</option>
-                      <option value="S">S (चेस्ट 36")</option>
-                      <option value="M">M (चेस्ट 38")</option>
-                      <option value="L">L (चेस्ट 40")</option>
-                      <option value="XL">XL (चेस्ट 42")</option>
-                      <option value="XXL">XXL (चेस्ट 44")</option>
+                      <option value="XS">XS</option>
+                      <option value="S">S</option>
+                      <option value="M">M</option>
+                      <option value="L">L</option>
+                      <option value="XL">XL</option>
+                      <option value="XXL">XXL</option>
                     </select>
                   </div>
 

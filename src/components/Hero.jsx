@@ -142,9 +142,9 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
                   e.currentTarget.style.background = 'rgba(255, 255, 255, 0.14)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
-                title="खोया हुआ ई-पास खोजें व पुनः डाउनलोड करें"
+                title="ई-पास खोजें व पुनः डाउनलोड करें"
               >
-                <span>🔍 ई-पास / बिब खोजें</span>
+                <span>🔍 ई-पास खोजें</span>
               </button>
             </div>
 
