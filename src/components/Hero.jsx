@@ -66,27 +66,7 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
             position: 'relative',
             height: '48px'
           }}>
-            {/* Badge */}
-            <div className="hero-ticker-badge" style={{
-              background: 'linear-gradient(135deg, #b91c1c 0%, #991b1b 100%)',
-              color: '#ffffff',
-              padding: '0 18px',
-              height: '100%',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontWeight: 900,
-              fontSize: '0.88rem',
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-              flexShrink: 0,
-              zIndex: 3,
-              boxShadow: '4px 0 12px rgba(0, 0, 0, 0.4)'
-            }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fef08a', display: 'inline-block', boxShadow: '0 0 8px #fef08a' }}></span>
-              <Bell size={16} color="#fef08a" />
-              <span style={{ color: '#ffffff', letterSpacing: '0.04em' }}>आधिकारिक बुलेटिन</span>
-            </div>
+
 
             {/* Marquee Track */}
             <div className="notice-ticker-track-container" style={{

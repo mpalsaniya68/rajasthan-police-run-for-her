@@ -14,29 +14,10 @@ export function PrizePodiumSection({ onOpenRegister }) {
     >
       <div className="container">
         {/* Section Header */}
-        <div className="section-header" style={{ marginBottom: '36px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <span style={{
-              fontSize: '0.84rem',
-              padding: '6px 14px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: '#0f172a',
-              color: '#ffffff',
-              borderRadius: '6px',
-              fontWeight: 800
-            }}>
-              <Trophy size={15} color="#fde047" />
-              आधिकारिक नकद पुरस्कार राशि (Official Cash Prize Money)
-            </span>
-          </div>
-          <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', color: '#0f172a', margin: '8px 0 10px 0', fontWeight: 900 }}>
-            जयपुर मुख्य फ्लैगशिप — नकद पुरस्कार एवं सम्मान पोडियम
+        <div className="section-header" style={{ marginBottom: '32px', textAlign: 'center' }}>
+          <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', color: '#0f172a', margin: '0 0 8px 0', fontWeight: 900 }}>
+            Prizes & Rewards (पुरस्कार एवं सम्मान)
           </h2>
-          <p style={{ fontSize: '1.02rem', color: '#475569', lineHeight: '1.6', maxWidth: '840px', margin: '0 auto', fontWeight: 500 }}>
-            अल्बर्ट हॉल, जयपुर मुख्य फ्लैगशिप मैराथन में भाग लेने वाले शीर्ष धावकों के लिए विशेष नकद पुरस्कार एवं सभी श्रेणियों में मेडल, ड्राई-फिट टी-शर्ट व रिफ्रेशमेंट्स किट।
-          </p>
         </div>
 
         {/* 3-Column Prize Cards Grid */}
@@ -97,7 +78,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span style={{ fontSize: '1.25rem' }}>🥇</span>
                     <span>1st Prize (प्रथम विजेता)</span>
                   </div>
-                  <span style={{ fontWeight: 900, fontSize: '1.3rem', color: '#fde047' }}>₹21,000</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fde047' }}>To Be Announced</span>
                 </div>
 
                 <div style={{
@@ -113,7 +94,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span style={{ fontSize: '1.25rem' }}>🥈</span>
                     <span>2nd Prize (द्वितीय विजेता)</span>
                   </div>
-                  <span style={{ fontWeight: 900, fontSize: '1.25rem', color: '#0f172a' }}>₹11,000</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
 
                 <div style={{
@@ -129,7 +110,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span style={{ fontSize: '1.25rem' }}>🥉</span>
                     <span>3rd Prize (तृतीय विजेता)</span>
                   </div>
-                  <span style={{ fontWeight: 900, fontSize: '1.25rem', color: '#0f172a' }}>₹5,100</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
               </div>
 
@@ -190,7 +171,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span style={{ fontSize: '1.25rem' }}>🥇</span>
                     <span>1st Prize (प्रथम विजेता)</span>
                   </div>
-                  <span style={{ fontWeight: 900, fontSize: '1.3rem', color: '#fde047' }}>₹11,000</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fde047' }}>To Be Announced</span>
                 </div>
 
                 <div style={{
@@ -206,7 +187,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span style={{ fontSize: '1.25rem' }}>🥈</span>
                     <span>2nd Prize (द्वितीय विजेता)</span>
                   </div>
-                  <span style={{ fontWeight: 900, fontSize: '1.25rem', color: '#0f172a' }}>₹5,100</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
 
                 <div style={{
@@ -222,7 +203,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span style={{ fontSize: '1.25rem' }}>🥉</span>
                     <span>3rd Prize (तृतीय विजेता)</span>
                   </div>
-                  <span style={{ fontWeight: 900, fontSize: '1.25rem', color: '#0f172a' }}>₹2,100</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
               </div>
 

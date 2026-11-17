@@ -12,9 +12,9 @@ export const RACE_CATEGORIES = [
     reporting: "05:00 AM",
     description: "The premier competitive endurance run for seasoned marathoners, police personnel, and serious athletes.",
     prizes: [
-      { rank: "1st", amount: "₹21,000", trophy: "🥇", label: "प्रथम" },
-      { rank: "2nd", amount: "₹11,000", trophy: "🥈", label: "द्वितीय" },
-      { rank: "3rd", amount: "₹5,100", trophy: "🥉", label: "तृतीय" }
+      { rank: "1st", amount: "To Be Announced", trophy: "🥇", label: "प्रथम" },
+      { rank: "2nd", amount: "To Be Announced", trophy: "🥈", label: "द्वितीय" },
+      { rank: "3rd", amount: "To Be Announced", trophy: "🥉", label: "तृतीय" }
     ],
     prizeNote: "नकद पुरस्कार केवल जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल) ओपन पोडियम हेतु लागू है।",
     perks: [
@@ -38,9 +38,9 @@ export const RACE_CATEGORIES = [
     reporting: "05:15 AM",
     description: "High-energy timed course designed for intermediate runners, university athletes, and enthusiastic youth.",
     prizes: [
-      { rank: "1st", amount: "₹11,000", trophy: "🥇", label: "प्रथम" },
-      { rank: "2nd", amount: "₹5,100", trophy: "🥈", label: "द्वितीय" },
-      { rank: "3rd", amount: "₹2,100", trophy: "🥉", label: "तृतीय" }
+      { rank: "1st", amount: "To Be Announced", trophy: "🥇", label: "प्रथम" },
+      { rank: "2nd", amount: "To Be Announced", trophy: "🥈", label: "द्वितीय" },
+      { rank: "3rd", amount: "To Be Announced", trophy: "🥉", label: "तृतीय" }
     ],
     prizeNote: "नकद पुरस्कार केवल जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल) ओपन पोडियम हेतु लागू है।",
     perks: [

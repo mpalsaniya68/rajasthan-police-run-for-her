@@ -129,7 +129,7 @@ export function Categories({ onSelectCategory }) {
                           <div style={{ fontSize: '0.72rem', fontWeight: 800, color: idx === 0 ? '#cbd5e1' : '#475569' }}>
                             {p.trophy} {p.label}
                           </div>
-                          <div style={{ fontSize: '1.02rem', fontWeight: 900, color: idx === 0 ? '#fde047' : '#0f172a', marginTop: '2px' }}>
+                          <div style={{ fontSize: '0.82rem', fontWeight: 900, color: idx === 0 ? '#fde047' : '#0f172a', marginTop: '2px', whiteSpace: 'nowrap' }}>
                             {p.amount}
                           </div>
                         </div>
