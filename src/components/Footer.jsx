@@ -30,7 +30,7 @@ export function Footer({ onNavigate }) {
               <PoliceEmblem size={40} />
               <div>
                 <div style={{ fontWeight: 800, color: '#ffffff', fontSize: '1.05rem' }}>RAJASTHAN POLICE</div>
-                <div style={{ color: '#ff7597', fontWeight: 700, fontSize: '0.8rem' }}>RUN FOR HER 2027</div>
+                <div translate="no" className="notranslate" style={{ color: '#ff7597', fontWeight: 700, fontSize: '0.8rem' }}>RUN FOR HER 2027</div>
               </div>
             </div>
             <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6 }}>

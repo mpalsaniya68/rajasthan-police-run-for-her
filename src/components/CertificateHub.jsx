@@ -683,7 +683,7 @@ export function CertificateHub({ registrations = [] }) {
 
                   <div style={{ textAlign: 'right' }}>
                     <RunForHerBadge size={48} />
-                    <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--crimson-600)', marginTop: '2px' }}>
+                    <div translate="no" className="notranslate" style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--crimson-600)', marginTop: '2px' }}>
                       RUN FOR HER 2027
                     </div>
                   </div>

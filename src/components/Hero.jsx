@@ -55,16 +55,20 @@ export function Hero({ onOpenRegister, onOpenFindPass, totalRegistered = "1000+"
               ★ RAJASTHAN POLICE STATEWIDE MARATHON 2027 ★
             </div>
 
-            <h1 style={{
-              fontSize: 'clamp(2.3rem, 6.5vw, 4.6rem)',
-              fontWeight: 900,
-              lineHeight: 1.08,
-              letterSpacing: '-0.02em',
-              color: '#ffffff',
-              textTransform: 'uppercase',
-              margin: '0 0 12px 0',
-              textShadow: '0 4px 20px rgba(0, 0, 0, 0.7)'
-            }}>
+            <h1 
+              translate="no"
+              className="notranslate"
+              style={{
+                fontSize: 'clamp(2.3rem, 6.5vw, 4.6rem)',
+                fontWeight: 900,
+                lineHeight: 1.08,
+                letterSpacing: '-0.02em',
+                color: '#ffffff',
+                textTransform: 'uppercase',
+                margin: '0 0 12px 0',
+                textShadow: '0 4px 20px rgba(0, 0, 0, 0.7)'
+              }}
+            >
               RUN FOR HER
             </h1>
 

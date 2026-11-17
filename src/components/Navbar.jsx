@@ -157,12 +157,16 @@ export function Navbar({
 
               {/* English Sub-Heading & Tagline */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
-                <span style={{
-                  fontSize: 'clamp(0.85rem, 1.8vw, 1.05rem)',
-                  fontWeight: 900,
-                  color: 'var(--crimson-600)',
-                  letterSpacing: '0.04em'
-                }}>
+                <span 
+                  translate="no"
+                  className="notranslate"
+                  style={{
+                    fontSize: 'clamp(0.85rem, 1.8vw, 1.05rem)',
+                    fontWeight: 900,
+                    color: 'var(--crimson-600)',
+                    letterSpacing: '0.04em'
+                  }}
+                >
                   RUN FOR HER
                 </span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }} className="d-tablet-inline">
