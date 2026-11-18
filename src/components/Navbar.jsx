@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
-import { Shield, UserPlus, Menu, X, Phone, PackageCheck, LogOut } from 'lucide-react';
+import { Shield, Menu, X, Phone, PackageCheck, LogOut } from 'lucide-react';
 
 export function Navbar({ 
   onOpenRegister, 
@@ -176,17 +176,8 @@ export function Navbar({
             </div>
           </div>
 
-          {/* Right Header: Quick Registration & Mobile Toggle */}
+          {/* Right Header: Mobile Toggle */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {/* Quick Register CTA */}
-            <button 
-              onClick={onOpenRegister} 
-              className="btn-primary" 
-              style={{ padding: '8px 18px', fontSize: '0.88rem', whiteSpace: 'nowrap' }}
-            >
-              <UserPlus size={15} /> रजिस्ट्रेशन
-            </button>
-
             {/* Mobile / Tablet Toggle Hamburger */}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -234,6 +225,9 @@ export function Navbar({
                   onClick={() => {
                     if (tab.isFindPass) {
                       if (onOpenFindPass) onOpenFindPass();
+                      else handleNav('find-pass');
+                    } else if (tab.id === 'register') {
+                      if (onOpenRegister) onOpenRegister();
                       else handleNav('register');
                     } else {
                       handleNav(tab.id);
@@ -364,8 +358,8 @@ export function Navbar({
           {[
             { id: 'home', label: 'मुख्य पृष्ठ' },
             { id: 'register', label: 'ऑनलाइन पंजीकरण (ई-पास)', color: 'var(--police-gold-700)' },
+            { id: 'find-pass', label: '🔍 ई-पास खोजें (Find E-Pass)', color: 'var(--police-navy-900)', isFindPass: true },
             { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी' },
-
             { id: 'certificates', label: 'फिनिशर सर्टिफिकेट व सत्यापन', color: 'var(--police-gold-700)' },
             { id: 'pledge-safety', label: 'महिला सुरक्षा संकल्प', color: 'var(--crimson-600)' }
           ].map(tab => {
@@ -373,7 +367,18 @@ export function Navbar({
             return (
               <button
                 key={tab.id}
-                onClick={() => handleNav(tab.id)}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (tab.isFindPass) {
+                    if (onOpenFindPass) onOpenFindPass();
+                    else handleNav('find-pass');
+                  } else if (tab.id === 'register') {
+                    if (onOpenRegister) onOpenRegister();
+                    else handleNav('register');
+                  } else {
+                    handleNav(tab.id);
+                  }
+                }}
                 style={{
                   background: isActive ? 'var(--police-navy-100)' : 'var(--police-navy-50)',
                   color: tab.color || 'var(--police-navy-900)',
@@ -396,32 +401,6 @@ export function Navbar({
               </button>
             );
           })}
-
-          <button
-            onClick={() => { 
-              setMobileMenuOpen(false); 
-              if (onOpenFindPass) onOpenFindPass();
-              else handleNav('register'); 
-            }}
-            style={{
-              padding: '11px',
-              textAlign: 'center',
-              fontWeight: 800,
-              fontSize: '0.88rem',
-              justifyContent: 'center',
-              marginTop: '4px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              color: '#fde68a',
-              border: '1px solid rgba(253, 230, 138, 0.35)',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              cursor: 'pointer'
-            }}
-          >
-            🔍 ई-पास खोजें (Find E-Pass)
-          </button>
 
           <button
             onClick={() => { setMobileMenuOpen(false); handleNav(navAdminTarget); }}

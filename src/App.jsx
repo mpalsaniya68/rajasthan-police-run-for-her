@@ -79,13 +79,15 @@ class ErrorBoundary extends React.Component {
 
 export default function App() {
 
-  // Active Page State ('home', 'register', 'route-schedule', 'districts', 'certificates', 'photos', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal')
+  const VALID_PAGES = ['home', 'register', 'find-pass', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'];
+
+  // Active Page State ('home', 'register', 'find-pass', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal')
   const [activePage, setActivePage] = useState(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.replace(/^#\/?/, '');
       const search = new URLSearchParams(window.location.search).get('page');
       const target = hash || search;
-      if (['home', 'register', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'].includes(target)) {
+      if (VALID_PAGES.includes(target)) {
         return target;
       }
     }
@@ -104,7 +106,12 @@ export default function App() {
 
   const [selectedCategoryForModal, setSelectedCategoryForModal] = useState("21k");
   const [selectedDistrictForRegister, setSelectedDistrictForRegister] = useState("JPR-COMM");
-  const [selectedRegTab, setSelectedRegTab] = useState("register");
+  const [selectedRegTab, setSelectedRegTab] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.hash.replace(/^#\/?/, '') === 'find-pass') {
+      return 'find';
+    }
+    return 'register';
+  });
 
   // Single Access Admin States & RBAC Credentials
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
@@ -121,6 +128,11 @@ export default function App() {
   });
 
   const navigateToPage = (pageId) => {
+    if (pageId === 'find-pass') {
+      setSelectedRegTab('find');
+    } else if (pageId === 'register') {
+      setSelectedRegTab('register');
+    }
     setActivePage(pageId);
     if (typeof window !== 'undefined') {
       window.location.hash = pageId;
@@ -131,7 +143,9 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace(/^#\/?/, '');
-      if (['home', 'register', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'].includes(hash)) {
+      if (VALID_PAGES.includes(hash)) {
+        if (hash === 'find-pass') setSelectedRegTab('find');
+        else if (hash === 'register') setSelectedRegTab('register');
         setActivePage(hash);
       }
     };
@@ -256,7 +270,7 @@ export default function App() {
 
   const handleOpenFindPass = () => {
     setSelectedRegTab("find");
-    navigateToPage('register');
+    navigateToPage('find-pass');
   };
 
   return (
@@ -286,9 +300,9 @@ export default function App() {
       <main id="main-content" tabIndex="-1" style={{ flex: 1 }}>
         <ErrorBoundary>
 
-        {/* 0. DEDICATED FULL-PAGE ONLINE RUNNER REGISTRATION */}
+        {/* 0. DEDICATED FULL-PAGE ONLINE RUNNER REGISTRATION & E-PASS SEARCH */}
 
-        {activePage === 'register' && (
+        {(activePage === 'register' || activePage === 'find-pass') && (
 
           <div id="page-register">
 
@@ -298,7 +312,16 @@ export default function App() {
 
               initialDistrict={selectedDistrictForRegister}
 
-              initialTab={selectedRegTab}
+              initialTab={activePage === 'find-pass' ? 'find' : selectedRegTab}
+
+              onTabChange={(tab) => {
+                setSelectedRegTab(tab);
+                const targetPage = tab === 'find' ? 'find-pass' : 'register';
+                setActivePage(targetPage);
+                if (typeof window !== 'undefined') {
+                  window.location.hash = targetPage;
+                }
+              }}
 
               onNavigate={navigateToPage}
 

@@ -29,6 +29,7 @@ export function RegistrationPage({
   initialCategory = "21k",
   initialDistrict = "JPR-COMM",
   initialTab = "register",
+  onTabChange,
   onNavigate,
   onRegisterSuccess
 }) {
@@ -109,9 +110,22 @@ export function RegistrationPage({
   // Tab State: "register" (New Registration) or "find" (Find/Re-print Existing E-Pass)
   const [activeTab, setActiveTab] = useState(() => initialTab || "register");
 
+  const handleSwitchTab = (tab) => {
+    setActiveTab(tab);
+    if (tab === "find") {
+      setIsSuccess(false);
+    }
+    if (onTabChange) {
+      onTabChange(tab);
+    }
+  };
+
   useEffect(() => {
     if (initialTab) {
       setActiveTab(initialTab);
+      if (initialTab === "find") {
+        setIsSuccess(false);
+      }
     }
   }, [initialTab]);
   const [findQuery, setFindQuery] = useState("");
@@ -1569,8 +1583,8 @@ export function RegistrationPage({
                 <button
                   onClick={() => {
                     setIsSuccess(false);
-                    setActiveTab('find');
                     setRegisteredParticipant(null);
+                    handleSwitchTab('find');
                   }}
                   style={{
                     background: 'var(--police-navy-50)',
@@ -1607,7 +1621,7 @@ export function RegistrationPage({
                 boxShadow: 'var(--shadow-sm)'
               }}>
                 <button
-                  onClick={() => setActiveTab('register')}
+                  onClick={() => handleSwitchTab('register')}
                   style={{
                     flex: 1,
                     padding: '12px 18px',
@@ -1630,7 +1644,7 @@ export function RegistrationPage({
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('find')}
+                  onClick={() => handleSwitchTab('find')}
                   style={{
                     flex: 1,
                     padding: '12px 18px',
@@ -1686,7 +1700,7 @@ export function RegistrationPage({
                 </div>
               </div>
               <button
-                onClick={() => setActiveTab('register')}
+                onClick={() => handleSwitchTab('register')}
                 className="btn-gold"
                 style={{ padding: '8px 16px', fontSize: '0.82rem' }}
               >
@@ -1767,7 +1781,7 @@ export function RegistrationPage({
                     {findSearchError || `दर्ज किए गए विवरण "${findQuery}" से संबंधित कोई अधिकृत ई-पास नहीं मिला।`}
                   </p>
                   <button
-                    onClick={() => setActiveTab('register')}
+                    onClick={() => handleSwitchTab('register')}
                     className="btn-primary"
                     style={{ padding: '10px 22px', fontSize: '0.9rem', fontWeight: 800 }}
                   >
