@@ -1219,7 +1219,7 @@ export function RegistrationPage({
             </button>
             <span style={{ color: 'var(--border-medium)' }}>/</span>
             <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>
-              आधिकारिक ऑनलाइन धावक पंजीकरण (Run for Her 2027)
+              {activeTab === 'find' ? 'E-Pass Search' : 'Online Registration'}
             </span>
           </div>
 
@@ -1663,7 +1663,7 @@ export function RegistrationPage({
                   }}
                 >
                   <Search size={18} color={activeTab === 'find' ? '#fde68a' : 'currentColor'} />
-                  <span>ई-पास खोजें / पुनः डाउनलोड (Find My E-Pass)</span>
+                  <span>E-Pass Search</span>
                 </button>
               </div>
 
@@ -1680,32 +1680,13 @@ export function RegistrationPage({
             <div style={{
               background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
               color: '#ffffff',
-              padding: '24px',
+              padding: '20px 24px',
               borderBottom: '3px solid var(--police-gold-500)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '14px'
+              textAlign: 'center'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <PoliceEmblem size={44} />
-                <div>
-                  <h2 style={{ fontSize: '1.25rem', margin: '0 0 4px 0', color: '#fef08a', fontWeight: 900 }}>
-                    आधिकारिक ई-पास खोज एवं पुनः डाउनलोड केंद्र
-                  </h2>
-                  <div style={{ fontSize: '0.8rem', color: '#e2e8f0' }}>
-                    Rajasthan Police Marathon 2027 • अपना पंजीकृत ई-पास खोजें व प्रिंट करें
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => handleSwitchTab('register')}
-                className="btn-gold"
-                style={{ padding: '8px 16px', fontSize: '0.82rem' }}
-              >
-                + नया पंजीकरण करें
-              </button>
+              <h2 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', margin: 0, color: '#ffffff', fontWeight: 900, letterSpacing: '0.02em' }}>
+                E-Pass Search
+              </h2>
             </div>
 
             <div style={{ padding: 'clamp(20px, 4vw, 36px)' }}>

@@ -358,7 +358,7 @@ export function Navbar({
           {[
             { id: 'home', label: 'मुख्य पृष्ठ' },
             { id: 'register', label: 'ऑनलाइन पंजीकरण (ई-पास)', color: 'var(--police-gold-700)' },
-            { id: 'find-pass', label: '🔍 ई-पास खोजें (Find E-Pass)', color: 'var(--police-navy-900)', isFindPass: true },
+            { id: 'find-pass', label: '🔍 E-Pass Search', color: 'var(--police-navy-900)', isFindPass: true },
             { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी' },
             { id: 'certificates', label: 'फिनिशर सर्टिफिकेट व सत्यापन', color: 'var(--police-gold-700)' },
             { id: 'pledge-safety', label: 'महिला सुरक्षा संकल्प', color: 'var(--crimson-600)' }
