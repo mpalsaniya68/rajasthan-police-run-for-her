@@ -190,9 +190,10 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
       if (!singleSearchQuery.trim()) return false;
       const q = singleSearchQuery.toLowerCase().trim();
       const bib = (r.bibNumber || '').toLowerCase();
+      const physBib = (r.physicalBibNumber || '').toLowerCase();
       const mob = (r.mobile || '').toLowerCase();
       const name = (r.fullName || '').toLowerCase();
-      return bib.includes(q) || mob.includes(q) || name.includes(q);
+      return bib.includes(q) || physBib.includes(q) || mob.includes(q) || name.includes(q);
     }
 
     return true;
@@ -205,7 +206,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
     fullName: "सुनीता चौधरी",
     bibNumber: "RJ-21K-1009",
     categoryName: "21 KM Half Marathon",
-    districtName: "जयपुर पुलिस कमिश्नरेट",
+    districtName: "जयपुर",
     tshirtSize: "L (Large)",
     certificateId: "RPM-2027-CONF-8821"
   };
@@ -316,7 +317,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                 🟢 RajSMS & WhatsApp Cloud Gateway Active
               </span>
             </div>
-            <h2 style={{ fontSize: '1.65rem', fontWeight: 900, margin: '0 0 6px 0', letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontSize: '1.65rem', fontWeight: 900, margin: '0 0 6px 0', letterSpacing: '-0.01em', color: '#ffffff' }}>
               📢 WhatsApp एवं SMS प्रसारण कमांड सेंटर
             </h2>
             <p style={{ margin: 0, fontSize: '0.94rem', color: '#a7f3d0', maxWidth: '780px', lineHeight: 1.55 }}>

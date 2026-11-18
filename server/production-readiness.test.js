@@ -254,7 +254,7 @@ test("FULL PRODUCTION LIFECYCLE AUDIT: Registration -> E-Pass -> Expo Handover -
   const verifyHandoverOtpData = await verifyHandoverOtpRes.json();
   assert.ok(verifyHandoverOtpData.verificationToken);
 
-  // 11d. Expo Kit Handover Confirmation with Valid Verification Token
+  // 11d. Expo Kit Handover Confirmation with Valid Verification Token & Dynamic Physical Bib Mapping
   const handoverRes = await fetch(`${baseUrl}/expo/handover`, {
     method: "POST",
     headers: {
@@ -263,10 +263,11 @@ test("FULL PRODUCTION LIFECYCLE AUDIT: Registration -> E-Pass -> Expo Handover -
     },
     body: JSON.stringify({
       bibNumber: runnerBib,
+      physicalBibNumber: "2101",
       counterId: "counter_01",
       counterName: "काउंटर-01 (21KM हाफ मैराथन - पुरुष)",
       operatorName: "Constable Mahendra",
-      rfidTagId: `RFID-${runnerBib}`,
+      rfidTagId: "RFID-2101",
       verificationToken: verifyHandoverOtpData.verificationToken
     })
   });
@@ -274,6 +275,17 @@ test("FULL PRODUCTION LIFECYCLE AUDIT: Registration -> E-Pass -> Expo Handover -
   const handoverData = await handoverRes.json();
   assert.equal(handoverData.success, true);
   assert.equal(handoverData.runner.kitCollected, true);
+  assert.equal(handoverData.runner.physicalBibNumber, "2101");
+
+  // 11e. Verify Runner can be Looked Up by Event Company's Physical Bib Number (2101)
+  const physLookupRes = await fetch(`${baseUrl}/expo/runner?q=2101`, {
+    headers: { "Authorization": `Bearer ${expoToken}` }
+  });
+  assert.equal(physLookupRes.status, 200);
+  const physLookupData = await physLookupRes.json();
+  assert.equal(physLookupData.success, true);
+  assert.equal(physLookupData.runner.bibNumber, runnerBib);
+  assert.equal(physLookupData.runner.physicalBibNumber, "2101");
 
   // 12. Duplicate Handover Rejection (409 Conflict)
   const dupHandoverRes = await fetch(`${baseUrl}/expo/handover`, {

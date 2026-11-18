@@ -30,8 +30,7 @@ import {
 
   apiGetCertificateStats,
   apiBatchGenerateCertificates,
-  apiDispatchCertificate,
-  apiSendBroadcast
+  apiDispatchCertificate
 } from '../services/api';
 
 
@@ -104,17 +103,6 @@ export function AdminDashboard({
   // Printable Checklist Modal State
   const [isPrintChecklistOpen, setIsPrintChecklistOpen] = useState(false);
 
-  // Mass Communication / Broadcast Modal State
-  const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
-  const [broadcastForm, setBroadcastForm] = useState({
-    title: "रेस किट एवं समय-सारणी निर्देश",
-    message: "आदरणीय धावक, राजस्थान पुलिस मैराथन 2027 में आपका स्वागत है। कृपया 1 व 2 जनवरी को अपनी टी-शर्ट एवं आरएफआईडी बिब संग्रह केंद्र से प्राप्त करें। 3 जनवरी प्रातः 5:30 बजे अल्बर्ट हॉल पर फ्लैग-ऑफ होगा।",
-    targetCategory: "all",
-    channel: "SMS"
-  });
-  const [isSendingBroadcast, setIsSendingBroadcast] = useState(false);
-  const [broadcastFeedback, setBroadcastFeedback] = useState(null);
-
   // Mobile View Mode Switcher ('table' on desktop, 'cards' default on mobile)
   const [viewMode, setViewMode] = useState(() => {
     if (typeof window !== 'undefined' && window.innerWidth <= 768) {
@@ -158,6 +146,8 @@ export function AdminDashboard({
   const [scannedRunner, setScannedRunner] = useState(null);
 
   const [rfidTagInput, setRfidTagInput] = useState("");
+
+  const [physicalBibInput, setPhysicalBibInput] = useState("");
 
   const [counterId, setCounterId] = useState("काउंटर-01 (अल्बर्ट हॉल)");
 
@@ -223,37 +213,6 @@ export function AdminDashboard({
       console.error("Failed to load live admin data:", err);
     } finally {
       setIsLoadingDb(false);
-    }
-  };
-
-  const handleSendBroadcast = async (e) => {
-    if (e) e.preventDefault();
-    if (!broadcastForm.title.trim() || !broadcastForm.message.trim()) {
-      alert("कृपया शीर्षक एवं संदेश दोनों भरें।");
-      return;
-    }
-    setIsSendingBroadcast(true);
-    setBroadcastFeedback(null);
-    try {
-      const res = await apiSendBroadcast({
-        title: broadcastForm.title,
-        message: broadcastForm.message,
-        targetCategory: broadcastForm.targetCategory,
-        channel: broadcastForm.channel
-      });
-      if (res && res.success) {
-        setBroadcastFeedback({ type: "success", message: res.message });
-        setTimeout(() => {
-          setIsBroadcastOpen(false);
-          setBroadcastFeedback(null);
-        }, 3000);
-      } else {
-        setBroadcastFeedback({ type: "error", message: res?.error || "प्रसारण विफल हुआ।" });
-      }
-    } catch (err) {
-      setBroadcastFeedback({ type: "error", message: "सर्वर से कनेक्ट करने में त्रुटि।" });
-    } finally {
-      setIsSendingBroadcast(false);
     }
   };
 
@@ -519,6 +478,8 @@ export function AdminDashboard({
 
         rfidTagId: found.rfid_tag_id || found.rfidTag || '',
 
+        physicalBibNumber: found.physical_bib_number || found.physicalBibNumber || '',
+
         collectedBy: found.collected_by || null,
 
         mobile: found.mobile || found.masked_mobile || ''
@@ -528,6 +489,8 @@ export function AdminDashboard({
       setScannedRunner(normalized);
 
       setRfidTagInput(normalized.rfidTagId || `RF-${Math.floor(100000 + Math.random() * 900000)}`);
+
+      setPhysicalBibInput(normalized.physicalBibNumber || '');
 
       setKitActionMsg(null);
 
@@ -567,6 +530,8 @@ export function AdminDashboard({
 
         bibNumber: scannedRunner.bibNumber,
 
+        physicalBibNumber: physicalBibInput.trim().toUpperCase() || undefined,
+
         rfidTagId: rfidTagInput.trim(),
 
         counterId: counterId
@@ -577,11 +542,12 @@ export function AdminDashboard({
 
       if (res && res.success) {
 
+        const assignedPhys = physicalBibInput.trim().toUpperCase();
         setKitActionMsg({ 
 
           type: 'success', 
 
-          text: `सफलतापूर्वक किट आवंटित! RFID चिप #${rfidTagInput.trim()} धावक ${scannedRunner.fullName} (Bib: ${scannedRunner.bibNumber}) को हैंडओवर की गई।` 
+          text: `सफलतापूर्वक किट आवंटित! ${assignedPhys ? `फिजिकल बिब #${assignedPhys} • ` : ''}RFID चिप #${rfidTagInput.trim()} धावक ${scannedRunner.fullName} (Reg ID: ${scannedRunner.bibNumber}) को हैंडओवर की गई।` 
 
         });
 
@@ -594,6 +560,8 @@ export function AdminDashboard({
           kitCollectedAt: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
 
           rfidTagId: rfidTagInput.trim(),
+
+          physicalBibNumber: assignedPhys || prev.physicalBibNumber || '',
 
           collectedBy: counterId
 
@@ -672,6 +640,8 @@ export function AdminDashboard({
     bibCollected: !!p.kit_collected,
 
     rfidTagId: p.rfid_tag_id || null,
+
+    physicalBibNumber: p.physical_bib_number || null,
 
     finishTime: p.finish_time || 'Pending / In Progress',
 
@@ -2965,6 +2935,16 @@ export function AdminDashboard({
 
                         </button>
 
+                        {row.physicalBibNumber && (
+
+                          <span style={{ fontSize: '0.68rem', fontFamily: 'monospace', color: '#b91c1c', fontWeight: 900, background: '#fef2f2', padding: '1px 6px', borderRadius: '4px', border: '1px solid #fecaca' }}>
+
+                            Bib: #{row.physicalBibNumber}
+
+                          </span>
+
+                        )}
+
                         {row.rfidTagId && (
 
                           <span style={{ fontSize: '0.66rem', fontFamily: 'monospace', color: 'var(--police-navy-700)', fontWeight: 800 }}>
@@ -3680,7 +3660,51 @@ export function AdminDashboard({
 
                     <div className="admin-rfid-action-row">
 
-                      <div style={{ flex: 1, minWidth: '220px' }}>
+                      <div style={{ flex: 1, minWidth: '200px' }}>
+
+                        <label style={{ display: 'block', fontSize: '0.74rem', color: '#fde68a', marginBottom: '4px', fontWeight: 700 }}>
+
+                          इवेंट कंपनी फिजिकल बिब नंबर (Physical Bib No.):
+
+                        </label>
+
+                        <input
+
+                          type="text"
+
+                          value={physicalBibInput}
+
+                          onChange={(e) => setPhysicalBibInput(e.target.value.toUpperCase())}
+
+                          placeholder="उदा. 2101, 10045"
+
+                          style={{
+
+                            width: '100%',
+
+                            padding: '10px 14px',
+
+                            borderRadius: '5px',
+
+                            background: 'rgba(255, 255, 255, 0.12)',
+
+                            border: '1.5px solid #38bdf8',
+
+                            color: '#ffffff',
+
+                            fontFamily: 'monospace',
+
+                            fontSize: '1rem',
+
+                            fontWeight: 900
+
+                          }}
+
+                        />
+
+                      </div>
+
+                      <div style={{ flex: 1, minWidth: '200px' }}>
 
                         <label style={{ display: 'block', fontSize: '0.74rem', color: '#cbd5e1', marginBottom: '4px', fontWeight: 700 }}>
 
@@ -5272,8 +5296,8 @@ export function AdminDashboard({
       {adminTab === "broadcast" && (
         <BroadcastCommandCenter
           adminUser={adminUser}
-          participants={participants}
-          onRefresh={loadParticipants}
+          participants={combinedRegistrations}
+          onRefresh={loadLiveDashboardData}
         />
       )}
 
@@ -5440,212 +5464,6 @@ export function AdminDashboard({
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    )}
-
-    {/* MASS COMMUNICATION / BROADCAST MODAL */}
-    {isBroadcastOpen && (
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(10, 28, 61, 0.75)',
-        zIndex: 999999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px'
-      }}>
-        <div style={{
-          background: '#ffffff',
-          borderRadius: '12px',
-          width: '100%',
-          maxWidth: '640px',
-          boxShadow: '0 25px 50px rgba(0,0,0,0.35)',
-          overflow: 'hidden'
-        }}>
-          {/* Header */}
-          <div style={{
-            background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
-            color: '#ffffff',
-            padding: '18px 24px',
-            borderBottom: '3px solid var(--police-gold-500)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Radio size={20} color="#fde68a" />
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#ffffff', fontWeight: 800 }}>
-                  सामूहिक SMS/व्हाट्सएप प्रसारण केंद्र
-                </h3>
-                <div style={{ fontSize: '0.74rem', color: '#cbd5e1' }}>
-                  राजस्थान पुलिस मैराथन 2027 • जन-सूचना एवं एडवाइजरी प्रसारण
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={() => setIsBroadcastOpen(false)}
-              style={{ background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '1.2rem', fontWeight: 800 }}
-            >
-              ✕
-            </button>
-          </div>
-
-          <form onSubmit={handleSendBroadcast} style={{ padding: '24px' }}>
-            {broadcastFeedback && (
-              <div style={{
-                padding: '12px 16px',
-                borderRadius: '8px',
-                marginBottom: '16px',
-                background: broadcastFeedback.type === 'success' ? '#ecfdf5' : '#fef2f2',
-                border: `1.5px solid ${broadcastFeedback.type === 'success' ? '#86efac' : '#fecaca'}`,
-                color: broadcastFeedback.type === 'success' ? '#166534' : '#991b1b',
-                fontSize: '0.84rem',
-                fontWeight: 800,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                <CheckCircle2 size={16} color={broadcastFeedback.type === 'success' ? '#16a34a' : '#dc2626'} />
-                <span>{broadcastFeedback.message}</span>
-              </div>
-            )}
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                  प्रसारण चैनल (Channel):
-                </label>
-                <select
-                  value={broadcastForm.channel}
-                  onChange={(e) => setBroadcastForm({ ...broadcastForm, channel: e.target.value })}
-                  style={{ width: '100%', padding: '9px 10px', borderRadius: '6px', border: '1.5px solid var(--border-medium)', fontSize: '0.84rem', fontWeight: 700 }}
-                >
-                  <option value="SMS">📱 SMS गेटवे (DGP Rajasthan)</option>
-                  <option value="WHATSAPP">💬 व्हाट्सएप (Rajasthan Police)</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                  लक्षित धावक समूह (Target Audience):
-                </label>
-                <select
-                  value={broadcastForm.targetCategory}
-                  onChange={(e) => setBroadcastForm({ ...broadcastForm, targetCategory: e.target.value })}
-                  style={{ width: '100%', padding: '9px 10px', borderRadius: '6px', border: '1.5px solid var(--border-medium)', fontSize: '0.84rem', fontWeight: 700 }}
-                >
-                  <option value="all">🌐 समस्त पंजीकृत धावक (All Categories)</option>
-                  <option value="21k">🏅 21 KM हाफ मैराथन धावक</option>
-                  <option value="10k">🏃 10 KM स्पीड रन धावक</option>
-                  <option value="5k">👥 5 KM कम्युनिटी रन धावक</option>
-                </select>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                📋 त्वरित टेम्पलेट चुनें (Quick Template):
-              </label>
-              <select
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === 'kit') {
-                    setBroadcastForm({
-                      ...broadcastForm,
-                      title: "रेस किट एवं बिब संग्रहण निर्देश",
-                      message: "आदरणीय धावक, राजस्थान पुलिस मैराथन 2027 हेतु अपनी बिब व रनिंग किट 1 व 2 जनवरी को अल्बर्ट हॉल/पुलिस लाइन केंद्र से प्रातः 9:00 से सायं 6:00 बजे तक अवश्य प्राप्त करें। डिजिटल ई-पास साथ लाएं।"
-                    });
-                  } else if (val === 'flagoff') {
-                    setBroadcastForm({
-                      ...broadcastForm,
-                      title: "रेस दिवस फ्लैग-ऑफ समय व रूट एडवाइजरी",
-                      message: "आदरणीय धावक, 3 जनवरी 2027 को प्रातः 5:30 बजे अल्बर्ट हॉल पर ऐतिहासिक फ्लैग-ऑफ होगा। समय पर पहुंचे एवं नारी सुरक्षा संकल्प में सहभागी बनें।"
-                    });
-                  } else if (val === 'traffic') {
-                    setBroadcastForm({
-                      ...broadcastForm,
-                      title: "महत्वपूर्ण रूट एवं ट्रैफिक सूचना",
-                      message: "मैराथन दिवस पर जयपुर शहर में प्रमुख रूट डायवर्जन रहेंगे। पार्किंग एवं रूट मैप वेबसाइट पर देखें।"
-                    });
-                  }
-                }}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid var(--police-gold-500)', background: '#fffbeb', fontSize: '0.82rem', fontWeight: 700, color: '#92400e' }}
-              >
-                <option value="">-- त्वरित टेम्पलेट लोड करें --</option>
-                <option value="kit">👕 1. रेस किट व बिब संग्रहण निर्देश (Kit Distribution)</option>
-                <option value="flagoff">🏁 2. रेस दिवस फ्लैग-ऑफ समय व रूट एडवाइजरी (Flag-off Schedule)</option>
-                <option value="traffic">🚦 3. महत्वपूर्ण रूट एवं ट्रैफिक सूचना (Traffic Advisory)</option>
-              </select>
-            </div>
-
-            <div style={{ marginBottom: '14px' }}>
-              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                संदेश शीर्षक (Message Title) <span style={{ color: '#ef4444' }}>*</span>:
-              </label>
-              <input
-                type="text"
-                required
-                value={broadcastForm.title}
-                onChange={(e) => setBroadcastForm({ ...broadcastForm, title: e.target.value })}
-                style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1.5px solid var(--border-medium)', fontSize: '0.88rem', fontWeight: 700 }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-                  संदेश सामग्री (Message Body) <span style={{ color: '#ef4444' }}>*</span>:
-                </label>
-                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                  {broadcastForm.message.length} अक्षर
-                </span>
-              </div>
-              <textarea
-                rows={4}
-                required
-                value={broadcastForm.message}
-                onChange={(e) => setBroadcastForm({ ...broadcastForm, message: e.target.value })}
-                style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1.5px solid var(--border-medium)', fontSize: '0.86rem', resize: 'vertical' }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-              <button
-                type="button"
-                onClick={() => setIsBroadcastOpen(false)}
-                style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '9px 16px', borderRadius: '6px', fontSize: '0.84rem', fontWeight: 700, cursor: 'pointer' }}
-              >
-                रद्द करें
-              </button>
-              <button
-                type="submit"
-                disabled={isSendingBroadcast}
-                style={{
-                  background: 'var(--police-navy-900)',
-                  color: '#ffffff',
-                  border: 'none',
-                  padding: '9px 22px',
-                  borderRadius: '6px',
-                  fontSize: '0.86rem',
-                  fontWeight: 800,
-                  cursor: isSendingBroadcast ? 'wait' : 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: '0 2px 8px rgba(10,28,61,0.2)'
-                }}
-              >
-                <Send size={15} color="#fde68a" />
-                <span>{isSendingBroadcast ? 'प्रसारण भेजा जा रहा है...' : 'अभी प्रसारण प्रेषित करें ➔'}</span>
-              </button>
-            </div>
-          </form>
         </div>
       </div>
     )}

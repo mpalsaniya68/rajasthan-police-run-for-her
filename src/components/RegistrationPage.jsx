@@ -976,14 +976,14 @@ export function RegistrationPage({
       ctx.fill();
       ctx.stroke();
 
-      // Top title bar inside Bib Box
+      // Top title bar inside Registration ID Box
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("छाती बिब संख्या", bibCenterX, 198);
+      ctx.fillText("पंजीकरण संख्या", bibCenterX, 198);
       ctx.fillStyle = "#94a3b8";
       ctx.font = "bold 11px sans-serif";
-      ctx.fillText("OFFICIAL BIB NUMBER", bibCenterX, 218);
+      ctx.fillText("REGISTRATION ID", bibCenterX, 218);
 
       // Dedicated Inner Card for Bib Number (280px wide, centered)
       const badgeX = 55;
@@ -1040,13 +1040,26 @@ export function RegistrationPage({
       // Entry Status & Reporting
       ctx.fillStyle = "#059669";
       ctx.font = "bold 15px sans-serif";
-      ctx.fillText("✓ प्रवेश अधिकृत (Entry Approved)", bibCenterX, 448);
+      ctx.fillText("✓ प्रवेश अधिकृत (Entry Approved)", bibCenterX, 444);
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 13px sans-serif";
-      ctx.fillText("रिपोर्टिंग: 3 जन 2027, 05:00 AM", bibCenterX, 474);
-      ctx.fillStyle = "#94a3b8";
-      ctx.font = "12px sans-serif";
-      ctx.fillText("गेट नंबर 2 • अल्बर्ट हॉल", bibCenterX, 498);
+      ctx.fillText("रिपोर्टिंग: 3 जन 2027, 05:00 AM", bibCenterX, 468);
+      if (p.physicalBibNumber) {
+        ctx.fillStyle = "#b91c1c";
+        ctx.font = "bold 13px sans-serif";
+        ctx.fillText(`आवंटित फिजिकल बिब: #${p.physicalBibNumber}`, bibCenterX, 494);
+      } else if (routeConfig) {
+        ctx.fillStyle = "#1d4ed8";
+        ctx.font = "bold 12px sans-serif";
+        ctx.fillText("RFID बिब एक्सपो काउंटर पर दिया जाएगा", bibCenterX, 494);
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "12px sans-serif";
+        ctx.fillText("गेट नंबर 2 • अल्बर्ट हॉल", bibCenterX, 518);
+      } else {
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "12px sans-serif";
+        ctx.fillText("पुलिस लाइन / जिला वेन्यू", bibCenterX, 494);
+      }
       ctx.textAlign = "left";
 
       // 4. Middle Section: Runner Details
@@ -1208,14 +1221,14 @@ export function RegistrationPage({
       `आदरणीय *${registeredParticipant.fullName}* जी,\n` +
       `राजस्थान पुलिस मैराथन 2027 में आपका पंजीकरण सफलतापूर्वक पूर्ण हो चुका है।\n\n` +
       `📋 *प्रवेश विवरण (Entry Details):*\n` +
-      `🎽 *छाती बिब संख्या (BIB No.):* ${registeredParticipant.bibNumber}\n` +
+      `🆔 *पंजीकरण संख्या (Registration ID):* ${registeredParticipant.bibNumber}\n` +
       `🎯 *दौड़ श्रेणी:* ${registeredParticipant.categoryName}\n` +
-      `📍 *स्थान:* ${registeredParticipant.districtName}\n` +
+      `📍 *स्थान:* ${formatCleanDistrictName(registeredParticipant)}\n` +
       `📅 *तारीख:* 3 जनवरी 2027, प्रातः 05:00 बजे रिपोर्टिंग\n` +
       (registeredParticipant.tshirtSize && registeredParticipant.tshirtSize !== 'N/A' ? `👕 *टी-शर्ट साइज़:* Size ${registeredParticipant.tshirtSize}\n` : '') +
       `🩸 *रक्त समूह:* ${registeredParticipant.bloodGroup || 'B+'}\n` +
       `🆔 *प्रमाण पत्र टोकन:* ${registeredParticipant.certificateId}\n\n` +
-      `⚠️ *महत्वपूर्ण:* एक्सपो केंद्र व मैराथन प्रवेश द्वार पर यह बिब नंबर एवं पहचान पत्र दिखाना अनिवार्य है।\n\n` +
+      `⚠️ *महत्वपूर्ण:* एक्सपो केंद्र पर यह ई-पास व पहचान पत्र दिखाकर अपना फिजिकल RFID बिब व किट प्राप्त करें।\n\n` +
       `ई-पास डाउनलोड व सत्यापन पोर्टल:\n${window.location.origin}/#register\n\n` +
       `_राजस्थान पुलिस — सेवार्थ कटिबद्धता_`;
 
@@ -1231,9 +1244,9 @@ export function RegistrationPage({
     const text = encodeURIComponent(
       `🏃‍♀️ मैंने राजस्थान पुलिस मैराथन 2027 'RUN FOR HER' में पंजीकरण कर लिया है!\n\n` +
       `🏅 धावक: ${registeredParticipant.fullName}\n` +
-      `🎽 बिब नंबर: ${registeredParticipant.bibNumber}\n` +
+      `🆔 पंजीकरण संख्या: ${registeredParticipant.bibNumber}\n` +
       `🎯 श्रेणी: ${registeredParticipant.categoryName}\n` +
-      `📍 स्थान: ${registeredParticipant.districtName}\n` +
+      `📍 स्थान: ${formatCleanDistrictName(registeredParticipant)}\n` +
       `📅 तिथि: 3 जनवरी 2027, प्रातः 06:00 बजे\n\n` +
       `हर कदम नारी सुरक्षा और सम्मान के लिए! आप भी आज ही रजिस्टर करें:\n${window.location.origin}/#register`
     );
@@ -1376,12 +1389,12 @@ export function RegistrationPage({
                 {/* Bib Main Content Grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', alignItems: 'center' }}>
 
-                  {/* Left: Huge Bib Number & Category */}
+                  {/* Left: Registration ID & Category */}
                   <div style={{ textAlign: 'center', background: 'var(--police-navy-50)', padding: '20px', borderRadius: '12px', border: '1.5px dashed var(--police-navy-800)' }}>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase' }}>
-                      छाती बिब संख्या (Bib Number)
+                      पंजीकरण संख्या (Registration ID)
                     </div>
-                    <div style={{ fontSize: 'clamp(2.2rem, 5vw, 3rem)', fontWeight: 900, color: 'var(--police-navy-950)', letterSpacing: '2px', margin: '6px 0' }}>
+                    <div style={{ fontSize: 'clamp(2rem, 4.5vw, 2.75rem)', fontWeight: 900, color: 'var(--police-navy-950)', letterSpacing: '1.5px', margin: '6px 0' }}>
                       {registeredParticipant.bibNumber}
                     </div>
                     <div style={{
@@ -1395,6 +1408,33 @@ export function RegistrationPage({
                     }}>
                       {registeredParticipant.categoryName}
                     </div>
+                    {registeredParticipant.physicalBibNumber ? (
+                      <div style={{
+                        marginTop: '10px',
+                        padding: '5px 10px',
+                        background: '#ecfdf5',
+                        border: '1px solid #86efac',
+                        borderRadius: '6px',
+                        fontSize: '0.78rem',
+                        fontWeight: 800,
+                        color: '#065f46'
+                      }}>
+                        🏷️ आवंटित फिजिकल बिब: #{registeredParticipant.physicalBibNumber}
+                      </div>
+                    ) : getJaipurRouteConfig(registeredParticipant) ? (
+                      <div style={{
+                        marginTop: '10px',
+                        padding: '5px 10px',
+                        background: '#eff6ff',
+                        border: '1px solid #bfdbfe',
+                        borderRadius: '6px',
+                        fontSize: '0.73rem',
+                        fontWeight: 700,
+                        color: '#1e40af'
+                      }}>
+                        ℹ️ RFID बिब एक्सपो काउंटर पर दिया जाएगा
+                      </div>
+                    ) : null}
                   </div>
 
                   {/* Middle: Runner Identity & Medical Badge */}

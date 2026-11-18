@@ -983,6 +983,7 @@ export async function handleApiRequest(req, res) {
         participant: {
           id: r.id,
           bibNumber: r.bib_number || r.bibNumber,
+          physicalBibNumber: r.physical_bib_number || r.physicalBibNumber || null,
           certificateId: r.certificate_id || r.certificateId,
           fullName: r.full_name || r.fullName,
           gender: r.gender,
@@ -2276,18 +2277,18 @@ export async function handleApiRequest(req, res) {
 
       const upperQ = cleanQ.toUpperCase();
       const findRes = await db.execute({
-        sql: `SELECT id, bib_number, full_name, gender, dob, mobile, masked_mobile, emergency_contact, emergency_relation,
+        sql: `SELECT id, bib_number, physical_bib_number, full_name, gender, dob, mobile, masked_mobile, emergency_contact, emergency_relation,
                      blood_group, medical_condition, medical_notes, category_id, category_name, district_id,
                      district_name, tshirt_size, kit_collected, kit_collected_at, collected_by, rfid_tag_id,
                      certificate_id, qr_token, status
               FROM participants 
-              WHERE bib_number = ? OR bib_number = ? OR mobile = ? OR certificate_id = ? OR certificate_id = ? OR qr_token = ? OR id = ? 
+              WHERE bib_number = ? OR bib_number = ? OR physical_bib_number = ? OR physical_bib_number = ? OR mobile = ? OR certificate_id = ? OR certificate_id = ? OR qr_token = ? OR id = ? 
               LIMIT 1`,
-        args: [cleanQ, upperQ, cleanQ, cleanQ, upperQ, cleanQ, cleanQ]
+        args: [cleanQ, upperQ, cleanQ, upperQ, cleanQ, cleanQ, upperQ, cleanQ, cleanQ]
       });
 
       if (findRes.rows.length === 0) {
-        return error(`धावक रिकॉर्ड नहीं मिला ("${cleanQ}")। कृपया सही ई-पास या बिब स्कैन करें।`, 404);
+        return error(`धावक रिकॉर्ड नहीं मिला ("${cleanQ}")। कृपया सही ई-पास या पंजीकरण आईडी स्कैन करें।`, 404);
       }
 
       const r = findRes.rows[0];
@@ -2296,6 +2297,7 @@ export async function handleApiRequest(req, res) {
         runner: {
           id: r.id,
           bibNumber: r.bib_number,
+          physicalBibNumber: r.physical_bib_number || null,
           fullName: r.full_name,
           gender: r.gender,
           dob: r.dob,
@@ -2435,6 +2437,7 @@ export async function handleApiRequest(req, res) {
       const body = await parseJsonBody(req);
       const runnerId = (body.runnerId || body.id || "").trim();
       const bibNumber = (body.bibNumber || "").trim().toUpperCase();
+      const physicalBibNumber = (body.physicalBibNumber || body.assignedBibNumber || "").trim().toUpperCase();
       const rfidTag = (body.rfidTagId || "").trim();
       const operatorName = (body.operatorName || adminUser.fullName || "वॉलंटियर").trim();
       const counterName = (body.counterName || adminUser.counterName || "एक्सपो काउंटर").trim();
@@ -2503,8 +2506,20 @@ export async function handleApiRequest(req, res) {
         return error("किट सुपुर्दगी से पूर्व धावक का मोबाइल OTP अथवा मूल पहचान पत्र सत्यापन अनिवार्य है।", 403);
       }
 
+      // Guard: Ensure event company's physical Bib Number isn't already assigned to another runner
+      if (physicalBibNumber) {
+        const dupBibRes = await db.execute({
+          sql: "SELECT id, full_name, bib_number FROM participants WHERE UPPER(physical_bib_number) = ? AND id != ? LIMIT 1",
+          args: [physicalBibNumber, runner.id]
+        });
+        if (dupBibRes.rows.length > 0) {
+          const other = dupBibRes.rows[0];
+          return error(`⚠️ फिजिकल बिब नंबर "${physicalBibNumber}" पहले से धावक ${other.full_name} (${other.bib_number}) को आवंटित है! कृपया दूसरा बिब उठाएं।`, 409);
+        }
+      }
+
       const now = new Date().toISOString();
-      const tag = rfidTag || `RFID-${runner.bib_number}`;
+      const tag = rfidTag || (physicalBibNumber ? `RFID-${physicalBibNumber}` : `RFID-${runner.bib_number}`);
       const collectorRecord = `${counterName} [${operatorName}]`;
 
       await db.execute({
@@ -2512,22 +2527,25 @@ export async function handleApiRequest(req, res) {
                 kit_collected = 1, 
                 kit_collected_at = ?, 
                 rfid_tag_id = ?, 
+                physical_bib_number = ?,
                 collected_by = ? 
               WHERE id = ?`,
-        args: [now, tag, collectorRecord, runner.id]
+        args: [now, tag, physicalBibNumber, collectorRecord, runner.id]
       });
 
       // Immutable Audit Log with Verification Mode & Details
       const sizeNote = (runner.tshirt_size && runner.tshirt_size !== 'N/A') ? `, Size: ${runner.tshirt_size}` : '';
+      const physBibNote = physicalBibNumber ? `, PhysicalBib: ${physicalBibNumber}` : '';
       await db.execute({
         sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-        args: [operatorName, "KIT_HANDOVER_SUCCESS", `Bib: ${runner.bib_number}${sizeNote}, Mode: ${verificationMode} (${verificationDetail}), Counter: ${counterName}, RFID: ${tag}`, clientIp, now]
+        args: [operatorName, "KIT_HANDOVER_SUCCESS", `RegID: ${runner.bib_number}${physBibNote}${sizeNote}, Mode: ${verificationMode} (${verificationDetail}), Counter: ${counterName}, RFID: ${tag}`, clientIp, now]
       });
 
       const runnerSizeMsg = (runner.tshirt_size && runner.tshirt_size !== 'N/A') ? ` • साइज ${runner.tshirt_size}` : '';
+      const runnerBibMsg = physicalBibNumber ? ` • फिजिकल बिब #${physicalBibNumber}` : '';
       return json({
         success: true,
-        message: `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${runner.full_name}${runnerSizeMsg})`,
+        message: `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${runner.full_name}${runnerBibMsg}${runnerSizeMsg})`,
         runner: {
           ...runner,
           kitCollected: true,
@@ -2536,6 +2554,8 @@ export async function handleApiRequest(req, res) {
           kit_collected_at: now,
           rfid_tag_id: tag,
           rfidTagId: tag,
+          physical_bib_number: physicalBibNumber || null,
+          physicalBibNumber: physicalBibNumber || null,
           collectedBy: collectorRecord,
           collected_by: collectorRecord
         }
@@ -2561,8 +2581,8 @@ export async function handleApiRequest(req, res) {
 
       const upperQ = cleanQ.toUpperCase();
       const findRes = await db.execute({
-        sql: "SELECT * FROM participants WHERE bib_number = ? OR bib_number = ? OR mobile = ? OR certificate_id = ? OR certificate_id = ? OR qr_token = ? OR id = ? LIMIT 1",
-        args: [cleanQ, upperQ, cleanQ, cleanQ, upperQ, cleanQ, cleanQ]
+        sql: "SELECT * FROM participants WHERE bib_number = ? OR bib_number = ? OR physical_bib_number = ? OR physical_bib_number = ? OR mobile = ? OR certificate_id = ? OR certificate_id = ? OR qr_token = ? OR id = ? LIMIT 1",
+        args: [cleanQ, upperQ, cleanQ, upperQ, cleanQ, cleanQ, upperQ, cleanQ, cleanQ]
       });
 
       if (findRes.rows.length === 0) {
@@ -2698,7 +2718,7 @@ export async function handleApiRequest(req, res) {
         const counterNum = numMatch ? numMatch[0] : "";
 
         const queryRes = await db.execute({
-          sql: `SELECT id, bib_number, full_name, gender, category_name, district_name, tshirt_size, 
+          sql: `SELECT id, bib_number, physical_bib_number, full_name, gender, category_name, district_name, tshirt_size, 
                        kit_collected, kit_collected_at, collected_by, rfid_tag_id
                 FROM participants 
                 WHERE kit_collected = 1 
@@ -2726,6 +2746,7 @@ export async function handleApiRequest(req, res) {
           id: r.id,
           type: "KIT_HANDOVER",
           bibNumber: r.bib_number,
+          physicalBibNumber: r.physical_bib_number || null,
           fullName: r.full_name,
           gender: r.gender,
           categoryName: r.category_name,
@@ -2784,7 +2805,7 @@ export async function handleApiRequest(req, res) {
       let roster = [];
       try {
         const rosterRes = await db.execute({
-          sql: `SELECT id, bib_number, full_name, gender, category_id, category_name, district_name, tshirt_size, 
+          sql: `SELECT id, bib_number, physical_bib_number, full_name, gender, category_id, category_name, district_name, tshirt_size, 
                        kit_collected, kit_collected_at, collected_by, rfid_tag_id, masked_mobile
                 FROM participants 
                 ORDER BY kit_collected DESC, kit_collected_at DESC, created_at DESC 
@@ -2793,6 +2814,7 @@ export async function handleApiRequest(req, res) {
         roster = rosterRes.rows.map(r => ({
           id: r.id,
           bibNumber: r.bib_number,
+          physicalBibNumber: r.physical_bib_number || null,
           fullName: r.full_name,
           gender: r.gender,
           categoryId: r.category_id,
@@ -3021,26 +3043,38 @@ export async function handleApiRequest(req, res) {
 
       const body = await parseJsonBody(req);
       const runnerIdentifier = (body.bibNumber || body.query || "").trim();
+      const physicalBibNumber = (body.physicalBibNumber || body.assignedBibNumber || "").trim().toUpperCase();
       const rfidTag = (body.rfidTagId || "").trim();
       const counterName = (body.counterId || body.collectedBy || "Police Line Expo Counter").trim();
 
       if (!runnerIdentifier) {
-        return error("कृपया बिब नंबर, मोबाइल नंबर अथवा ई-पास आईडी प्रदान करें।", 400);
+        return error("कृपया पंजीकरण संख्या, बिब नंबर, मोबाइल नंबर अथवा ई-पास आईडी प्रदान करें।", 400);
       }
 
       const q = runnerIdentifier;
       const findRes = await db.execute({
-        sql: "SELECT * FROM participants WHERE bib_number = ? OR mobile = ? OR certificate_id = ? OR qr_token = ? LIMIT 1",
-        args: [q, q, q, q]
+        sql: "SELECT * FROM participants WHERE bib_number = ? OR physical_bib_number = ? OR mobile = ? OR certificate_id = ? OR qr_token = ? LIMIT 1",
+        args: [q, q.toUpperCase(), q, q, q]
       });
 
       if (findRes.rows.length === 0) {
-        return error("धावक रिकॉर्ड नहीं मिला। कृपया बिब अथवा मोबाइल नंबर पुनः जांचें।", 404);
+        return error("धावक रिकॉर्ड नहीं मिला। कृपया पंजीकरण संख्या अथवा मोबाइल नंबर पुनः जांचें।", 404);
       }
 
       const runner = findRes.rows[0];
+      if (physicalBibNumber) {
+        const dupBibRes = await db.execute({
+          sql: "SELECT id, full_name, bib_number FROM participants WHERE UPPER(physical_bib_number) = ? AND id != ? LIMIT 1",
+          args: [physicalBibNumber, runner.id]
+        });
+        if (dupBibRes.rows.length > 0) {
+          const other = dupBibRes.rows[0];
+          return error(`⚠️ फिजिकल बिब नंबर "${physicalBibNumber}" पहले से धावक ${other.full_name} (${other.bib_number}) को आवंटित है!`, 409);
+        }
+      }
+
       const now = new Date().toISOString();
-      const tag = rfidTag || `RFID-${runner.bib_number}`;
+      const tag = rfidTag || (physicalBibNumber ? `RFID-${physicalBibNumber}` : `RFID-${runner.bib_number}`);
       const counter = counterName;
 
       await db.execute({
@@ -3048,25 +3082,27 @@ export async function handleApiRequest(req, res) {
                 kit_collected = 1, 
                 kit_collected_at = ?, 
                 rfid_tag_id = ?, 
+                physical_bib_number = ?,
                 collected_by = ? 
               WHERE id = ?`,
-        args: [now, tag, counter, runner.id]
+        args: [now, tag, physicalBibNumber, counter, runner.id]
       });
 
       // Audit Log
       await db.execute({
         sql: "INSERT INTO audit_logs (actor, action, details, ip, created_at) VALUES (?, ?, ?, ?, ?)",
-        args: [counter, "KIT_ALLOTTED", `Bib: ${runner.bib_number}, RFID: ${tag}, Runner: ${runner.full_name}`, clientIp, now]
+        args: [counter, "KIT_ALLOTTED", `RegID: ${runner.bib_number}${physicalBibNumber ? `, PhysicalBib: ${physicalBibNumber}` : ''}, RFID: ${tag}, Runner: ${runner.full_name}`, clientIp, now]
       });
 
       return json({
         success: true,
-        message: `✅ किट एवं RFID बिब सफलतापूर्वक आवंटित! (${runner.full_name})`,
+        message: `✅ किट एवं RFID बिब सफलतापूर्वक आवंटित! (${runner.full_name}${physicalBibNumber ? ` • Bib #${physicalBibNumber}` : ''})`,
         participant: {
           ...runner,
           kit_collected: 1,
           kit_collected_at: now,
           rfid_tag_id: tag,
+          physical_bib_number: physicalBibNumber || null,
           collected_by: counter
         }
       });
@@ -3358,8 +3394,8 @@ export async function handleApiRequest(req, res) {
       } else if (targetAudience === "kit_collected") {
         whereClause += " AND kit_collected = 1";
       } else if (targetAudience === "single" && searchQuery) {
-        whereClause += " AND (bib_number = ? OR mobile = ? OR masked_mobile = ?)";
-        args.push(searchQuery, searchQuery, searchQuery);
+        whereClause += " AND (bib_number = ? OR physical_bib_number = ? OR mobile = ? OR masked_mobile = ?)";
+        args.push(searchQuery, searchQuery.toUpperCase(), searchQuery, searchQuery);
       }
 
       const countRes = await db.execute({
@@ -3373,7 +3409,7 @@ export async function handleApiRequest(req, res) {
         fullName: "सुनीता चौधरी",
         bibNumber: "RJ-21K-1009",
         categoryName: "21 KM Half Marathon",
-        districtName: "जयपुर पुलिस कमिश्नरेट",
+        districtName: "जयपुर",
         tshirtSize: "M",
         certificateId: "CERT-2027-DEMO"
       };

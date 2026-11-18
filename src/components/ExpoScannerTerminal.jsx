@@ -102,6 +102,8 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
   const [overrideIdLast4, setOverrideIdLast4] = useState('');
   const [overrideReason, setOverrideReason] = useState('नेटवर्क / SMS समस्या');
   const [overrideError, setOverrideError] = useState('');
+  // Dynamic Physical Bib Number assigned at Expo Counter (Event Company RFID Bib e.g. 2101)
+  const [physicalBibInput, setPhysicalBibInput] = useState('');
 
   // 60-second OTP resend countdown timer
   useEffect(() => {
@@ -125,6 +127,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     setOverrideIdLast4('');
     setOverrideReason('नेटवर्क / SMS समस्या');
     setOverrideError('');
+    setPhysicalBibInput('');
   };
 
   // Counter Statistics
@@ -868,18 +871,20 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
     const nowStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
     const operatorStr = `${currentUser?.counterName || 'काउंटर-01'} [${currentUser?.fullName || 'वॉलंटियर'}]`;
+    const assignedPhysicalBib = physicalBibInput.trim().toUpperCase();
+    const resolvedRfidTag = assignedPhysicalBib ? `RFID-${assignedPhysicalBib}` : `RFID-${scannedRunner.bibNumber}`;
 
     // 1. Immediately record in local storage so double-distribution is blocked offline
     try {
       const collectedKits = JSON.parse(localStorage.getItem('rpm_collected_kits') || '{}');
-      collectedKits[scannedRunner.bibNumber.toUpperCase()] = { time: nowStr, by: operatorStr };
+      collectedKits[scannedRunner.bibNumber.toUpperCase()] = { time: nowStr, by: operatorStr, physicalBibNumber: assignedPhysicalBib || null };
       localStorage.setItem('rpm_collected_kits', JSON.stringify(collectedKits));
 
       const saved = localStorage.getItem('rpm_registrations');
       const list = saved ? JSON.parse(saved) : [];
       const updated = list.map(r => {
         if (r.id === scannedRunner.id || (r.bibNumber && r.bibNumber.toUpperCase() === scannedRunner.bibNumber.toUpperCase())) {
-          return { ...r, kitCollected: true, kit_collected: true, bibCollected: true, kitCollectedAt: nowStr, collectedBy: operatorStr };
+          return { ...r, kitCollected: true, kit_collected: true, bibCollected: true, physicalBibNumber: assignedPhysicalBib || r.physicalBibNumber || null, kitCollectedAt: nowStr, collectedBy: operatorStr };
         }
         return r;
       });
@@ -899,7 +904,8 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         body: JSON.stringify({
           runnerId: scannedRunner.id,
           bibNumber: scannedRunner.bibNumber,
-          rfidTagId: `RFID-${scannedRunner.bibNumber}`,
+          physicalBibNumber: assignedPhysicalBib || undefined,
+          rfidTagId: resolvedRfidTag,
           operatorName: currentUser?.fullName || 'वॉलंटियर',
           counterName: currentUser?.counterName || 'काउंटर-01',
           verificationToken: handoverVerification.token || undefined,
@@ -914,22 +920,28 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
       if (data.alreadyCollected || !data.success || res.status === 409) {
         if (soundEnabled) playSound('duplicate');
-        setScanStatus('ALREADY_COLLECTED');
+        if (data.alreadyCollected) {
+          setScanStatus('ALREADY_COLLECTED');
+          const rColl = data.runner || {};
+          resetHandoverVerification();
+          setScannedRunner(prev => ({
+            ...prev,
+            kitCollected: true,
+            kit_collected: true,
+            kitCollectedAt: rColl.kitCollectedAt || rColl.kit_collected_at || prev?.kitCollectedAt || nowStr,
+            collectedBy: rColl.collectedBy || rColl.collected_by || prev?.collectedBy || operatorStr
+          }));
+        } else {
+          // Physical bib conflict or validation error — keep runner card ready so volunteer can enter another bib
+          setScanStatus('INVALID');
+        }
         setStatusMessage(data.error || data.message || `⚠️ पूर्व में वितरित! यह किट पहले ही सौंपी जा चुकी है।`);
-        const rColl = data.runner || {};
-        resetHandoverVerification();
-        setScannedRunner(prev => ({
-          ...prev,
-          kitCollected: true,
-          kit_collected: true,
-          kitCollectedAt: rColl.kitCollectedAt || rColl.kit_collected_at || prev?.kitCollectedAt || nowStr,
-          collectedBy: rColl.collectedBy || rColl.collected_by || prev?.collectedBy || operatorStr
-        }));
         return;
       }
 
       const sizeText = (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? ` • साइज ${scannedRunner.tshirtSize}` : '';
-      const defaultSuccessMsg = `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName}${sizeText})`;
+      const bibText = assignedPhysicalBib ? ` • फिजिकल बिब #${assignedPhysicalBib}` : '';
+      const defaultSuccessMsg = `✅ किट व RFID बिब सफलतापूर्वक हैंडओवर! (${scannedRunner.fullName}${bibText}${sizeText})`;
 
       if (data.success) {
         if (soundEnabled) playSound('success');
@@ -940,6 +952,8 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           ...prev,
           kitCollected: true,
           kit_collected: true,
+          physicalBibNumber: data?.runner?.physicalBibNumber || assignedPhysicalBib || null,
+          rfidTagId: data?.runner?.rfidTagId || resolvedRfidTag,
           kitCollectedAt: data?.runner?.kitCollectedAt || data?.runner?.kit_collected_at || nowStr,
           collectedBy: data?.runner?.collectedBy || data?.runner?.collected_by || operatorStr
         }));
@@ -948,12 +962,13 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           id: `kit_${Date.now()}_${scannedRunner.bibNumber}`,
           type: "KIT_HANDOVER",
           bibNumber: scannedRunner.bibNumber,
+          physicalBibNumber: data?.runner?.physicalBibNumber || assignedPhysicalBib || null,
           fullName: scannedRunner.fullName,
           gender: scannedRunner.gender || "-",
           categoryName: scannedRunner.categoryName,
           districtName: scannedRunner.districtName || "जयपुर",
           tshirtSize: scannedRunner.tshirtSize || "N/A",
-          rfidTagId: `RFID-${scannedRunner.bibNumber}`,
+          rfidTagId: resolvedRfidTag,
           timestamp: new Date().toISOString(),
           operatorInfo: operatorStr,
           statusLabel: "किट हैंडओवर पूर्ण"
@@ -1100,6 +1115,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     setScannedRunner({
       id: runner.id,
       bibNumber: runner.bibNumber,
+      physicalBibNumber: runner.physicalBibNumber || null,
       fullName: runner.fullName,
       categoryName: runner.categoryName,
       districtName: runner.districtName,
@@ -1866,10 +1882,26 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               </div>
 
               <div>
-                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>बिब नंबर (Bib #):</span>
-                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#dc2626', fontFamily: 'monospace' }}>
+                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>पंजीकरण संख्या (Registration ID):</span>
+                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0a1c3d', fontFamily: 'monospace' }}>
                   {scannedRunner.bibNumber}
                 </div>
+                {scannedRunner.physicalBibNumber && (
+                  <div style={{
+                    display: 'inline-block',
+                    marginTop: '4px',
+                    padding: '2px 8px',
+                    background: '#fef2f2',
+                    border: '1px solid #fca5a5',
+                    borderRadius: '4px',
+                    fontSize: '0.82rem',
+                    fontWeight: 900,
+                    color: '#b91c1c',
+                    fontFamily: 'monospace'
+                  }}>
+                    🏷️ फिजिकल बिब: #{scannedRunner.physicalBibNumber}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -2213,6 +2245,60 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               </div>
             )}
 
+            {/* Dynamic Physical Bib Number Tagging Box (Event Company RFID Bib Mapping) */}
+            {!isKitAlreadyHandedOver && (
+              <div style={{
+                background: '#eff6ff',
+                border: '1.5px solid #93c5fd',
+                borderRadius: '8px',
+                padding: '14px 16px',
+                marginBottom: '18px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+                  <label
+                    htmlFor="expo-physical-bib-input"
+                    style={{ fontSize: '0.9rem', fontWeight: 900, color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    🏷️ इवेंट कंपनी का फिजिकल बिब नंबर टैग करें (Assign Physical RFID Bib No.)
+                  </label>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#1d4ed8', background: '#dbeafe', padding: '2px 8px', borderRadius: '4px' }}>
+                    Dynamic Bib Tagging
+                  </span>
+                </div>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <input
+                    id="expo-physical-bib-input"
+                    type="text"
+                    value={physicalBibInput}
+                    onChange={(e) => setPhysicalBibInput(e.target.value.toUpperCase())}
+                    placeholder="उदा. 2101, 10045 (बिब का नंबर टाइप या बारकोड स्कैन करें)"
+                    style={{
+                      flex: 1,
+                      minWidth: '240px',
+                      padding: '10px 14px',
+                      borderRadius: '6px',
+                      border: '2px solid #3b82f6',
+                      background: '#ffffff',
+                      fontSize: '1.05rem',
+                      fontWeight: 900,
+                      fontFamily: 'monospace',
+                      color: '#0a1c3d',
+                      letterSpacing: '1px',
+                      outline: 'none'
+                    }}
+                  />
+                  {physicalBibInput.trim() && (
+                    <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#065f46', background: '#d1fae5', padding: '8px 12px', borderRadius: '6px', border: '1px solid #6ee7b7' }}>
+                      ✓ लिंक होगा: {scannedRunner.bibNumber} ⇄ Bib #{physicalBibInput.trim()}
+                    </span>
+                  )}
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#475569', marginTop: '6px' }}>
+                  एक्सपो काउंटर से धावक को दिए जा रहे फिजिकल RFID बिब का नंबर दर्ज करें — यह सीधे धावक की पंजीकरण आईडी (<strong>{scannedRunner.bibNumber}</strong>) से जुड़ जाएगा।
+                </div>
+              </div>
+            )}
+
             {/* Anti-Fraud RFID Kit Handover Action */}
             <div style={{ 
               display: 'flex', 
@@ -2224,7 +2310,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               borderTop: '1px solid #e2e8f0'
             }}>
               <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                सुरक्षा जांच: <strong style={{ color: '#0a1c3d' }}>RFID टैग ऑटो-लिंक (RFID-{scannedRunner.bibNumber})</strong>
+                सुरक्षा जांच: <strong style={{ color: '#0a1c3d' }}>RFID टैग ऑटो-लिंक ({physicalBibInput.trim() ? `RFID-${physicalBibInput.trim().toUpperCase()}` : `RFID-${scannedRunner.bibNumber}`})</strong>
               </div>
 
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -2773,11 +2859,12 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
             const q = historySearch.toLowerCase().trim();
             const displayList = q ? baseList.filter(s => {
               const matchBib = (s.bibNumber || '').toLowerCase().includes(q);
+              const matchPhysBib = (s.physicalBibNumber || '').toLowerCase().includes(q);
               const matchName = (s.fullName || '').toLowerCase().includes(q);
               const matchCat = (s.categoryName || '').toLowerCase().includes(q);
               const matchDist = (s.districtName || '').toLowerCase().includes(q);
               const matchMob = (s.mobile || '').toLowerCase().includes(q);
-              return matchBib || matchName || matchCat || matchDist || matchMob;
+              return matchBib || matchPhysBib || matchName || matchCat || matchDist || matchMob;
             }) : baseList;
 
             if (displayList.length === 0) {
@@ -2848,12 +2935,12 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                             </div>
                           </td>
 
-                          {/* Bib Number */}
+                          {/* Registration ID & Assigned Physical Bib */}
                           <td style={{ padding: '10px 12px' }}>
                             <span style={{
                               fontFamily: 'monospace',
                               fontWeight: 800,
-                              fontSize: '0.85rem',
+                              fontSize: '0.82rem',
                               background: '#eff6ff',
                               color: '#1d4ed8',
                               padding: '2px 8px',
@@ -2863,6 +2950,22 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                             }}>
                               {s.bibNumber || 'RJ-RUN'}
                             </span>
+                            {s.physicalBibNumber && (
+                              <div style={{
+                                marginTop: '4px',
+                                fontFamily: 'monospace',
+                                fontWeight: 900,
+                                fontSize: '0.78rem',
+                                background: '#fef2f2',
+                                color: '#b91c1c',
+                                padding: '1px 7px',
+                                borderRadius: '4px',
+                                border: '1px solid #fecaca',
+                                display: 'inline-block'
+                              }}>
+                                Bib #{s.physicalBibNumber}
+                              </div>
+                            )}
                           </td>
 
                           {/* Race Category */}

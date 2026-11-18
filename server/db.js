@@ -156,6 +156,14 @@ export async function initDatabase(force = false) {
             `);
           } catch (e) {}
 
+          // Ensure physical_bib_number column exists for Expo Counter dynamic bib mapping
+          try {
+            await db.execute("ALTER TABLE participants ADD COLUMN physical_bib_number TEXT DEFAULT '';");
+          } catch (e) {}
+          try {
+            await db.execute("CREATE INDEX IF NOT EXISTS idx_participants_physical_bib ON participants(physical_bib_number);");
+          } catch (e) {}
+
           // Purge legacy demo accounts to enforce security
           try {
             await db.execute(`
@@ -217,6 +225,7 @@ export async function initDatabase(force = false) {
         kit_collected INTEGER DEFAULT 0,
         kit_collected_at TEXT,
         rfid_tag_id TEXT DEFAULT '',
+        physical_bib_number TEXT DEFAULT '',
         collected_by TEXT DEFAULT '',
         status TEXT DEFAULT 'CONFIRMED',
         finish_time TEXT,
@@ -241,6 +250,9 @@ export async function initDatabase(force = false) {
     } catch (e) {}
     try {
       await db.execute("ALTER TABLE participants ADD COLUMN rfid_tag_id TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN physical_bib_number TEXT DEFAULT '';");
     } catch (e) {}
     try {
       await db.execute("ALTER TABLE participants ADD COLUMN collected_by TEXT DEFAULT '';");
@@ -327,6 +339,7 @@ export async function initDatabase(force = false) {
 
     // High-performance B-tree indexes for fast lookups
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_bib ON participants(bib_number);`);
+    await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_physical_bib ON participants(physical_bib_number);`);
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_mobile ON participants(mobile);`);
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_cert ON participants(certificate_id);`);
     await db.execute(`CREATE INDEX IF NOT EXISTS idx_participants_qr ON participants(qr_token);`);
