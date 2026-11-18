@@ -15,7 +15,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
         {/* Section Header */}
         <div className="section-header" style={{ marginBottom: '32px', textAlign: 'center' }}>
           <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', color: '#0f172a', margin: '0 0 8px 0', fontWeight: 900 }}>
-            Prizes & Rewards (पुरस्कार एवं सम्मान)
+            Prizes & Rewards
           </h2>
         </div>
 
@@ -42,7 +42,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
           }}>
             <div>
               <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 20px 0' }}>
-                21 KM हाफ मैराथन
+                21 KM Half Marathon
               </h3>
 
               {/* Podium Breakdown (Clean White Theme) */}
@@ -58,7 +58,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥇</span>
-                    <span>1st Prize (प्रथम विजेता)</span>
+                    <span>1st Prize</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
@@ -74,7 +74,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥈</span>
-                    <span>2nd Prize (द्वितीय विजेता)</span>
+                    <span>2nd Prize</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
@@ -90,7 +90,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥉</span>
-                    <span>3rd Prize (तृतीय विजेता)</span>
+                    <span>3rd Prize</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
@@ -113,7 +113,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
           }}>
             <div>
               <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 20px 0' }}>
-                10 KM स्पीड रन
+                10 KM Speed Run
               </h3>
 
               {/* Podium Breakdown (Clean White Theme) */}
@@ -129,7 +129,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥇</span>
-                    <span>1st Prize (प्रथम विजेता)</span>
+                    <span>1st Prize</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
@@ -145,7 +145,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥈</span>
-                    <span>2nd Prize (द्वितीय विजेता)</span>
+                    <span>2nd Prize</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
@@ -161,7 +161,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥉</span>
-                    <span>3rd Prize (तृतीय विजेता)</span>
+                    <span>3rd Prize</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
                 </div>
@@ -169,7 +169,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
             </div>
           </div>
 
-          {/* CARD 3: 5KM & 2KM Community & Family Run */}
+          {/* CARD 3: 5K & 2K Fun Run */}
           <div style={{
             background: '#ffffff',
             borderRadius: '14px',
@@ -184,7 +184,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
           }}>
             <div>
               <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 20px 0' }}>
-                5K एवं 2K फन रन
+                5K & 2K Fun Run
               </h3>
 
               {/* Perks Highlights Box (Clean White Theme) */}
@@ -200,21 +200,21 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ fontSize: '1.35rem' }}>🥇</span>
                   <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.96rem' }}>
-                    फिनिशर मेडल (Finisher Medal)
+                    Finisher Medal
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ fontSize: '1.35rem' }}>👕</span>
                   <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.96rem' }}>
-                    ड्राई-फिट टी-शर्ट (Dry-Fit T-Shirt)
+                    Dry-Fit T-Shirt
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ fontSize: '1.35rem' }}>🥪</span>
                   <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.96rem' }}>
-                    पोस्ट-रन रिफ्रेशमेंट्स (Refreshments)
+                    Post-Run Refreshments
                   </div>
                 </div>
               </div>
