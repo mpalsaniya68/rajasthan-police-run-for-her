@@ -635,7 +635,6 @@ input:focus, select:focus, textarea:focus {
 
   /* Universal Breadcrumb Bar Removal Across All Pages */
   #page-certificates > div:first-child,
-  #page-register > div:first-child,
   #page-home > div:first-child,
   #page-categories > div:first-child,
   #page-route-schedule > div:first-child,
@@ -656,6 +655,8 @@ input:focus, select:focus, textarea:focus {
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
     box-shadow: none !important;
   }
 
@@ -740,25 +741,25 @@ input:focus, select:focus, textarea:focus {
   /* ========================================================
      2. REGISTRATION E-PASS PRINT ENGINE (A4 PORTRAIT)
      ======================================================== */
-  #page-register .section-padding {
-    padding: 0 !important;
-    margin: 0 !important;
-    background: #ffffff !important;
-    border: none !important;
-  }
-
+  #page-register > div,
+  #page-register .section-padding,
   #page-register .container,
-  #page-register .registration-page-container {
+  #page-register .registration-page-container,
+  #page-register .registration-page-container > div,
+  #page-register .registration-page-container > div > div,
+  #page-register .registration-page-container > div > div > div {
     max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+    min-height: auto !important;
   }
 
   /* Hide tabs, forms, success banner, buttons outside pass card */
   #page-register .section-header,
-  #page-register .gov-card > div:first-child,
-  #page-register .gov-card > div:last-child > div:last-child,
   #page-register form {
     display: none !important;
     visibility: hidden !important;
@@ -770,14 +771,15 @@ input:focus, select:focus, textarea:focus {
   .print-pass-card {
     display: block !important;
     visibility: visible !important;
-    border: 2px solid #0a1c3d !important;
-    border-radius: 8px !important;
+    box-sizing: border-box !important;
+    border: 2.5px solid #0a1c3d !important;
+    border-radius: 10px !important;
     box-shadow: none !important;
     background: #ffffff !important;
-    padding: 18px 22px !important;
-    margin: 6mm auto !important;
-    width: 100% !important;
-    max-width: 780px !important;
+    padding: 12px 16px !important;
+    margin: 4mm auto 0 auto !important;
+    width: 196mm !important;
+    max-width: 196mm !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-after: avoid !important;
@@ -790,6 +792,23 @@ input:focus, select:focus, textarea:focus {
     visibility: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  .print-pass-card .epass-route-map-panel {
+    margin-top: 10px !important;
+    border: 1.5px solid #0a1c3d !important;
+    border-radius: 8px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-pass-card .epass-route-map-img {
+    max-height: 136mm !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
   }
 }
 

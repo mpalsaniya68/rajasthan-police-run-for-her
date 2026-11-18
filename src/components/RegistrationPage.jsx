@@ -25,6 +25,49 @@ import { apiRegister, apiSendOtp, apiVerifyOtp, apiSearchPass, apiSendPassOtp, a
 
 const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
 
+const JAIPUR_ROUTE_MAPS = {
+  '21k': {
+    src: '/images/routes/route_21k.png',
+    label: '21 KM HALF MARATHON ROUTE MAP — ALBERT HALL, JAIPUR',
+    timing: 'Reporting: 05:00 AM • Flag-Off: 06:00 AM'
+  },
+  '10k': {
+    src: '/images/routes/route_10k.png',
+    label: '10 KM MARATHON ROUTE MAP — ALBERT HALL, JAIPUR',
+    timing: 'Reporting: 05:15 AM • Flag-Off: 06:15 AM'
+  },
+  '5k': {
+    src: '/images/routes/route_5k.png',
+    label: '5 KM MARATHON ROUTE MAP — ALBERT HALL, JAIPUR',
+    timing: 'Reporting: 05:30 AM • Flag-Off: 06:45 AM'
+  },
+  '2k': {
+    src: '/images/routes/route_2k.png',
+    label: '2 KM MARATHON ROUTE MAP — ALBERT HALL, JAIPUR',
+    timing: 'Reporting: 06:00 AM • Flag-Off: 07:15 AM'
+  }
+};
+
+function getJaipurRouteMap(p) {
+  if (!p) return null;
+  const distId = String(p.districtId || '').toLowerCase();
+  const distName = String(p.districtName || '').toLowerCase();
+  const isJaipur =
+    distId === 'jpr-comm' ||
+    distId === 'jaipur_comm' ||
+    distId.includes('jaipur') ||
+    distName.includes('jaipur') ||
+    distName.includes('जयपुर');
+  if (!isJaipur) return null;
+
+  const rawCat = String(p.category || p.categoryId || p.categoryName || '').toLowerCase();
+  if (rawCat.includes('21')) return JAIPUR_ROUTE_MAPS['21k'];
+  if (rawCat.includes('10')) return JAIPUR_ROUTE_MAPS['10k'];
+  if (rawCat.includes('5')) return JAIPUR_ROUTE_MAPS['5k'];
+  if (rawCat.includes('2')) return JAIPUR_ROUTE_MAPS['2k'];
+  return null;
+}
+
 export function RegistrationPage({
   initialCategory = "21k",
   initialDistrict = "JPR-COMM",
@@ -823,23 +866,41 @@ export function RegistrationPage({
     setIsDownloadingPass(true);
 
     try {
+      const routeMapInfo = getJaipurRouteMap(p);
+      let routeImg = null;
+      if (routeMapInfo) {
+        routeImg = new Image();
+        routeImg.crossOrigin = "anonymous";
+        routeImg.src = routeMapInfo.src;
+        await new Promise((resolve) => {
+          routeImg.onload = resolve;
+          routeImg.onerror = resolve;
+        });
+        if (!routeImg.complete || routeImg.naturalWidth === 0) {
+          routeImg = null;
+        }
+      }
+
+      const canvasWidth = 1200;
+      const canvasHeight = routeImg ? 1680 : 760;
+
       const canvas = document.createElement("canvas");
-      canvas.width = 1200;
-      canvas.height = 760;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
       const ctx = canvas.getContext("2d");
 
       // 1. Background fill
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, 1200, 760);
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
       // Security outer frame
       ctx.strokeStyle = "#0a1c3d";
       ctx.lineWidth = 10;
-      ctx.strokeRect(5, 5, 1190, 750);
+      ctx.strokeRect(5, 5, canvasWidth - 10, canvasHeight - 10);
 
       ctx.strokeStyle = "#d4af37";
       ctx.lineWidth = 3;
-      ctx.strokeRect(16, 16, 1168, 728);
+      ctx.strokeRect(16, 16, canvasWidth - 32, canvasHeight - 32);
 
       // 2. Header Band (Deep Police Navy)
       ctx.fillStyle = "#0a1c3d";
@@ -1094,18 +1155,66 @@ export function RegistrationPage({
       const passInfoText = `पास आईडी: ${p.orderId || p.certificateId || 'RPM2027'}  |  श्रेणी: ${p.categoryName || 'Rajasthan Police Marathon 2027'}  |  आयोजन स्थल: ${p.districtName || 'जयपुर'}`;
       ctx.fillText(passInfoText, 60, 624);
 
-      // 7. Official Bottom Footer
+      // 7. Category-Specific Jaipur Route Map Panel (Only for Jaipur Runners)
+      if (routeImg && routeMapInfo) {
+        const mapBoxX = 40;
+        const mapBoxY = 660;
+        const mapBoxW = 1120;
+        const mapBoxH = 910;
+
+        // Route card outer border
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#0a1c3d";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        drawRRect(mapBoxX, mapBoxY, mapBoxW, mapBoxH, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        // Route card top header bar
+        ctx.fillStyle = "#0a1c3d";
+        ctx.fillRect(mapBoxX, mapBoxY, mapBoxW, 48);
+
+        ctx.fillStyle = "#fef08a";
+        ctx.font = "bold 17px sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText(routeMapInfo.label, mapBoxX + 20, mapBoxY + 30);
+
+        ctx.fillStyle = "#e2e8f0";
+        ctx.font = "bold 14px sans-serif";
+        ctx.textAlign = "right";
+        ctx.fillText(routeMapInfo.timing, mapBoxX + mapBoxW - 20, mapBoxY + 30);
+        ctx.textAlign = "left";
+
+        // Aspect-ratio-safe contain draw for route map image
+        const innerPad = 18;
+        const availW = mapBoxW - innerPad * 2;
+        const availH = mapBoxH - 48 - innerPad * 2;
+        const imgRatio = routeImg.naturalWidth / routeImg.naturalHeight;
+        let drawW = availW;
+        let drawH = drawW / imgRatio;
+        if (drawH > availH) {
+          drawH = availH;
+          drawW = drawH * imgRatio;
+        }
+        const drawX = mapBoxX + (mapBoxW - drawW) / 2;
+        const drawY = mapBoxY + 48 + innerPad + (availH - drawH) / 2;
+        ctx.drawImage(routeImg, drawX, drawY, drawW, drawH);
+      }
+
+      // 8. Official Bottom Footer
+      const footerY = routeImg ? 1590 : 660;
       ctx.fillStyle = "#0a1c3d";
-      ctx.fillRect(20, 660, 1160, 70);
+      ctx.fillRect(20, footerY, 1160, 70);
 
       ctx.fillStyle = "#fef08a";
       ctx.font = "bold 17px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("★ सेवार्थ कटिबद्धता • राजस्थान पुलिस मुख्यालय, जयपुर ★", 600, 692);
+      ctx.fillText("★ सेवार्थ कटिबद्धता • राजस्थान पुलिस मुख्यालय, जयपुर ★", 600, footerY + 32);
 
       ctx.fillStyle = "#e2e8f0";
       ctx.font = "13px sans-serif";
-      ctx.fillText("24×7 महिला गरिमा हेल्पलाइन: 1090 | आपातकालीन सेवा: 112 | पोर्टल: police.rajasthan.gov.in", 600, 715);
+      ctx.fillText("24×7 महिला गरिमा हेल्पलाइन: 1090 | आपातकालीन सेवा: 112 | पोर्टल: police.rajasthan.gov.in", 600, footerY + 55);
       ctx.textAlign = "left";
 
       // 8. Download directly as PNG file into user's device/local storage
@@ -1433,10 +1542,58 @@ export function RegistrationPage({
                     ★ सेवार्थ कटिबद्धता ★
                   </div>
                 </div>
+
+                {/* Category-Specific Jaipur Route Map (Only for Jaipur Runners) */}
+                {(() => {
+                  const jaipurRoute = getJaipurRouteMap(registeredParticipant);
+                  if (!jaipurRoute) return null;
+                  return (
+                    <div
+                      className="epass-route-map-panel"
+                      style={{
+                        marginTop: '18px',
+                        border: '1.5px solid var(--police-navy-900)',
+                        borderRadius: '10px',
+                        overflow: 'hidden',
+                        background: '#ffffff'
+                      }}
+                    >
+                      <div style={{
+                        background: 'var(--police-navy-950)',
+                        color: '#fef08a',
+                        padding: '8px 14px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '6px',
+                        fontSize: '0.78rem',
+                        fontWeight: 800
+                      }}>
+                        <span>🗺️ {jaipurRoute.label}</span>
+                        <span style={{ color: '#e2e8f0', fontWeight: 700 }}>{jaipurRoute.timing}</span>
+                      </div>
+                      <div style={{ padding: '12px', textAlign: 'center', background: '#ffffff' }}>
+                        <img
+                          src={jaipurRoute.src}
+                          alt={jaipurRoute.label}
+                          className="epass-route-map-img"
+                          style={{
+                            width: '100%',
+                            maxHeight: '540px',
+                            objectFit: 'contain',
+                            display: 'block',
+                            margin: '0 auto'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Direct WhatsApp Notice Banner */}
-              <div style={{
+              <div className="no-print" style={{
                 background: '#f0fdf4',
                 border: '1.5px solid #86efac',
                 borderRadius: '10px',
@@ -1516,9 +1673,9 @@ export function RegistrationPage({
                     cursor: 'pointer',
                     boxShadow: '0 2px 6px rgba(22, 163, 74, 0.2)'
                   }}
-                  title="मैराथन आमंत्रण दोस्तों के साथ व्हाट्सएप पर शेयर करें"
+                  title="व्हाट्सएप पर शेयर करें"
                 >
-                  <Share2 size={18} /> मित्रों के साथ शेयर करें
+                  <Share2 size={18} /> शेयर करें
                 </button>
 
                 <button
