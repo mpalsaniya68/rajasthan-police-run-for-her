@@ -2038,7 +2038,7 @@ export function RegistrationPage({
               textAlign: 'center'
             }}>
               <h1 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', margin: 0, color: '#ffffff', fontWeight: 900, letterSpacing: '0.02em' }}>
-                Runner Registration Form
+                Registration Form
               </h1>
             </div>
 
@@ -2343,7 +2343,7 @@ export function RegistrationPage({
               textAlign: 'center'
             }}>
               <h1 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', margin: 0, color: '#ffffff', fontWeight: 900, letterSpacing: '0.02em' }}>
-                Runner Registration Form
+                Registration Form
               </h1>
             </div>
 
