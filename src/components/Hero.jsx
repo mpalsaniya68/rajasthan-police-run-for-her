@@ -16,6 +16,16 @@ const HERO_SLIDES = [
     src: '/images/marathon_hero_slide3.jpg',
     alt: 'Rajasthan Police Marathon - Women Empowerment Finish Celebration',
     position: 'center 30%'
+  },
+  {
+    src: '/images/marathon_hero_slide4.jpg',
+    alt: 'Rajasthan Police Marathon - Udaipur City Palace & Lake Pichola Heritage Run',
+    position: 'center 35%'
+  },
+  {
+    src: '/images/marathon_hero_slide5.jpg',
+    alt: 'Rajasthan Police Marathon - Jaisalmer Sonar Quila & Chittorgarh Vijay Stambh Unity Run',
+    position: 'center 30%'
   }
 ];
 
