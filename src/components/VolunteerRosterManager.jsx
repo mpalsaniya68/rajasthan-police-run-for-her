@@ -276,7 +276,7 @@ export function VolunteerRosterManager() {
 
   // Share duty details without sending passwords through messaging URLs.
   const handleShareWhatsApp = (vol) => {
-    const text = `*राजस्थान पुलिस मैराथन 2027 - आधिकारिक ड्यूटी आदेश* 👮‍♂️\n\n` +
+    const text = `*राजस्थान पुलिस मैराथन 2027 - ड्यूटी आदेश* 👮‍♂️\n\n` +
       `श्री/सुश्री: *${vol.fullName}* (${vol.designation || 'स्टाफ'})\n` +
       `आवंटित ड्यूटी स्टेशन: *${vol.counterName}*\n\n` +
       `• लॉगिन पोर्टल: https://police.rajasthan.gov.in/marathon\n` +
@@ -615,7 +615,7 @@ export function VolunteerRosterManager() {
                   <th style={{ padding: '12px 16px', fontWeight: 800, color: '#334155', width: '25%' }}>आवंटित ड्यूटी स्टेशन</th>
                   <th style={{ padding: '12px 16px', fontWeight: 800, color: '#334155', width: '16%' }}>लॉगिन आईडी व मोबाइल</th>
                   <th style={{ padding: '12px 16px', fontWeight: 800, color: '#334155', textAlign: 'center', width: '8%' }}>स्थिति</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 800, color: '#334155', textAlign: 'right', width: '14%' }}>आधिकारिक एक्शन</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 800, color: '#334155', textAlign: 'right', width: '14%' }}>एक्शन</th>
                 </tr>
               </thead>
               <tbody>
@@ -1279,7 +1279,7 @@ export function VolunteerRosterManager() {
             }}>
               <span style={{ fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Printer size={15} color="#f59e0b" />
-                <span>आधिकारिक ड्यूटी पास पूर्वावलोकन</span>
+                <span>ड्यूटी पास पूर्वावलोकन</span>
               </span>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
@@ -1374,7 +1374,7 @@ export function VolunteerRosterManager() {
                   borderRadius: '12px',
                   letterSpacing: '0.5px'
                 }}>
-                  आधिकारिक ड्यूटी आदेश एवं ऑपरेटर पास (DUTY PASS)
+                  ड्यूटी आदेश एवं ऑपरेटर पास (DUTY PASS)
                 </div>
               </div>
 

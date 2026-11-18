@@ -45,7 +45,6 @@ export function Footer({ onNavigate }) {
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', color: '#e2e8f0' }}>
               <li><a href="#home" onClick={(e) => handleNav(e, 'home')}>मुख्य पृष्ठ (Home)</a></li>
               <li><a href="#route-schedule" onClick={(e) => handleNav(e, 'route-schedule')}>कोर्स रूट एवं समय-सारणी (Route & Schedule)</a></li>
-              <li><a href="#districts" onClick={(e) => handleNav(e, 'districts')}>राजस्थान के समस्त पुलिस जिले</a></li>
               <li><a href="#certificates" onClick={(e) => handleNav(e, 'certificates')}>फिनिशर सर्टिफिकेट एवं सत्यापन</a></li>
               <li><a href="#pledge-safety" onClick={(e) => handleNav(e, 'pledge-safety')}>नारी सुरक्षा सामूहिक संकल्प निर्देशिका</a></li>
               <li><a href="#expo-terminal" onClick={(e) => handleNav(e, 'expo-terminal')} style={{ color: '#6ee7b7', fontWeight: 700 }}>📦 एक्सपो किट व गेट स्कैनर (Expo Desk)</a></li>
@@ -69,7 +68,7 @@ export function Footer({ onNavigate }) {
 
           <div>
             <h4 style={{ fontSize: '0.85rem', color: '#fef08a', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
-              आधिकारिक नोडल प्रकोष्ठ
+              नोडल प्रकोष्ठ
             </h4>
             <div style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6 }}>
               <div style={{ marginBottom: '6px' }}>
@@ -79,7 +78,7 @@ export function Footer({ onNavigate }) {
                 <strong style={{ color: '#ffffff' }}>ट्रैफिक समन्वय:</strong> डीसीपी (ट्रैफिक), जयपुर
               </div>
               <div style={{ marginBottom: '6px' }}>
-                <strong style={{ color: '#ffffff' }}>आधिकारिक ईमेल:</strong> rpm.nodal@rajasthanpolice.gov.in
+                <strong style={{ color: '#ffffff' }}>ईमेल:</strong> rpm.nodal@rajasthanpolice.gov.in
               </div>
               <div style={{ marginTop: '8px', fontSize: '0.74rem', color: '#94a3b8' }}>
                 कंट्रोल रूम एवं आपात स्थिति: 112 / 1090 (24x7)

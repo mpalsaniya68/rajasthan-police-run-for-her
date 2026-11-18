@@ -66,7 +66,7 @@ export function PatronDesk() {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <span className="badge-gold">आयोजन संरक्षक संदेश</span>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700 }}>आधिकारिक वक्तव्य</span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700 }}>संदेश</span>
               </div>
               {/* DGP Official Written Message Area - Left blank per instructions */}
               <div style={{

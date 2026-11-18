@@ -50,7 +50,7 @@ export function SafetyPledge() {
                 <Heart size={22} color="var(--crimson-600)" />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.25rem', color: 'var(--police-navy-900)' }}>आधिकारिक महिला सुरक्षा संकल्प</h3>
+                <h3 style={{ fontSize: '1.25rem', color: 'var(--police-navy-900)' }}>महिला सुरक्षा संकल्प</h3>
                 <div style={{ fontSize: '0.78rem', color: 'var(--crimson-600)', fontWeight: 700 }}>
                   {pledgeCount.toLocaleString()} नागरिकों ने अब तक शपथ ली
                 </div>

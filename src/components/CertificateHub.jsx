@@ -26,7 +26,7 @@ export function CertificateHub({ registrations = [] }) {
           if (res && res.success && res.certificate) {
             setSelectedRunner(res.certificate);
             setIsVerifiedFromBackend(true);
-            setSearchFeedback({ type: 'success', message: `✅ डिजिटल QR कोड द्वारा आधिकारिक प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
+            setSearchFeedback({ type: 'success', message: `✅ डिजिटल QR कोड द्वारा प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
           }
         }).catch(() => setIsSearching(false));
       }
@@ -78,7 +78,7 @@ export function CertificateHub({ registrations = [] }) {
       if (res && res.success && res.certificate) {
         setSelectedRunner(res.certificate);
         setIsVerifiedFromBackend(true);
-        setSearchFeedback({ type: 'success', message: `✅ राजस्थान पुलिस डेटाबेस से आधिकारिक प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
+        setSearchFeedback({ type: 'success', message: `✅ राजस्थान पुलिस डेटाबेस से प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
       } else {
         setIsVerifiedFromBackend(false);
         setSearchFeedback({ type: 'error', message: res.error || `कोई रिकॉर्ड नहीं मिला: "${rawQ}"। कृपया वैध बिब नंबर, मोबाइल अथवा सर्टिफिकेट ID दर्ज करें।` });

@@ -12,8 +12,6 @@ import { InteractiveRoute } from './components/InteractiveRoute';
 
 import { SafetyPledge } from './components/SafetyPledge';
 
-import { DistrictHub } from './components/DistrictHub';
-
 import { ScheduleExpo } from './components/ScheduleExpo';
 
 import { CertificateHub } from './components/CertificateHub';
@@ -79,9 +77,9 @@ class ErrorBoundary extends React.Component {
 
 export default function App() {
 
-  const VALID_PAGES = ['home', 'register', 'find-pass', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'];
+  const VALID_PAGES = ['home', 'register', 'find-pass', 'route-schedule', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'];
 
-  // Active Page State ('home', 'register', 'find-pass', 'route-schedule', 'districts', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal')
+  // Active Page State ('home', 'register', 'find-pass', 'route-schedule', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal')
   const [activePage, setActivePage] = useState(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.replace(/^#\/?/, '');
@@ -399,44 +397,6 @@ export default function App() {
 
         )}
 
-        {/* 4. POLICE DISTRICTS PAGE */}
-
-        {activePage === 'districts' && (
-
-          <div id="page-districts">
-
-            <div className="no-print" style={{ background: '#ffffff', borderBottom: '1px solid var(--border-subtle)', padding: '12px 0' }}>
-
-              <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-
-                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
-
-                  <span>/</span>
-
-                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>राजस्थान के समस्त पुलिस जिले</span>
-
-                </div>
-
-                <span className="badge-gov">राज्यव्यापी पुलिस जिला केंद्र</span>
-
-              </div>
-
-            </div>
-
-            <DistrictHub onSelectDistrict={(distId) => {
-
-              setSelectedDistrictForRegister(distId);
-
-              navigateToPage('register');
-
-            }} />
-
-          </div>
-
-        )}
-
         {/* 5. FINISHER CERTIFICATES & LEDGER VERIFICATION PAGE */}
 
         {activePage === 'certificates' && (
@@ -453,11 +413,11 @@ export default function App() {
 
                   <span>/</span>
 
-                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>ई-सर्टिफिकेट डाउनलोड एवं आधिकारिक सत्यापन पोर्टल</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>ई-सर्टिफिकेट डाउनलोड एवं सत्यापन पोर्टल</span>
 
                 </div>
 
-                <span className="badge-gold">आधिकारिक राजस्थान पुलिस ई-प्रमाण पत्र</span>
+                <span className="badge-gold">राजस्थान पुलिस ई-प्रमाण पत्र</span>
 
               </div>
 

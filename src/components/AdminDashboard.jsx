@@ -107,8 +107,8 @@ export function AdminDashboard({
   // Mass Communication / Broadcast Modal State
   const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
   const [broadcastForm, setBroadcastForm] = useState({
-    title: "आधिकारिक रेस किट एवं समय-सारणी निर्देश",
-    message: "आदरणीय धावक, राजस्थान पुलिस मैराथन 2027 में आपका स्वागत है। कृपया 1 व 2 जनवरी को अपनी आधिकारिक टी-शर्ट एवं आरएफआईडी बिब संग्रह केंद्र से प्राप्त करें। 3 जनवरी प्रातः 5:30 बजे अल्बर्ट हॉल पर फ्लैग-ऑफ होगा।",
+    title: "रेस किट एवं समय-सारणी निर्देश",
+    message: "आदरणीय धावक, राजस्थान पुलिस मैराथन 2027 में आपका स्वागत है। कृपया 1 व 2 जनवरी को अपनी टी-शर्ट एवं आरएफआईडी बिब संग्रह केंद्र से प्राप्त करें। 3 जनवरी प्रातः 5:30 बजे अल्बर्ट हॉल पर फ्लैग-ऑफ होगा।",
     targetCategory: "all",
     channel: "SMS"
   });
@@ -357,7 +357,7 @@ export function AdminDashboard({
     const distLabel = isDistrictRole ? (adminUser?.districtName || 'आपके जिले') : (certDistrict === 'all' ? 'समस्त 41 जिलों' : certDistrict);
     const modeLabel = activeMode === 'GATE_SCANNED_ONLY' ? 'केवल गेट-स्कैन उपस्थित' : 'समस्त पंजीकृत';
     
-    if (!overrideMode && !window.confirm(`क्या आप ${distLabel} के ${modeLabel} धावकों के लिए डिजिटल प्रमाण पत्र जारी व आधिकारिक SMS/Email प्रेषित करना चाहते हैं?`)) {
+    if (!overrideMode && !window.confirm(`क्या आप ${distLabel} के ${modeLabel} धावकों के लिए डिजिटल प्रमाण पत्र जारी व SMS/Email प्रेषित करना चाहते हैं?`)) {
       return;
     }
 
@@ -1466,7 +1466,7 @@ export function AdminDashboard({
                   cursor: 'pointer',
                   boxShadow: 'var(--shadow-sm)'
                 }}
-                title="धावकों को आधिकारिक WhatsApp एवं SMS प्रसारण कमांड सेंटर खोलें"
+                title="धावकों को WhatsApp एवं SMS प्रसारण कमांड सेंटर खोलें"
               >
                 <Radio size={14} color="#059669" />
                 <span>📢 WhatsApp व SMS प्रसारण</span>
@@ -1997,7 +1997,7 @@ export function AdminDashboard({
 
                 <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
 
-                  आधिकारिक डेटा एक्सपोर्ट केंद्र (Official CSV Export Engine)
+                  डेटा एक्सपोर्ट केंद्र (Official CSV Export Engine)
 
                 </span>
 
@@ -3906,7 +3906,7 @@ export function AdminDashboard({
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Trophy size={22} color="#f59e0b" />
                 <h3 style={{ margin: 0, fontSize: '1.08rem', fontWeight: 800, color: '#0f172a' }}>
-                  रेस डे आधिकारिक परिणाम एवं लीडरबोर्ड (Official Standings)
+                  रेस डे परिणाम एवं लीडरबोर्ड (Official Standings)
                 </h3>
               </div>
               <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: '#64748b' }}>
@@ -4487,7 +4487,7 @@ export function AdminDashboard({
                 {certStats.totalRegistered}
               </div>
               <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
-                आधिकारिक राजस्थान पुलिस डेटाबेस
+                राजस्थान पुलिस डेटाबेस
               </div>
             </div>
 
@@ -4946,7 +4946,7 @@ export function AdminDashboard({
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                   <div style={{ fontWeight: 800, fontSize: '1rem', color: '#0a1c3d' }}>
-                    प्रमाण पत्र आधिकारिक प्रिव्यू • {previewCertRunner.fullName} ({previewCertRunner.bibNumber})
+                    प्रमाण पत्र प्रिव्यू • {previewCertRunner.fullName} ({previewCertRunner.bibNumber})
                   </div>
                   <button
                     onClick={() => setPreviewCertRunner(null)}
@@ -5319,7 +5319,7 @@ export function AdminDashboard({
               <Printer size={20} color="#fde68a" />
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#ffffff', fontWeight: 800 }}>
-                  आधिकारिक धावक उपस्थिति एवं किट वितरण चेकलिस्ट (Printable Master A4)
+                  धावक उपस्थिति एवं किट वितरण चेकलिस्ट (Printable Master A4)
                 </h3>
                 <div style={{ fontSize: '0.74rem', color: '#cbd5e1' }}>
                   वर्तमान फ़िल्टर: {filteredList.length} धावक • ऑन-ग्राउंड ड्यूटी चेकलिस्ट
@@ -5375,7 +5375,7 @@ export function AdminDashboard({
                 राजस्थान पुलिस मैराथन 2027 • "रन फॉर हर" (Run for Her)
               </div>
               <div style={{ fontSize: '0.82rem', fontWeight: 700 }}>
-                आधिकारिक धावक उपस्थिति, किट वितरण एवं गेट सुरक्षा रजिस्टर
+                धावक उपस्थिति, किट वितरण एवं गेट सुरक्षा रजिस्टर
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', marginTop: '8px', color: '#333333' }}>
                 <span><strong>स्थान/यूनिट:</strong> {isDistrictRole ? adminUser.districtName : (districtFilter === 'all' ? 'समस्त राजस्थान' : districtFilter)}</span>
@@ -5481,7 +5481,7 @@ export function AdminDashboard({
               <Radio size={20} color="#fde68a" />
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#ffffff', fontWeight: 800 }}>
-                  आधिकारिक सामूहिक SMS/व्हाट्सएप प्रसारण केंद्र
+                  सामूहिक SMS/व्हाट्सएप प्रसारण केंद्र
                 </h3>
                 <div style={{ fontSize: '0.74rem', color: '#cbd5e1' }}>
                   राजस्थान पुलिस मैराथन 2027 • जन-सूचना एवं एडवाइजरी प्रसारण
@@ -5526,8 +5526,8 @@ export function AdminDashboard({
                   onChange={(e) => setBroadcastForm({ ...broadcastForm, channel: e.target.value })}
                   style={{ width: '100%', padding: '9px 10px', borderRadius: '6px', border: '1.5px solid var(--border-medium)', fontSize: '0.84rem', fontWeight: 700 }}
                 >
-                  <option value="SMS">📱 आधिकारिक SMS गेटवे (DGP Rajasthan)</option>
-                  <option value="WHATSAPP">💬 व्हाट्सएप आधिकारिक (Rajasthan Police)</option>
+                  <option value="SMS">📱 SMS गेटवे (DGP Rajasthan)</option>
+                  <option value="WHATSAPP">💬 व्हाट्सएप (Rajasthan Police)</option>
                 </select>
               </div>
 
@@ -5550,7 +5550,7 @@ export function AdminDashboard({
 
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                📋 त्वरित आधिकारिक टेम्पलेट चुनें (Quick Template):
+                📋 त्वरित टेम्पलेट चुनें (Quick Template):
               </label>
               <select
                 onChange={(e) => {
@@ -5558,7 +5558,7 @@ export function AdminDashboard({
                   if (val === 'kit') {
                     setBroadcastForm({
                       ...broadcastForm,
-                      title: "आधिकारिक रेस किट एवं बिब संग्रहण निर्देश",
+                      title: "रेस किट एवं बिब संग्रहण निर्देश",
                       message: "आदरणीय धावक, राजस्थान पुलिस मैराथन 2027 हेतु अपनी बिब व रनिंग किट 1 व 2 जनवरी को अल्बर्ट हॉल/पुलिस लाइन केंद्र से प्रातः 9:00 से सायं 6:00 बजे तक अवश्य प्राप्त करें। डिजिटल ई-पास साथ लाएं।"
                     });
                   } else if (val === 'flagoff') {
@@ -5571,13 +5571,13 @@ export function AdminDashboard({
                     setBroadcastForm({
                       ...broadcastForm,
                       title: "महत्वपूर्ण रूट एवं ट्रैफिक सूचना",
-                      message: "मैराथन दिवस पर जयपुर शहर में प्रमुख रूट डायवर्जन रहेंगे। पार्किंग एवं आधिकारिक रूट मैप वेबसाइट पर देखें।"
+                      message: "मैराथन दिवस पर जयपुर शहर में प्रमुख रूट डायवर्जन रहेंगे। पार्किंग एवं रूट मैप वेबसाइट पर देखें।"
                     });
                   }
                 }}
                 style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid var(--police-gold-500)', background: '#fffbeb', fontSize: '0.82rem', fontWeight: 700, color: '#92400e' }}
               >
-                <option value="">-- त्वरित आधिकारिक टेम्पलेट लोड करें --</option>
+                <option value="">-- त्वरित टेम्पलेट लोड करें --</option>
                 <option value="kit">👕 1. रेस किट व बिब संग्रहण निर्देश (Kit Distribution)</option>
                 <option value="flagoff">🏁 2. रेस दिवस फ्लैग-ऑफ समय व रूट एडवाइजरी (Flag-off Schedule)</option>
                 <option value="traffic">🚦 3. महत्वपूर्ण रूट एवं ट्रैफिक सूचना (Traffic Advisory)</option>

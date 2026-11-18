@@ -9,7 +9,7 @@ const CAMPAIGNS = [
   {
     id: "CONFIRMATION",
     badge: "रजिस्ट्रेशन पुष्टि",
-    title: "आधिकारिक पंजीकरण एवं ई-पास पुष्टि",
+    title: "पंजीकरण एवं ई-पास पुष्टि",
     desc: "नये पंजीकृत धावकों को ई-पास, बिब नंबर व स्वागत संदेश प्रेषण",
     icon: "🎫",
     defaultChannel: "BOTH",
@@ -17,14 +17,14 @@ const CAMPAIGNS = [
     text: `🏛️ *राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'*
 
 प्रिय *{name}*,
-आपका आधिकारिक पंजीकरण सफल रहा है! राजस्थान पुलिस परिवार इस ऐतिहासिक नारी सुरक्षा जन-आंदोलन में आपका हार्दिक स्वागत करता है।
+आपका पंजीकरण सफल रहा है! राजस्थान पुलिस परिवार इस ऐतिहासिक नारी सुरक्षा जन-आंदोलन में आपका हार्दिक स्वागत करता है।
 
 🏷️ *बिब नंबर:* {bib}
 🏃 *दौड़ श्रेणी:* {category}
 📍 *आयोजन स्थल:* {district}
 👕 *टी-शर्ट साइज़:* {tshirtSize}
 
-📲 *अपना आधिकारिक डिजिटल ई-पास व क्यूआर कोड तुरंत डाउनलोड करें:*
+📲 *अपना डिजिटल ई-पास व क्यूआर कोड तुरंत डाउनलोड करें:*
 👉 https://police.rajasthan.gov.in/epass/{certId}
 
 कृपया दौड़ दिवस पर अपना ई-पास व मूल फोटो पहचान पत्र साथ लाएं।
@@ -61,10 +61,10 @@ const CAMPAIGNS = [
     icon: "👕",
     defaultChannel: "BOTH",
     defaultAudience: "kit_pending",
-    text: `👕 *राजस्थान पुलिस मैराथन 2027 — आधिकारिक किट वितरण सूचना*
+    text: `👕 *राजस्थान पुलिस मैराथन 2027 — किट वितरण सूचना*
 
 आदरणीय *{name}*,
-आपकी आधिकारिक रनर किट (टी-शर्ट साइज़: *{tshirtSize}* एवं आरएफआईडी बिब *#{bib}*) एक्सपो काउंटर पर तैयार है।
+आपकी रनर किट (टी-शर्ट साइज़: *{tshirtSize}* एवं आरएफआईडी बिब *#{bib}*) एक्सपो काउंटर पर तैयार है।
 
 📅 *वितरण तिथि:* 1 एवं 2 जनवरी 2027
 ⏰ *समय:* प्रातः 10:00 AM से सायं 07:00 PM
@@ -97,7 +97,7 @@ const CAMPAIGNS = [
   {
     id: "CUSTOM",
     badge: "कस्टम संदेश",
-    title: "विशेष आधिकारिक संदेश (Custom Broadcast)",
+    title: "विशेष संदेश (Custom Broadcast)",
     desc: "अपनी आवश्यकतानुसार व्यक्तिगत टेक्स्ट व टैग्स के साथ सीधा संदेश भेजें",
     icon: "✍️",
     defaultChannel: "BOTH",
@@ -230,7 +230,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
         return;
       }
     } else {
-      const confirmText = `⚠️ आधिकारिक प्रसारण की पुष्टि:\n\n• अभियान: ${title}\n• डिलीवरी चैनल: ${channel === 'BOTH' ? 'WhatsApp + SMS' : channel}\n• कुल लक्षित धावक: ${recipientsCount} धावक\n\nक्या आप यह संदेश तुरंत प्रेषित करना चाहते हैं?`;
+      const confirmText = `⚠️ प्रसारण की पुष्टि:\n\n• अभियान: ${title}\n• डिलीवरी चैनल: ${channel === 'BOTH' ? 'WhatsApp + SMS': channel}\n• कुल लक्षित धावक: ${recipientsCount} धावक\n\nक्या आप यह संदेश तुरंत प्रेषित करना चाहते हैं?`;
       if (!window.confirm(confirmText)) return;
     }
 
@@ -317,10 +317,10 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
               </span>
             </div>
             <h2 style={{ fontSize: '1.65rem', fontWeight: 900, margin: '0 0 6px 0', letterSpacing: '-0.01em' }}>
-              📢 आधिकारिक WhatsApp एवं SMS प्रसारण कमांड सेंटर
+              📢 WhatsApp एवं SMS प्रसारण कमांड सेंटर
             </h2>
             <p style={{ margin: 0, fontSize: '0.94rem', color: '#a7f3d0', maxWidth: '780px', lineHeight: 1.55 }}>
-              पंजीकृत धावकों को रीयल-टाइम ई-पास पुष्टि, एक्सपो किट पिक-अप रिमाइंडर, रेस दिवस 24H काउंटडाउन एवं आधिकारिक प्रचार संदेश एक क्लिक में प्रेषित करें।
+              पंजीकृत धावकों को रीयल-टाइम ई-पास पुष्टि, एक्सपो किट पिक-अप रिमाइंडर, रेस दिवस 24H काउंटडाउन एवं प्रचार संदेश एक क्लिक में प्रेषित करें।
             </p>
           </div>
 
@@ -1048,7 +1048,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
               📜 संदेश प्रसारण इतिहास एवं ऑडिट लॉग्स (Broadcast History & Delivery Log)
             </h3>
             <p style={{ margin: '3px 0 0 0', fontSize: '0.84rem', color: '#64748b' }}>
-              पुलिस मुख्यालय कमान द्वारा पूर्व में भेजे गए आधिकारिक संदेशों का संपूर्ण टाइमस्टैम्प्ड रिकॉर्ड
+              पुलिस मुख्यालय कमान द्वारा पूर्व में भेजे गए संदेशों का संपूर्ण टाइमस्टैम्प्ड रिकॉर्ड
             </p>
           </div>
           <span style={{ fontSize: '0.8rem', color: '#059669', fontWeight: 700 }}>

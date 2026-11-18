@@ -164,12 +164,12 @@ export async function sendCertificateNotification(runner) {
 
   if (isJaipurTimed && finishTime) {
     // PHQ / Jaipur Flagship Timed Half Marathon
-    smsText = `राजस्थान पुलिस हाफ मैराथन 2027: प्रिय ${fullName}, आपने 'रन फॉर हर' (${categoryName}) आधिकारिक समय ${finishTime} में पूर्ण की है। पुलिस महानिदेशक (DGP), राजस्थान द्वारा अधिकृत डिजिटल प्रमाण पत्र डाउनलोड करें: https://police.rajasthan.gov.in/cert/${certificateId} — राजस्थान पुलिस`;
-    emailSubject = `आधिकारिक फिनिशर प्रमाण पत्र | राजस्थान पुलिस हाफ मैराथन 2027 (${categoryName})`;
-    emailBody = `प्रिय ${fullName},\n\nहार्दिक बधाई! राजस्थान पुलिस हाफ मैराथन 2027 'रन फॉर हर' में आपने ${categoryName} दौड़ आधिकारिक समय ${finishTime} में सफलतापूर्वक पूर्ण की है।\n\nपुलिस महानिदेशक (DGP) राजस्थान द्वारा अधिकृत आपका डिजिटल प्रमाण पत्र पोर्टल पर जारी कर दिया गया है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\nराजस्थान पुलिस परिवार आपकी खेल भावना और नारी सुरक्षा संकल्प को सलाम करता है।\n\nकार्यालय महानिदेशक पुलिस, राजस्थान, जयपुर।`;
+    smsText = `राजस्थान पुलिस हाफ मैराथन 2027: प्रिय ${fullName}, आपने 'रन फॉर हर' (${categoryName}) समय ${finishTime} में पूर्ण की है। पुलिस महानिदेशक (DGP), राजस्थान द्वारा अधिकृत डिजिटल प्रमाण पत्र डाउनलोड करें: https://police.rajasthan.gov.in/cert/${certificateId} — राजस्थान पुलिस`;
+    emailSubject = `फिनिशर प्रमाण पत्र | राजस्थान पुलिस हाफ मैराथन 2027 (${categoryName})`;
+    emailBody = `प्रिय ${fullName},\n\nहार्दिक बधाई! राजस्थान पुलिस हाफ मैराथन 2027 'रन फॉर हर' में आपने ${categoryName} दौड़ समय ${finishTime} में सफलतापूर्वक पूर्ण की है।\n\nपुलिस महानिदेशक (DGP) राजस्थान द्वारा अधिकृत आपका डिजिटल प्रमाण पत्र पोर्टल पर जारी कर दिया गया है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\nराजस्थान पुलिस परिवार आपकी खेल भावना और नारी सुरक्षा संकल्प को सलाम करता है।\n\nकार्यालय महानिदेशक पुलिस, राजस्थान, जयपुर।`;
   } else {
     // District / SP Level Awareness Run
-    smsText = `राजस्थान पुलिस 'रन फॉर हर': प्रिय ${fullName}, ${districtName} में नारी सुरक्षा व सम्मान दौड़ में आपकी सहभागिता का आधिकारिक डिजिटल प्रमाण पत्र जारी हो चुका है। डाउनलोड: https://police.rajasthan.gov.in/cert/${certificateId} — पुलिस अधीक्षक कार्यालय`;
+    smsText = `राजस्थान पुलिस 'रन फॉर हर': प्रिय ${fullName}, ${districtName} में नारी सुरक्षा व सम्मान दौड़ में आपकी सहभागिता का डिजिटल प्रमाण पत्र जारी हो चुका है। डाउनलोड: https://police.rajasthan.gov.in/cert/${certificateId} — पुलिस अधीक्षक कार्यालय`;
     emailSubject = `अधिकृत सहभागिता प्रमाण पत्र | रन फॉर हर - राजस्थान पुलिस (${districtName})`;
     emailBody = `प्रिय ${fullName},\n\n'रन फॉर हर' - महिला सुरक्षा, सम्मान एवं सशक्तिकरण के राज्यव्यापी जन-जागरूकता अभियान में ${districtName} से सक्रिय सहभागिता के लिए राजस्थान पुलिस आपका हार्दिक आभार व्यक्त करती है।\n\nजिला पुलिस अधीक्षक (SP) द्वारा अधिकृत आपका डिजिटल सहभागिता प्रमाण पत्र पोर्टल पर उपलब्ध है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\n"हर कदम उसकी सुरक्षा के लिए"\nकार्यालय जिला पुलिस अधीक्षक, ${districtName}।`;
   }
@@ -373,9 +373,9 @@ export async function dispatchGatewayWhatsApp({ mobile, message, templateName = 
 export const BROADCAST_TEMPLATES = {
   CONFIRMATION: {
     id: "CONFIRMATION",
-    title: "आधिकारिक पंजीकरण एवं ई-पास पुष्टि",
+    title: "पंजीकरण एवं ई-पास पुष्टि",
     defaultChannel: "BOTH",
-    text: `🏛️ राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'\n\nप्रिय {name},\nआपका आधिकारिक पंजीकरण सफल रहा है!\n\n🏷️ बिब नंबर: {bib}\n🏃 दौड़ श्रेणी: {category}\n📍 स्थान: {district}\n\n📲 अपना आधिकारिक डिजिटल ई-पास व क्यूआर कोड तुरंत डाउनलोड करें:\n👉 https://police.rajasthan.gov.in/epass/{certId}\n\nहेल्पलाइन: 112 / 1090\n- राजस्थान पुलिस मुख्यालय`
+    text: `🏛️ राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'\n\nप्रिय {name},\nआपका पंजीकरण सफल रहा है!\n\n🏷️ बिब नंबर: {bib}\n🏃 दौड़ श्रेणी: {category}\n📍 स्थान: {district}\n\n📲 अपना डिजिटल ई-पास व क्यूआर कोड तुरंत डाउनलोड करें:\n👉 https://police.rajasthan.gov.in/epass/{certId}\n\nहेल्पलाइन: 112 / 1090\n- राजस्थान पुलिस मुख्यालय`
   },
   PROMOTION: {
     id: "PROMOTION",
@@ -387,7 +387,7 @@ export const BROADCAST_TEMPLATES = {
     id: "EXPO_KIT_REMINDER",
     title: "एक्सपो किट (टी-शर्ट एवं RFID बिब) संग्रह रिमाइंडर",
     defaultChannel: "BOTH",
-    text: `👕 राजस्थान पुलिस मैराथन 2027 — आधिकारिक किट सूचना\n\nआदरणीय {name},\nआपकी आधिकारिक प्रतिभागी किट (साइज: {tshirtSize} एवं बिब #{bib}) तैयार है।\n\n📅 किट वितरण: 1 एवं 2 जनवरी 2027\n⏰ समय: प्रातः 10:00 AM से सायं 07:00 PM\n📍 स्थान: अल्बर्ट हॉल मैराथन एक्सपो काउंटर, जेएलएन मार्ग, जयपुर\n\nकृपया अपना ई-पास अथवा एसएमएस दिखाकर किट अवश्य प्राप्त करें।\n- राजस्थान पुलिस एक्सपो समिति`
+    text: `👕 राजस्थान पुलिस मैराथन 2027 — किट सूचना\n\nआदरणीय {name},\nआपकी प्रतिभागी किट (साइज: {tshirtSize} एवं बिब #{bib}) तैयार है।\n\n📅 किट वितरण: 1 एवं 2 जनवरी 2027\n⏰ समय: प्रातः 10:00 AM से सायं 07:00 PM\n📍 स्थान: अल्बर्ट हॉल मैराथन एक्सपो काउंटर, जेएलएन मार्ग, जयपुर\n\nकृपया अपना ई-पास अथवा एसएमएस दिखाकर किट अवश्य प्राप्त करें।\n- राजस्थान पुलिस एक्सपो समिति`
   },
   RACE_REMINDER: {
     id: "RACE_REMINDER",
@@ -397,7 +397,7 @@ export const BROADCAST_TEMPLATES = {
   },
   CUSTOM: {
     id: "CUSTOM",
-    title: "विशेष आधिकारिक संदेश (Custom Broadcast)",
+    title: "विशेष संदेश (Custom Broadcast)",
     defaultChannel: "BOTH",
     text: `राजस्थान पुलिस मैराथन 2027: प्रिय {name}, आपका बिब नंबर {bib} है। कृपया समय पर रिपोर्ट करें। - राजस्थान पुलिस`
   }

@@ -1351,7 +1351,7 @@ export async function handleApiRequest(req, res) {
       });
 
       if (resCert.rows.length === 0) {
-        return error("प्रमाण पत्र सत्यापन विफल: यह प्रमाण पत्र राजस्थान पुलिस आधिकारिक रिकॉर्ड में नहीं मिला।", 404);
+        return error("प्रमाण पत्र सत्यापन विफल: यह प्रमाण पत्र राजस्थान पुलिस रिकॉर्ड में नहीं मिला।", 404);
       }
 
       const r = resCert.rows[0];
@@ -2569,7 +2569,7 @@ export async function handleApiRequest(req, res) {
         return json({
           success: false,
           status: "INVALID_PASS",
-          message: "❌ अमान्य अथवा अपंजीकृत ई-पास! इस पास का कोई आधिकारिक रिकॉर्ड नहीं मिला।"
+          message: "❌ अमान्य अथवा अपंजीकृत ई-पास! इस पास का कोई रिकॉर्ड नहीं मिला।"
         }, 404);
       }
 
@@ -3331,7 +3331,7 @@ export async function handleApiRequest(req, res) {
       const searchQuery = (body.searchQuery || body.q || "").trim();
 
       const baseTemplate = BROADCAST_TEMPLATES[templateType] || BROADCAST_TEMPLATES.CUSTOM;
-      const title = (body.title || baseTemplate.title || "आधिकारिक प्रसारण संदेश").trim();
+      const title = (body.title || baseTemplate.title || "प्रसारण संदेश").trim();
       const message = (body.message || baseTemplate.text || "").trim();
 
       if (!title || !message) {
@@ -3406,7 +3406,7 @@ export async function handleApiRequest(req, res) {
 
       return json({
         success: true,
-        message: `आधिकारिक संदेश सफलतापूर्वक ${recipientsCount} पंजीकृत धावकों को प्रेषित किया गया।`,
+        message: `संदेश सफलतापूर्वक ${recipientsCount} पंजीकृत धावकों को प्रेषित किया गया।`,
         recipientsCount,
         channel: rawChannel,
         templateType,

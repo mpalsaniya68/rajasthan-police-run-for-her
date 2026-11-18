@@ -113,7 +113,7 @@ export function GovPaymentModal({
                 राजस्थान सरकार | वित्त विभाग (Government of Rajasthan)
               </div>
               <div style={{ fontSize: '0.74rem', color: '#e2e8f0' }}>
-                e-Gras / SBI ePay — आधिकारिक ई-चालान एवं शुल्क भुगतान पोर्टल
+                e-Gras / SBI ePay — ई-चालान एवं शुल्क भुगतान पोर्टल
               </div>
             </div>
           </div>
@@ -293,7 +293,7 @@ export function GovPaymentModal({
                 fontSize: '0.78rem',
                 color: '#334155'
               }}>
-                <span>आधिकारिक VPA: <strong>rajasthanpolice.marathon@sbi</strong></span>
+                <span>VPA:<strong>rajasthanpolice.marathon@sbi</strong></span>
               </div>
             </div>
           )}

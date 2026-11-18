@@ -639,7 +639,6 @@ input:focus, select:focus, textarea:focus {
   #page-home > div:first-child,
   #page-categories > div:first-child,
   #page-route-schedule > div:first-child,
-  #page-districts > div:first-child,
   #page-pledge-safety > div:first-child,
   .registration-breadcrumb {
     display: none !important;

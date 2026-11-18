@@ -1800,7 +1800,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>
-                    {scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A' ? 'आधिकारिक टी-शर्ट साइज (Official T-Shirt Size)' : 'टी-शर्ट पात्रता (T-Shirt Eligibility)'}
+                    {scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A' ? 'टी-शर्ट साइज (Official T-Shirt Size)': 'टी-शर्ट पात्रता (T-Shirt Eligibility)'}
                   </div>
                   <div style={{ fontSize: (scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A') ? '1.4rem' : '1.05rem', fontWeight: 900, color: '#0a1c3d' }}>
                     {scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A' ? (
@@ -1866,7 +1866,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               </div>
 
               <div>
-                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>आधिकारिक बिब नंबर (Bib #):</span>
+                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>बिब नंबर (Bib #):</span>
                 <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#dc2626', fontFamily: 'monospace' }}>
                   {scannedRunner.bibNumber}
                 </div>

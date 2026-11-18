@@ -682,7 +682,7 @@ export function RegistrationPage({
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email || !emailRegex.test(formData.email.trim())) {
-      alert("कृपया वैध ईमेल पता दर्ज करें (सर्टिफिकेट एवं आधिकारिक ई-पास सीधे इसी ईमेल पर प्रेषित होंगे)।");
+      alert("कृपया वैध ईमेल पता दर्ज करें (सर्टिफिकेट एवं ई-पास सीधे इसी ईमेल पर प्रेषित होंगे)।");
       return;
     }
 
@@ -904,7 +904,7 @@ export function RegistrationPage({
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("आधिकारिक छाती बिब संख्या", bibCenterX, 198);
+      ctx.fillText("छाती बिब संख्या", bibCenterX, 198);
       ctx.fillStyle = "#94a3b8";
       ctx.font = "bold 11px sans-serif";
       ctx.fillText("OFFICIAL BIB NUMBER", bibCenterX, 218);
@@ -1087,7 +1087,7 @@ export function RegistrationPage({
 
       ctx.fillStyle = "#065f46";
       ctx.font = "bold 18px sans-serif";
-      ctx.fillText("✓ आधिकारिक डिजिटल ई-पास (OFFICIAL DIGITAL ENTRY PASS)", 60, 598);
+      ctx.fillText("✓ डिजिटल ई-पास (OFFICIAL DIGITAL ENTRY PASS)", 60, 598);
 
       ctx.fillStyle = "#047857";
       ctx.font = "15px sans-serif";
@@ -1105,7 +1105,7 @@ export function RegistrationPage({
 
       ctx.fillStyle = "#e2e8f0";
       ctx.font = "13px sans-serif";
-      ctx.fillText("24×7 महिला गरिमा हेल्पलाइन: 1090  |  आपातकालीन सेवा: 112  |  आधिकारिक पोर्टल: police.rajasthan.gov.in", 600, 715);
+      ctx.fillText("24×7 महिला गरिमा हेल्पलाइन: 1090 | आपातकालीन सेवा: 112 | पोर्टल: police.rajasthan.gov.in", 600, 715);
       ctx.textAlign = "left";
 
       // 8. Download directly as PNG file into user's device/local storage
@@ -1132,7 +1132,7 @@ export function RegistrationPage({
 
     const message = 
       `🏛️ *राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'*\n` +
-      `★ आधिकारिक डिजिटल ई-पास व प्रवेश पत्र ★\n\n` +
+      `★ डिजिटल ई-पास व प्रवेश पत्र ★\n\n` +
       `आदरणीय *${registeredParticipant.fullName}* जी,\n` +
       `राजस्थान पुलिस मैराथन 2027 में आपका पंजीकरण सफलतापूर्वक पूर्ण हो चुका है।\n\n` +
       `📋 *प्रवेश विवरण (Entry Details):*\n` +
@@ -1157,7 +1157,7 @@ export function RegistrationPage({
   const handleShareWhatsApp = () => {
     if (!registeredParticipant) return;
     const text = encodeURIComponent(
-      `🏃‍♀️ मैंने राजस्थान पुलिस मैराथन 2027 'RUN FOR HER' में आधिकारिक पंजीकरण कर लिया है!\n\n` +
+      `🏃‍♀️ मैंने राजस्थान पुलिस मैराथन 2027 'RUN FOR HER' में पंजीकरण कर लिया है!\n\n` +
       `🏅 धावक: ${registeredParticipant.fullName}\n` +
       `🎽 बिब नंबर: ${registeredParticipant.bibNumber}\n` +
       `🎯 श्रेणी: ${registeredParticipant.categoryName}\n` +
@@ -1223,7 +1223,7 @@ export function RegistrationPage({
             </span>
           </div>
 
-          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 600 }}>आधिकारिक पोर्टल • राजस्थान पुलिस</div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 600 }}>राजस्थान पुलिस पोर्टल</div>
         </div>
       </div>
 
@@ -1267,7 +1267,7 @@ export function RegistrationPage({
                 पंजीकरण सफलतापूर्वक पूर्ण हुआ!
               </h2>
               <div style={{ fontSize: '0.94rem', color: '#e2e8f0' }}>
-                राजस्थान पुलिस मैराथन 2027 • <strong>Run for Her</strong> में आपका आधिकारिक ई-पास जारी किया गया है।
+                राजस्थान पुलिस मैराथन 2027 •<strong>Run for Her</strong> में आपका ई-पास जारी किया गया है।
               </div>
             </div>
 
@@ -1307,7 +1307,7 @@ export function RegistrationPage({
                   {/* Left: Huge Bib Number & Category */}
                   <div style={{ textAlign: 'center', background: 'var(--police-navy-50)', padding: '20px', borderRadius: '12px', border: '1.5px dashed var(--police-navy-800)' }}>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase' }}>
-                      आधिकारिक छाती बिब संख्या (Bib Number)
+                      छाती बिब संख्या (Bib Number)
                     </div>
                     <div style={{ fontSize: 'clamp(2.2rem, 5vw, 3rem)', fontWeight: 900, color: 'var(--police-navy-950)', letterSpacing: '2px', margin: '6px 0' }}>
                       {registeredParticipant.bibNumber}
@@ -1367,7 +1367,7 @@ export function RegistrationPage({
 
                     <div style={{ marginTop: '10px', background: 'var(--police-navy-50)', padding: '8px 12px', borderRadius: '8px', fontSize: '0.76rem', color: 'var(--police-navy-900)', border: '1px solid var(--border-subtle)' }}>
                       <div><strong>पहचान पत्र (Govt ID):</strong> {registeredParticipant.idType || 'Aadhaar'} ({registeredParticipant.idMasked || 'XXXX-XXXX-1234'})</div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}><strong>आधिकारिक ईमेल:</strong> {registeredParticipant.email}</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}><strong>ईमेल:</strong> {registeredParticipant.email}</div>
                     </div>
 
                     {registeredParticipant.medicalCondition && registeredParticipant.medicalCondition !== "None / Fully Fit" && (
@@ -1986,7 +1986,7 @@ export function RegistrationPage({
                               }}
                             >
                               <Unlock size={18} />
-                              <span>{isVerifyingPassOtp ? "सत्यापन जारी है..." : "सत्यापित करें व आधिकारिक ई-पास डाउनलोड करें"}</span>
+                              <span>{isVerifyingPassOtp ? "सत्यापन जारी है...": "सत्यापित करें व ई-पास डाउनलोड करें"}</span>
                             </button>
                           </div>
                         )}
@@ -2010,7 +2010,7 @@ export function RegistrationPage({
                 <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '4px' }}>
                   ℹ️ महत्वपूर्ण सूचना (Official Advisory):
                 </div>
-                • यह ई-पास 1 व 2 जनवरी 2027 को आधिकारिक बिब व रनिंग किट प्राप्त करने हेतु अनिवार्य है।<br />
+                • यह ई-पास 1 व 2 जनवरी 2027 को बिब व रनिंग किट प्राप्त करने हेतु अनिवार्य है।<br />
                 • 3 जनवरी 2027 को दौड़ स्थल (अल्बर्ट हॉल / जिला केंद्र) पर प्रवेश इसी ई-पास के डिजिटल अथवा प्रिंटेड रूप में दिखाने पर दिया जाएगा।
               </div>
             </div>
@@ -2844,7 +2844,7 @@ export function RegistrationPage({
                     marginTop: '4px'
                   }}>
                     <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 700, color: 'var(--police-navy-950)', marginBottom: '8px' }}>
-                      क्या आपने पहले कभी किसी मैराथन या आधिकारिक दौड़ में भाग लिया है?
+                      क्या आपने पहले कभी किसी मैराथन या दौड़ में भाग लिया है?
                     </label>
                     <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
                       <label style={{
