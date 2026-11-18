@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Send, MessageSquare, Smartphone, CheckCircle2, AlertCircle, RefreshCw, 
-  Users, Shirt, Trophy, Clock, Sparkles, Filter, Search, Tag, Eye, ShieldCheck, Check
+  Send, MessageSquare, CheckCircle2, AlertCircle, RefreshCw, Check
 } from 'lucide-react';
 import { apiSendBroadcast, apiGetBroadcastHistory } from '../services/api';
 
@@ -278,107 +277,57 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* 1. Header Banner with Live Operational KPI Matrix */}
+      {/* 1. Compact & Clean Header Strip */}
       <div style={{
-        background: 'linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%)',
-        borderRadius: '14px',
-        padding: '24px 28px',
-        color: '#ffffff',
-        boxShadow: '0 8px 24px rgba(6, 95, 70, 0.25)',
-        position: 'relative',
-        overflow: 'hidden'
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderLeft: '4px solid #059669',
+        borderRadius: '10px',
+        padding: '14px 20px',
+        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '12px'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <span style={{
-                background: '#34d399',
-                color: '#064e3b',
-                fontWeight: 900,
-                fontSize: '0.75rem',
-                padding: '4px 10px',
-                borderRadius: '6px',
-                letterSpacing: '0.04em',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px'
-              }}>
-                <Sparkles size={13} />
-                PHQ DEDICATED COMMAND
-              </span>
-              <span style={{
-                background: 'rgba(255, 255, 255, 0.18)',
-                color: '#ffffff',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                padding: '4px 10px',
-                borderRadius: '6px'
-              }}>
-                🟢 RajSMS & WhatsApp Cloud Gateway Active
-              </span>
-            </div>
-            <h2 style={{ fontSize: '1.65rem', fontWeight: 900, margin: '0 0 6px 0', letterSpacing: '-0.01em', color: '#ffffff' }}>
-              📢 WhatsApp एवं SMS प्रसारण कमांड सेंटर
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.94rem', color: '#a7f3d0', maxWidth: '780px', lineHeight: 1.55 }}>
-              पंजीकृत धावकों को रीयल-टाइम ई-पास पुष्टि, एक्सपो किट पिक-अप रिमाइंडर, रेस दिवस 24H काउंटडाउन एवं प्रचार संदेश एक क्लिक में प्रेषित करें।
-            </p>
-          </div>
-
-          <button
-            onClick={fetchLogs}
-            disabled={isLoadingLogs}
-            style={{
-              background: 'rgba(255, 255, 255, 0.16)',
-              border: '1px solid rgba(255, 255, 255, 0.35)',
-              color: '#ffffff',
-              padding: '9px 16px',
-              borderRadius: '8px',
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <RefreshCw size={14} className={isLoadingLogs ? "spin" : ""} />
-            <span>इतिहास रीफ्रेश करें</span>
-          </button>
-        </div>
-
-        {/* Live Audience Stat Pills */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: '12px',
-          marginTop: '20px',
-          paddingTop: '18px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.18)'
-        }}>
-          <div style={{ background: 'rgba(0, 0, 0, 0.22)', padding: '10px 14px', borderRadius: '8px' }}>
-            <div style={{ fontSize: '0.74rem', color: '#a7f3d0', fontWeight: 700 }}>कुल पंजीकृत धावक</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#ffffff' }}>{participants.length} धावक</div>
-          </div>
-          <div style={{ background: 'rgba(0, 0, 0, 0.22)', padding: '10px 14px', borderRadius: '8px' }}>
-            <div style={{ fontSize: '0.74rem', color: '#fef08a', fontWeight: 700 }}>👕 किट शेष (Kit Pending)</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#fef08a' }}>
-              {participants.filter(p => !p.bibCollected && !p.kit_collected).length} धावक
-            </div>
-          </div>
-          <div style={{ background: 'rgba(0, 0, 0, 0.22)', padding: '10px 14px', borderRadius: '8px' }}>
-            <div style={{ fontSize: '0.74rem', color: '#bfdbfe', fontWeight: 700 }}>🎯 वर्तमान लक्षित प्राप्तकर्ता</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#6ee7b7' }}>
-              {recipientsCount} धावक
-            </div>
-          </div>
-          <div style={{ background: 'rgba(0, 0, 0, 0.22)', padding: '10px 14px', borderRadius: '8px' }}>
-            <div style={{ fontSize: '0.74rem', color: '#e2e8f0', fontWeight: 700 }}>प्रसारण माध्यम</div>
-            <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#ffffff', marginTop: '4px' }}>
-              {channel === 'BOTH' ? '🟢 WhatsApp + 📱 SMS' : channel === 'WHATSAPP' ? '🟢 केवल WhatsApp' : '📱 केवल SMS'}
-            </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 900, margin: 0, color: 'var(--police-navy-950)' }}>
+            📢 WhatsApp एवं SMS प्रसारण
+          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', fontSize: '0.8rem', fontWeight: 700 }}>
+            <span style={{ background: '#f1f5f9', color: '#0f172a', padding: '4px 10px', borderRadius: '6px' }}>
+              कुल: {participants.length}
+            </span>
+            <span style={{ background: '#fef9c3', color: '#854d0e', padding: '4px 10px', borderRadius: '6px' }}>
+              किट शेष: {participants.filter(p => !p.bibCollected && !p.kit_collected).length}
+            </span>
+            <span style={{ background: '#ecfdf5', color: '#065f46', padding: '4px 10px', borderRadius: '6px', border: '1px solid #a7f3d0' }}>
+              लक्षित: {recipientsCount}
+            </span>
           </div>
         </div>
+
+        <button
+          onClick={fetchLogs}
+          disabled={isLoadingLogs}
+          style={{
+            background: '#f8fafc',
+            border: '1px solid #cbd5e1',
+            color: '#0f172a',
+            padding: '7px 14px',
+            borderRadius: '6px',
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          <RefreshCw size={13} className={isLoadingLogs ? "spin" : ""} />
+          <span>रीफ्रेश करें</span>
+        </button>
       </div>
 
       {/* Broadcast Result Toast */}
@@ -449,7 +398,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
               </h3>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '10px' }}>
               {CAMPAIGNS.map(camp => {
                 const isSelected = selectedCampaignId === camp.id;
                 return (
@@ -457,33 +406,33 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                     key={camp.id}
                     onClick={() => handleSelectCampaign(camp)}
                     style={{
-                      padding: '12px 14px',
+                      padding: '11px 14px',
                       borderRadius: '8px',
                       border: isSelected ? '2px solid #059669' : '1px solid var(--border-medium)',
                       background: isSelected ? '#ecfdf5' : '#f8fafc',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
-                      position: 'relative'
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '1.25rem' }}>{camp.icon}</span>
-                      <span style={{
-                        fontSize: '0.86rem',
-                        fontWeight: 800,
-                        color: isSelected ? '#065f46' : 'var(--police-navy-900)'
-                      }}>
-                        {camp.badge}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '0.74rem', color: '#64748b', lineHeight: 1.4 }}>
-                      {camp.desc}
-                    </div>
+                    <span style={{ fontSize: '1.15rem' }}>{camp.icon}</span>
+                    <span style={{
+                      fontSize: '0.86rem',
+                      fontWeight: 800,
+                      color: isSelected ? '#065f46' : 'var(--police-navy-900)',
+                      paddingRight: isSelected ? '18px' : 0
+                    }}>
+                      {camp.badge}
+                    </span>
                     {isSelected && (
                       <div style={{
                         position: 'absolute',
-                        top: '8px',
-                        right: '8px',
+                        top: '50%',
+                        right: '10px',
+                        transform: 'translateY(-50%)',
                         background: '#059669',
                         color: '#ffffff',
                         width: '18px',
@@ -608,10 +557,10 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                   onChange={(e) => setTargetAudience(e.target.value)}
                   style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.88rem' }}
                 >
-                  <option value="all">👥 समस्त पंजीकृत धावक (All Runners)</option>
-                  <option value="kit_pending">👕 केवल किट पेंडिंग धावक (Kit Pending Only)</option>
-                  <option value="kit_collected">✓ किट प्राप्त धावक (Kit Collected Only)</option>
-                  <option value="single">🔍 एकल धावक (Single Runner Search)</option>
+                  <option value="all">All Runners</option>
+                  <option value="kit_pending">Kit Pending Only</option>
+                  <option value="kit_collected">Kit Collected Only</option>
+                  <option value="single">Single Runner Search</option>
                 </select>
               </div>
 

@@ -178,25 +178,23 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
               </button>
             </div>
 
-            {/* Pure Transparent Liquid-Glass Countdown Card */}
+            {/* Minimal Floating Countdown Boxes (No Outer Box, Sheer Transparent Glass) */}
             <div className="hero-countdown-card">
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
+                gap: '7px',
                 color: '#fde68a',
                 fontFamily: "'Inter', Arial, sans-serif",
                 fontWeight: 800,
-                fontSize: '0.82rem',
-                letterSpacing: '0.16em',
+                fontSize: '0.8rem',
+                letterSpacing: '0.18em',
                 textTransform: 'uppercase',
-                marginBottom: '14px',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.22)',
-                paddingBottom: '10px',
-                textShadow: '0 1px 6px rgba(0, 0, 0, 0.5)'
+                marginBottom: '12px',
+                textShadow: '0 2px 8px rgba(0, 0, 0, 0.75)'
               }}>
-                <Timer size={16} color="#fde68a" />
+                <Timer size={15} color="#fde68a" />
                 <span translate="no" className="notranslate">EVENT COUNTDOWN</span>
               </div>
 
@@ -342,15 +340,12 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
         }
 
         .hero-countdown-card {
-          max-width: 640px;
+          max-width: 580px;
           margin: 0 auto;
-          padding: 18px 24px 20px 24px;
-          border-radius: 18px;
-          background: rgba(15, 23, 42, 0.24);
-          backdrop-filter: blur(18px);
-          -webkit-backdrop-filter: blur(18px);
-          box-shadow: 0 16px 40px rgba(5, 17, 38, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.34);
-          border: 1px solid rgba(255, 255, 255, 0.32);
+          padding: 4px 0 0 0;
+          background: transparent;
+          border: none;
+          box-shadow: none;
           color: #ffffff;
         }
 
@@ -358,40 +353,40 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 10px;
+          gap: 12px;
         }
 
         .hero-countdown-box {
           flex: 1;
           min-width: 0;
-          background: rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          border-radius: 12px;
+          background: rgba(5, 17, 38, 0.20);
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
+          border-radius: 14px;
           padding: 14px 8px;
-          border: 1px solid rgba(255, 255, 255, 0.28);
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+          border: 1px solid rgba(255, 255, 255, 0.34);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.24);
           text-align: center;
         }
 
         .hero-countdown-val {
           font-family: 'Inter', Arial, sans-serif;
           font-variant-numeric: tabular-nums;
-          font-size: clamp(1.9rem, 4vw, 2.85rem);
+          font-size: clamp(1.95rem, 4vw, 2.9rem);
           font-weight: 900;
           color: #ffffff;
           line-height: 1;
-          text-shadow: 0 3px 14px rgba(5, 17, 38, 0.65);
+          text-shadow: 0 3px 16px rgba(5, 17, 38, 0.85), 0 1px 3px rgba(0, 0, 0, 0.75);
         }
 
         .hero-countdown-lbl {
           font-family: 'Inter', Arial, sans-serif;
-          font-size: 0.72rem;
+          font-size: 0.73rem;
           color: #fde68a;
           font-weight: 800;
-          letter-spacing: 0.14em;
+          letter-spacing: 0.15em;
           margin-top: 7px;
-          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+          text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85);
         }
 
         .hero-countdown-sep {
@@ -465,7 +460,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           }
 
           .hero-countdown-card {
-            padding: 14px 12px !important;
+            padding: 4px 0 !important;
           }
 
           .hero-countdown-row {

@@ -312,11 +312,12 @@ export function AdminDashboard({
   }, [isOpen, adminTab, certDistrict]);
 
   const handleBatchGenerateCertificates = async (overrideMode) => {
-    const activeMode = overrideMode || certEligibilityMode;
+    const isStringMode = typeof overrideMode === 'string' && (overrideMode === 'GATE_SCANNED_ONLY' || overrideMode === 'ALL_REGISTERED');
+    const activeMode = isStringMode ? overrideMode : certEligibilityMode;
     const distLabel = isDistrictRole ? (adminUser?.districtName || 'आपके जिले') : (certDistrict === 'all' ? 'समस्त 41 जिलों' : certDistrict);
     const modeLabel = activeMode === 'GATE_SCANNED_ONLY' ? 'केवल गेट-स्कैन उपस्थित' : 'समस्त पंजीकृत';
     
-    if (!overrideMode && !window.confirm(`क्या आप ${distLabel} के ${modeLabel} धावकों के लिए डिजिटल प्रमाण पत्र जारी व SMS/Email प्रेषित करना चाहते हैं?`)) {
+    if (!isStringMode && !window.confirm(`क्या आप ${distLabel} के ${modeLabel} धावकों के लिए डिजिटल प्रमाण पत्र जारी व SMS/Email प्रेषित करना चाहते हैं?`)) {
       return;
     }
 
@@ -4725,7 +4726,7 @@ export function AdminDashboard({
               </button>
 
               <button
-                onClick={handleBatchGenerateCertificates}
+                onClick={() => handleBatchGenerateCertificates()}
                 disabled={isGeneratingCerts}
                 style={{
                   padding: '12px 24px',

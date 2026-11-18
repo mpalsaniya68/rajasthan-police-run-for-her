@@ -136,6 +136,7 @@ export function RegistrationPage({
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const [locationQrUrl, setLocationQrUrl] = useState("");
   const [isDownloadingPass, setIsDownloadingPass] = useState(false);
+  const [autoSaveStatus, setAutoSaveStatus] = useState('idle'); // 'idle' | 'saving' | 'saved'
 
   useEffect(() => {
     QRCode.toDataURL(ALBERT_HALL_MAPS_URL, {
@@ -864,7 +865,12 @@ export function RegistrationPage({
       onRegisterSuccess(fullRecord);
     }
     setIsSuccess(true);
+    setAutoSaveStatus('saving');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Actually auto-download the PNG E-Pass into user's Downloads folder
+    setTimeout(() => {
+      handleDownloadEPassPNG(fullRecord);
+    }, 350);
   };
 
   const handleDownloadEPassPNG = async (participantParam) => {
@@ -1193,15 +1199,39 @@ export function RegistrationPage({
       ctx.fillText("24×7 महिला गरिमा हेल्पलाइन: 1090 | आपातकालीन सेवा: 112 | पोर्टल: police.rajasthan.gov.in", 600, footerY + 55);
       ctx.textAlign = "left";
 
-      // 8. Download directly as PNG file into user's device/local storage
-      const pngUrl = canvas.toDataURL("image/png");
-      const downloadLink = document.createElement("a");
+      // 8. Download directly as PNG file into user's device Downloads folder
       const safeBib = (p.bibNumber || "RUNNER").replace(/[^a-zA-Z0-9_-]/g, "_");
-      downloadLink.download = `RJ-POLICE-MARATHON-EPASS-${safeBib}.png`;
-      downloadLink.href = pngUrl;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+      const fileName = `RJ-POLICE-MARATHON-EPASS-${safeBib}.png`;
+
+      const triggerDownload = (href, revokeAfter = false) => {
+        const downloadLink = document.createElement("a");
+        downloadLink.download = fileName;
+        downloadLink.href = href;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        if (revokeAfter) {
+          setTimeout(() => URL.revokeObjectURL(href), 3000);
+        }
+      };
+
+      if (typeof canvas.toBlob === "function") {
+        await new Promise((resolve) => {
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const blobUrl = URL.createObjectURL(blob);
+              triggerDownload(blobUrl, true);
+            } else {
+              triggerDownload(canvas.toDataURL("image/png"), false);
+            }
+            resolve();
+          }, "image/png");
+        });
+      } else {
+        triggerDownload(canvas.toDataURL("image/png"), false);
+      }
+      setAutoSaveStatus('saved');
     } catch (err) {
       console.error("Pass download error:", err);
       alert("ई-पास डाउनलोड करने में त्रुटि। कृपया पुनः प्रयास करें।");
@@ -1574,7 +1604,11 @@ export function RegistrationPage({
                   <span style={{ fontSize: '1.5rem' }}>📲</span>
                   <div>
                     <div style={{ fontWeight: 800, color: '#166534', fontSize: '0.92rem' }}>
-                      ई-पास आपकी डिवाइस (Downloads) में स्वतः सुरक्षित किया जा रहा है!
+                      {autoSaveStatus === 'saved'
+                        ? '✅ ई-पास आपकी डिवाइस (Downloads) में स्वतः सुरक्षित हो गया है!'
+                        : (autoSaveStatus === 'saving' || isDownloadingPass)
+                          ? '⏳ ई-पास आपकी डिवाइस (Downloads) में स्वतः सुरक्षित किया जा रहा है...'
+                          : '🎫 आपका डिजिटल ई-पास डाउनलोड के लिए तैयार है!'}
                     </div>
                     <div style={{ fontSize: '0.8rem', color: '#15803d' }}>
                       अपने पंजीकृत मोबाइल <strong>+91 {registeredParticipant.mobile}</strong> के व्हाट्सएप पर 1-क्लिक में रसीद सुरक्षित करें:
