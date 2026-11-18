@@ -6,7 +6,6 @@ import confetti from 'canvas-confetti';
 export function SafetyPledge() {
   const [pledgeName, setPledgeName] = useState("");
   const [pledged, setPledged] = useState(false);
-  const [pledgeCount, setPledgeCount] = useState(26540);
 
   const handleTakePledge = (e) => {
     e.preventDefault();
@@ -15,7 +14,6 @@ export function SafetyPledge() {
       return;
     }
     setPledged(true);
-    setPledgeCount(prev => prev + 1);
     try {
       confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
     } catch (err) {}
@@ -50,10 +48,7 @@ export function SafetyPledge() {
                 <Heart size={22} color="var(--crimson-600)" />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.25rem', color: 'var(--police-navy-900)' }}>महिला सुरक्षा संकल्प</h3>
-                <div style={{ fontSize: '0.78rem', color: 'var(--crimson-600)', fontWeight: 700 }}>
-                  {pledgeCount.toLocaleString()} नागरिकों ने अब तक शपथ ली
-                </div>
+                <h3 style={{ fontSize: '1.25rem', color: 'var(--police-navy-900)', margin: 0 }}>महिला सुरक्षा संकल्प</h3>
               </div>
             </div>
 

@@ -379,7 +379,7 @@ export default function App() {
 
                   <span>/</span>
 
-                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>रूट मैप, कार्यक्रम समय-सारणी एवं एक्सपो किट</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>रूट व एक्सपो</span>
 
                 </div>
 
@@ -413,7 +413,7 @@ export default function App() {
 
                   <span>/</span>
 
-                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>ई-सर्टिफिकेट डाउनलोड एवं सत्यापन पोर्टल</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>ई-प्रमाण पत्र</span>
 
                 </div>
 
@@ -445,7 +445,7 @@ export default function App() {
 
                   <span>/</span>
 
-                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>महिला सुरक्षा संकल्प एवं 24x7 आपातकालीन हेल्पलाइन</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>सुरक्षा संकल्प</span>
 
                 </div>
 

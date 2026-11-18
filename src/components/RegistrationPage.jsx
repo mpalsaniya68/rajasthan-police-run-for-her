@@ -1640,7 +1640,7 @@ export function RegistrationPage({
                   }}
                 >
                   <FileText size={18} color={activeTab === 'register' ? '#fde68a' : 'currentColor'} />
-                  <span>नया धावक पंजीकरण (New Registration)</span>
+                  <span>New Registration</span>
                 </button>
 
                 <button
