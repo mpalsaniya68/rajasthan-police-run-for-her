@@ -795,20 +795,24 @@ input:focus, select:focus, textarea:focus {
   }
 
   .print-pass-card .epass-route-map-panel {
-    margin-top: 10px !important;
+    margin-top: 12px !important;
     border: 1.5px solid #0a1c3d !important;
     border-radius: 8px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
 
-  .print-pass-card .epass-route-map-img {
-    max-height: 136mm !important;
-    width: auto !important;
-    max-width: 100% !important;
-    object-fit: contain !important;
-    display: block !important;
-    margin: 0 auto !important;
+  .print-pass-card .epass-route-body-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 158px !important;
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .epass-route-body-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 

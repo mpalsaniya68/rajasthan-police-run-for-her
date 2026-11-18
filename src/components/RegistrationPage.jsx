@@ -22,51 +22,14 @@ import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
 import confetti from 'canvas-confetti';
 import QRCode from 'qrcode';
 import { apiRegister, apiSendOtp, apiVerifyOtp, apiSearchPass, apiSendPassOtp, apiVerifyPassOtp } from '../services/api';
+import {
+  ALBERT_HALL_MAPS_URL,
+  getJaipurRouteConfig,
+  HorizontalRouteMapCard,
+  drawHorizontalRouteMapOnCanvas
+} from '../utils/jaipurRouteMap';
 
 const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
-
-const JAIPUR_ROUTE_MAPS = {
-  '21k': {
-    src: '/images/routes/route_21k.png',
-    label: '21 KM HALF MARATHON ROUTE MAP — ALBERT HALL, JAIPUR',
-    timing: 'Reporting: 05:00 AM • Flag-Off: 06:00 AM'
-  },
-  '10k': {
-    src: '/images/routes/route_10k.png',
-    label: '10 KM MARATHON ROUTE MAP — ALBERT HALL, JAIPUR',
-    timing: 'Reporting: 05:15 AM • Flag-Off: 06:15 AM'
-  },
-  '5k': {
-    src: '/images/routes/route_5k.png',
-    label: '5 KM MARATHON ROUTE MAP — ALBERT HALL, JAIPUR',
-    timing: 'Reporting: 05:30 AM • Flag-Off: 06:45 AM'
-  },
-  '2k': {
-    src: '/images/routes/route_2k.png',
-    label: '2 KM MARATHON ROUTE MAP — ALBERT HALL, JAIPUR',
-    timing: 'Reporting: 06:00 AM • Flag-Off: 07:15 AM'
-  }
-};
-
-function getJaipurRouteMap(p) {
-  if (!p) return null;
-  const distId = String(p.districtId || '').toLowerCase();
-  const distName = String(p.districtName || '').toLowerCase();
-  const isJaipur =
-    distId === 'jpr-comm' ||
-    distId === 'jaipur_comm' ||
-    distId.includes('jaipur') ||
-    distName.includes('jaipur') ||
-    distName.includes('जयपुर');
-  if (!isJaipur) return null;
-
-  const rawCat = String(p.category || p.categoryId || p.categoryName || '').toLowerCase();
-  if (rawCat.includes('21')) return JAIPUR_ROUTE_MAPS['21k'];
-  if (rawCat.includes('10')) return JAIPUR_ROUTE_MAPS['10k'];
-  if (rawCat.includes('5')) return JAIPUR_ROUTE_MAPS['5k'];
-  if (rawCat.includes('2')) return JAIPUR_ROUTE_MAPS['2k'];
-  return null;
-}
 
 function formatCleanDistrictName(p) {
   if (!p) return "Jaipur";
@@ -171,7 +134,18 @@ export function RegistrationPage({
   const [isSuccess, setIsSuccess] = useState(false);
   const [registeredParticipant, setRegisteredParticipant] = useState(null);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const [locationQrUrl, setLocationQrUrl] = useState("");
   const [isDownloadingPass, setIsDownloadingPass] = useState(false);
+
+  useEffect(() => {
+    QRCode.toDataURL(ALBERT_HALL_MAPS_URL, {
+      width: 200,
+      margin: 1,
+      color: { dark: '#0a1c3d', light: '#ffffff' }
+    })
+      .then((url) => setLocationQrUrl(url))
+      .catch(() => {});
+  }, []);
 
   // Mobile Security OTP Verification States
   const [isMobileVerified, setIsMobileVerified] = useState(false);
@@ -899,23 +873,31 @@ export function RegistrationPage({
     setIsDownloadingPass(true);
 
     try {
-      const routeMapInfo = getJaipurRouteMap(p);
-      let routeImg = null;
-      if (routeMapInfo) {
-        routeImg = new Image();
-        routeImg.crossOrigin = "anonymous";
-        routeImg.src = routeMapInfo.src;
-        await new Promise((resolve) => {
-          routeImg.onload = resolve;
-          routeImg.onerror = resolve;
-        });
-        if (!routeImg.complete || routeImg.naturalWidth === 0) {
-          routeImg = null;
+      const routeConfig = getJaipurRouteConfig(p);
+      let locQrImg = null;
+      if (routeConfig) {
+        let locQrDataUrl = locationQrUrl;
+        if (!locQrDataUrl) {
+          try {
+            locQrDataUrl = await QRCode.toDataURL(ALBERT_HALL_MAPS_URL, {
+              width: 200,
+              margin: 1,
+              color: { dark: '#0a1c3d', light: '#ffffff' }
+            });
+          } catch {}
+        }
+        if (locQrDataUrl) {
+          locQrImg = new Image();
+          locQrImg.src = locQrDataUrl;
+          await new Promise((resolve) => {
+            locQrImg.onload = resolve;
+            locQrImg.onerror = resolve;
+          });
         }
       }
 
       const canvasWidth = 1200;
-      const canvasHeight = routeImg ? 1590 : 660;
+      const canvasHeight = routeConfig ? 1015 : 660;
 
       const canvas = document.createElement("canvas");
       canvas.width = canvasWidth;
@@ -1178,55 +1160,13 @@ export function RegistrationPage({
       ctx.fillText("RFID चिप युक्त", qrBoxX + 125, 482);
       ctx.textAlign = "left";
 
-      // 6. Category-Specific Jaipur Route Map Panel (Only for Jaipur Runners)
-      if (routeImg && routeMapInfo) {
-        const mapBoxX = 40;
-        const mapBoxY = 570;
-        const mapBoxW = 1120;
-        const mapBoxH = 910;
-
-        // Route card outer border
-        ctx.fillStyle = "#ffffff";
-        ctx.strokeStyle = "#0a1c3d";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        drawRRect(mapBoxX, mapBoxY, mapBoxW, mapBoxH, 10);
-        ctx.fill();
-        ctx.stroke();
-
-        // Route card top header bar
-        ctx.fillStyle = "#0a1c3d";
-        ctx.fillRect(mapBoxX, mapBoxY, mapBoxW, 48);
-
-        ctx.fillStyle = "#fef08a";
-        ctx.font = "bold 17px sans-serif";
-        ctx.textAlign = "left";
-        ctx.fillText(routeMapInfo.label, mapBoxX + 20, mapBoxY + 30);
-
-        ctx.fillStyle = "#e2e8f0";
-        ctx.font = "bold 14px sans-serif";
-        ctx.textAlign = "right";
-        ctx.fillText(routeMapInfo.timing, mapBoxX + mapBoxW - 20, mapBoxY + 30);
-        ctx.textAlign = "left";
-
-        // Aspect-ratio-safe contain draw for route map image
-        const innerPad = 18;
-        const availW = mapBoxW - innerPad * 2;
-        const availH = mapBoxH - 48 - innerPad * 2;
-        const imgRatio = routeImg.naturalWidth / routeImg.naturalHeight;
-        let drawW = availW;
-        let drawH = drawW / imgRatio;
-        if (drawH > availH) {
-          drawH = availH;
-          drawW = drawH * imgRatio;
-        }
-        const drawX = mapBoxX + (mapBoxW - drawW) / 2;
-        const drawY = mapBoxY + 48 + innerPad + (availH - drawH) / 2;
-        ctx.drawImage(routeImg, drawX, drawY, drawW, drawH);
+      // 6. Creative Horizontal Jaipur Route Map Panel + Albert Hall Google Maps QR (Only for Jaipur Runners)
+      if (routeConfig) {
+        drawHorizontalRouteMapOnCanvas(ctx, routeConfig, locQrImg, 40, 566, 1120, 342, drawRRect);
       }
 
       // 7. Official Bottom Footer
-      const footerY = routeImg ? 1500 : 570;
+      const footerY = routeConfig ? 925 : 570;
       ctx.fillStyle = "#0a1c3d";
       ctx.fillRect(20, footerY, 1160, 70);
 
@@ -1570,53 +1510,11 @@ export function RegistrationPage({
                   </div>
                 </div>
 
-                {/* Category-Specific Jaipur Route Map (Only for Jaipur Runners) */}
-                {(() => {
-                  const jaipurRoute = getJaipurRouteMap(registeredParticipant);
-                  if (!jaipurRoute) return null;
-                  return (
-                    <div
-                      className="epass-route-map-panel"
-                      style={{
-                        marginTop: '18px',
-                        border: '1.5px solid var(--police-navy-900)',
-                        borderRadius: '10px',
-                        overflow: 'hidden',
-                        background: '#ffffff'
-                      }}
-                    >
-                      <div style={{
-                        background: 'var(--police-navy-950)',
-                        color: '#fef08a',
-                        padding: '8px 14px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                        gap: '6px',
-                        fontSize: '0.78rem',
-                        fontWeight: 800
-                      }}>
-                        <span>🗺️ {jaipurRoute.label}</span>
-                        <span style={{ color: '#e2e8f0', fontWeight: 700 }}>{jaipurRoute.timing}</span>
-                      </div>
-                      <div style={{ padding: '12px', textAlign: 'center', background: '#ffffff' }}>
-                        <img
-                          src={jaipurRoute.src}
-                          alt={jaipurRoute.label}
-                          className="epass-route-map-img"
-                          style={{
-                            width: '100%',
-                            maxHeight: '540px',
-                            objectFit: 'contain',
-                            display: 'block',
-                            margin: '0 auto'
-                          }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })()}
+                {/* Creative Horizontal Jaipur Route Map + Clickable Albert Hall Google Maps Card */}
+                <HorizontalRouteMapCard
+                  route={getJaipurRouteConfig(registeredParticipant)}
+                  locationQrUrl={locationQrUrl}
+                />
               </div>
 
               {/* Direct WhatsApp Notice Banner */}
