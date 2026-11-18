@@ -68,6 +68,39 @@ function getJaipurRouteMap(p) {
   return null;
 }
 
+function formatCleanDistrictName(p) {
+  if (!p) return "Jaipur";
+  const distId = String(p.districtId || '').toLowerCase();
+  const rawName = String(p.districtName || '').trim();
+  const lowerName = rawName.toLowerCase();
+
+  if (
+    distId === 'jpr-comm' ||
+    distId === 'jaipur_comm' ||
+    distId.includes('jaipur') ||
+    lowerName.includes('jaipur') ||
+    lowerName.includes('जयपुर')
+  ) {
+    return "Jaipur";
+  }
+
+  if (p.districtId) {
+    const matched = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === p.districtId);
+    if (matched && matched.name) return matched.name;
+  }
+
+  const cleaned = rawName
+    .replace(/पुलिस\s*कमिश्नरेट/gi, '')
+    .replace(/कमिश्नरेट/gi, '')
+    .replace(/Police\s*Commissionerate/gi, '')
+    .replace(/Commissionerate/gi, '')
+    .replace(/\(Albert Hall Flagship\)/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return cleaned || "Jaipur";
+}
+
 export function RegistrationPage({
   initialCategory = "21k",
   initialDistrict = "JPR-COMM",
@@ -235,7 +268,7 @@ export function RegistrationPage({
             mobile: "7023233248",
             gender: "Male",
             categoryName: "21 KM Half Marathon",
-            districtName: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+            districtName: "Jaipur",
             status: "CERT_ISSUED",
             tshirtSize: "L"
           },
@@ -274,7 +307,7 @@ export function RegistrationPage({
             maskedName,
             maskedMobile,
             categoryName: match.categoryName || match.category_name || "21 KM Half Marathon",
-            districtName: match.districtName || match.district_name || "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+            districtName: match.districtName || match.district_name || "Jaipur",
             status: match.status || "CONFIRMED",
             _localData: match
           };
@@ -294,7 +327,7 @@ export function RegistrationPage({
           fullName: "Madan Palsaniya",
           mobile: "7023233248",
           categoryName: "21 KM Half Marathon",
-          districtName: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+          districtName: "Jaipur",
           status: "CERT_ISSUED"
         }
       ];
@@ -833,7 +866,7 @@ export function RegistrationPage({
       category: category,
       categoryName: p.categoryName || currentCatObj.name,
       venueType: venueType,
-      districtName: p.districtName || (venueType === "jaipur" ? "जयपुर पुलिस कमिश्नरेट (Albert Hall Flagship)" : currentDistrictObj.name),
+      districtName: p.districtName || (venueType === "jaipur" ? "Jaipur" : currentDistrictObj.name),
       runnerType: runnerType,
       tshirtSize: venueType === "jaipur" ? (formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M") : "N/A",
       emergencyContact: `${formData.emergencyContactName || 'Family'} (${formData.emergencyRelation || 'Kin'}: ${cleanEmergency})`,
@@ -882,7 +915,7 @@ export function RegistrationPage({
       }
 
       const canvasWidth = 1200;
-      const canvasHeight = routeImg ? 1680 : 760;
+      const canvasHeight = routeImg ? 1590 : 660;
 
       const canvas = document.createElement("canvas");
       canvas.width = canvasWidth;
@@ -1035,10 +1068,13 @@ export function RegistrationPage({
       ctx.textAlign = "left";
 
       // 4. Middle Section: Runner Details
+      const cleanDistrict = formatCleanDistrictName(p);
+      const hasRealId = Boolean(p.idMasked && !/^X+[-X]*$/i.test(String(p.idMasked).trim()) && p.idMasked !== 'XXXX-XXXX-1234');
+
       const detailsX = 380;
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText("धावक का पूरा नाम (RUNNER FULL NAME):", detailsX, 195);
+      ctx.fillText("धावक का पूरा नाम (RUNNER FULL NAME):", detailsX, 198);
       const nameStr = String(p.fullName || "पंजीकृत धावक").trim();
       let nameFontSize = 26;
       ctx.font = `bold ${nameFontSize}px sans-serif`;
@@ -1047,35 +1083,40 @@ export function RegistrationPage({
         ctx.font = `bold ${nameFontSize}px sans-serif`;
       }
       ctx.fillStyle = "#0a1c3d";
-      ctx.fillText(nameStr, detailsX, 230);
+      ctx.fillText(nameStr, detailsX, 234);
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText("आयोजन स्थल (REPORTING VENUE):", detailsX, 275);
+      ctx.fillText("आयोजन स्थल (REPORTING VENUE):", detailsX, 282);
       ctx.fillStyle = "#0a1c3d";
-      ctx.font = "bold 20px sans-serif";
-      ctx.fillText("📍 " + (p.districtName || "जयपुर पुलिस कमिश्नरेट"), detailsX, 305);
+      ctx.font = "bold 21px sans-serif";
+      ctx.fillText("📍 " + cleanDistrict, detailsX, 314);
+
+      let nextY = 366;
+      if (hasRealId) {
+        ctx.fillStyle = "#64748b";
+        ctx.font = "bold 14px sans-serif";
+        ctx.fillText("पहचान पत्र (GOVT ID TYPE & NUMBER):", detailsX, nextY);
+        ctx.fillStyle = "#0a1c3d";
+        ctx.font = "bold 19px sans-serif";
+        ctx.fillText(`${p.idType || 'Aadhaar'}: ${p.idMasked}`, detailsX, nextY + 28);
+        nextY += 72;
+      }
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText("पहचान पत्र (GOVT ID TYPE & NUMBER):", detailsX, 350);
-      ctx.fillStyle = "#0a1c3d";
-      ctx.font = "bold 19px sans-serif";
-      ctx.fillText(`${p.idType || 'Aadhaar'}: ${p.idMasked || 'XXXX-XXXX-1234'}`, detailsX, 378);
-
-      ctx.fillStyle = "#64748b";
-      ctx.font = "bold 14px sans-serif";
-      ctx.fillText("पंजीकृत मोबाइल एवं ईमेल:", detailsX, 420);
+      ctx.fillText("पंजीकृत मोबाइल एवं ईमेल:", detailsX, nextY);
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "18px sans-serif";
-      ctx.fillText(`📞 ${p.mobile || ''}   ✉️ ${p.email || ''}`, detailsX, 448);
+      ctx.fillText(`📞 ${p.mobile || ''}   ✉️ ${p.email || ''}`, detailsX, nextY + 30);
 
+      const emergencyY = nextY + 78;
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText("आपातकालीन संपर्क (EMERGENCY CONTACT):", detailsX, 490);
+      ctx.fillText("आपातकालीन संपर्क (EMERGENCY CONTACT):", detailsX, emergencyY);
       ctx.fillStyle = "#991b1b";
       ctx.font = "bold 17px sans-serif";
-      ctx.fillText(p.emergencyContact || "पुलिस सहायता केंद्र 112", detailsX, 518);
+      ctx.fillText(p.emergencyContact || "पुलिस सहायता केंद्र 112", detailsX, emergencyY + 28);
 
       // 5. Right Section: Security QR Code
       const qrBoxX = 910;
@@ -1095,7 +1136,7 @@ export function RegistrationPage({
         certId: p.certificateId || p.id || `RPM-2027-${p.bibNumber}`,
         name: p.fullName,
         category: p.categoryName,
-        district: p.districtName,
+        district: cleanDistrict,
         tshirt: p.tshirtSize || "M",
         bloodGroup: p.bloodGroup || "B+",
         mobile: p.mobile || "",
@@ -1137,28 +1178,10 @@ export function RegistrationPage({
       ctx.fillText("RFID चिप युक्त", qrBoxX + 125, 482);
       ctx.textAlign = "left";
 
-      // 6. Payment Receipt Status Strip (Official e-Gras / Challan Receipt)
-      ctx.fillStyle = "#ecfdf5";
-      ctx.strokeStyle = "#10b981";
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.roundRect(40, 565, 1120, 75, 8);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = "#065f46";
-      ctx.font = "bold 18px sans-serif";
-      ctx.fillText("✓ डिजिटल ई-पास (OFFICIAL DIGITAL ENTRY PASS)", 60, 598);
-
-      ctx.fillStyle = "#047857";
-      ctx.font = "15px sans-serif";
-      const passInfoText = `पास आईडी: ${p.orderId || p.certificateId || 'RPM2027'}  |  श्रेणी: ${p.categoryName || 'Rajasthan Police Marathon 2027'}  |  आयोजन स्थल: ${p.districtName || 'जयपुर'}`;
-      ctx.fillText(passInfoText, 60, 624);
-
-      // 7. Category-Specific Jaipur Route Map Panel (Only for Jaipur Runners)
+      // 6. Category-Specific Jaipur Route Map Panel (Only for Jaipur Runners)
       if (routeImg && routeMapInfo) {
         const mapBoxX = 40;
-        const mapBoxY = 660;
+        const mapBoxY = 570;
         const mapBoxW = 1120;
         const mapBoxH = 910;
 
@@ -1202,8 +1225,8 @@ export function RegistrationPage({
         ctx.drawImage(routeImg, drawX, drawY, drawW, drawH);
       }
 
-      // 8. Official Bottom Footer
-      const footerY = routeImg ? 1590 : 660;
+      // 7. Official Bottom Footer
+      const footerY = routeImg ? 1500 : 570;
       ctx.fillStyle = "#0a1c3d";
       ctx.fillRect(20, footerY, 1160, 70);
 
@@ -1470,13 +1493,17 @@ export function RegistrationPage({
                     <div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>आयोजन स्थल (Reporting Venue)</div>
                       <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--police-navy-800)' }}>
-                        📍 {registeredParticipant.districtName}
+                        📍 {formatCleanDistrictName(registeredParticipant)}
                       </div>
                     </div>
 
                     <div style={{ marginTop: '10px', background: 'var(--police-navy-50)', padding: '8px 12px', borderRadius: '8px', fontSize: '0.76rem', color: 'var(--police-navy-900)', border: '1px solid var(--border-subtle)' }}>
-                      <div><strong>पहचान पत्र (Govt ID):</strong> {registeredParticipant.idType || 'Aadhaar'} ({registeredParticipant.idMasked || 'XXXX-XXXX-1234'})</div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}><strong>ईमेल:</strong> {registeredParticipant.email}</div>
+                      {registeredParticipant.idMasked && !/^X+[-X]*$/i.test(String(registeredParticipant.idMasked).trim()) && registeredParticipant.idMasked !== 'XXXX-XXXX-1234' && (
+                        <div><strong>पहचान पत्र (Govt ID):</strong> {registeredParticipant.idType || 'Aadhaar'} ({registeredParticipant.idMasked})</div>
+                      )}
+                      {registeredParticipant.email && (
+                        <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '2px' }}><strong>ईमेल:</strong> {registeredParticipant.email}</div>
+                      )}
                     </div>
 
                     {registeredParticipant.medicalCondition && registeredParticipant.medicalCondition !== "None / Fully Fit" && (
