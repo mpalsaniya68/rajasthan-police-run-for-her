@@ -58,13 +58,15 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
     return () => clearInterval(timer);
   }, []);
 
-  // Auto-advance 3-slide cinematic background carousel every 5.5 seconds
+  const slideCount = HERO_SLIDES.length;
+
+  // Auto-advance 5-slide cinematic background carousel every 4.5 seconds (resets cleanly on manual dot click & HMR)
   useEffect(() => {
-    const slideTimer = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 5500);
-    return () => clearInterval(slideTimer);
-  }, []);
+    const slideTimer = setTimeout(() => {
+      setActiveSlide((prev) => (prev + 1) % slideCount);
+    }, 4500);
+    return () => clearTimeout(slideTimer);
+  }, [activeSlide, slideCount]);
 
   const countdownItems = [
     { label: 'DAYS', val: String(timeLeft.days).padStart(2, '0') },
