@@ -10,7 +10,14 @@ export function CertificateHub({ registrations = [] }) {
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchFeedback, setSearchFeedback] = useState(null);
+  const [certNoticePopup, setCertNoticePopup] = useState(null);
   const [isDownloadingCert, setIsDownloadingCert] = useState(false);
+
+  const checkRunnerIssued = (runner) => {
+    if (!runner) return false;
+    const isDemoRunner = ['RJ-21K-1005', 'RJ-10K-2018', 'RJ-05K-3042', 'RJ-05K-9901'].includes(runner.bibNumber);
+    return Boolean(isDemoRunner || runner.isIssued || runner.status === 'CERT_ISSUED' || runner.status === 'FINISHED');
+  };
 
   // Check URL hash for direct QR verification: #verify?certId=RJ-POL-2027-XXXX
   useEffect(() => {
@@ -25,7 +32,6 @@ export function CertificateHub({ registrations = [] }) {
           setIsSearching(false);
           if (res && res.success && res.certificate) {
             setSelectedRunner(res.certificate);
-            setIsVerifiedFromBackend(true);
             setSearchFeedback({ type: 'success', message: `✅ डिजिटल QR कोड द्वारा प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
           }
         }).catch(() => setIsSearching(false));
@@ -48,12 +54,20 @@ export function CertificateHub({ registrations = [] }) {
     }
   }, [selectedRunner]);
 
+  const openNotIssuedPopup = () => {
+    setCertNoticePopup({
+      title: "प्रमाण पत्र अभी जारी नहीं हुआ है",
+      message: "दौड़ समापन, गेट उपस्थिति सत्यापन एवं पुलिस अधिकृत समिति द्वारा जारी किए जाने के उपरांत ही प्रमाण पत्र डाउनलोड हेतु उपलब्ध होगा। जारी होते ही आपके पंजीकृत मोबाइल पर SMS/ईमेल द्वारा सूचना प्रेषित की जाएगी।"
+    });
+  };
+
   const handleSearch = async (e) => {
     e.preventDefault();
     const rawQ = searchQuery.trim();
     if (!rawQ) return;
     const q = rawQ.toLowerCase();
     setSearchFeedback(null);
+    setCertNoticePopup(null);
 
     // 1. Check in local loaded registrations
     const foundLocal = registrations.find(r => 
@@ -65,8 +79,11 @@ export function CertificateHub({ registrations = [] }) {
 
     if (foundLocal) {
       setSelectedRunner(foundLocal);
-      setIsVerifiedFromBackend(true);
-      setSearchFeedback({ type: 'success', message: `धावक रिकॉर्ड प्राप्त हुआ: ${foundLocal.fullName} (Bib: ${foundLocal.bibNumber})` });
+      if (!checkRunnerIssued(foundLocal)) {
+        openNotIssuedPopup();
+      } else {
+        setSearchFeedback({ type: 'success', message: `धावक रिकॉर्ड प्राप्त हुआ: ${foundLocal.fullName} (Bib: ${foundLocal.bibNumber})` });
+      }
       return;
     }
 
@@ -77,15 +94,17 @@ export function CertificateHub({ registrations = [] }) {
       setIsSearching(false);
       if (res && res.success && res.certificate) {
         setSelectedRunner(res.certificate);
-        setIsVerifiedFromBackend(true);
-        setSearchFeedback({ type: 'success', message: `✅ राजस्थान पुलिस डेटाबेस से प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
+        if (!checkRunnerIssued(res.certificate)) {
+          openNotIssuedPopup();
+        } else {
+          setSearchFeedback({ type: 'success', message: `✅ राजस्थान पुलिस डेटाबेस से प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
+        }
       } else {
-        setIsVerifiedFromBackend(false);
-        setSearchFeedback({ type: 'error', message: res.error || `कोई रिकॉर्ड नहीं मिला: "${rawQ}"। कृपया वैध बिब नंबर, मोबाइल अथवा सर्टिफिकेट ID दर्ज करें।` });
+        openNotIssuedPopup();
       }
     } catch (err) {
       setIsSearching(false);
-      setSearchFeedback({ type: 'error', message: "सर्वर से कनेक्ट करने में त्रुटि। कृपया पुनः प्रयास करें।" });
+      openNotIssuedPopup();
     }
   };
 
@@ -530,8 +549,7 @@ export function CertificateHub({ registrations = [] }) {
 
   if (!selectedRunner) return null;
 
-  const isDemo = ['RJ-21K-1005', 'RJ-10K-2018', 'RJ-05K-3042', 'RJ-05K-9901'].includes(selectedRunner.bibNumber);
-  const isIssued = isDemo || selectedRunner.isIssued || selectedRunner.status === 'CERT_ISSUED' || selectedRunner.status === 'FINISHED';
+  const isIssued = checkRunnerIssued(selectedRunner);
 
   const distId = (selectedRunner.districtId || "").toLowerCase();
   const distName = (selectedRunner.districtName || "").toLowerCase();
@@ -636,7 +654,16 @@ export function CertificateHub({ registrations = [] }) {
         )}
 
         {/* Certificate Display & Control Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 320px)', gap: '24px', alignItems: 'start' }} className="cert-responsive-grid">
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isIssued ? 'minmax(0, 1fr) minmax(0, 320px)' : 'minmax(0, 920px)',
+            justifyContent: 'center',
+            gap: '24px',
+            alignItems: 'start'
+          }}
+          className="cert-responsive-grid"
+        >
           {/* THE OFFICIAL HIGH-DIGNITY CERTIFICATE (SCROLLABLE ON MOBILE) */}
           <div style={{ overflowX: 'auto', paddingBottom: '10px' }}>
             <div className="printable-certificate" style={{
@@ -842,31 +869,14 @@ export function CertificateHub({ registrations = [] }) {
             </div>
           </div>
 
-          {/* RIGHT SIDE: DOWNLOAD & ACTIONS CONTROLS */}
-          <div className="cert-dispatch-controls no-print" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div className="gov-card" style={{ padding: '18px' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--police-navy-900)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
-                सर्टिफिकेट डाउनलोड व शेयर
-              </div>
-
-              {!isIssued ? (
-                <div style={{
-                  background: '#fffbeb',
-                  border: '1.5px solid #f59e0b',
-                  borderRadius: '6px',
-                  padding: '14px',
-                  color: '#92400e',
-                  fontSize: '0.82rem',
-                  lineHeight: 1.5
-                }}>
-                  <div style={{ fontWeight: 800, fontSize: '0.88rem', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>⏳</span> प्रमाण पत्र अभी जारी नहीं हुआ है
-                  </div>
-                  <div>
-                    दौड़ समापन, गेट उपस्थिति सत्यापन एवं पुलिस अधिकृत समिति द्वारा जारी किए जाने के उपरांत ही प्रमाण पत्र डाउनलोड हेतु उपलब्ध होगा। जारी होते ही आपके पंजीकृत मोबाइल पर SMS/ईमेल द्वारा सूचना प्रेषित की जाएगी।
-                  </div>
+          {/* RIGHT SIDE: DOWNLOAD & ACTIONS CONTROLS (Shown only when certificate is issued) */}
+          {isIssued && (
+            <div className="cert-dispatch-controls no-print" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div className="gov-card" style={{ padding: '18px' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--police-navy-900)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
+                  सर्टिफिकेट डाउनलोड व शेयर
                 </div>
-              ) : (
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <button
                     onClick={handleDownloadCertificatePNG}
@@ -917,11 +927,83 @@ export function CertificateHub({ registrations = [] }) {
                     <Share2 size={15} /> WhatsApp पर शेयर करें
                   </button>
                 </div>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
+
+      {/* On-Demand Popup Modal when user searches before certificate is issued */}
+      {certNoticePopup && (
+        <div
+          className="no-print"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setCertNoticePopup(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(10, 28, 61, 0.55)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            zIndex: 2000
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#ffffff',
+              borderRadius: '14px',
+              maxWidth: '460px',
+              width: '100%',
+              padding: '26px 24px',
+              boxShadow: '0 24px 50px rgba(10, 28, 61, 0.3)',
+              border: '2px solid #f59e0b',
+              textAlign: 'center'
+            }}
+          >
+            <div style={{
+              width: '54px',
+              height: '54px',
+              borderRadius: '50%',
+              background: '#fffbeb',
+              border: '1.5px solid #f59e0b',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 14px auto',
+              fontSize: '1.5rem'
+            }}>
+              ⏳
+            </div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#92400e', margin: '0 0 10px 0' }}>
+              {certNoticePopup.title}
+            </h3>
+            <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6, margin: '0 0 20px 0' }}>
+              {certNoticePopup.message}
+            </p>
+            <button
+              type="button"
+              onClick={() => setCertNoticePopup(null)}
+              style={{
+                background: 'var(--police-navy-900)',
+                color: '#ffffff',
+                padding: '10px 28px',
+                borderRadius: '8px',
+                border: 'none',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                cursor: 'pointer'
+              }}
+            >
+              ठीक है
+            </button>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @media (max-width: 900px) {
