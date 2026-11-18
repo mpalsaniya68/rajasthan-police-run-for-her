@@ -2482,9 +2482,10 @@ export function RegistrationPage({
                   <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
                     दौड़ श्रेणी चुनें:
                   </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
                     {availableCategories.map(cat => {
                       const isSelected = category === cat.id;
+                      const shortLabel = cat.id === '21k' ? '21 KM' : cat.id === '10k' ? '10 KM' : cat.id === '5k' ? '5 KM' : '2 KM';
                       return (
                         <div
                           key={cat.id}
@@ -2496,8 +2497,8 @@ export function RegistrationPage({
                             background: isSelected ? 'var(--police-navy-50)' : '#ffffff',
                             cursor: 'pointer',
                             display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             boxShadow: isSelected ? 'var(--shadow-sm)' : 'none',
                             position: 'relative',
                             transition: 'all 0.15s'
@@ -2506,8 +2507,8 @@ export function RegistrationPage({
                           {isSelected && (
                             <div style={{
                               position: 'absolute',
-                              top: '10px',
-                              right: '10px',
+                              top: '8px',
+                              right: '8px',
                               background: 'var(--police-navy-900)',
                               color: '#ffffff',
                               borderRadius: '50%',
@@ -2520,16 +2521,9 @@ export function RegistrationPage({
                               <Check size={12} strokeWidth={3} />
                             </div>
                           )}
-                          <div>
-                            <div style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--police-navy-800)', textTransform: 'uppercase' }}>
-                              {cat.distance}
-                            </div>
-                            <div style={{ fontWeight: 900, fontSize: '1.02rem', color: 'var(--police-navy-950)', margin: '4px 0 8px 0' }}>
-                              {cat.name}
-                            </div>
+                          <div style={{ fontWeight: 900, fontSize: '1.25rem', color: 'var(--police-navy-950)', letterSpacing: '0.02em' }}>
+                            {shortLabel}
                           </div>
-
-
                         </div>
                       );
                     })}
