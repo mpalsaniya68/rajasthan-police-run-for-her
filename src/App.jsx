@@ -389,9 +389,9 @@ export default function App() {
 
             </div>
 
-            <ScheduleExpo />
-
             <InteractiveRoute />
+
+            <ScheduleExpo />
 
           </div>
 

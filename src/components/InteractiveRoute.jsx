@@ -100,7 +100,6 @@ export function InteractiveRoute() {
       id: '21k',
       badge: '21 KM',
       label: '21 KM हाफ मैराथन',
-      sub: 'Jawahar Circle U-Turn',
       accent: '#dc2626',
       badgeBg: 'bg-red-600',
       timing: 'Reporting: 05:00 AM | Flag-Off: 06:00 AM'
@@ -109,7 +108,6 @@ export function InteractiveRoute() {
       id: '10k',
       badge: '10 KM',
       label: '10 KM स्पीड रन',
-      sub: 'MNIT Crossing U-Turn',
       accent: '#1d4ed8',
       badgeBg: 'bg-blue-600',
       timing: 'Reporting: 05:15 AM | Flag-Off: 06:15 AM'
@@ -118,7 +116,6 @@ export function InteractiveRoute() {
       id: '5k',
       badge: '5 KM',
       label: '5 KM कम्युनिटी रन',
-      sub: 'Gandhi Circle U-Turn',
       accent: '#0f172a',
       badgeBg: 'bg-slate-800',
       timing: 'Reporting: 05:30 AM | Flag-Off: 06:45 AM'
@@ -127,7 +124,6 @@ export function InteractiveRoute() {
       id: '2k',
       badge: '2 KM',
       label: '2 KM फैमिली वॉक',
-      sub: 'Trimurti Circle U-Turn',
       accent: '#0284c7',
       badgeBg: 'bg-sky-600',
       timing: 'Reporting: 06:00 AM | Flag-Off: 07:15 AM'
@@ -135,20 +131,14 @@ export function InteractiveRoute() {
   ];
 
   return (
-    <section id="route" className="section-padding" style={{ position: 'relative', background: '#f8fafc', borderTop: '1px solid var(--border-subtle)' }}>
+    <section id="route" className="section-padding" style={{ position: 'relative', background: '#f8fafc', borderTop: '1px solid var(--border-subtle)', paddingTop: '28px' }}>
       <div className="container">
         
-        {/* Section Header */}
-        <div className="section-header" style={{ marginBottom: '24px' }}>
-          <span className="badge-gold" style={{ fontSize: '0.85rem', padding: '6px 14px' }}>
-            Official Heritage Marathon Route • Albert Hall, Jaipur
-          </span>
-          <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', color: 'var(--police-navy-950)', margin: '12px 0 8px 0', fontWeight: 800 }}>
-            जयपुर फ्लैगशिप रेस रूट एवं सुविधा मानचित्र (Course & Facilities)
+        {/* Compact Section Header */}
+        <div style={{ textAlign: 'center', marginBottom: '18px' }}>
+          <h2 style={{ fontSize: '1.45rem', color: 'var(--police-navy-950)', margin: 0, fontWeight: 800 }}>
+            जयपुर फ्लैगशिप रेस रूट (Race Route Map)
           </h2>
-          <p style={{ fontSize: '1.05rem', color: '#475569', lineHeight: '1.6', maxWidth: '840px', margin: '0 auto' }}>
-            अपनी पंजीकृत रेस श्रेणी चुनें — केवल उसी श्रेणी का रूट मैप, मुख्य चेकपॉइंट्स व यू-टर्न प्रदर्शित होगा। समतल जेएलएन मार्ग कॉरिडोर पर 100% ट्रैफिक-मुक्त सुरक्षा व्यवस्था।
-          </p>
         </div>
 
         {/* 1. INTERACTIVE CATEGORY TABS (USER SELECTS ONE, DEFAULT: 21K) */}
@@ -156,7 +146,7 @@ export function InteractiveRoute() {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
           gap: '12px',
-          marginBottom: '24px'
+          marginBottom: '20px'
         }}>
           {CATEGORY_TABS.map((tab) => {
             const isSelected = selectedCategory === tab.id;
@@ -167,12 +157,12 @@ export function InteractiveRoute() {
                 style={{
                   background: isSelected ? '#ffffff' : '#f1f5f9',
                   border: isSelected ? `2.5px solid ${tab.accent}` : '1.5px solid var(--border-medium)',
-                  borderRadius: '12px',
-                  padding: '14px 18px',
+                  borderRadius: '10px',
+                  padding: '12px 16px',
                   textAlign: 'left',
                   cursor: 'pointer',
-                  boxShadow: isSelected ? `0 6px 20px ${tab.accent}25` : 'none',
-                  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: isSelected ? `0 4px 16px ${tab.accent}25` : 'none',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   position: 'relative',
                   overflow: 'hidden'
                 }}
@@ -184,35 +174,33 @@ export function InteractiveRoute() {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: '4px',
+                    height: '3.5px',
                     background: tab.accent
                   }}></div>
                 )}
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <span style={{
-                    fontSize: '0.78rem',
-                    fontWeight: 900,
-                    color: '#ffffff',
-                    background: tab.accent,
-                    padding: '3px 10px',
-                    borderRadius: '999px',
-                    letterSpacing: '0.04em'
-                  }}>
-                    {tab.badge}
-                  </span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{
+                      fontSize: '0.8rem',
+                      fontWeight: 900,
+                      color: '#ffffff',
+                      background: tab.accent,
+                      padding: '3px 10px',
+                      borderRadius: '999px',
+                      letterSpacing: '0.04em'
+                    }}>
+                      {tab.badge}
+                    </span>
+                    <span style={{ fontSize: '1.02rem', fontWeight: 800, color: isSelected ? 'var(--police-navy-950)' : '#334155' }}>
+                      {tab.label}
+                    </span>
+                  </div>
                   {isSelected && (
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', fontWeight: 800, color: tab.accent }}>
-                      <CheckCircle2 size={14} /> सक्रिय मैप
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.74rem', fontWeight: 800, color: tab.accent }}>
+                      <CheckCircle2 size={13} /> सक्रिय मैप
                     </span>
                   )}
-                </div>
-
-                <div style={{ fontSize: '1.05rem', fontWeight: 800, color: isSelected ? 'var(--police-navy-950)' : '#334155' }}>
-                  {tab.label}
-                </div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600, marginTop: '2px' }}>
-                  {tab.sub}
                 </div>
               </button>
             );
