@@ -2687,7 +2687,7 @@ export function RegistrationPage({
                 </div>
               </div>
 
-              {/* SECTION 2: धावक का व्यक्तिगत विवरण */}
+              {/* SECTION 2: Personal Details */}
               <div style={{ marginBottom: '32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', borderBottom: '2px solid var(--police-navy-50)', paddingBottom: '8px' }}>
                   <span style={{
@@ -2703,7 +2703,7 @@ export function RegistrationPage({
                     fontWeight: 900
                   }}>2</span>
                   <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                    धावक का व्यक्तिगत विवरण
+                    Personal Details
                   </h3>
                 </div>
 
