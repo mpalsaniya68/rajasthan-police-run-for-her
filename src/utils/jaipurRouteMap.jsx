@@ -113,7 +113,7 @@ export function getJaipurRouteConfig(p) {
  * Creative Horizontal SVG Route Map Card + Clickable Albert Hall Google Maps Link & QR
  * Used in both On-Screen E-Pass Preview and A4 PDF Print!
  */
-export function HorizontalRouteMapCard({ route, locationQrUrl }) {
+export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = false }) {
   if (!route) return null;
 
   const outCount = route.outbound.length;
@@ -140,44 +140,44 @@ export function HorizontalRouteMapCard({ route, locationQrUrl }) {
     <div
       className="epass-route-map-panel"
       style={{
-        marginTop: '16px',
-        border: '1.5px solid var(--police-navy-900)',
+        marginTop: hideHeader ? '0' : '16px',
+        border: '1.5px solid var(--border-medium)',
         borderRadius: '10px',
         overflow: 'hidden',
         background: '#ffffff'
       }}
     >
-      {/* Top Navy Header Strip */}
-      <div style={{
-        background: 'linear-gradient(90deg, #051126 0%, #0a1c3d 100%)',
-        color: '#ffffff',
-        padding: '8px 14px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '8px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{
-            background: route.accent,
-            color: '#ffffff',
-            fontWeight: 900,
-            fontSize: '0.72rem',
-            padding: '2px 9px',
-            borderRadius: '999px',
-            letterSpacing: '0.04em'
-          }}>
-            {route.shortBadge}
-          </span>
-          <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#fef08a', letterSpacing: '0.02em' }}>
-            {route.title}
-          </span>
+      {/* Top Header Strip (Clean White Background, Heading Only) */}
+      {!hideHeader && (
+        <div style={{
+          background: '#ffffff',
+          borderBottom: '1.5px solid var(--border-subtle)',
+          color: 'var(--police-navy-950)',
+          padding: '10px 16px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '8px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{
+              background: route.accent,
+              color: '#ffffff',
+              fontWeight: 900,
+              fontSize: '0.74rem',
+              padding: '2px 9px',
+              borderRadius: '999px',
+              letterSpacing: '0.04em'
+            }}>
+              {route.shortBadge}
+            </span>
+            <span style={{ fontSize: '0.92rem', fontWeight: 900, color: 'var(--police-navy-950)', letterSpacing: '0.02em' }}>
+              {route.title}
+            </span>
+          </div>
         </div>
-        <span style={{ fontSize: '0.74rem', color: '#e2e8f0', fontWeight: 700 }}>
-          {route.timing}
-        </span>
-      </div>
+      )}
 
       {/* Horizontal Body: Creative SVG Map (Left) + Clickable Albert Hall Google Maps Box (Right) */}
       <div
@@ -299,13 +299,22 @@ export function HorizontalRouteMapCard({ route, locationQrUrl }) {
               </text>
             </g>
 
-            {/* Right Anchor: U-Turn Point Badge */}
+            {/* Right Anchor: U-Turn Point Badge with Authentic Road Traffic Sign */}
             <g>
               <rect x="640" y="58" width="108" height="100" rx="12" fill="#ffffff" stroke={route.accent} strokeWidth="2.2" />
               <circle cx="694" cy="86" r="16" fill={route.accent} />
-              <text x="694" y="91" textAnchor="middle" fill="#ffffff" fontSize="13" fontWeight="900">
-                ↺
-              </text>
+              {/* Authentic Traffic U-Turn Arrow */}
+              <path
+                d="M 699 93 L 699 84 A 5 5 0 0 0 689 84 L 689 89"
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+              />
+              <polygon
+                points="684.5,87 689,95 693.5,87"
+                fill="#ffffff"
+              />
               <text x="694" y="119" textAnchor="middle" fill="#0a1c3d" fontSize="10.2" fontWeight="900">
                 {route.turnaround.label}
               </text>
@@ -634,9 +643,27 @@ export function drawHorizontalRouteMapOnCanvas(ctx, route, locQrImg, boxX, boxY,
   ctx.beginPath();
   ctx.arc(utCX, utY + 32, 18, 0, Math.PI * 2);
   ctx.fill();
+
+  // Authentic U-Turn Traffic Sign Arrow in Canvas
+  ctx.save();
+  ctx.strokeStyle = '#ffffff';
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 18px sans-serif';
-  ctx.fillText('↺', utCX, utY + 38);
+  ctx.lineWidth = 3.2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(utCX + 5.5, utY + 39);
+  ctx.lineTo(utCX + 5.5, utY + 29);
+  ctx.arc(utCX, utY + 29, 5.5, 0, Math.PI, true);
+  ctx.lineTo(utCX - 5.5, utY + 35);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(utCX - 9.5, utY + 33.5);
+  ctx.lineTo(utCX - 5.5, utY + 41);
+  ctx.lineTo(utCX - 1.5, utY + 33.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
 
   ctx.fillStyle = '#0a1c3d';
   ctx.font = 'bold 12px sans-serif';

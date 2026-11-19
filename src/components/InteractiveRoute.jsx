@@ -131,7 +131,7 @@ export function InteractiveRoute() {
   ];
 
   return (
-    <section id="route" className="section-padding" style={{ position: 'relative', background: '#f8fafc', borderTop: '1px solid var(--border-subtle)', paddingTop: '28px' }}>
+    <section id="route" className="section-padding" style={{ position: 'relative', background: '#ffffff', borderTop: '1px solid var(--border-subtle)', paddingTop: '28px' }}>
       <div className="container">
         
         {/* Compact Section Header */}
@@ -155,7 +155,7 @@ export function InteractiveRoute() {
                 key={tab.id}
                 onClick={() => setSelectedCategory(tab.id)}
                 style={{
-                  background: isSelected ? '#ffffff' : '#f1f5f9',
+                  background: '#ffffff',
                   border: isSelected ? `2.5px solid ${tab.accent}` : '1.5px solid var(--border-medium)',
                   borderRadius: '10px',
                   padding: '12px 16px',
@@ -207,38 +207,33 @@ export function InteractiveRoute() {
           })}
         </div>
 
-        {/* 2. CATEGORY SUMMARY BANNER */}
+        {/* 2. CATEGORY SUMMARY HEADER BAR (WHITE BACKGROUND, HEADING ONLY) */}
         <div style={{
-          background: 'linear-gradient(90deg, #051126 0%, #0a1c3d 100%)',
-          color: '#ffffff',
-          borderRadius: '12px',
-          padding: '14px 20px',
+          background: '#ffffff',
+          border: '1.5px solid var(--border-medium)',
+          borderRadius: '10px',
+          padding: '12px 18px',
           marginBottom: '20px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '12px',
-          boxShadow: 'var(--shadow-md)'
+          gap: '12px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{
               background: routeConfig.accent,
               color: '#ffffff',
               fontSize: '0.82rem',
               fontWeight: 900,
-              padding: '4px 12px',
-              borderRadius: '999px'
+              padding: '3px 12px',
+              borderRadius: '999px',
+              letterSpacing: '0.04em'
             }}>
               {routeConfig.shortBadge}
             </span>
-            <div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#fef08a' }}>
-                {routeConfig.title}
-              </div>
-              <div style={{ fontSize: '0.82rem', color: '#cbd5e1', fontWeight: 600 }}>
-                {routeConfig.timing} • प्रारंभ व समापन: अल्बर्ट हॉल (Albert Hall)
-              </div>
+            <div style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--police-navy-950)', letterSpacing: '0.02em' }}>
+              {routeConfig.title}
             </div>
           </div>
 
@@ -250,19 +245,19 @@ export function InteractiveRoute() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '8px 16px',
+              padding: '7px 14px',
               borderRadius: '8px',
-              background: '#ffffff',
-              color: 'var(--police-navy-950)',
-              fontSize: '0.85rem',
+              background: 'var(--police-navy-900)',
+              color: '#ffffff',
+              fontSize: '0.82rem',
               fontWeight: 800,
               textDecoration: 'none',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+              boxShadow: '0 2px 6px rgba(10, 28, 61, 0.15)'
             }}
           >
-            <Navigation size={15} color="#dc2626" />
+            <Navigation size={14} color="#fde047" />
             <span>गूगल मैप्स नेविगेशन (अल्बर्ट हॉल)</span>
-            <ExternalLink size={13} color="#64748b" />
+            <ExternalLink size={12} color="#cbd5e1" />
           </a>
         </div>
 
@@ -271,6 +266,7 @@ export function InteractiveRoute() {
           <HorizontalRouteMapCard 
             route={routeConfig} 
             locationQrUrl={locationQrUrl} 
+            hideHeader={true}
           />
         </div>
 
