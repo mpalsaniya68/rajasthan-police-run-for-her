@@ -172,8 +172,7 @@ export const RACE_DAY_TIMELINE = [
   { time: "05:45 AM", title: "Opening Ceremony & Women's Safety Pledge", desc: "National Anthem, Welcome Address, and all 10,000+ runners taking the official 'Run for Her' Safety Oath." },
   { time: "06:00 AM", title: "Grand Flag-off by DGP Rajeev Sharma, IPS", desc: "Official siren & countdown flag-off of 21K Half Marathon, followed by 10K, 5K, and 2K waves." },
   { time: "06:15 - 08:30 AM", title: "Running Waves & Community Engagement", desc: "Live Rajasthan Police pipe band along JLN Marg, hydration points, cheer stations, and interactive safety displays." },
-  { time: "08:30 - 10:00 AM", title: "Finish Line Festivities & Refreshments", desc: "Medal presentation at finish gantry, energetic breakfast, hydration zone, photo booths, and live DJ." },
-  { time: "06:00 PM (Evening)", title: "Closing Ceremony & Honors by Hon'ble CM", desc: "Dignitary addresses, celebration of women achievers, prize distribution, and podium trophies awarded by Chief Minister, Rajasthan." }
+  { time: "08:30 - 10:00 AM", title: "Finish Line Festivities & Refreshments", desc: "Medal presentation at finish gantry, energetic breakfast, hydration zone, photo booths, and live DJ." }
 ];
 
 export const SAFETY_HELPLINES = [

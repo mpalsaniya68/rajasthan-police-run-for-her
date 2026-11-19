@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 export function FAQSection({ onNavigate }) {
   const [openIndex, setOpenIndex] = useState(0);
@@ -7,7 +7,7 @@ export function FAQSection({ onNavigate }) {
   const faqs = [
     {
       q: "राजस्थान पुलिस मैराथन 2027 में भाग लेने की क्या प्रक्रिया व सुविधाएं हैं?",
-      a: "राजस्थान पुलिस मैराथन 2027 ('Run for Her' अभियान) में राज्य का कोई भी नागरिक, महिला, युवा एवं धावक पोर्टल पर ऑनलाइन पंजीकरण करके सीधे भाग ले सकता है। पंजीकृत प्रतिभागियों को ड्राई-फिट टी-शर्ट (जयपुर फ्लैगशिप), RFID टाइमिंग चिप बिब, फिनिशर मेडल, DGP अधिकृत डिजिटल ई-सर्टिफिकेट, हाइड्रेशन एवं पोस्ट-रन रिफ्रेशमेंट्स प्रदान किए जाएंगे।"
+      a: "राजस्थान पुलिस मैराथन 2027 ('Run for Her' अभियान) में राज्य का कोई भी नागरिक, महिला, युवा एवं धावक पोर्टल पर ऑनलाइन पंजीकरण करके सीधे भाग ले सकता है। पंजीकृत प्रतिभागियों को ड्राई-फिट टी-शर्ट (जयपुर फ्लैगशिप), RFID टाइमिंग चिप बिब, फिनिशर मेडल, DGP हस्ताक्षरित डिजिटल ई-सर्टिफिकेट, हाइड्रेशन एवं पोस्ट-रन रिफ्रेशमेंट्स प्रदान किए जाएंगे।"
     },
     {
       q: "रनिंग किट, टी-शर्ट और RFID बिब कब और कहाँ से प्राप्त होंगे?",
@@ -43,43 +43,16 @@ export function FAQSection({ onNavigate }) {
     <section id="faq-section" style={{ background: '#ffffff', padding: '60px 0', borderTop: '1px solid var(--border-subtle)' }}>
       <div className="container" style={{ maxWidth: '960px' }}>
         
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'var(--police-navy-50)',
-            color: 'var(--police-navy-900)',
-            padding: '6px 16px',
-            borderRadius: '100px',
-            fontSize: '0.82rem',
-            fontWeight: 800,
-            border: '1px solid var(--border-medium)',
-            marginBottom: '12px'
-          }}>
-            <HelpCircle size={15} color="var(--crimson-600)" />
-            <span>प्रतिभागी सहायता केंद्र • FREQUENTLY ASKED QUESTIONS</span>
-          </div>
-
+        {/* Header - Only Middle Heading */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h2 style={{
-            fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
+            fontSize: 'clamp(1.4rem, 2.8vw, 1.95rem)',
             fontWeight: 900,
             color: 'var(--police-navy-950)',
-            margin: '0 0 12px 0'
+            margin: 0
           }}>
             अक्सर पूछे जाने वाले महत्वपूर्ण सवाल (FAQs)
           </h2>
-
-          <p style={{
-            fontSize: '0.96rem',
-            color: 'var(--text-muted)',
-            maxWidth: '680px',
-            margin: '0 auto',
-            lineHeight: 1.6
-          }}>
-            राजस्थान पुलिस मैराथन 2027 'RUN FOR HER' के संबंध में धावकों एवं नागरिकों द्वारा पूछे जाने वाले सामान्य प्रश्नों के उत्तर।
-          </p>
         </div>
 
         {/* FAQ Accordion List */}

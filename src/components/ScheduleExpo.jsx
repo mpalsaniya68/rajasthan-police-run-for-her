@@ -6,16 +6,11 @@ export function ScheduleExpo() {
   return (
     <section id="schedule" className="section-padding" style={{ position: 'relative', background: '#ffffff', borderTop: '1px solid var(--border-subtle)' }}>
       <div className="container">
-        <div className="section-header">
-          <span className="badge-gov" style={{ fontSize: '0.85rem', padding: '6px 14px' }}>
-            Official Event Program • 03 Jan 2027
-          </span>
-          <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', color: 'var(--police-navy-950)', margin: '12px 0 8px 0' }}>
+        {/* Header - Only Middle Heading */}
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+          <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.95rem)', color: 'var(--police-navy-950)', margin: 0, fontWeight: 900 }}>
             कार्यक्रम समय-सारणी, बिब एक्सपो एवं रेस नियम (Schedule, Expo & Rules)
           </h2>
-          <p style={{ fontSize: '1.05rem', color: '#475569', lineHeight: '1.6', maxWidth: '820px', margin: '0 auto' }}>
-            राजस्थान पुलिस मुख्यालय द्वारा अनुमोदित कार्यक्रम — 3 जनवरी 2027, सुबह 5:00 बजे रिपोर्टिंग से लेकर सायं पुरस्कार वितरण तक।
-          </p>
         </div>
 
         {/* TOP ROW: Timeline + Bib Expo */}
