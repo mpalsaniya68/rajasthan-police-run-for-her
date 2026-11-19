@@ -2547,7 +2547,7 @@ export function RegistrationPage({
                     fontWeight: 900
                   }}>1</span>
                   <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                    दौड़ श्रेणी एवं आयोजन स्थल चुनें
+                    {isHindi ? 'दौड़ श्रेणी एवं आयोजन स्थल चुनें' : 'Select Race Category & Venue'}
                   </h3>
                 </div>
 
@@ -2705,7 +2705,7 @@ export function RegistrationPage({
                     fontWeight: 900
                   }}>2</span>
                   <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                    Personal Details
+                    {isHindi ? 'व्यक्तिगत विवरण' : 'Personal Details'}
                   </h3>
                 </div>
 

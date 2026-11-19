@@ -9,82 +9,90 @@ export const JAIPUR_ROUTE_CONFIGS = {
     id: '21k',
     shortBadge: '21 KM',
     title: 'HALF MARATHON ROUTE — ALBERT HALL, JAIPUR',
+    titleHi: 'हाफ मैराथन रूट — अल्बर्ट हॉल, जयपुर',
     timing: 'Reporting: 05:00 AM • Flag-Off: 06:00 AM',
+    timingHi: 'रिपोर्टिंग: प्रातः 05:00 • फ्लैग-ऑफ: प्रातः 06:00',
     accent: '#dc2626',
     accentSoft: '#fef2f2',
     accentBorder: '#fecaca',
     outbound: [
-      { label: 'Trimurti Circle', km: '1.5 KM' },
-      { label: 'Birla Mandir / RU', km: '3.5 KM' },
-      { label: 'Gandhi Circle', km: '5.5 KM' },
-      { label: 'MNIT & Apex Circle', km: '8.5 KM' }
+      { label: 'Trimurti Circle', labelHi: 'त्रिमूर्ति सर्किल', km: '1.5 KM' },
+      { label: 'Birla Mandir / RU', labelHi: 'बिरला मंदिर / RU', km: '3.5 KM' },
+      { label: 'Gandhi Circle', labelHi: 'गांधी सर्किल', km: '5.5 KM' },
+      { label: 'MNIT & Apex Circle', labelHi: 'MNIT व एपेक्स सर्किल', km: '8.5 KM' }
     ],
-    turnaround: { label: 'Jawahar Circle', sub: 'U-TURN • 10.5 KM' },
+    turnaround: { label: 'Jawahar Circle', labelHi: 'जवाहर सर्किल', sub: 'U-TURN • 10.5 KM', subHi: 'U-टर्न • 10.5 KM' },
     inbound: [
-      { label: 'World Trade Park', km: '12 KM' },
-      { label: 'KV School Loop', km: '15.5 KM' },
-      { label: 'Jawahar Kala Kendra', km: '17.5 KM' },
-      { label: 'JDA / Soni Hospital', km: '19.5 KM' }
+      { label: 'World Trade Park', labelHi: 'वर्ल्ड ट्रेड पार्क', km: '12 KM' },
+      { label: 'KV School Loop', labelHi: 'केवी स्कूल लूप', km: '15.5 KM' },
+      { label: 'Jawahar Kala Kendra', labelHi: 'जवाहर कला केंद्र', km: '17.5 KM' },
+      { label: 'JDA / Soni Hospital', labelHi: 'JDA / सोनी हॉस्पिटल', km: '19.5 KM' }
     ]
   },
   '10k': {
     id: '10k',
     shortBadge: '10 KM',
-    title: '10 KM MARATHON ROUTE — ALBERT HALL, JAIPUR',
+    title: '10 KM SPEED RUN ROUTE — ALBERT HALL, JAIPUR',
+    titleHi: '10 KM स्पीड रन रूट — अल्बर्ट हॉल, जयपुर',
     timing: 'Reporting: 05:15 AM • Flag-Off: 06:15 AM',
+    timingHi: 'रिपोर्टिंग: प्रातः 05:15 • फ्लैग-ऑफ: प्रातः 06:15',
     accent: '#1d4ed8',
     accentSoft: '#eff6ff',
     accentBorder: '#bfdbfe',
     outbound: [
-      { label: 'Trimurti Circle', km: '1.2 KM' },
-      { label: 'Birla Mandir', km: '2.2 KM' },
-      { label: 'Rajasthan Univ.', km: '3.2 KM' },
-      { label: 'Gandhi Circle', km: '4.2 KM' }
+      { label: 'Trimurti Circle', labelHi: 'त्रिमूर्ति सर्किल', km: '1.2 KM' },
+      { label: 'Birla Mandir', labelHi: 'बिरला मंदिर', km: '2.2 KM' },
+      { label: 'Rajasthan Univ.', labelHi: 'राजस्थान वि.वि.', km: '3.2 KM' },
+      { label: 'Gandhi Circle', labelHi: 'गांधी सर्किल', km: '4.2 KM' }
     ],
-    turnaround: { label: 'DB Crossing / MNIT', sub: 'U-TURN • 5.0 KM' },
+    turnaround: { label: 'DB Crossing / MNIT', labelHi: 'DB क्रॉसिंग / MNIT', sub: 'U-TURN • 5.0 KM', subHi: 'U-टर्न • 5.0 KM' },
     inbound: [
-      { label: 'Commerce College', km: '6.0 KM' },
-      { label: 'Jawahar Kala Kendra', km: '7.2 KM' },
-      { label: 'Kanoria College', km: '8.2 KM' },
-      { label: 'JDA Circle', km: '9.0 KM' }
+      { label: 'Commerce College', labelHi: 'कॉमर्स कॉलेज', km: '6.0 KM' },
+      { label: 'Jawahar Kala Kendra', labelHi: 'जवाहर कला केंद्र', km: '7.2 KM' },
+      { label: 'Kanoria College', labelHi: 'कनोडिया कॉलेज', km: '8.2 KM' },
+      { label: 'JDA Circle', labelHi: 'जेडीए सर्किल', km: '9.0 KM' }
     ]
   },
   '5k': {
     id: '5k',
     shortBadge: '5 KM',
-    title: '5 KM MARATHON ROUTE — ALBERT HALL, JAIPUR',
+    title: '5 KM COMMUNITY RUN ROUTE — ALBERT HALL, JAIPUR',
+    titleHi: '5 KM कम्युनिटी रन रूट — अल्बर्ट हॉल, जयपुर',
     timing: 'Reporting: 05:30 AM • Flag-Off: 06:45 AM',
+    timingHi: 'रिपोर्टिंग: प्रातः 05:30 • फ्लैग-ऑफ: प्रातः 06:45',
     accent: '#0f172a',
     accentSoft: '#f8fafc',
     accentBorder: '#cbd5e1',
     outbound: [
-      { label: 'Trimurti Circle', km: '1.0 KM' },
-      { label: 'Birla Mandir', km: '1.8 KM' },
-      { label: 'Rajasthan Univ.', km: '2.2 KM' }
+      { label: 'Trimurti Circle', labelHi: 'त्रिमूर्ति सर्किल', km: '1.0 KM' },
+      { label: 'Birla Mandir', labelHi: 'बिरला मंदिर', km: '1.8 KM' },
+      { label: 'Rajasthan Univ.', labelHi: 'राजस्थान वि.वि.', km: '2.2 KM' }
     ],
-    turnaround: { label: 'Gandhi Circle', sub: 'U-TURN • 2.5 KM' },
+    turnaround: { label: 'Gandhi Circle', labelHi: 'गांधी सर्किल', sub: 'U-TURN • 2.5 KM', subHi: 'U-टर्न • 2.5 KM' },
     inbound: [
-      { label: 'Kanoria College', km: '3.0 KM' },
-      { label: 'JDA Circle', km: '3.8 KM' },
-      { label: 'Soni Hospital', km: '4.4 KM' }
+      { label: 'Kanoria College', labelHi: 'कनोडिया कॉलेज', km: '3.0 KM' },
+      { label: 'JDA Circle', labelHi: 'जेडीए सर्किल', km: '3.8 KM' },
+      { label: 'Soni Hospital', labelHi: 'सोनी हॉस्पिटल', km: '4.4 KM' }
     ]
   },
   '2k': {
     id: '2k',
     shortBadge: '2 KM',
-    title: '2 KM FUN RUN ROUTE — ALBERT HALL, JAIPUR',
+    title: '2 KM FAMILY WALK ROUTE — ALBERT HALL, JAIPUR',
+    titleHi: '2 KM फैमिली वॉक रूट — अल्बर्ट हॉल, जयपुर',
     timing: 'Reporting: 06:00 AM • Flag-Off: 07:15 AM',
+    timingHi: 'रिपोर्टिंग: प्रातः 06:00 • फ्लैग-ऑफ: प्रातः 07:15',
     accent: '#0284c7',
     accentSoft: '#f0f9ff',
     accentBorder: '#bae6fd',
     outbound: [
-      { label: 'Ram Niwas Gate', km: '0.4 KM' },
-      { label: 'JLN Marg Corridor', km: '0.8 KM' }
+      { label: 'Ram Niwas Gate', labelHi: 'रामनिवास बाग गेट', km: '0.4 KM' },
+      { label: 'JLN Marg Corridor', labelHi: 'JLN मार्ग कॉरिडोर', km: '0.8 KM' }
     ],
-    turnaround: { label: 'Trimurti Circle', sub: 'U-TURN • 1.0 KM' },
+    turnaround: { label: 'Trimurti Circle', labelHi: 'त्रिमूर्ति सर्किल', sub: 'U-TURN • 1.0 KM', subHi: 'U-टर्न • 1.0 KM' },
     inbound: [
-      { label: 'JLN Marg Return', km: '1.4 KM' },
-      { label: 'Albert Hall Approach', km: '1.8 KM' }
+      { label: 'JLN Marg Return', labelHi: 'JLN मार्ग वापसी', km: '1.4 KM' },
+      { label: 'Albert Hall Approach', labelHi: 'अल्बर्ट हॉल एप्रोच', km: '1.8 KM' }
     ]
   }
 };
@@ -113,7 +121,7 @@ export function getJaipurRouteConfig(p) {
  * Creative Horizontal SVG Route Map Card + Clickable Albert Hall Google Maps Link & QR
  * Used in both On-Screen E-Pass Preview and A4 PDF Print!
  */
-export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = false }) {
+export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = false, isHindi = true }) {
   if (!route) return null;
 
   const outCount = route.outbound.length;
@@ -173,7 +181,7 @@ export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = fals
               {route.shortBadge}
             </span>
             <span style={{ fontSize: '0.92rem', fontWeight: 900, color: 'var(--police-navy-950)', letterSpacing: '0.02em' }}>
-              {route.title}
+              {isHindi ? (route.titleHi || route.title) : route.title}
             </span>
           </div>
         </div>
@@ -197,7 +205,7 @@ export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = fals
             viewBox="0 0 760 232"
             style={{ width: '100%', height: 'auto', display: 'block' }}
             role="img"
-            aria-label={route.title}
+            aria-label={isHindi ? (route.titleHi || route.title) : route.title}
           >
             {/* Subtle Map Canvas Background */}
             <rect x="2" y="2" width="756" height="228" rx="10" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="1.5" />
@@ -225,7 +233,7 @@ export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = fals
               letterSpacing="1.6"
               style={{ paintOrder: 'stroke', stroke: route.accentSoft, strokeWidth: '6px' }}
             >
-              JLN MARG CORRIDOR
+              {isHindi ? 'जेएलएन मार्ग सुरक्षित कॉरिडोर' : 'JLN MARG SECURED CORRIDOR'}
             </text>
 
             {/* Continuous Rounded U-Loop Track */}
@@ -256,7 +264,7 @@ export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = fals
                   <line x1={cx} y1={topY - 6} x2={cx} y2={topY - 22} stroke="#94a3b8" strokeWidth="1.2" />
                   <circle cx={cx} cy={topY} r="6" fill="#ffffff" stroke={route.accent} strokeWidth="3" />
                   <text x={cx} y={topY - 37} textAnchor="middle" fill="#0a1c3d" fontSize="10.5" fontWeight="800">
-                    {stop.label}
+                    {isHindi ? (stop.labelHi || stop.label) : stop.label}
                   </text>
                   <text x={cx} y={topY - 25} textAnchor="middle" fill={route.accent} fontSize="9" fontWeight="800">
                     {stop.km}
@@ -273,7 +281,7 @@ export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = fals
                   <line x1={cx} y1={botY + 6} x2={cx} y2={botY + 20} stroke="#94a3b8" strokeWidth="1.2" />
                   <circle cx={cx} cy={botY} r="6" fill="#ffffff" stroke={route.accent} strokeWidth="3" />
                   <text x={cx} y={botY + 32} textAnchor="middle" fill="#0a1c3d" fontSize="10.5" fontWeight="800">
-                    {stop.label}
+                    {isHindi ? (stop.labelHi || stop.label) : stop.label}
                   </text>
                   <text x={cx} y={botY + 44} textAnchor="middle" fill="#475569" fontSize="9" fontWeight="700">
                     {stop.km}
@@ -289,13 +297,13 @@ export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = fals
               <circle cx="63" cy="84" r="21" fill="#dc2626" stroke="#fde68a" strokeWidth="1.5" />
               <path d="M 49 91 L 77 91 M 52 91 L 52 83 L 74 83 L 74 91 M 56 83 C 56 75, 70 75, 70 83 M 63 73 L 63 77" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
               <text x="63" y="122" textAnchor="middle" fill="#fde68a" fontSize="9.5" fontWeight="900" letterSpacing="0.8">
-                START / FINISH
+                {isHindi ? 'प्रारंभ / समापन' : 'START / FINISH'}
               </text>
               <text x="63" y="137" textAnchor="middle" fill="#ffffff" fontSize="11.5" fontWeight="900">
-                ALBERT HALL
+                {isHindi ? 'अल्बर्ट हॉल' : 'ALBERT HALL'}
               </text>
               <text x="63" y="151" textAnchor="middle" fill="#cbd5e1" fontSize="8.8" fontWeight="700">
-                Jaipur
+                {isHindi ? 'जयपुर' : 'Jaipur'}
               </text>
             </g>
 
@@ -303,32 +311,35 @@ export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = fals
             <g>
               <rect x="640" y="58" width="108" height="100" rx="12" fill="#ffffff" stroke={route.accent} strokeWidth="2.2" />
               <circle cx="694" cy="86" r="16" fill={route.accent} />
-              {/* Authentic Traffic U-Turn Arrow */}
+              {/* Authentic Traffic U-Turn Arrow (Up, Curve, Down with Downward Arrowhead) */}
               <path
-                d="M 699 93 L 699 84 A 5 5 0 0 0 689 84 L 689 89"
+                d="M 699 94 L 699 82 A 5 5 0 0 0 689 82 L 689 90"
                 fill="none"
                 stroke="#ffffff"
-                strokeWidth="2.8"
+                strokeWidth="3.2"
                 strokeLinecap="round"
+                strokeLinejoin="round"
               />
               <polygon
-                points="684.5,87 689,95 693.5,87"
+                points="685,89 689,96 693,89"
                 fill="#ffffff"
               />
               <text x="694" y="119" textAnchor="middle" fill="#0a1c3d" fontSize="10.2" fontWeight="900">
-                {route.turnaround.label}
+                {isHindi ? (route.turnaround.labelHi || route.turnaround.label) : route.turnaround.label}
               </text>
               <text x="694" y="134" textAnchor="middle" fill={route.accent} fontSize="8.6" fontWeight="800">
-                {route.turnaround.sub}
+                {isHindi ? (route.turnaround.subHi || route.turnaround.sub) : route.turnaround.sub}
               </text>
               <text x="694" y="148" textAnchor="middle" fill="#64748b" fontSize="8" fontWeight="700">
-                Water & Medical
+                {isHindi ? 'जल एवं चिकित्सा' : 'Water & Medical'}
               </text>
             </g>
 
             {/* Compact Micro-Legend */}
             <text x="16" y="218" fill="#475569" fontSize="9" fontWeight="700">
-              💧 Hydration Stations Every 2 KM   •   ✚ Medical & Ambulance Support   •   🏁 Start & Finish: Albert Hall, Ram Niwas Garden
+              {isHindi
+                ? '💧 प्रत्येक 2 KM पर जल सेवा   •   ✚ आपातकालीन चिकित्सा व एम्बुलेंस   •   🏁 प्रारंभ व समापन: अल्बर्ट हॉल (रामनिवास बाग)'
+                : '💧 Hydration Stations Every 2 KM   •   ✚ Medical & Ambulance Support   •   🏁 Start & Finish: Albert Hall, Ram Niwas Garden'}
             </text>
           </svg>
         </div>
@@ -354,41 +365,42 @@ export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = fals
             textAlign: 'center',
             cursor: 'pointer'
           }}
-          title="Google Maps पर अल्बर्ट हॉल का रास्ता खोलें"
+          title={isHindi ? "Google Maps पर अल्बर्ट हॉल का रास्ता खोलें" : "Open Albert Hall on Google Maps"}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: 900, color: '#1d4ed8', letterSpacing: '0.03em' }}>
             <MapPin size={14} color="#dc2626" />
-            <span>ALBERT HALL LOCATION</span>
+            <span>{isHindi ? 'अल्बर्ट हॉल (जयपुर)' : 'ALBERT HALL LOCATION'}</span>
           </div>
 
-          {locationQrUrl && (
-            <div style={{ background: '#ffffff', padding: '4px', borderRadius: '6px', border: '1px solid #bfdbfe' }}>
+          {/* QR Code Container */}
+          <div style={{
+            background: '#ffffff',
+            padding: '4px',
+            borderRadius: '6px',
+            border: '1px solid #bfdbfe',
+            lineHeight: 0
+          }}>
+            {locationQrUrl ? (
               <img
                 src={locationQrUrl}
-                alt="Albert Hall Google Maps QR"
-                style={{ width: '82px', height: '82px', display: 'block' }}
+                alt="Google Maps QR Code"
+                style={{ width: '84px', height: '84px', display: 'block' }}
               />
-            </div>
-          )}
+            ) : (
+              <div style={{ width: '84px', height: '84px', background: '#e2e8f0', borderRadius: '4px' }} />
+            )}
+          </div>
 
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '4px',
-            background: '#1d4ed8',
-            color: '#ffffff',
-            fontSize: '0.68rem',
+            fontSize: '0.72rem',
             fontWeight: 800,
-            padding: '5px 10px',
-            borderRadius: '999px',
-            width: '100%',
-            justifyContent: 'center'
+            color: '#1d4ed8'
           }}>
+            <span>{isHindi ? 'रास्ता नेविगेट करें' : 'Open in Google Maps'}</span>
             <Navigation size={11} />
-            <span>Google Maps रास्ता</span>
-          </div>
-          <div style={{ fontSize: '0.62rem', color: '#475569', fontWeight: 700, lineHeight: 1.2 }}>
-            क्लिक करें या QR स्कैन करें
           </div>
         </a>
       </div>

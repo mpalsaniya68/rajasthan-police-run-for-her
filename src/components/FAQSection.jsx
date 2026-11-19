@@ -3,10 +3,10 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export function FAQSection({ onNavigate }) {
-  const { t } = useLanguage();
+  const { t, isHindi } = useLanguage();
   const [openIndex, setOpenIndex] = useState(0);
 
-  const faqs = [
+  const faqsHi = [
     {
       q: "राजस्थान पुलिस मैराथन 2027 में भाग लेने की क्या प्रक्रिया व सुविधाएं हैं?",
       a: "राजस्थान पुलिस मैराथन 2027 ('Run for Her' अभियान) में राज्य का कोई भी नागरिक, महिला, युवा एवं धावक पोर्टल पर ऑनलाइन पंजीकरण करके सीधे भाग ले सकता है। पंजीकृत प्रतिभागियों को ड्राई-फिट टी-शर्ट (जयपुर फ्लैगशिप), RFID टाइमिंग चिप बिब, फिनिशर मेडल, DGP हस्ताक्षरित डिजिटल ई-सर्टिफिकेट, हाइड्रेशन एवं पोस्ट-रन रिफ्रेशमेंट्स प्रदान किए जाएंगे।"
@@ -40,6 +40,43 @@ export function FAQSection({ onNavigate }) {
       a: "प्रत्येक 500 मीटर पर राजस्थान पुलिस निर्भया स्क्वाड, महिला पुलिसकर्मी, प्राथमिक चिकित्सा बूथ तथा 8 एडवांस लाइफ सपोर्ट (ALS) एम्बुलेंस तैनात रहेंगी। किसी भी अप्रत्याशित परिस्थिति में 24x7 महिला हेल्पलाइन 1090 अथवा राष्ट्रीय आपातकालीन सेवा 112 पर तुरंत संपर्क किया जा सकता है।"
     }
   ];
+
+  const faqsEn = [
+    {
+      q: "What is the procedure to participate in Rajasthan Police Marathon 2027 and what perks are included?",
+      a: "Any citizen, woman, youth, and runner can participate directly by registering online on this portal for the 'Run for Her' statewide movement. Registered runners receive a dry-fit running t-shirt (Jaipur flagship), RFID timing chip bib, official finisher medal, DGP-signed digital e-certificate, hydration on course, and post-run refreshments."
+    },
+    {
+      q: "When and where will the running kit, T-shirt, and RFID bib be distributed?",
+      a: "Kits will be distributed during the 2-day Bib Expo on 1st & 2nd January 2027 (10:00 AM to 07:00 PM). In Jaipur, expo is hosted at Albert Hall / Ram Niwas Garden, and in districts at the respective District Police Line. Please bring your digital E-Pass and a valid government photo ID (Aadhaar / Voter ID / College ID)."
+    },
+    {
+      q: "Will all finishers receive medals and digital E-Certificates?",
+      a: "Yes! Every participant who completes their run within the official cut-off time will be awarded an official Rajasthan Police Finisher Medal. A verified digital e-certificate signed by the Director General of Police (DGP) will also be sent to your registered WhatsApp/SMS and email within 2 hours of race completion."
+    },
+    {
+      q: "What are the reporting and flag-off timings on race day (3 January 2027)?",
+      a: "• 21 KM Half Marathon: 05:00 AM Reporting | 06:00 AM Flag-Off\n• 10 KM Speed Run: 05:15 AM Reporting | 06:15 AM Flag-Off\n• 5 KM Community Run: 05:30 AM Reporting | 06:45 AM Flag-Off\n• 2 KM Family Walk: 06:00 AM Reporting | 07:15 AM Flag-Off\nPlease arrive at your designated entry gate at least 45 minutes prior to flag-off."
+    },
+    {
+      q: "What are the parking arrangements and traffic diversions on race day?",
+      a: "For complete runner safety, JLN Marg corridor (from Albert Hall to Jawahar Circle) will be strictly closed to general traffic from 04:30 AM to 09:30 AM and reserved exclusively for runners. Free dedicated parking is provided at Ram Niwas Garden Underpass Parking and JDA Multi-Level Parking."
+    },
+    {
+      q: "If I lose my E-Pass or delete the SMS, do I need to register again?",
+      a: "No! There is no need to fill out a new form. Visit the 'Find E-Pass' tab on this portal, enter your 10-digit mobile number, and your original E-Pass will appear instantly on screen, ready to view, print, or download."
+    },
+    {
+      q: "Can multiple members from a family or group register individually?",
+      a: "Yes, each participant can enter their individual details to receive their unique personal E-Pass and BIB number."
+    },
+    {
+      q: "What medical and emergency support is available along the race route?",
+      a: "Rajasthan Police Nirbhaya Squad, female police officers, first-aid posts, and 8 Advanced Life Support (ALS) ambulances are stationed every 500 meters along the corridor. In any emergency, call 24x7 Women Helpline 1090 or National Emergency 112 immediately."
+    }
+  ];
+
+  const faqs = isHindi ? faqsHi : faqsEn;
 
   return (
     <section id="faq-section" style={{ background: '#ffffff', padding: '60px 0', borderTop: '1px solid var(--border-subtle)' }}>

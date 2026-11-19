@@ -5,14 +5,14 @@ import confetti from 'canvas-confetti';
 import { useLanguage } from '../context/LanguageContext';
 
 export function SafetyPledge() {
-  const { t } = useLanguage();
+  const { t, isHindi } = useLanguage();
   const [pledgeName, setPledgeName] = useState("");
   const [pledged, setPledged] = useState(false);
 
   const handleTakePledge = (e) => {
     e.preventDefault();
     if (!pledgeName.trim()) {
-      alert("कृपया शपथ हस्ताक्षर हेतु अपना नाम दर्ज करें।");
+      alert(isHindi ? "कृपया शपथ हस्ताक्षर हेतु अपना नाम दर्ज करें।" : "Please enter your full name to sign the pledge.");
       return;
     }
     setPledged(true);
@@ -22,7 +22,9 @@ export function SafetyPledge() {
   };
 
   const sharePledge = () => {
-    const text = `🌟 मैंने राजस्थान पुलिस मैराथन - "RUN FOR HER" के तहत महिला सुरक्षा, गरिमा और समानता की शपथ ली है। आप भी राजस्थान पुलिस के साथ जुड़ें और शपथ लें: ${window.location.origin}#pledge 👮‍♂️🤝👩 #RunForHer #RajasthanPolice`;
+    const text = isHindi
+      ? `🌟 मैंने राजस्थान पुलिस मैराथन - "RUN FOR HER" के तहत महिला सुरक्षा, गरिमा और समानता की शपथ ली है। आप भी राजस्थान पुलिस के साथ जुड़ें और शपथ लें: ${window.location.origin}#pledge 👮‍♂️🤝👩 #RunForHer #RajasthanPolice`
+      : `🌟 I have taken the Women's Safety Pledge with Rajasthan Police Marathon - "RUN FOR HER". Join Rajasthan Police and take the pledge: ${window.location.origin}#pledge 👮‍♂️🤝👩 #RunForHer #RajasthanPolice`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   };
 
@@ -49,7 +51,9 @@ export function SafetyPledge() {
                 <Heart size={22} color="var(--crimson-600)" />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.25rem', color: 'var(--police-navy-900)', margin: 0 }}>महिला सुरक्षा संकल्प</h3>
+                <h3 style={{ fontSize: '1.25rem', color: 'var(--police-navy-900)', margin: 0 }}>
+                  {isHindi ? 'महिला सुरक्षा संकल्प' : "Women's Safety Oath"}
+                </h3>
               </div>
             </div>
 
@@ -62,10 +66,12 @@ export function SafetyPledge() {
               marginBottom: '20px'
             }}>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-body)', lineHeight: 1.6, marginBottom: '10px', fontStyle: 'italic' }}>
-                "मैं यह सत्यनिष्ठा से संकल्प लेता/लेती हूँ कि मैं सार्वजनिक स्थलों, कार्यस्थलों एवं समाज में महिलाओं और बालिकाओं की गरिमा, सुरक्षा और समानता के लिए सदैव तत्पर रहूँगा/रहूँगी। मैं उत्पीड़न का सक्रिय विरोध करूँगा/करूँगी और राजस्थान पुलिस के साथ मिलकर एक सुरक्षित राजस्थान का निर्माण करूँगा/करूँगी।"
+                {isHindi 
+                  ? '"मैं यह सत्यनिष्ठा से संकल्प लेता/लेती हूँ कि मैं सार्वजनिक स्थलों, कार्यस्थलों एवं समाज में महिलाओं और बालिकाओं की गरिमा, सुरक्षा और समानता के लिए सदैव तत्पर रहूँगा/रहूँगी। मैं उत्पीड़न का सक्रिय विरोध करूँगा/करूँगी और राजस्थान पुलिस के साथ मिलकर एक सुरक्षित राजस्थान का निर्माण करूँगा/करूँगी।"'
+                  : '"I solemnly pledge that I shall always stand for the dignity, safety, and equality of women and girls in public spaces, workplaces, and society. I will actively oppose harassment and collaborate with Rajasthan Police to build a safe Rajasthan."'}
               </p>
               <div style={{ fontSize: '0.8rem', color: 'var(--police-gold-700)', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', fontWeight: 600 }}>
-                Every Step for Her Safety • हर कदम नारी सुरक्षा के लिए
+                Every Step for Her Safety • {isHindi ? 'हर कदम नारी सुरक्षा के लिए' : 'Every Step for Women Safety'}
               </div>
             </div>
 
@@ -74,7 +80,7 @@ export function SafetyPledge() {
               <form onSubmit={handleTakePledge} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <input
                   type="text"
-                  placeholder="शपथ पत्र पर अपना नाम दर्ज करें..."
+                  placeholder={isHindi ? "शपथ पत्र पर अपना नाम दर्ज करें..." : "Enter your full name to take the pledge..."}
                   value={pledgeName}
                   onChange={(e) => setPledgeName(e.target.value)}
                   style={{
@@ -89,7 +95,7 @@ export function SafetyPledge() {
                   }}
                 />
                 <button type="submit" className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.9rem' }}>
-                  <Heart size={15} /> शपथ लें & बैज पाएं
+                  <Heart size={15} /> {isHindi ? 'शपथ लें & बैज पाएं' : 'Take Pledge & Get Badge'}
                 </button>
               </form>
             ) : (
@@ -97,11 +103,11 @@ export function SafetyPledge() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CheckCircle2 size={20} color="#15803d" />
                   <span style={{ color: '#15803d', fontWeight: 700, fontSize: '0.9rem' }}>
-                    धन्यवाद {pledgeName}! आपका संकल्प पंजीकृत हो चुका है।
+                    {isHindi ? `धन्यवाद ${pledgeName}! आपका संकल्प पंजीकृत हो चुका है।` : `Thank you ${pledgeName}! Your pledge has been registered.`}
                   </span>
                 </div>
                 <button onClick={sharePledge} className="btn-secondary" style={{ padding: '5px 12px', fontSize: '0.78rem' }}>
-                  <Share2 size={13} /> शेयर करें
+                  <Share2 size={13} /> {isHindi ? 'शेयर करें' : 'Share'}
                 </button>
               </div>
             )}
@@ -171,7 +177,7 @@ export function SafetyPledge() {
             </div>
 
             <button onClick={sharePledge} className="btn-secondary" style={{ marginTop: '14px', padding: '7px 16px', fontSize: '0.82rem' }}>
-              <Share2 size={14} color="#25D366" /> WhatsApp स्टेटस पर लगाएं
+              <Share2 size={14} color="#25D366" /> {isHindi ? 'WhatsApp स्टेटस पर लगाएं' : 'Share on WhatsApp'}
             </button>
           </div>
         </div>

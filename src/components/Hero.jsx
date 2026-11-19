@@ -197,7 +197,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
                 textShadow: '0 2px 8px rgba(0, 0, 0, 0.75)'
               }}>
                 <Timer size={15} color="#fde68a" />
-                <span translate="no" className="notranslate">EVENT COUNTDOWN</span>
+                <span>{isHindi ? 'रेस दिवस उल्टी गिनती' : 'EVENT COUNTDOWN'}</span>
               </div>
 
               <div className="hero-countdown-row">

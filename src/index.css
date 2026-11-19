@@ -3,6 +3,28 @@
    Official Government Portal Design System (Light / Medium-Light Theme)
    ========================================================================== */
 
+/* Google Translate bar suppression for clean native UI */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner-frame,
+#goog-gt-tt {
+  display: none !important;
+}
+body {
+  top: 0px !important;
+}
+.skiptranslate > iframe {
+  display: none !important;
+}
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+.goog-text-highlight {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
 /* Unicode-range scoped Hindi font rule so local Kruti Dev never garbles ASCII English text */
 @font-face {
   font-family: 'KrutiDevHindi';

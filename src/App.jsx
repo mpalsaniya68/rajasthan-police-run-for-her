@@ -31,6 +31,7 @@ import { RegistrationPage } from './components/RegistrationPage';
 
 import { FAQSection } from './components/FAQSection';
 import { MobileQuickSosBar } from './components/MobileQuickSosBar';
+import { useLanguage } from './context/LanguageContext';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -76,6 +77,7 @@ class ErrorBoundary extends React.Component {
 }
 
 export default function App() {
+  const { isHindi } = useLanguage();
 
   const VALID_PAGES = ['home', 'register', 'find-pass', 'route-schedule', 'certificates', 'pledge-safety', 'admin-login', 'admin', 'expo-terminal'];
 
@@ -375,15 +377,21 @@ export default function App() {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
 
-                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
+                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>
+                    {isHindi ? 'मुख्य पृष्ठ' : 'Home'}
+                  </button>
 
                   <span>/</span>
 
-                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>रूट व एक्सपो</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>
+                    {isHindi ? 'रूट व एक्सपो' : 'Route & Expo'}
+                  </span>
 
                 </div>
 
-                <span className="badge-gold">फ्लैग-ऑफ: 3 जनवरी 2027, सुबह 06:00 बजे</span>
+                <span className="badge-gold">
+                  {isHindi ? 'फ्लैग-ऑफ: 3 जनवरी 2027, सुबह 06:00 बजे' : 'Flag-Off: 3 January 2027, 06:00 AM'}
+                </span>
 
               </div>
 
@@ -409,15 +417,21 @@ export default function App() {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
 
-                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
+                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>
+                    {isHindi ? 'मुख्य पृष्ठ' : 'Home'}
+                  </button>
 
                   <span>/</span>
 
-                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>ई-प्रमाण पत्र</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>
+                    {isHindi ? 'ई-प्रमाण पत्र' : 'E-Certificate'}
+                  </span>
 
                 </div>
 
-                <span className="badge-gold">राजस्थान पुलिस ई-प्रमाण पत्र</span>
+                <span className="badge-gold">
+                  {isHindi ? 'राजस्थान पुलिस ई-प्रमाण पत्र' : 'Rajasthan Police E-Certificate'}
+                </span>
 
               </div>
 
@@ -441,15 +455,21 @@ export default function App() {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
 
-                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>मुख्य पृष्ठ</button>
+                  <button onClick={() => navigateToPage('home')} style={{ background: 'none', border: 'none', color: 'var(--police-navy-800)', fontWeight: 700, cursor: 'pointer', padding: 0 }}>
+                    {isHindi ? 'मुख्य पृष्ठ' : 'Home'}
+                  </button>
 
                   <span>/</span>
 
-                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>सुरक्षा संकल्प</span>
+                  <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>
+                    {isHindi ? 'सुरक्षा संकल्प' : 'Safety Pledge'}
+                  </span>
 
                 </div>
 
-                <span className="badge-pink">महिला हेल्पलाइन: 1090 / 112</span>
+                <span className="badge-pink">
+                  {isHindi ? 'महिला हेल्पलाइन: 1090 / 112' : 'Women Helpline: 1090 / 112'}
+                </span>
 
               </div>
 

@@ -57,35 +57,35 @@ export function Footer({ onNavigate }) {
 
           <div>
             <h4 style={{ fontSize: '0.85rem', color: '#fef08a', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
-              आयोजन मुख्यालय
+              {isHindi ? 'आयोजन मुख्यालय' : 'Headquarters'}
             </h4>
             <div style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6 }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', marginBottom: '6px' }}>
                 <MapPin size={15} color="var(--police-gold-400)" style={{ marginTop: '2px', flexShrink: 0 }} />
-                <span>पुलिस मुख्यालय, लाल कोठी, टोंक रोड, जयपुर, राजस्थान - 302015</span>
+                <span>{isHindi ? 'पुलिस मुख्यालय, लाल कोठी, टोंक रोड, जयपुर, राजस्थान - 302015' : 'Police Headquarters, Lal Kothi, Tonk Road, Jaipur, Rajasthan - 302015'}</span>
               </div>
               <div style={{ marginTop: '10px', fontSize: '0.75rem', color: '#94a3b8' }}>
-                जिला स्तरीय दौड़ संबंधित जिला पुलिस अधीक्षक (SP) के निर्देशन में संचालित।
+                {isHindi ? 'जिला स्तरीय दौड़ संबंधित जिला पुलिस अधीक्षक (SP) के निर्देशन में संचालित।' : 'District-level runs conducted under respective District SP direction.'}
               </div>
             </div>
           </div>
 
           <div>
             <h4 style={{ fontSize: '0.85rem', color: '#fef08a', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
-              नोडल प्रकोष्ठ
+              {isHindi ? 'नोडल प्रकोष्ठ' : 'Nodal Cell'}
             </h4>
             <div style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6 }}>
               <div style={{ marginBottom: '6px' }}>
-                <strong style={{ color: '#ffffff' }}>राज्य नोडल अधिकारी:</strong> एडीजीपी (कम्युनिटी पुलिसिंग)
+                <strong style={{ color: '#ffffff' }}>{isHindi ? 'राज्य नोडल अधिकारी:' : 'State Nodal Officer:'}</strong> {isHindi ? 'एडीजीपी (कम्युनिटी पुलिसिंग)' : 'ADGP (Community Policing)'}
               </div>
               <div style={{ marginBottom: '6px' }}>
-                <strong style={{ color: '#ffffff' }}>ट्रैफिक समन्वय:</strong> डीसीपी (ट्रैफिक), जयपुर
+                <strong style={{ color: '#ffffff' }}>{isHindi ? 'ट्रैफिक समन्वय:' : 'Traffic Coordination:'}</strong> {isHindi ? 'डीसीपी (ट्रैफिक), जयपुर' : 'DCP (Traffic), Jaipur'}
               </div>
               <div style={{ marginBottom: '6px' }}>
-                <strong style={{ color: '#ffffff' }}>ईमेल:</strong> rpm.nodal@rajasthanpolice.gov.in
+                <strong style={{ color: '#ffffff' }}>{isHindi ? 'ईमेल:' : 'Email:'}</strong> rpm.nodal@rajasthanpolice.gov.in
               </div>
               <div style={{ marginTop: '8px', fontSize: '0.74rem', color: '#94a3b8' }}>
-                कंट्रोल रूम एवं आपात स्थिति: 112 / 1090 (24x7)
+                {isHindi ? 'कंट्रोल रूम एवं आपात स्थिति: 112 / 1090 (24x7)' : 'Control Room & Emergency: 112 / 1090 (24x7)'}
               </div>
             </div>
           </div>
@@ -94,12 +94,12 @@ export function Footer({ onNavigate }) {
         {/* Bottom Bar */}
         <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', fontSize: '0.75rem', color: '#94a3b8' }}>
           <div>
-            © 2027 राजस्थान पुलिस, राजस्थान सरकार। सर्वाधिकार सुरक्षित।
+            {isHindi ? '© 2027 राजस्थान पुलिस, राजस्थान सरकार। सर्वाधिकार सुरक्षित।' : '© 2027 Rajasthan Police, Government of Rajasthan. All Rights Reserved.'}
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
             <span>"Every Step for Her Safety"</span>
             <span>•</span>
-            <span style={{ color: '#fef08a' }}>हर कदम नारी सुरक्षा के लिए</span>
+            <span style={{ color: '#fef08a' }}>{isHindi ? 'हर कदम नारी सुरक्षा के लिए' : 'Every Step for Women Safety'}</span>
           </div>
         </div>
       </div>

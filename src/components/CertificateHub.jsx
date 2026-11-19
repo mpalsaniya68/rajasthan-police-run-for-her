@@ -559,7 +559,7 @@ export function CertificateHub({ registrations = [] }) {
   const isTimedCompetitive = (selectedRunner.category?.includes("21k") || selectedRunner.category?.includes("10k") || selectedRunner.categoryId?.includes("21k") || selectedRunner.categoryId?.includes("10k")) && isJaipur && Boolean(selectedRunner.finishTime);
 
   return (
-    <section id="certificates" className="section-padding" style={{ position: 'relative', background: '#f8fafc', borderTop: '1px solid var(--border-subtle)' }}>
+    <section id="certificates" className="section-padding" style={{ position: 'relative', background: '#ffffff', borderTop: '1px solid var(--border-subtle)' }}>
       <div className="container">
         <div className="section-header no-print" style={{ marginBottom: '28px', textAlign: 'center' }}>
           <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', color: 'var(--police-navy-950)', margin: '0 0 8px 0', fontWeight: 800 }}>

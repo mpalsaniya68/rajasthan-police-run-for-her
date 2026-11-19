@@ -1,8 +1,11 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export function PatronDesk() {
+  const { isHindi } = useLanguage();
+
   return (
-    <section id="patron-desk" style={{ background: '#f8fafc', padding: '60px 0', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+    <section id="patron-desk" style={{ background: '#ffffff', padding: '60px 0', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
       <div className="container">
 
         {/* 1. SECTION: MESSAGE FROM DIRECTOR GENERAL OF POLICE (DGP RAJASTHAN) */}
@@ -56,8 +59,12 @@ export function PatronDesk() {
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
                   zIndex: 2
                 }}>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#fef08a' }}>राजीव शर्मा, भा.पु.से. (IPS)</div>
-                  <div style={{ fontSize: '0.72rem', color: '#e2e8f0', marginTop: '2px' }}>महानिदेशक पुलिस, राजस्थान (DGP)</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#fef08a' }}>
+                    {isHindi ? 'राजीव शर्मा, भा.पु.से. (IPS)' : 'Rajeev Sharma, IPS'}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#e2e8f0', marginTop: '2px' }}>
+                    {isHindi ? 'महानिदेशक पुलिस, राजस्थान (DGP)' : 'Director General of Police, Rajasthan (DGP)'}
+                  </div>
                 </div>
               </div>
             </div>
@@ -65,8 +72,10 @@ export function PatronDesk() {
             {/* DGP Official Written Message */}
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <span className="badge-gold">आयोजन संरक्षक संदेश</span>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700 }}>संदेश</span>
+                <span className="badge-gold">{isHindi ? 'आयोजन संरक्षक संदेश' : "Patron's Message"}</span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+                  {isHindi ? 'संदेश' : 'Official Message'}
+                </span>
               </div>
               {/* DGP Official Written Message Area - Left blank per instructions */}
               <div style={{
@@ -91,10 +100,10 @@ export function PatronDesk() {
               }}>
                 <div>
                   <div style={{ fontSize: '0.9rem', fontWeight: 900, color: 'var(--police-navy-950)' }}>
-                    (राजीव शर्मा, भा.पु.से.)
+                    {isHindi ? '(राजीव शर्मा, भा.पु.से.)' : '(Rajeev Sharma, IPS)'}
                   </div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--police-gold-700)', fontWeight: 700 }}>
-                    महानिदेशक पुलिस, राजस्थान
+                    {isHindi ? 'महानिदेशक पुलिस, राजस्थान' : 'Director General of Police, Rajasthan'}
                   </div>
                 </div>
               </div>
