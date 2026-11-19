@@ -24,7 +24,7 @@ dist-ssr
 *.sw?
 
 # Database & Secrets
-data/
+/data/
 .env
 .env*.local
 __pycache__/
