@@ -68,8 +68,8 @@ export function sanitizeDistrictParam(val) {
 }
 
 const DISTRICT_NAMES = {
-  "jaipur_comm": "जयपुर पुलिस कमिश्नरेट (Jaipur)",
-  "jodhpur_comm": "जोधपुर पुलिस कमिश्नरेट (Jodhpur)",
+  "jaipur_comm": "जयपुर (Jaipur)",
+  "jodhpur_comm": "जोधपुर (Jodhpur)",
   "kota_city": "कोटा शहर पुलिस (Kota City)",
   "kota_rural": "कोटा ग्रामीण पुलिस (Kota Rural)",
   "bhiwadi": "भिवाड़ी पुलिस जिला (Bhiwadi)",
@@ -184,7 +184,7 @@ export async function warmRunnerCache(force = false) {
       category_id: "21k",
       category_name: "21 KM Half Marathon",
       district_id: "jaipur_comm",
-      district_name: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+      district_name: "जयपुर (Jaipur)",
       tshirt_size: "L",
       certificate_id: "RJ-POL-2027-03ABE3",
       status: "CERT_ISSUED",
@@ -662,7 +662,7 @@ export async function handleApiRequest(req, res) {
           category_id: "21k",
           category_name: "21 KM Half Marathon",
           district_id: "jaipur_comm",
-          district_name: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+          district_name: "जयपुर (Jaipur)",
           tshirt_size: "L",
           certificate_id: "RJ-POL-2027-03ABE3",
           qr_token: "F90E5128EED1B2AD",
@@ -930,7 +930,7 @@ export async function handleApiRequest(req, res) {
           medical_notes: "",
           category_id: "21k",
           category_name: "21 KM Half Marathon",
-          district_name: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+          district_name: "जयपुर (Jaipur)",
           tshirt_size: "L",
           emergency_contact: "7627002063",
           emergency_relation: "अभिभावक (Guardian)",
@@ -1509,7 +1509,7 @@ export async function handleApiRequest(req, res) {
             mobile: "7023233248",
             email: "manvi8648@gmail.com",
             categoryName: "21 KM Half Marathon",
-            districtName: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+            districtName: "जयपुर (Jaipur)",
             finishTime: "01:34:20",
             isJaipurTimed: true
           },

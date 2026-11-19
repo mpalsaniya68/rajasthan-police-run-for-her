@@ -9,7 +9,7 @@ try {
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
   }
-} catch (e) {
+} catch {
   // Read-only serverless filesystem fallback (Vercel / AWS Lambda)
 }
 
@@ -39,7 +39,7 @@ try {
       }
     }
   }
-} catch (e) {
+} catch {
   // Ignore if not present
 }
 
@@ -566,7 +566,7 @@ async function seedInitialParticipants() {
       catId: "21k",
       catName: "21 KM Half Marathon",
       distId: "jaipur_comm",
-      distName: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+      distName: "जयपुर (Jaipur)",
       tshirt: "L",
       certId: "RJ-POL-2027-03ABE3",
       status: "CERT_ISSUED",
@@ -684,7 +684,7 @@ async function syncCoreParticipants() {
       catId: "21k",
       catName: "21 KM Half Marathon",
       distId: "jaipur_comm",
-      distName: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+      distName: "जयपुर (Jaipur)",
       tshirt: "L",
       certId: "RJ-POL-2027-03ABE3",
       status: "CERT_ISSUED",

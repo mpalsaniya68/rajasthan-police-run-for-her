@@ -176,7 +176,7 @@ export async function apiAdminLogin(username, password) {
     const text = await res.text();
     try {
       return JSON.parse(text);
-    } catch (e) {
+    } catch {
       console.error("apiAdminLogin response was not JSON:", text);
       return { success: false, error: "सर्वर से कनेक्ट करने में त्रुटि। कृपया पुनः प्रयास करें।" };
     }
@@ -215,7 +215,7 @@ export async function apiExpoLogin(operatorNameOrUser, counterIdOrPass, counterN
     const text = await res.text();
     try {
       return JSON.parse(text);
-    } catch (e) {
+    } catch {
       console.error("apiExpoLogin response was not JSON:", text);
       return { success: false, error: "सर्वर से कनेक्ट करने में त्रुटि। कृपया पुनः प्रयास करें।" };
     }

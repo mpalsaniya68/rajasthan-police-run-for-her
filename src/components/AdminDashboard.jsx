@@ -91,7 +91,7 @@ export function AdminDashboard({
 
   const [districtFilter, setDistrictFilter] = useState(() => isDistrictRole ? (adminUser.districtId || adminUser.districtName || "all") : "all");
 
-  const [selectedExportDistrict, setSelectedExportDistrict] = useState(() => isDistrictRole ? (adminUser.districtName || RAJASTHAN_POLICE_DISTRICTS[0]?.name) : (RAJASTHAN_POLICE_DISTRICTS[0]?.name || "Jaipur Police Commissionerate (Flagship Host)"));
+  const [selectedExportDistrict, setSelectedExportDistrict] = useState(() => isDistrictRole ? (adminUser.districtName || RAJASTHAN_POLICE_DISTRICTS[0]?.name) : (RAJASTHAN_POLICE_DISTRICTS[0]?.name || "Jaipur (Flagship Host)"));
 
   const [exportNotice, setExportNotice] = useState(null);
 
@@ -465,7 +465,7 @@ export function AdminDashboard({
 
         categoryName: found.category_name || found.categoryName || '21 KM Half Marathon',
 
-        districtName: found.district_name || found.districtName || 'Jaipur Police Commissionerate',
+        districtName: found.district_name || found.districtName || 'Jaipur',
 
         tshirtSize: found.tshirt_size || found.tshirtSize || 'N/A',
 
@@ -4203,7 +4203,7 @@ export function AdminDashboard({
 
                     full_name: "पूजा शेखावत",
 
-                    district_name: "जोधपुर कमिश्नरेट",
+                    district_name: "जोधपुर",
 
                     category_name: "21 KM Half Marathon",
 

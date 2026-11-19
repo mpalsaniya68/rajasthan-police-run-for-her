@@ -62,7 +62,7 @@ export const RACE_CATEGORIES = [
     flagOff: "06:45 AM",
     cutOffTime: "1 घंटा (सुबह 07:45 AM)",
     reporting: "05:30 AM",
-    description: "The flagship mass awareness run happening simultaneously in Jaipur and all 41 Rajasthan Police Districts and Commissionerates.",
+    description: "The flagship mass awareness run happening simultaneously in Jaipur and all 41 Rajasthan Police Districts.",
     perks: [
       "फिनिशर मेडल 🥇",
       "ड्राई-फिट रनिंग टी-शर्ट 👕",
@@ -200,7 +200,7 @@ export const INITIAL_REGISTRATIONS = [
     category: "21k",
     categoryName: "21 KM Half Marathon",
     venueType: "jaipur",
-    districtName: "जयपुर पुलिस कमिश्नरेट (Jaipur)",
+    districtName: "जयपुर (Jaipur)",
     runnerType: "Citizen Runner",
     tshirtSize: "L",
     emergencyContact: "7627002063 (अभिभावक)",
@@ -232,7 +232,7 @@ export const INITIAL_REGISTRATIONS = [
     category: "10k",
     categoryName: "10 KM Speed Run",
     venueType: "jaipur",
-    districtName: "Jaipur Police Commissionerate",
+    districtName: "Jaipur",
     runnerType: "Police Personnel",
     tshirtSize: "L",
     emergencyContact: "Sunita Kanwar (94140 11223)",
@@ -306,7 +306,7 @@ export const INITIAL_TRACKING_PROFILES = [
     gender: "Male",
     age: 26,
     mobile: "+91 70232 33248",
-    districtName: "Jaipur Police Commissionerate",
+    districtName: "Jaipur",
     runnerType: "Citizen Runner",
     status: "FINISHED",
     currentKm: 21.097,
@@ -344,7 +344,7 @@ export const INITIAL_TRACKING_PROFILES = [
     gender: "Male",
     age: 31,
     mobile: "+91 94140 12345",
-    districtName: "Jaipur Police Commissionerate",
+    districtName: "Jaipur",
     runnerType: "Police Personnel",
     status: "FINISHED",
     currentKm: 10.0,
@@ -414,7 +414,7 @@ export const PROHIBITED_ITEMS = [
 
 export const NODAL_OFFICIALS = [
   { designation: "अतिरिक्त पुलिस महानिदेशक (ADGP)", role: "राज्य नोडल प्रभारी, कम्युनिटी पुलिसिंग", office: "पुलिस मुख्यालय, जयपुर", contact: "0141-2600000" },
-  { designation: "पुलिस उपायुक्त (DCP Traffic)", role: "रूट, ट्रैफिक डायवर्जन एवं कॉरिडोर सुरक्षा", office: "जयपुर पुलिस कमिश्नरेट", contact: "0141-2565656" },
+  { designation: "पुलिस उपायुक्त (DCP Traffic)", role: "रूट, ट्रैफिक डायवर्जन एवं कॉरिडोर सुरक्षा", office: "जयपुर पुलिस", contact: "0141-2565656" },
   { designation: "मुख्य चिकित्सा एवं स्वास्थ्य अधिकारी (CMHO)", role: "आपातकालीन चिकित्सा एवं एम्बुलेंस ग्रिड", office: "स्वास्थ्य विभाग, जयपुर", contact: "108 / 102" },
   { designation: "महिला सुरक्षा नोडल कमान (निर्भया स्क्वाड)", role: "महिला धावक सुरक्षा एवं गरिमा हेल्पलाइन", office: "गरिमा डेस्क, राजस्थान पुलिस", contact: "1090 / 112" }
 ];

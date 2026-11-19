@@ -94,7 +94,7 @@ export async function dispatchGatewaySms({ mobile, message, templateId = "" }) {
 
       const textResp = await res.text();
       let parsed = textResp;
-      try { parsed = JSON.parse(textResp); } catch (e) {}
+      try { parsed = JSON.parse(textResp); } catch { }
 
       console.log(`[SMS Gateway (${isRajSms ? 'RajSMS' : 'Live'})]: Sent to +91-${cleanMobile} | Status: ${res.status}`);
       return {
@@ -150,7 +150,7 @@ export async function sendCertificateNotification(runner) {
   const {
     fullName = "धावक",
     mobile = "",
-    email = "",
+    _email = "",
     certificateId = "",
     finishTime = "",
     categoryName = "5 KM Community Run",
@@ -164,14 +164,14 @@ export async function sendCertificateNotification(runner) {
 
   if (isJaipurTimed && finishTime) {
     // PHQ / Jaipur Flagship Timed Half Marathon
-    smsText = `राजस्थान पुलिस हाफ मैराथन 2027: प्रिय ${fullName}, आपने 'रन फॉर हर' (${categoryName}) समय ${finishTime} में पूर्ण की है। पुलिस महानिदेशक (DGP), राजस्थान द्वारा अधिकृत डिजिटल प्रमाण पत्र डाउनलोड करें: https://police.rajasthan.gov.in/cert/${certificateId} — राजस्थान पुलिस`;
+    smsText = `राजस्थान पुलिस हाफ मैराथन 2027: प्रिय ${fullName}, आपने 'रन फॉर हर' (${categoryName}) समय ${finishTime} में पूर्ण की है। पुलिस महानिदेशक (DGP), राजस्थान द्वारा जारी डिजिटल प्रमाण पत्र डाउनलोड करें: https://police.rajasthan.gov.in/cert/${certificateId} — राजस्थान पुलिस`;
     emailSubject = `फिनिशर प्रमाण पत्र | राजस्थान पुलिस हाफ मैराथन 2027 (${categoryName})`;
-    emailBody = `प्रिय ${fullName},\n\nहार्दिक बधाई! राजस्थान पुलिस हाफ मैराथन 2027 'रन फॉर हर' में आपने ${categoryName} दौड़ समय ${finishTime} में सफलतापूर्वक पूर्ण की है।\n\nपुलिस महानिदेशक (DGP) राजस्थान द्वारा अधिकृत आपका डिजिटल प्रमाण पत्र पोर्टल पर जारी कर दिया गया है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\nराजस्थान पुलिस परिवार आपकी खेल भावना और नारी सुरक्षा संकल्प को सलाम करता है।\n\nकार्यालय महानिदेशक पुलिस, राजस्थान, जयपुर।`;
+    emailBody = `प्रिय ${fullName},\n\nहार्दिक बधाई! राजस्थान पुलिस हाफ मैराथन 2027 'रन फॉर हर' में आपने ${categoryName} दौड़ समय ${finishTime} में सफलतापूर्वक पूर्ण की है।\n\nपुलिस महानिदेशक (DGP) राजस्थान द्वारा जारी आपका डिजिटल प्रमाण पत्र पोर्टल पर जारी कर दिया गया है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\nराजस्थान पुलिस परिवार आपकी खेल भावना और नारी सुरक्षा संकल्प को सलाम करता है।\n\nकार्यालय महानिदेशक पुलिस, राजस्थान, जयपुर।`;
   } else {
     // District / SP Level Awareness Run
     smsText = `राजस्थान पुलिस 'रन फॉर हर': प्रिय ${fullName}, ${districtName} में नारी सुरक्षा व सम्मान दौड़ में आपकी सहभागिता का डिजिटल प्रमाण पत्र जारी हो चुका है। डाउनलोड: https://police.rajasthan.gov.in/cert/${certificateId} — पुलिस अधीक्षक कार्यालय`;
-    emailSubject = `अधिकृत सहभागिता प्रमाण पत्र | रन फॉर हर - राजस्थान पुलिस (${districtName})`;
-    emailBody = `प्रिय ${fullName},\n\n'रन फॉर हर' - महिला सुरक्षा, सम्मान एवं सशक्तिकरण के राज्यव्यापी जन-जागरूकता अभियान में ${districtName} से सक्रिय सहभागिता के लिए राजस्थान पुलिस आपका हार्दिक आभार व्यक्त करती है।\n\nजिला पुलिस अधीक्षक (SP) द्वारा अधिकृत आपका डिजिटल सहभागिता प्रमाण पत्र पोर्टल पर उपलब्ध है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\n"हर कदम उसकी सुरक्षा के लिए"\nकार्यालय जिला पुलिस अधीक्षक, ${districtName}।`;
+    emailSubject = `डिजिटल सहभागिता प्रमाण पत्र | रन फॉर हर - राजस्थान पुलिस (${districtName})`;
+    emailBody = `प्रिय ${fullName},\n\n'रन फॉर हर' - महिला सुरक्षा, सम्मान एवं सशक्तिकरण के राज्यव्यापी जन-जागरूकता अभियान में ${districtName} से सक्रिय सहभागिता के लिए राजस्थान पुलिस आपका हार्दिक आभार व्यक्त करती है।\n\nजिला पुलिस अधीक्षक (SP) द्वारा जारी डिजिटल सहभागिता प्रमाण पत्र पोर्टल पर उपलब्ध है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\n"हर कदम उसकी सुरक्षा के लिए"\nकार्यालय जिला पुलिस अधीक्षक, ${districtName}।`;
   }
 
   const dispatchResult = await dispatchGatewaySms({
@@ -317,7 +317,7 @@ export function isLiveWhatsAppConfigured() {
 /**
  * Unified WhatsApp Gateway Dispatcher with Meta Cloud API & Commercial Gateway Support
  */
-export async function dispatchGatewayWhatsApp({ mobile, message, templateName = "" }) {
+export async function dispatchGatewayWhatsApp({ mobile, message, templateName: _templateName = "" }) {
   const cleanMobile = String(mobile || "").replace(/\D/g, "").slice(-10);
   if (cleanMobile.length !== 10) {
     return { success: false, error: "Invalid 10-digit mobile number", simulated: true };

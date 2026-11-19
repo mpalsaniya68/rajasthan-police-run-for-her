@@ -4,8 +4,7 @@ import http from "node:http";
 import { 
   dispatchGatewayWhatsApp, 
   dispatchGatewaySms, 
-  resolveMessagePlaceholders, 
-  BROADCAST_TEMPLATES 
+  resolveMessagePlaceholders 
 } from "./notifications.js";
 
 const bootstrapUsername = "broadcast-test-admin";

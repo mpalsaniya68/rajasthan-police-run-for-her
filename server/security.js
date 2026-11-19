@@ -176,7 +176,7 @@ export function verifyPassword(password, storedHash) {
         if (crypto.timingSafeEqual(Buffer.from(computedPbkdf2), Buffer.from(storedHash))) {
           return true;
         }
-      } catch (e) { }
+      } catch { }
     }
 
     // 2. Compatibility check: legacy salted SHA-256
@@ -189,7 +189,7 @@ export function verifyPassword(password, storedHash) {
         if (crypto.timingSafeEqual(Buffer.from(legacySha256), Buffer.from(storedHash))) {
           return true;
         }
-      } catch (e) { }
+      } catch { }
     }
   }
 
@@ -244,7 +244,7 @@ export function verifyAdminToken(token) {
           verified = true;
           break;
         }
-      } catch (e) { }
+      } catch { }
     }
   }
 
@@ -256,7 +256,7 @@ export function verifyAdminToken(token) {
       return null; // Expired
     }
     return payload;
-  } catch (err) {
+  } catch {
     return null;
   }
 }
@@ -301,7 +301,7 @@ export function verifyOtpVerificationToken(token, expectedMobile) {
     if (payload.mobile !== clean) return false;
     if (!payload.exp || Date.now() > payload.exp) return false;
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 }
@@ -347,7 +347,7 @@ export function verifyHandoverVerificationToken(token, expectedBib) {
     if (payload.bib !== clean) return false;
     if (!payload.exp || Date.now() > payload.exp) return false;
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 }
