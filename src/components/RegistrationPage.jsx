@@ -28,6 +28,7 @@ import {
   HorizontalRouteMapCard,
   drawHorizontalRouteMapOnCanvas
 } from '../utils/jaipurRouteMap';
+import { useLanguage } from '../context/LanguageContext';
 
 const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
 
@@ -72,6 +73,7 @@ export function RegistrationPage({
   onNavigate,
   onRegisterSuccess
 }) {
+  const { t, isHindi } = useLanguage();
   const [pendingPayload, setPendingPayload] = useState(null);
   const [venueType, setVenueType] = useState(() => (initialDistrict && initialDistrict !== "JPR-COMM" && initialDistrict !== "jaipur_comm") ? "district" : "jaipur");
 
@@ -1841,7 +1843,7 @@ export function RegistrationPage({
               textAlign: 'center'
             }}>
               <h2 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', margin: 0, color: '#ffffff', fontWeight: 900, letterSpacing: '0.02em' }}>
-                E-Pass Search
+                {isHindi ? 'ई-पास खोजें व डाउनलोड करें' : 'E-Pass Search & Download'}
               </h2>
             </div>
 
@@ -2189,7 +2191,7 @@ export function RegistrationPage({
               textAlign: 'center'
             }}>
               <h1 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', margin: 0, color: '#ffffff', fontWeight: 900, letterSpacing: '0.02em' }}>
-                Registration Form
+                {isHindi ? 'ऑनलाइन धावक पंजीकरण' : 'Online Runner Registration'}
               </h1>
             </div>
 
@@ -2494,7 +2496,7 @@ export function RegistrationPage({
               textAlign: 'center'
             }}>
               <h1 style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', margin: 0, color: '#ffffff', fontWeight: 900, letterSpacing: '0.02em' }}>
-                Registration Form
+                {isHindi ? 'ऑनलाइन धावक पंजीकरण' : 'Online Runner Registration'}
               </h1>
             </div>
 

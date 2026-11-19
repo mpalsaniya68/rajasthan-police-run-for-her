@@ -1,8 +1,10 @@
 import React from 'react';
 import { PoliceEmblem } from './Emblems';
 import { MapPin } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export function Footer({ onNavigate }) {
+  const { t, isHindi } = useLanguage();
   const handleNav = (e, pageId) => {
     e.preventDefault();
     if (onNavigate) {
@@ -34,20 +36,22 @@ export function Footer({ onNavigate }) {
               </div>
             </div>
             <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6 }}>
-              राजस्थान पुलिस द्वारा महिला सुरक्षा, सम्मान, समानता एवं सशक्तीकरण को समर्पित राज्यव्यापी जनसहभागिता अभियान।
+              {isHindi 
+                ? 'राजस्थान पुलिस द्वारा महिला सुरक्षा, सम्मान, समानता एवं सशक्तीकरण को समर्पित राज्यव्यापी जनसहभागिता अभियान।'
+                : 'A statewide public participation movement dedicated to women safety, dignity, and empowerment by Rajasthan Police.'}
             </p>
           </div>
 
           <div>
             <h4 style={{ fontSize: '0.85rem', color: '#fef08a', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
-              महत्वपूर्ण लिंक्स
+              {isHindi ? 'महत्वपूर्ण लिंक्स' : 'Important Links'}
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', color: '#e2e8f0' }}>
-              <li><a href="#home" onClick={(e) => handleNav(e, 'home')}>मुख्य पृष्ठ (Home)</a></li>
-              <li><a href="#route-schedule" onClick={(e) => handleNav(e, 'route-schedule')}>कोर्स रूट एवं समय-सारणी (Route & Schedule)</a></li>
-              <li><a href="#certificates" onClick={(e) => handleNav(e, 'certificates')}>फिनिशर सर्टिफिकेट एवं सत्यापन</a></li>
-              <li><a href="#pledge-safety" onClick={(e) => handleNav(e, 'pledge-safety')}>नारी सुरक्षा सामूहिक संकल्प निर्देशिका</a></li>
-              <li><a href="#expo-terminal" onClick={(e) => handleNav(e, 'expo-terminal')} style={{ color: '#6ee7b7', fontWeight: 700 }}>📦 एक्सपो किट व गेट स्कैनर (Expo Desk)</a></li>
+              <li><a href="#home" onClick={(e) => handleNav(e, 'home')}>{isHindi ? 'मुख्य पृष्ठ' : 'Home'}</a></li>
+              <li><a href="#route-schedule" onClick={(e) => handleNav(e, 'route-schedule')}>{isHindi ? 'कोर्स रूट एवं समय-सारणी' : 'Course Route & Schedule'}</a></li>
+              <li><a href="#certificates" onClick={(e) => handleNav(e, 'certificates')}>{isHindi ? 'फिनिशर सर्टिफिकेट एवं सत्यापन' : 'Finisher Certificates & Verification'}</a></li>
+              <li><a href="#pledge-safety" onClick={(e) => handleNav(e, 'pledge-safety')}>{isHindi ? 'नारी सुरक्षा सामूहिक संकल्प' : 'Women Safety Pledge'}</a></li>
+              <li><a href="#expo-terminal" onClick={(e) => handleNav(e, 'expo-terminal')} style={{ color: '#6ee7b7', fontWeight: 700 }}>{isHindi ? '📦 एक्सपो किट व गेट स्कैनर' : '📦 Expo Kit & Gate Scanner'}</a></li>
             </ul>
           </div>
 

@@ -1,15 +1,18 @@
 import React from 'react';
 import { RACE_DAY_TIMELINE, PROHIBITED_ITEMS } from '../data/mockData';
 import { Clock, Package, AlertCircle, ShieldAlert, Luggage } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export function ScheduleExpo() {
+  const { t } = useLanguage();
+
   return (
     <section id="schedule" className="section-padding" style={{ position: 'relative', background: '#ffffff', borderTop: '1px solid var(--border-subtle)' }}>
       <div className="container">
         {/* Header - Only Middle Heading */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.95rem)', color: 'var(--police-navy-950)', margin: 0, fontWeight: 900 }}>
-            कार्यक्रम समय-सारणी, बिब एक्सपो एवं रेस नियम (Schedule, Expo & Rules)
+            {t('scheduleHeading')}
           </h2>
         </div>
 

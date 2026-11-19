@@ -20,8 +20,10 @@ import {
   ALBERT_HALL_MAPS_URL 
 } from '../utils/jaipurRouteMap';
 import QRCode from 'qrcode';
+import { useLanguage } from '../context/LanguageContext';
 
 export function InteractiveRoute() {
+  const { t, isHindi } = useLanguage();
   // Category Selector: Default to '21k' as requested by the user
   const [selectedCategory, setSelectedCategory] = useState('21k');
   const [activeFacilityFilter, setActiveFacilityFilter] = useState('all');
@@ -137,7 +139,7 @@ export function InteractiveRoute() {
         {/* Compact Section Header */}
         <div style={{ textAlign: 'center', marginBottom: '18px' }}>
           <h2 style={{ fontSize: '1.45rem', color: 'var(--police-navy-950)', margin: 0, fontWeight: 800 }}>
-            जयपुर फ्लैगशिप रेस रूट (Race Route Map)
+            {t('routeHeading')}
           </h2>
         </div>
 

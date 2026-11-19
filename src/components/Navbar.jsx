@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
-import { Shield, Menu, X, Phone, PackageCheck, LogOut } from 'lucide-react';
+import { Shield, Menu, X, Phone, PackageCheck, LogOut, Globe, Languages } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export function Navbar({ 
   onOpenRegister, 
@@ -10,6 +11,7 @@ export function Navbar({
   isAdminAuthenticated = false,
   adminUser = null
 }) {
+  const { language, toggleLanguage, isHindi, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [fontSize, setFontSize] = useState("normal"); // "normal", "large", "xlarge"
 
@@ -23,12 +25,12 @@ export function Navbar({
       : 'admin';
 
   const navAdminLabel = !isAdminAuthenticated
-    ? 'प्रशासनिक लॉगिन'
+    ? t('adminLogin')
     : isExpoRole
-      ? (adminUser?.role === 'GATE_MARSHAL' ? '🚪 गेट स्कैनर' : '📦 एक्सपो स्टेशन')
+      ? (adminUser?.role === 'GATE_MARSHAL' ? (isHindi ? '🚪 गेट स्कैनर' : '🚪 Gate Scanner') : (isHindi ? '📦 एक्सपो स्टेशन' : '📦 Expo Station'))
       : isDistrictRole
-        ? `🛡️ ${adminUser?.districtName?.split(' ')[0] || 'जिला SP'} कमान`
-        : '🛡️ PHQ कमान';
+        ? `🛡️ ${adminUser?.districtName?.split(' ')[0] || (isHindi ? 'जिला SP' : 'Dist SP')} ${isHindi ? 'कमान' : 'Command'}`
+        : (isHindi ? '🛡️ PHQ कमान' : '🛡️ PHQ Command');
 
   const navAdminBg = !isAdminAuthenticated
     ? '#1e3a8a'
@@ -89,16 +91,41 @@ export function Navbar({
           {/* Left: Govt Identity */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ fontWeight: 800, color: '#fde68a', letterSpacing: '0.03em' }}>
-              राजस्थान सरकार | GOVERNMENT OF RAJASTHAN
+              {isHindi ? 'राजस्थान सरकार | GOVERNMENT OF RAJASTHAN' : 'GOVERNMENT OF RAJASTHAN'}
             </span>
           </div>
 
-          {/* Right: Emergency Helpline, Accessibility, Nodal Admin */}
+          {/* Right: Emergency Helpline, Language Toggle, Accessibility */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#fca5a5', fontWeight: 700 }}>
               <Phone size={12} />
-              <span>महिला हेल्पलाइन: 1090 / 112</span>
+              <span>{t('womenHelpline')}</span>
             </div>
+
+            {/* Language Toggle Button (Utility Bar) */}
+            <button
+              onClick={toggleLanguage}
+              style={{
+                background: '#1e3a8a',
+                color: '#fde68a',
+                border: '1.5px solid #3b82f6',
+                borderRadius: '4px',
+                padding: '2px 9px',
+                fontSize: '0.74rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                transition: 'all 0.2s ease'
+              }}
+              aria-label={isHindi ? "Switch site to English" : "वेबसाइट को हिन्दी में बदलें"}
+              title={isHindi ? "Switch site to English" : "वेबसाइट को हिन्दी में बदलें"}
+            >
+              <Globe size={12} color="#fde68a" />
+              <span>{isHindi ? 'English' : 'हिन्दी'}</span>
+            </button>
 
             {/* Accessibility Font Size Controls (WCAG 1.4.4) */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} className="d-tablet-inline">
@@ -143,7 +170,7 @@ export function Navbar({
             <PoliceEmblem size={52} className="navbar-police-logo" />
 
             <div>
-              {/* Devanagari Primary Heading */}
+              {/* Primary Heading */}
               <div style={{
                 fontFamily: 'var(--font-heading)',
                 fontSize: 'clamp(1.15rem, 2.5vw, 1.7rem)',
@@ -152,10 +179,10 @@ export function Navbar({
                 lineHeight: 1.1,
                 letterSpacing: '0.01em'
               }}>
-                राजस्थान पुलिस मैराथन 2027
+                {t('mainTitle')}
               </div>
 
-              {/* English Sub-Heading & Tagline */}
+              {/* Sub-Heading & Tagline */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
                 <span 
                   translate="no"
@@ -170,14 +197,36 @@ export function Navbar({
                   RUN FOR HER
                 </span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }} className="d-tablet-inline">
-                  • Every Step for Women Safety
+                  • {t('tagline')}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Right Header: Mobile Toggle */}
+          {/* Right Header: Language Switch & Mobile Toggle */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Quick Mobile/Tablet Language Pill */}
+            <button
+              onClick={toggleLanguage}
+              style={{
+                background: 'var(--police-navy-900)',
+                color: '#fde68a',
+                border: '1.5px solid var(--police-gold-500)',
+                borderRadius: '6px',
+                padding: '6px 11px',
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}
+              title={isHindi ? "Switch site to English" : "वेबसाइट को हिन्दी में बदलें"}
+            >
+              <Globe size={13} color="#fde68a" />
+              <span>{isHindi ? 'English' : 'हिन्दी'}</span>
+            </button>
+
             {/* Mobile / Tablet Toggle Hamburger */}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -209,14 +258,14 @@ export function Navbar({
       }}>
         <div className="container-fluid" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           {/* Desktop Nav Items - Clean, Professional Government Format */}
-          <nav aria-label="मुख्य नेविगेशन मेन्यू (Main Navigation)" style={{ display: 'none', alignItems: 'center', gap: '4px' }} className="desktop-nav-items">
+          <nav aria-label={isHindi ? "मुख्य नेविगेशन मेन्यू" : "Main Navigation"} style={{ display: 'none', alignItems: 'center', gap: '4px' }} className="desktop-nav-items">
             {[
-              { id: 'home', label: 'मुख्य पृष्ठ' },
-              { id: 'register', label: 'पंजीकरण (ई-पास)', isGold: true },
-              { id: 'find-pass', label: '🔍 ई-पास खोजें', isFindPass: true },
-              { id: 'route-schedule', label: 'रूट व एक्सपो' },
-              { id: 'certificates', label: 'ई-प्रमाण पत्र' },
-              { id: 'pledge-safety', label: 'सुरक्षा संकल्प' }
+              { id: 'home', label: t('navHome') },
+              { id: 'register', label: t('navRegister'), isGold: true },
+              { id: 'find-pass', label: t('navFindPass'), isFindPass: true },
+              { id: 'route-schedule', label: t('navRoute') },
+              { id: 'certificates', label: t('navCertificates') },
+              { id: 'pledge-safety', label: t('navPledge') }
             ].map(tab => {
               const isActive = activePage === tab.id;
               return (
@@ -271,13 +320,37 @@ export function Navbar({
             })}
           </nav>
 
-          {/* Admin / Expo Station Button - Role-Aware */}
+          {/* Right Nav Utilities: Language Toggle + Admin / Expo Station Button */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
             marginLeft: 'auto'
           }}>
+            {/* Desktop Language Switch Toggle */}
+            <button
+              onClick={toggleLanguage}
+              style={{
+                background: 'rgba(255, 255, 255, 0.12)',
+                color: '#fde68a',
+                border: '1px solid rgba(253, 230, 138, 0.4)',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s ease'
+              }}
+              title={isHindi ? "Switch to English" : "हिन्दी में बदलें"}
+            >
+              <Languages size={14} color="#fde68a" />
+              <span>{isHindi ? 'English' : 'हिन्दी'}</span>
+            </button>
+
             <button
               id="btn-nav-admin-login"
               onClick={() => handleNav(navAdminTarget)}
@@ -355,13 +428,40 @@ export function Navbar({
           maxHeight: '80vh',
           overflowY: 'auto'
         }}>
+          {/* Mobile Language Switcher (Prominent at top of drawer) */}
+          <button
+            onClick={toggleLanguage}
+            style={{
+              background: 'var(--police-navy-900)',
+              color: '#fde68a',
+              border: '1.5px solid var(--police-gold-500)',
+              borderRadius: '6px',
+              padding: '11px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontWeight: 800,
+              fontSize: '0.9rem',
+              cursor: 'pointer',
+              marginBottom: '6px'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Languages size={18} color="#fde68a" />
+              <span>{isHindi ? 'Switch website to English' : 'वेबसाइट को हिन्दी में बदलें'}</span>
+            </div>
+            <span style={{ background: '#1e3a8a', padding: '3px 10px', borderRadius: '4px', fontSize: '0.8rem', color: '#fff', fontWeight: 900 }}>
+              {isHindi ? 'English' : 'हिन्दी'}
+            </span>
+          </button>
+
           {[
-            { id: 'home', label: 'मुख्य पृष्ठ' },
-            { id: 'register', label: 'ऑनलाइन पंजीकरण (ई-पास)', color: 'var(--police-gold-700)' },
-            { id: 'find-pass', label: '🔍 E-Pass Search', color: 'var(--police-navy-900)', isFindPass: true },
-            { id: 'route-schedule', label: 'रूट मैप व एक्सपो समय-सारणी' },
-            { id: 'certificates', label: 'फिनिशर सर्टिफिकेट व सत्यापन', color: 'var(--police-gold-700)' },
-            { id: 'pledge-safety', label: 'महिला सुरक्षा संकल्प', color: 'var(--crimson-600)' }
+            { id: 'home', label: t('navHome') },
+            { id: 'register', label: t('navRegister'), color: 'var(--police-gold-700)' },
+            { id: 'find-pass', label: t('navFindPass'), color: 'var(--police-navy-900)', isFindPass: true },
+            { id: 'route-schedule', label: t('navRoute') },
+            { id: 'certificates', label: t('navCertificates'), color: 'var(--police-gold-700)' },
+            { id: 'pledge-safety', label: t('navPledge'), color: 'var(--crimson-600)' }
           ].map(tab => {
             const isActive = activePage === tab.id;
             return (

@@ -1,6 +1,9 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export function PrizePodiumSection({ onOpenRegister }) {
+  const { t, isHindi } = useLanguage();
+
   return (
     <section 
       id="prizes-showcase" 
@@ -15,7 +18,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
         {/* Section Header */}
         <div className="section-header" style={{ marginBottom: '32px', textAlign: 'center' }}>
           <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', color: '#0f172a', margin: '0 0 8px 0', fontWeight: 900 }}>
-            Prizes & Rewards
+            {t('prizesHeading')}
           </h2>
         </div>
 
@@ -42,7 +45,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
           }}>
             <div>
               <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 20px 0' }}>
-                21 KM Half Marathon
+                {isHindi ? '21 KM हाफ मैराथन' : '21 KM Half Marathon'}
               </h3>
 
               {/* Podium Breakdown (Clean White Theme) */}
@@ -58,9 +61,11 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥇</span>
-                    <span>1st Prize</span>
+                    <span>{isHindi ? 'प्रथम पुरस्कार' : '1st Prize'}</span>
                   </div>
-                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
+                    {isHindi ? 'शीघ्र घोषित होगा' : 'To Be Announced'}
+                  </span>
                 </div>
 
                 <div style={{
@@ -74,9 +79,11 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥈</span>
-                    <span>2nd Prize</span>
+                    <span>{isHindi ? 'द्वितीय पुरस्कार' : '2nd Prize'}</span>
                   </div>
-                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
+                    {isHindi ? 'शीघ्र घोषित होगा' : 'To Be Announced'}
+                  </span>
                 </div>
 
                 <div style={{
@@ -90,9 +97,11 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥉</span>
-                    <span>3rd Prize</span>
+                    <span>{isHindi ? 'तृतीय पुरस्कार' : '3rd Prize'}</span>
                   </div>
-                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
+                    {isHindi ? 'शीघ्र घोषित होगा' : 'To Be Announced'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -113,7 +122,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
           }}>
             <div>
               <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 20px 0' }}>
-                10 KM Speed Run
+                {isHindi ? '10 KM स्पीड रन' : '10 KM Speed Run'}
               </h3>
 
               {/* Podium Breakdown (Clean White Theme) */}
@@ -129,9 +138,11 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥇</span>
-                    <span>1st Prize</span>
+                    <span>{isHindi ? 'प्रथम पुरस्कार' : '1st Prize'}</span>
                   </div>
-                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
+                    {isHindi ? 'शीघ्र घोषित होगा' : 'To Be Announced'}
+                  </span>
                 </div>
 
                 <div style={{
@@ -145,9 +156,11 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥈</span>
-                    <span>2nd Prize</span>
+                    <span>{isHindi ? 'द्वितीय पुरस्कार' : '2nd Prize'}</span>
                   </div>
-                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
+                    {isHindi ? 'शीघ्र घोषित होगा' : 'To Be Announced'}
+                  </span>
                 </div>
 
                 <div style={{
@@ -161,9 +174,11 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: '#0f172a', fontSize: '0.94rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>🥉</span>
-                    <span>3rd Prize</span>
+                    <span>{isHindi ? 'तृतीय पुरस्कार' : '3rd Prize'}</span>
                   </div>
-                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>To Be Announced</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
+                    {isHindi ? 'शीघ्र घोषित होगा' : 'To Be Announced'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -184,7 +199,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
           }}>
             <div>
               <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 20px 0' }}>
-                5K & 2K Fun Run
+                {isHindi ? '5 KM व 2 KM फन रन' : '5K & 2K Fun Run'}
               </h3>
 
               {/* Perks Highlights Box (Clean White Theme) */}
@@ -200,21 +215,21 @@ export function PrizePodiumSection({ onOpenRegister }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ fontSize: '1.35rem' }}>🥇</span>
                   <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.96rem' }}>
-                    Finisher Medal
+                    {isHindi ? 'फिनिशर मेडल' : 'Finisher Medal'}
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ fontSize: '1.35rem' }}>👕</span>
                   <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.96rem' }}>
-                    Dry-Fit T-Shirt
+                    {isHindi ? 'ड्राई-फिट टी-शर्ट' : 'Dry-Fit T-Shirt'}
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ fontSize: '1.35rem' }}>🥪</span>
                   <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.96rem' }}>
-                    Post-Run Refreshments
+                    {isHindi ? 'पोस्ट-रन अल्पाहार' : 'Post-Run Refreshments'}
                   </div>
                 </div>
               </div>

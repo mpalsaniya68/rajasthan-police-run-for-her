@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export function FAQSection({ onNavigate }) {
+  const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState(0);
 
   const faqs = [
@@ -51,7 +53,7 @@ export function FAQSection({ onNavigate }) {
             color: 'var(--police-navy-950)',
             margin: 0
           }}>
-            अक्सर पूछे जाने वाले महत्वपूर्ण सवाल (FAQs)
+            {t('faqHeading')}
           </h2>
         </div>
 

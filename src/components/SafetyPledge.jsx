@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Heart, CheckCircle2, Share2, Shield } from 'lucide-react';
 import { PoliceEmblem } from './Emblems';
 import confetti from 'canvas-confetti';
+import { useLanguage } from '../context/LanguageContext';
 
 export function SafetyPledge() {
+  const { t } = useLanguage();
   const [pledgeName, setPledgeName] = useState("");
   const [pledged, setPledged] = useState(false);
 
@@ -25,14 +27,13 @@ export function SafetyPledge() {
   };
 
   return (
-    <section id="pledge" className="section-padding" style={{ position: 'relative', background: '#f8fafc', borderTop: '1px solid var(--border-subtle)' }}>
+    <section id="pledge" className="section-padding" style={{ position: 'relative', background: '#ffffff', borderTop: '1px solid var(--border-subtle)' }}>
       <div className="container">
-        <div className="section-header">
-          <span className="badge-pink">The Soul of the Movement</span>
-          <h2>नारी सुरक्षा सामूहिक शपथ (Women's Safety Pledge)</h2>
-          <p>
-            महिला सुरक्षा सिर्फ पुलिस की नहीं, बल्कि समाज के प्रत्येक नागरिक की साझा जिम्मेदारी है। आज ही इस ऐतिहासिक जन-आंदोलन का हिस्सा बनकर शपथ लें।
-          </p>
+        {/* Header - Only Middle Heading */}
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+          <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.95rem)', color: 'var(--police-navy-950)', margin: 0, fontWeight: 900 }}>
+            {t('pledgeHeading')}
+          </h2>
         </div>
 
         <div style={{

@@ -3,8 +3,10 @@ import { apiVerifyCertificate } from '../services/api';
 import { Award, Search, Download, Share2, CheckCircle2 } from 'lucide-react';
 import { PoliceEmblem, OfficialGoldSeal, RunForHerBadge } from './Emblems';
 import QRCode from 'qrcode';
+import { useLanguage } from '../context/LanguageContext';
 
 export function CertificateHub({ registrations = [] }) {
+  const { t, isHindi } = useLanguage();
   const [selectedRunner, setSelectedRunner] = useState(registrations[0] || null);
   const [searchQuery, setSearchQuery] = useState("");
   const [qrCodeUrl, setQrCodeUrl] = useState("");
@@ -561,7 +563,7 @@ export function CertificateHub({ registrations = [] }) {
       <div className="container">
         <div className="section-header no-print" style={{ marginBottom: '28px', textAlign: 'center' }}>
           <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', color: 'var(--police-navy-950)', margin: '0 0 8px 0', fontWeight: 800 }}>
-            Marathon Certificate (मैराथन ई-प्रमाण पत्र)
+            {isHindi ? 'मैराथन ई-प्रमाण पत्र' : 'Marathon E-Certificate'}
           </h2>
         </div>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Timer, ArrowRight } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const HERO_SLIDES = [
   {
@@ -30,6 +31,7 @@ const HERO_SLIDES = [
 ];
 
 export function Hero({ onOpenRegister, onOpenFindPass }) {
+  const { t, isHindi } = useLanguage();
   // Live Countdown logic strictly targeted to 3 January 2027, 06:00:00 AM IST
   const TARGET_DATE = new Date(2027, 0, 3, 6, 0, 0);
 
@@ -69,10 +71,10 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
   }, [activeSlide, slideCount]);
 
   const countdownItems = [
-    { label: 'DAYS', val: String(timeLeft.days).padStart(2, '0') },
-    { label: 'HOURS', val: String(timeLeft.hours).padStart(2, '0') },
-    { label: 'MINS', val: String(timeLeft.minutes).padStart(2, '0') },
-    { label: 'SECS', val: String(timeLeft.seconds).padStart(2, '0') }
+    { label: t('days'), val: String(timeLeft.days).padStart(2, '0') },
+    { label: t('hours'), val: String(timeLeft.hours).padStart(2, '0') },
+    { label: t('mins'), val: String(timeLeft.minutes).padStart(2, '0') },
+    { label: t('secs'), val: String(timeLeft.seconds).padStart(2, '0') }
   ];
 
   return (
@@ -112,7 +114,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
               marginBottom: '8px',
               textShadow: '0 2px 12px rgba(5, 17, 38, 0.85)'
             }}>
-              ★ RAJASTHAN POLICE STATEWIDE MARATHON 2027 ★
+              {t('superTitle')}
             </div>
 
             {/* Brand Hero Title (Locked against auto-translation) */}
@@ -153,7 +155,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
                   letterSpacing: '0.02em',
                   textShadow: '0 1px 4px rgba(0, 0, 0, 0.35)'
                 }}>
-                  "हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के नाम"
+                  {t('slogan')}
                 </span>
               </div>
             </div>
@@ -163,18 +165,18 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
               <button
                 onClick={onOpenRegister}
                 className="hero-btn-primary"
-                title="ऑनलाइन पंजीकरण पोर्टल"
+                title={isHindi ? "ऑनलाइन पंजीकरण पोर्टल" : "Online Registration Portal"}
               >
-                <span>पंजीकरण करें</span>
+                <span>{isHindi ? 'पंजीकरण करें' : 'Register Now'}</span>
                 <ArrowRight size={18} />
               </button>
 
               <button
                 onClick={onOpenFindPass}
                 className="hero-btn-glass"
-                title="ई-पास खोजें व पुनः डाउनलोड करें"
+                title={isHindi ? "ई-पास खोजें व पुनः डाउनलोड करें" : "Find & Download E-Pass"}
               >
-                <span>🔍 ई-पास खोजें</span>
+                <span>{isHindi ? '🔍 ई-पास खोजें' : '🔍 Find E-Pass'}</span>
               </button>
             </div>
 
