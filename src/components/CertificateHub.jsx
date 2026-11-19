@@ -314,7 +314,7 @@ export function CertificateHub({ registrations = [] }) {
       // Event Date & Authority
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText(`आयोजन तिथि: 3 जनवरी 2027 • ${isTimedCompetitive ? 'अधिकृत प्रतिस्पर्धी फिनिशर प्रमाण पत्र' : 'अधिकृत सहभागिता एवं सुरक्षा संकल्प प्रमाण पत्र'}`, 675, 595);
+      ctx.fillText(`आयोजन तिथि: 3 जनवरी 2027 • ${isTimedCompetitive ? 'प्रतिस्पर्धी फिनिशर प्रमाण पत्र' : 'डिजिटल सहभागिता एवं सुरक्षा संकल्प प्रमाण पत्र'}`, 675, 595);
 
       // Bottom Signatures & Seal Section
       ctx.textAlign = "center";
