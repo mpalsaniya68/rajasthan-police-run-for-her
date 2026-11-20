@@ -17,6 +17,7 @@ import { VolunteerRosterManager } from './VolunteerRosterManager';
 import { BroadcastCommandCenter } from './BroadcastCommandCenter';
 
 import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
+import { useLanguage } from '../context/LanguageContext';
 
 import { 
 
@@ -76,8 +77,7 @@ export function AdminDashboard({
 
 
   const isDistrictRole = adminUser?.role === 'DISTRICT';
-
-
+  const { language, isHindi } = useLanguage();
 
   const [adminTab, setAdminTab] = useState("registrations"); // "registrations" | "kit_counter" | "leaderboard" | "district_certificates" | "district_medical"
 
@@ -85,7 +85,9 @@ export function AdminDashboard({
 
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const [showUnmaskedId, setShowUnmaskedId] = useState(false);
+  // Clean Pagination States (Limit to 15-20 rows per view)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
 
   const [selectedCatFilter, setSelectedCatFilter] = useState("all");
 
@@ -99,6 +101,11 @@ export function AdminDashboard({
   const [kitFilter, setKitFilter] = useState("all"); // "all" | "collected" | "pending"
   const [medicalFilter, setMedicalFilter] = useState("all"); // "all" | "alerts_only"
   const [tshirtFilter, setTshirtFilter] = useState("all"); // "all" | "XS" | "S" | "M" | "L" | "XL" | "XXL"
+
+  // Reset pagination to first page whenever any filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [districtFilter, selectedCatFilter, kitFilter, medicalFilter, tshirtFilter, debouncedSearch]);
 
   // Printable Checklist Modal State
   const [isPrintChecklistOpen, setIsPrintChecklistOpen] = useState(false);
@@ -190,13 +197,15 @@ export function AdminDashboard({
 
 
   // Load real-time database statistics and participants
-  const loadLiveDashboardData = async () => {
+  const loadLiveDashboardData = async (filterDist = districtFilter) => {
     setIsLoadingDb(true);
     try {
-      const distParam = isDistrictRole ? (adminUser.districtId || adminUser.districtName) : undefined;
+      const distParam = isDistrictRole 
+        ? (adminUser.districtId || adminUser.districtName) 
+        : (filterDist && filterDist !== 'all' ? (filterDist === 'jaipur' ? 'Jaipur' : filterDist) : undefined);
       const [statsRes, partsRes, certRes] = await Promise.all([
         apiGetAdminStats(distParam),
-        apiGetAdminParticipants({ district: distParam, limit: 300 }),
+        apiGetAdminParticipants({ district: distParam, limit: 500 }),
         apiGetCertificateStats(distParam)
       ]);
 
@@ -624,12 +633,6 @@ export function AdminDashboard({
 
     email: p.email || 'police.run@rajasthan.gov.in',
 
-    idType: p.id_type || 'Aadhaar',
-
-    idMasked: p.id_masked || (p.id_last4 ? 'XXXX-XXXX-' + p.id_last4 : 'XXXX-XXXX-1048'),
-
-    idRaw: p.id_raw || null,
-
     tshirtSize: p.tshirt_size || 'N/A',
 
     bloodGroup: p.blood_group || 'O+',
@@ -733,7 +736,7 @@ export function AdminDashboard({
 
                           (r.mobile || '').includes(q) ||
 
-                          (r.idMasked || '').toLowerCase().includes(q) ||
+                          (r.email || '').toLowerCase().includes(q) ||
 
                           (r.certificateId || '').toLowerCase().includes(q);
 
@@ -757,6 +760,14 @@ export function AdminDashboard({
     return matchesSearch && matchesCat && matchesDist && matchesKit && matchesMedical && matchesTshirt;
 
   });
+
+  // Clean Pagination Slicing (15-20 entries per page to keep dashboard clean & uncluttered)
+  const totalFilteredCount = filteredList.length;
+  const totalPages = Math.max(1, Math.ceil(totalFilteredCount / pageSize));
+  const validCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+  const startIndex = (validCurrentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, totalFilteredCount);
+  const paginatedList = filteredList.slice(startIndex, endIndex);
 
 
 
@@ -1244,8 +1255,8 @@ export function AdminDashboard({
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <span style={{ fontWeight: 800, fontSize: 'clamp(0.96rem, 2.8vw, 1.18rem)', color: '#0f172a', letterSpacing: '0.01em' }}>
                   {isDistrictRole 
-                    ? `जिला पुलिस अधीक्षक कमान डेस्क - ${adminUser.districtName || 'District Desk'}`
-                    : 'पुलिस मुख्यालय कमान एवं नोडल डेस्क (PHQ COMMAND)'}
+                    ? (isHindi ? `जिला पुलिस अधीक्षक कमान डेस्क - ${adminUser.districtName || 'जिला'}` : `District SP Command Desk - ${adminUser.districtName || 'District'}`)
+                    : (isHindi ? 'पुलिस मुख्यालय कमान एवं राज्य नोडल डेस्क' : 'State Police HQ Command & Nodal Desk')}
                 </span>
                 <span style={{
                   background: '#fef3c7',
@@ -1256,13 +1267,15 @@ export function AdminDashboard({
                   padding: '2px 8px',
                   borderRadius: '4px'
                 }}>
-                  {isDistrictRole ? 'जिला स्तर अधिकृत • SP Level' : '2FA Verified • State Level (PHQ)'}
+                  {isDistrictRole 
+                    ? (isHindi ? 'जिला स्तर अधिकृत' : 'District Authorized') 
+                    : (isHindi ? '2FA प्रमाणित • राज्य नोडल कमान' : '2FA Verified • State Command')}
                 </span>
               </div>
               <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>
                 {isDistrictRole 
-                  ? `स्थानीय धावक विवरण, आपातकालीन सुरक्षा सूची एवं जिला ई-सर्टिफिकेट प्रबंधन`
-                  : 'Statewide Real-time Logistics, Statewide CSV Engine & Certificate Control'}
+                  ? (isHindi ? 'स्थानीय धावक विवरण, आपातकालीन सुरक्षा सूची एवं जिला ई-सर्टिफिकेट प्रबंधन' : 'Local Runner Details, Emergency Safety Roster & District E-Certificates')
+                  : (isHindi ? 'राज्यव्यापी रियल-टाइम लॉजिस्टिक्स, डेटाबेस एवं प्रमाण पत्र नियंत्रण' : 'Statewide Real-time Logistics, Database Engine & Certificate Control')}
               </div>
             </div>
           </div>
@@ -1290,10 +1303,10 @@ export function AdminDashboard({
               }}
               onMouseOver={(e) => { e.currentTarget.style.background = '#f8fafc'; }}
               onMouseOut={(e) => { e.currentTarget.style.background = '#ffffff'; }}
-              title="सार्वजनिक वेबसाइट पर लौटें"
+              title={isHindi ? "सार्वजनिक वेबसाइट पर लौटें" : "Return to Public Portal"}
             >
               <ArrowLeft size={14} />
-              <span>मुख्य वेबसाइट</span>
+              <span>{isHindi ? 'मुख्य वेबसाइट' : 'Public Portal'}</span>
             </button>
 
             {/* Launch Dedicated Expo Scanner Terminal */}
@@ -1317,10 +1330,10 @@ export function AdminDashboard({
               }}
               onMouseOver={(e) => { e.currentTarget.style.background = '#d1fae5'; }}
               onMouseOut={(e) => { e.currentTarget.style.background = '#ecfdf5'; }}
-              title="फुलस्क्रीन एक्सपो किट व गेट स्कैनर टर्मिनल खोलें"
+              title={isHindi ? "फुलस्क्रीन एक्सपो किट व गेट स्कैनर टर्मिनल खोलें" : "Launch Fullscreen Expo Scanner Terminal"}
             >
               <PackageCheck size={14} color="#059669" />
-              <span>एक्सपो स्कैनर</span>
+              <span>{isHindi ? 'एक्सपो स्कैनर' : 'Expo Scanner'}</span>
             </button>
 
             {/* Logout / Security Lock Button */}
@@ -1349,10 +1362,10 @@ export function AdminDashboard({
               }}
               onMouseOver={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
               onMouseOut={(e) => { e.currentTarget.style.background = '#fef2f2'; }}
-              title="सत्र समाप्त करें एवं सुरक्षित लॉगआउट करें"
+              title={isHindi ? "सत्र समाप्त करें एवं सुरक्षित लॉगआउट करें" : "End session and logout"}
             >
               <LogOut size={14} />
-              <span>लॉगआउट</span>
+              <span>{isHindi ? 'लॉगआउट' : 'Logout'}</span>
             </button>
           </div>
         </div>
@@ -1377,7 +1390,9 @@ export function AdminDashboard({
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Zap size={16} color="var(--police-gold-600)" />
               <span style={{ fontSize: '0.88rem', fontWeight: 900, color: 'var(--police-navy-950)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                {isDistrictRole ? `कमांड मुख्यालय • ${adminUser.districtName || 'जिला'} सारांश` : 'राज्य नोडल पुलिस कमान • कार्यकारी डैशबोर्ड सारांश (Live KPI)'}
+                {isDistrictRole 
+                  ? (isHindi ? `कमांड मुख्यालय • ${adminUser.districtName || 'जिला'} सारांश` : `District Command • ${adminUser.districtName || 'District'} Summary`)
+                  : (isHindi ? 'राज्य नोडल पुलिस कमान • कार्यकारी डैशबोर्ड सारांश' : 'State Nodal Police Command • Executive Dashboard Summary')}
               </span>
               <span style={{
                 background: '#dcfce7',
@@ -1391,7 +1406,7 @@ export function AdminDashboard({
                 gap: '4px'
               }}>
                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#16a34a', display: 'inline-block' }}></span>
-                लाइव डेटा
+                {isHindi ? 'लाइव डेटा' : 'Live Data'}
               </span>
             </div>
 
@@ -1414,10 +1429,10 @@ export function AdminDashboard({
                   cursor: 'pointer',
                   boxShadow: 'var(--shadow-sm)'
                 }}
-                title="गेट उपस्थिति एवं किट वितरण A4 चेकलिस्ट प्रिंट करें"
+                title={isHindi ? "गेट उपस्थिति एवं किट वितरण A4 चेकलिस्ट प्रिंट करें" : "Print Gate & Kit Distribution Checklist"}
               >
                 <Printer size={14} color="var(--police-navy-900)" />
-                <span>🖨️ चेकलिस्ट प्रिंट</span>
+                <span>{isHindi ? '🖨️ चेकलिस्ट प्रिंट' : '🖨️ Print Checklist'}</span>
               </button>
 
               <button
@@ -1437,10 +1452,10 @@ export function AdminDashboard({
                   cursor: 'pointer',
                   boxShadow: 'var(--shadow-sm)'
                 }}
-                title="धावकों को WhatsApp एवं SMS प्रसारण कमांड सेंटर खोलें"
+                title={isHindi ? "धावकों को WhatsApp एवं SMS प्रसारण कमांड सेंटर खोलें" : "Open WhatsApp & SMS Broadcast Command Center"}
               >
                 <Radio size={14} color="#059669" />
-                <span>📢 WhatsApp व SMS प्रसारण</span>
+                <span>{isHindi ? '📢 संदेश प्रसारण' : '📢 Broadcast Center'}</span>
               </button>
 
               <button
@@ -1484,7 +1499,7 @@ export function AdminDashboard({
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase' }}>
-                  कुल पंजीकृत धावक
+                  {isHindi ? 'कुल पंजीकृत धावक' : 'Total Runners'}
                 </span>
                 <Users size={15} color="#2563eb" />
               </div>
@@ -1492,7 +1507,7 @@ export function AdminDashboard({
                 {(liveStats?.total || registrations.length).toLocaleString()}
               </div>
               <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '4px' }}>
-                {isDistrictRole ? `${adminUser.districtName?.split(' ')[0] || 'जिला'} आवंटित सूची` : `जयपुर: ${registrations.filter(r => r.venueType === 'jaipur').length.toLocaleString()} • अन्य जिले: ${registrations.filter(r => r.venueType !== 'jaipur').length.toLocaleString()}`}
+                {isDistrictRole ? (isHindi ? `${adminUser.districtName?.split(' ')[0] || 'जिला'} आवंटित सूची` : `${adminUser.districtName?.split(' ')[0] || 'District'} Allotted List`) : (isHindi ? `जयपुर: ${registrations.filter(r => r.venueType === 'jaipur').length.toLocaleString()} • अन्य जिले: ${registrations.filter(r => r.venueType !== 'jaipur').length.toLocaleString()}` : `Jaipur: ${registrations.filter(r => r.venueType === 'jaipur').length.toLocaleString()} • Other Districts: ${registrations.filter(r => r.venueType !== 'jaipur').length.toLocaleString()}`)}
               </div>
             </div>
 
@@ -1506,7 +1521,7 @@ export function AdminDashboard({
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#c2410c', textTransform: 'uppercase' }}>
-                  किट व बिब वितरण
+                  {isHindi ? 'किट व बिब वितरण' : 'Kit & Bib Handover'}
                 </span>
                 <Shirt size={15} color="#f97316" />
               </div>
@@ -1541,7 +1556,7 @@ export function AdminDashboard({
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#15803d', textTransform: 'uppercase' }}>
-                  गेट उपस्थिति (Scanned)
+                  {isHindi ? 'गेट उपस्थिति' : 'Gate Attendance'}
                 </span>
                 <QrCode size={15} color="#16a34a" />
               </div>
@@ -1549,7 +1564,7 @@ export function AdminDashboard({
                 {(certStats?.gateScanned || liveStats?.gateScanned || 2480).toLocaleString()}
               </div>
               <div style={{ fontSize: '0.7rem', color: '#15803d', marginTop: '4px', fontWeight: 600 }}>
-                ✓ क्यूआर कोड द्वारा अधिकृत प्रवेश
+                {isHindi ? '✓ क्यूआर कोड द्वारा अधिकृत प्रवेश' : '✓ Authorized QR Gate Entry'}
               </div>
             </div>
 
@@ -1563,7 +1578,7 @@ export function AdminDashboard({
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#a16207', textTransform: 'uppercase' }}>
-                  सर्टिफिकेट जारी
+                  {isHindi ? 'सर्टिफिकेट जारी' : 'Certificates Issued'}
                 </span>
                 <Award size={15} color="#d97706" />
               </div>
@@ -1571,7 +1586,7 @@ export function AdminDashboard({
                 {(certStats?.certificatesIssued || 1920).toLocaleString()}
               </div>
               <div style={{ fontSize: '0.7rem', color: '#a16207', marginTop: '4px' }}>
-                डिजिटल प्रमाणीकरण 1-क्लिक डिस्पैच
+                {isHindi ? 'डिजिटल प्रमाणीकरण डिस्पैच' : 'Digital Verification Dispatch'}
               </div>
             </div>
 
@@ -1585,7 +1600,7 @@ export function AdminDashboard({
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#b91c1c', textTransform: 'uppercase' }}>
-                  मेडिकल अलर्ट्स
+                  {isHindi ? 'मेडिकल अलर्ट्स' : 'Medical Alerts'}
                 </span>
                 <HeartPulse size={15} color="#dc2626" />
               </div>
@@ -1593,7 +1608,7 @@ export function AdminDashboard({
                 {(liveStats?.medicalAlerts || 48)}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-                <span style={{ fontSize: '0.7rem', color: '#b91c1c' }}>विशेष स्वास्थ्य निगरानी</span>
+                <span style={{ fontSize: '0.7rem', color: '#b91c1c' }}>{isHindi ? 'विशेष स्वास्थ्य निगरानी' : 'Special Health Watch'}</span>
                 <button
                   type="button"
                   onClick={() => {
@@ -1611,7 +1626,7 @@ export function AdminDashboard({
                     cursor: 'pointer'
                   }}
                 >
-                  {medicalFilter === "alerts_only" ? "हटाएं ✕" : "फ़िल्टर"}
+                  {medicalFilter === "alerts_only" ? (isHindi ? "हटाएं ✕" : "Clear ✕") : (isHindi ? "फ़िल्टर" : "Filter")}
                 </button>
               </div>
             </div>
@@ -1638,7 +1653,7 @@ export function AdminDashboard({
             }}
           >
             <Database size={15} color={adminTab === "registrations" ? "#2563eb" : "#64748b"} />
-            <span>{isDistrictRole ? `📋 ${adminUser.districtName?.split(' ')[0] || 'जिला'} धावक सूची एवं CSV` : '📋 राज्यव्यापी धावक सूची एवं CSV'}</span>
+            <span>{isDistrictRole ? (isHindi ? `📋 ${adminUser.districtName?.split(' ')[0] || 'जिला'} धावक सूची एवं CSV` : `📋 ${adminUser.districtName?.split(' ')[0] || 'District'} Runner Directory & CSV`) : (isHindi ? '📋 राज्यव्यापी धावक सूची एवं CSV' : '📋 Statewide Runner Directory & CSV')}</span>
           </button>
 
           {/* Show RFID Kit, Leaderboard & Live Radar ONLY for PHQ Level */}
@@ -1663,7 +1678,7 @@ export function AdminDashboard({
                 }}
               >
                 <PackageCheck size={16} color={adminTab === "kit_counter" ? "#2563eb" : "#64748b"} />
-                <span>RFID किट व बिब आवंटन (Expo Desk)</span>
+                <span>{isHindi ? 'RFID किट व बिब आवंटन' : 'RFID Kit & Bib Allotment'}</span>
                 <span style={{
                   background: '#fef3c7',
                   color: '#92400e',
@@ -1673,7 +1688,7 @@ export function AdminDashboard({
                   border: '1px solid #fde68a',
                   fontWeight: 700
                 }}>
-                  लाइव काउंटर
+                  {isHindi ? 'लाइव काउंटर' : 'Live Counter'}
                 </span>
               </button>
 
@@ -1696,7 +1711,7 @@ export function AdminDashboard({
                 }}
               >
                 <Trophy size={16} color={adminTab === "leaderboard" ? "#f59e0b" : "#64748b"} />
-                <span>🏆 रेस डे लीडरबोर्ड व परिणाम</span>
+                <span>{isHindi ? '🏆 रेस लीडरबोर्ड व परिणाम' : '🏆 Race Leaderboard & Results'}</span>
               </button>
 
               {/* Point 3: Volunteer & Gate Duty Roster Management */}
@@ -1718,7 +1733,7 @@ export function AdminDashboard({
                 }}
               >
                 <Users size={16} color={adminTab === "volunteers" ? "#16a34a" : "#64748b"} />
-                <span>👥 वॉलंटियर व ड्यूटी रोस्टर</span>
+                <span>{isHindi ? '👥 वॉलंटियर व ड्यूटी रोस्टर' : '👥 Volunteer & Duty Roster'}</span>
                 <span style={{
                   background: adminTab === "volunteers" ? '#dcfce7' : '#f1f5f9',
                   color: adminTab === "volunteers" ? '#15803d' : '#64748b',
@@ -1728,7 +1743,7 @@ export function AdminDashboard({
                   border: '1px solid #bbf7d0',
                   fontWeight: 700
                 }}>
-                  PHQ कमान
+                  {isHindi ? 'राज्य कमान' : 'State Command'}
                 </span>
               </button>
 
@@ -1751,7 +1766,7 @@ export function AdminDashboard({
                 }}
               >
                 <Award size={16} color={adminTab === "certificates" ? "#d97706" : "#64748b"} />
-                <span>🎖️ ई-प्रमाण पत्र प्रबंधन</span>
+                <span>{isHindi ? '🎖️ ई-प्रमाण पत्र प्रबंधन' : '🎖️ E-Certificates'}</span>
               </button>
 
               {/* Point 5: Dedicated WhatsApp & SMS Broadcast Command Center */}
@@ -1773,7 +1788,7 @@ export function AdminDashboard({
                 }}
               >
                 <Send size={15} color={adminTab === "broadcast" ? "#059669" : "#64748b"} />
-                <span>📢 संदेश प्रसारण (WhatsApp & SMS)</span>
+                <span>{isHindi ? '📢 संदेश प्रसारण' : '📢 Broadcast Center'}</span>
                 <span style={{
                   background: adminTab === "broadcast" ? '#d1fae5' : '#f1f5f9',
                   color: adminTab === "broadcast" ? '#065f46' : '#64748b',
@@ -1783,7 +1798,7 @@ export function AdminDashboard({
                   border: '1px solid #a7f3d0',
                   fontWeight: 800
                 }}>
-                  कमांड सेंटर
+                  {isHindi ? 'व्हाट्सएप / SMS' : 'WhatsApp / SMS'}
                 </span>
               </button>
             </>
@@ -1808,7 +1823,7 @@ export function AdminDashboard({
                 }}
               >
                 <QrCode size={15} color={adminTab === "district_certificates" ? "#2563eb" : "#64748b"} />
-                <span>🎖️ जिला ई-प्रमाण पत्र जारी एवं सत्यापन</span>
+                <span>{isHindi ? '🎖️ जिला ई-प्रमाण पत्र प्रबंधन' : '🎖️ District E-Certificates'}</span>
               </button>
 
               <button
@@ -1829,7 +1844,7 @@ export function AdminDashboard({
                 }}
               >
                 <HeartPulse size={15} color={adminTab === "district_medical" ? "#dc2626" : "#64748b"} />
-                <span>🚑 स्थानीय सुरक्षा व मेडिकल सूची</span>
+                <span>{isHindi ? '🚑 स्थानीय सुरक्षा व मेडिकल सूची' : '🚑 Local Medical & Safety Roster'}</span>
               </button>
 
               <button
@@ -1850,7 +1865,7 @@ export function AdminDashboard({
                 }}
               >
                 <Send size={15} color={adminTab === "broadcast" ? "#059669" : "#64748b"} />
-                <span>📢 जिला संदेश प्रसारण (WhatsApp & SMS)</span>
+                <span>{isHindi ? '📢 संदेश प्रसारण' : '📢 Broadcast Center'}</span>
               </button>
             </>
           )}
@@ -1967,47 +1982,33 @@ export function AdminDashboard({
                 <FileSpreadsheet size={20} color="var(--police-navy-900)" />
 
                 <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-
-                  डेटा एक्सपोर्ट केंद्र (Official CSV Export Engine)
-
+                  {isHindi ? 'डेटा एक्सपोर्ट केंद्र' : 'Data Export Center'}
                 </span>
 
-                <span className="badge-gov" style={{ fontSize: '0.68rem', padding: '1px 6px' }}>Excel / UTF-8 Ready</span>
+                <span className="badge-gov" style={{ fontSize: '0.68rem', padding: '1px 6px' }}>Excel / UTF-8</span>
 
               </div>
 
               <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-
-                डेटाबेस में कुल {liveStats?.total || registrations.length} राज्यव्यापी धावक पंजीकृत हैं
-
+                {isHindi 
+                  ? `डेटाबेस में कुल ${liveStats?.total || registrations.length} राज्यव्यापी धावक पंजीकृत हैं`
+                  : `Total ${liveStats?.total || registrations.length} statewide runners registered in database`}
               </span>
 
             </div>
 
-
-
             {isDistrictRole ? (
 
               <div style={{
-
                 background: '#ffffff',
-
                 padding: '16px 20px',
-
                 borderRadius: '6px',
-
                 border: '1.5px solid var(--police-navy-300)',
-
                 display: 'flex',
-
                 alignItems: 'center',
-
                 justifyContent: 'space-between',
-
                 flexWrap: 'wrap',
-
                 gap: '14px'
-
               }}>
 
                 <div>
@@ -2016,14 +2017,14 @@ export function AdminDashboard({
 
                     <MapPin size={18} color="var(--crimson-600)" />
 
-                    <span>📍 {adminUser.districtName || 'जिला'} धावक स्प्रेडशीट (Official District CSV)</span>
+                    <span>📍 {isHindi ? `${adminUser.districtName || 'जिला'} धावक स्प्रेडशीट` : `${adminUser.districtName || 'District'} Runner Spreadsheet`}</span>
 
                   </div>
 
                   <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-
-                    आपके जिले के सभी {filteredList.length} पंजीकृत धावकों का संपूर्ण विवरण एक्सेल (UTF-8) में डाउनलोड करें।
-
+                    {isHindi 
+                      ? `आपके जिले के सभी ${filteredList.length} पंजीकृत धावकों का संपूर्ण विवरण एक्सेल (UTF-8) में डाउनलोड करें।`
+                      : `Download full details of all ${filteredList.length} registered runners in your district in Excel (UTF-8).`}
                   </div>
 
                 </div>
@@ -2068,7 +2069,7 @@ export function AdminDashboard({
 
                   <Download size={16} />
 
-                  <span>{adminUser.districtName?.split(' ')[0] || 'जिले'} की धावक सूची डाउनलोड करें</span>
+                  <span>{isHindi ? `${adminUser.districtName?.split(' ')[0] || 'जिले'} की धावक सूची डाउनलोड करें` : `Download ${adminUser.districtName?.split(' ')[0] || 'District'} Runner CSV`}</span>
 
                 </button>
 
@@ -2086,7 +2087,7 @@ export function AdminDashboard({
 
                     <MapPin size={15} color="var(--crimson-600)" />
 
-                    <span>1. जिलावार अलग-अलग CSV डाउनलोड (District-wise):</span>
+                    <span>{isHindi ? '1. ज़िलावार अलग-अलग CSV डाउनलोड:' : '1. District-wise CSV Download:'}</span>
 
                   </div>
 
@@ -2158,16 +2159,16 @@ export function AdminDashboard({
 
                       <Download size={14} />
 
-                      <span>जिले की CSV डाउनलोड करें</span>
+                      <span>{isHindi ? 'जिले की CSV डाउनलोड करें' : 'Download District CSV'}</span>
 
                     </button>
 
                   </div>
 
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-
-                    चयनित जिले का पूरा विवरण, बिब, मोबाइल एवं साइज अलग स्प्रेडशीट में सेव होगा।
-
+                    {isHindi 
+                      ? 'चयनित जिले का पूरा विवरण, बिब, मोबाइल एवं साइज अलग स्प्रेडशीट में सेव होगा।'
+                      : 'Full details, bibs, mobile numbers and sizes of selected district will be exported.'}
                   </div>
 
                 </div>
@@ -2182,7 +2183,7 @@ export function AdminDashboard({
 
                     <Database size={15} color="var(--police-gold-700)" />
 
-                    <span>2. सम्पूर्ण राज्य मास्टर डेटा (All-in-One Consolidated):</span>
+                    <span>{isHindi ? '2. सम्पूर्ण राज्य मास्टर डेटा:' : '2. Consolidated Statewide Master Data:'}</span>
 
                   </div>
 
@@ -2228,16 +2229,16 @@ export function AdminDashboard({
 
                       <Download size={15} color="var(--police-gold-400)" />
 
-                      <span>🌐 सम्पूर्ण राजस्थान (All 50 Districts Master CSV)</span>
+                      <span>{isHindi ? '🌐 सम्पूर्ण राजस्थान मास्टर CSV डाउनलोड' : '🌐 Download Statewide Master CSV (All 50 Districts)'}</span>
 
                     </button>
 
                   </div>
 
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-
-                    एक ही फाइल में सभी 50 जिलों एवं अल्बर्ट हॉल फ्लैगशिप का सम्पूर्ण समेकित रिकॉर्ड।
-
+                    {isHindi 
+                      ? 'एक ही फाइल में सभी जिलों एवं अल्बर्ट हॉल फ्लैगशिप का सम्पूर्ण समेकित रिकॉर्ड।'
+                      : 'Consolidated master records for all districts and Albert Hall flagship.'}
                   </div>
 
                 </div>
@@ -2419,64 +2420,34 @@ export function AdminDashboard({
               <div style={{ position: 'relative', minWidth: '200px' }}>
 
                 <input
-
                   type="text"
-
-                  placeholder="नाम, बिब, मोबाइल खोजें..."
-
+                  placeholder={isHindi ? "नाम, बिब, मोबाइल या ईमेल खोजें..." : "Search name, bib, mobile or email..."}
                   value={searchTerm}
-
                   onChange={(e) => setSearchTerm(e.target.value)}
-
                   style={{
-
                     width: '100%',
-
                     padding: '7px 10px 7px 30px',
-
                     borderRadius: '4px',
-
                     background: '#ffffff',
-
                     border: '1px solid var(--border-strong)',
-
                     color: 'var(--text-main)',
-
                     fontSize: '0.82rem'
-
                   }}
-
                 />
-
                 <Search size={14} color="var(--text-muted)" style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)' }} />
-
               </div>
 
-
-
               <select
-
                 value={selectedCatFilter}
-
                 onChange={(e) => setSelectedCatFilter(e.target.value)}
-
                 style={{ padding: '7px 10px', borderRadius: '4px', background: '#ffffff', border: '1px solid var(--border-strong)', color: 'var(--text-main)', fontSize: '0.82rem' }}
-
               >
-
-                <option value="all">सभी कैटेगरीज (All)</option>
-
-                <option value="21k">21 KM Half Marathon</option>
-
-                <option value="10k">10 KM Speed Run</option>
-
-                <option value="5k">5 KM Community</option>
-
-                <option value="2k">2 KM Family Walk</option>
-
+                <option value="all">{isHindi ? 'सभी श्रेणियां' : 'All Categories'}</option>
+                <option value="21k">{isHindi ? '21 किमी हाफ मैराथन' : '21 KM Half Marathon'}</option>
+                <option value="10k">{isHindi ? '10 किमी ओपन रन' : '10 KM Open Run'}</option>
+                <option value="5k">{isHindi ? '5 किमी कम्युनिटी रन' : '5 KM Community Run'}</option>
+                <option value="2k">{isHindi ? '2 किमी फैमिली वॉक' : '2 KM Family Walk'}</option>
               </select>
-
-
 
               {/* District Filter: Locked badge if District SP, Select if PHQ */}
               {isDistrictRole ? (
@@ -2493,16 +2464,21 @@ export function AdminDashboard({
                   gap: '6px'
                 }}>
                   <MapPin size={13} color="#dc2626" />
-                  <span>📍 {adminUser.districtName || 'जिला कमान'} (अधिकार क्षेत्र)</span>
+                  <span>📍 {adminUser.districtName || 'जिला कमान'} {isHindi ? '(अधिकार क्षेत्र)' : '(Jurisdiction)'}</span>
                 </div>
               ) : (
                 <select
                   value={districtFilter}
-                  onChange={(e) => setDistrictFilter(e.target.value)}
+                  onChange={(e) => {
+                    const newDist = e.target.value;
+                    setDistrictFilter(newDist);
+                    setCurrentPage(1);
+                    loadLiveDashboardData(newDist);
+                  }}
                   style={{ padding: '7px 10px', borderRadius: '4px', background: '#ffffff', border: '1px solid var(--border-strong)', color: 'var(--text-main)', fontSize: '0.82rem', maxWidth: '240px' }}
                 >
-                  <option value="all">सभी स्थान / समस्त जिले</option>
-                  <option value="jaipur">जयपुर फ्लैगशिप (अल्बर्ट हॉल)</option>
+                  <option value="all">{isHindi ? 'सभी स्थान / समस्त जिले' : 'All Locations / All Districts'}</option>
+                  <option value="jaipur">{isHindi ? 'जयपुर फ्लैगशिप (अल्बर्ट हॉल)' : 'Jaipur Flagship (Albert Hall)'}</option>
                   {RAJASTHAN_POLICE_DISTRICTS.map(d => (
                     <option key={d.id} value={d.name}>{d.name}</option>
                   ))}
@@ -2514,11 +2490,11 @@ export function AdminDashboard({
                 value={kitFilter}
                 onChange={(e) => setKitFilter(e.target.value)}
                 style={{ padding: '7px 10px', borderRadius: '4px', background: '#ffffff', border: '1px solid var(--border-strong)', color: 'var(--text-main)', fontSize: '0.82rem' }}
-                title="किट वितरण स्थिति अनुसार फ़िल्टर"
+                title={isHindi ? "किट वितरण स्थिति अनुसार फ़िल्टर" : "Filter by Kit Status"}
               >
-                <option value="all">सभी किट स्थिति (Kit All)</option>
-                <option value="collected">✅ किट प्राप्त (Collected)</option>
-                <option value="pending">⏳ किट लंबित (Pending)</option>
+                <option value="all">{isHindi ? 'सभी किट स्थिति' : 'All Kit Status'}</option>
+                <option value="collected">{isHindi ? '✅ किट प्राप्त' : '✅ Kit Collected'}</option>
+                <option value="pending">{isHindi ? '⏳ किट लंबित' : '⏳ Kit Pending'}</option>
               </select>
 
               {/* Smart Medical Alert Filter */}
@@ -2534,10 +2510,10 @@ export function AdminDashboard({
                   fontSize: '0.82rem',
                   fontWeight: medicalFilter === "alerts_only" ? 800 : 400
                 }}
-                title="स्वास्थ्य एवं मेडिकल अलर्ट अनुसार फ़िल्टर"
+                title={isHindi ? "स्वास्थ्य एवं मेडिकल अलर्ट अनुसार फ़िल्टर" : "Filter by Medical Alert"}
               >
-                <option value="all">सभी स्वास्थ्य स्थिति</option>
-                <option value="alerts_only">⚠️ केवल मेडिकल अलर्ट्स (High Alert)</option>
+                <option value="all">{isHindi ? 'सभी स्वास्थ्य स्थिति' : 'All Health Status'}</option>
+                <option value="alerts_only">{isHindi ? '⚠️ केवल मेडिकल अलर्ट्स' : '⚠️ Medical Alerts Only'}</option>
               </select>
 
               {/* Smart T-Shirt Size Filter */}
@@ -2545,9 +2521,9 @@ export function AdminDashboard({
                 value={tshirtFilter}
                 onChange={(e) => setTshirtFilter(e.target.value)}
                 style={{ padding: '7px 10px', borderRadius: '4px', background: '#ffffff', border: '1px solid var(--border-strong)', color: 'var(--text-main)', fontSize: '0.82rem' }}
-                title="टी-शर्ट साइज़ अनुसार फ़िल्टर"
+                title={isHindi ? "टी-शर्ट साइज़ अनुसार फ़िल्टर" : "Filter by T-Shirt Size"}
               >
-                <option value="all">सभी साइज़ (Size All)</option>
+                <option value="all">{isHindi ? 'सभी साइज़' : 'All Sizes'}</option>
                 <option value="XS">Size XS</option>
                 <option value="S">Size S</option>
                 <option value="M">Size M</option>
@@ -2580,55 +2556,11 @@ export function AdminDashboard({
                   gap: '5px',
                   boxShadow: 'var(--shadow-sm)'
                 }}
-                title="वर्तमान फ़िल्टर किए गए धावकों की सूची एक्सेल में डाउनलोड करें"
+                title={isHindi ? "वर्तमान फ़िल्टर किए गए धावकों की सूची एक्सेल में डाउनलोड करें" : "Download filtered runners as CSV"}
               >
                 <Download size={13} />
-                <span>फ़िल्टर CSV ({filteredList.length})</span>
+                <span>{isHindi ? `फ़िल्टर CSV (${filteredList.length})` : `Filtered CSV (${filteredList.length})`}</span>
               </button>
-
-              {!isDistrictRole && (
-
-                <button
-
-                  type="button"
-
-                  onClick={() => setShowUnmaskedId(!showUnmaskedId)}
-
-                  style={{
-
-                    padding: '5px 10px',
-
-                    borderRadius: '4px',
-
-                    fontSize: '0.75rem',
-
-                    fontWeight: 700,
-
-                    background: showUnmaskedId ? '#fee2e2' : 'var(--police-navy-50)',
-
-                    color: showUnmaskedId ? '#991b1b' : 'var(--police-navy-900)',
-
-                    border: `1.5px solid ${showUnmaskedId ? '#f87171' : 'var(--police-navy-200)'}`,
-
-                    cursor: 'pointer',
-
-                    display: 'inline-flex',
-
-                    alignItems: 'center',
-
-                    gap: '4px'
-
-                  }}
-
-                  title="PHQ राज्य नोडल कमान विशेषाधिकार"
-
-                >
-
-                  <span>{showUnmaskedId ? '🔒 पुनः मास्क करें' : '👁️ अनमास्क ID (PHQ View)'}</span>
-
-                </button>
-
-              )}
 
 
 
@@ -2675,21 +2607,17 @@ export function AdminDashboard({
               </button>
 
               <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-
-                {filteredList.length} रिकॉर्ड्स प्रदर्शित
-
+                {isHindi 
+                  ? `कुल ${totalFilteredCount} में से ${totalFilteredCount === 0 ? 0 : startIndex + 1}-${endIndex} धावक प्रदर्शित` 
+                  : `Showing ${totalFilteredCount === 0 ? 0 : startIndex + 1}-${endIndex} of ${totalFilteredCount} runners`}
               </div>
-
             </div>
-
           </div>
-
-
 
           {/* Table / Mobile Cards Dynamic Container */}
           {viewMode === 'cards' ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {filteredList.map((row) => (
+              {paginatedList.map((row) => (
                 <div key={row.id} className="admin-runner-card">
                   {/* Top Bar: Bib Number, Blood Group & Kit Button */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -2734,7 +2662,7 @@ export function AdminDashboard({
                         gap: '4px'
                       }}
                     >
-                      {row.bibCollected ? '✓ किट प्राप्त' : '⏳ किट पेंडिंग'}
+                      {row.bibCollected ? (isHindi ? '✓ किट प्राप्त' : '✓ Kit Collected') : (isHindi ? '⏳ किट पेंडिंग' : '⏳ Kit Pending')}
                     </button>
                   </div>
 
@@ -2753,22 +2681,28 @@ export function AdminDashboard({
                   {/* Detail Chips Grid */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', fontSize: '0.75rem', background: '#f8fafc', padding: '8px 10px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
                     <div>
-                      <span style={{ color: '#64748b' }}>श्रेणी:</span> <strong style={{ color: '#0f172a' }}>{row.categoryName}</strong>
+                      <span style={{ color: '#64748b' }}>{isHindi ? 'श्रेणी:' : 'Category:'}</span> <strong style={{ color: '#0f172a' }}>{row.categoryName}</strong>
                     </div>
                     <div>
-                      <span style={{ color: '#64748b' }}>जिला:</span> <strong style={{ color: '#0f172a' }}>{row.districtName}</strong>
+                      <span style={{ color: '#64748b' }}>{isHindi ? 'जिला:' : 'District:'}</span> <strong style={{ color: '#0f172a' }}>{row.districtName}</strong>
                     </div>
                     <div>
-                      <span style={{ color: '#64748b' }}>फोन:</span> <a href={`tel:${row.mobile}`} style={{ color: '#1d4ed8', fontWeight: 700, textDecoration: 'none' }}>📞 {row.mobile}</a>
+                      <span style={{ color: '#64748b' }}>{isHindi ? 'फोन:' : 'Mobile:'}</span> <a href={`tel:${row.mobile}`} style={{ color: '#1d4ed8', fontWeight: 700, textDecoration: 'none' }}>📞 {row.mobile}</a>
                     </div>
                     <div>
-                      <span style={{ color: '#64748b' }}>टी-शर्ट:</span> <strong style={{ color: '#0f172a' }}>{row.tshirtSize || 'N/A'}</strong>
+                      <span style={{ color: '#64748b' }}>{isHindi ? 'टी-शर्ट:' : 'T-Shirt:'}</span> <strong style={{ color: '#0f172a' }}>{row.tshirtSize || 'N/A'}</strong>
                     </div>
+                    {row.email && row.email !== 'police.run@rajasthan.gov.in' ? (
+                      <div>
+                        <span style={{ color: '#64748b' }}>{isHindi ? 'ईमेल:' : 'Email:'}</span> <span style={{ color: '#334155', wordBreak: 'break-all' }}>{row.email}</span>
+                      </div>
+                    ) : (
+                      <div>
+                        <span style={{ color: '#64748b' }}>{isHindi ? 'पंजीयन:' : 'Registration:'}</span> <strong style={{ color: '#059669' }}>{isHindi ? 'सत्यापित' : 'Confirmed'}</strong>
+                      </div>
+                    )}
                     <div>
-                      <span style={{ color: '#64748b' }}>पहचान:</span> <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{showUnmaskedId && !isDistrictRole && row.idRaw ? row.idRaw : (row.idMasked || 'XXXX-XXXX-1048')}</span>
-                    </div>
-                    <div>
-                      <span style={{ color: '#64748b' }}>RFID:</span> <span style={{ fontFamily: 'monospace', fontWeight: 700, color: row.rfidTagId ? '#059669' : '#94a3b8' }}>{row.rfidTagId ? `#${row.rfidTagId}` : 'लंबित'}</span>
+                      <span style={{ color: '#64748b' }}>RFID:</span> <span style={{ fontFamily: 'monospace', fontWeight: 700, color: row.rfidTagId ? '#059669' : '#94a3b8' }}>{row.rfidTagId ? `#${row.rfidTagId}` : (isHindi ? 'लंबित' : 'Pending')}</span>
                     </div>
                   </div>
 
@@ -2787,214 +2721,232 @@ export function AdminDashboard({
           ) : (
             <>
               <div className="admin-scroll-hint">
-                <span>↔️ पूरी तालिका देखने के लिए दायें/बायें स्वाइप करें (Swipe table horizontally)</span>
+                <span>↔️ {isHindi ? 'पूरी तालिका देखने के लिए दायें/बायें स्वाइप करें' : 'Swipe table horizontally to view all columns'}</span>
               </div>
               <div className="admin-table-scroll">
-<table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem', color: 'var(--text-body)' }}>
-
-              <thead style={{ background: '#f8fafc', color: '#475569', textTransform: 'uppercase', fontSize: '0.72rem', position: 'sticky', top: 0, zIndex: 2, borderBottom: '1.5px solid #e2e8f0', fontWeight: 800 }}>
-
-                <tr>
-
-                  <th style={{ padding: '10px 12px' }}>Bib #</th>
-
-                  <th style={{ padding: '10px 12px' }}>धावक विवरण व रक्त समूह</th>
-
-                  <th style={{ padding: '10px 12px' }}>पहचान पत्र (Govt ID)</th>
-
-                  <th style={{ padding: '10px 12px' }}>कैटेगरी & जिला</th>
-
-                  <th style={{ padding: '10px 12px' }}>टी-शर्ट</th>
-
-                  <th style={{ padding: '10px 12px' }}>एक्सपो स्टेटस & RFID</th>
-
-                  <th style={{ padding: '10px 12px' }}>रेस समय</th>
-
-                  <th style={{ padding: '10px 12px' }}>सर्टिफिकेट ID</th>
-
-                </tr>
-
-              </thead>
-
-              <tbody>
-
-                {filteredList.map((row) => (
-
-                  <tr key={row.id} style={{ borderBottom: '1px solid var(--border-subtle)', background: '#ffffff' }}>
-
-                    <td style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--crimson-600)', fontFamily: 'monospace' }}>
-
-                      {row.bibNumber}
-
-                    </td>
-
-                    <td style={{ padding: '10px 12px' }}>
-
-                      <div style={{ fontWeight: 700, color: 'var(--police-navy-900)' }}>{row.fullName}</div>
-
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '2px' }}>
-
-                        <span>{row.mobile}</span>
-
-                        <span style={{ background: '#fee2e2', color: '#991b1b', padding: '1px 5px', borderRadius: '3px', fontWeight: 800, fontSize: '0.67rem' }}>
-
-                          🩸 {row.bloodGroup || 'O+'}
-
-                        </span>
-
-                        {row.medicalCondition && row.medicalCondition !== 'None' && (
-
-                          <span style={{ background: '#fef3c7', color: '#92400e', padding: '1px 5px', borderRadius: '3px', fontWeight: 800, fontSize: '0.67rem' }} title={row.medicalNotes || row.medicalCondition}>
-
-                            ⚠️ {row.medicalCondition}
-
-                          </span>
-
-                        )}
-
-                      </div>
-
-                    </td>
-
-                    <td style={{ padding: '10px 12px' }}>
-
-                      <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--police-navy-900)' }}>
-
-                        {row.idType || 'Aadhaar'}
-
-                      </div>
-
-                      <div style={{
-
-                        fontSize: '0.74rem',
-
-                        fontFamily: 'monospace',
-
-                        color: showUnmaskedId && !isDistrictRole && row.idRaw ? '#b91c1c' : 'var(--text-muted)',
-
-                        fontWeight: 700
-
-                      }}>
-
-                        {showUnmaskedId && !isDistrictRole && row.idRaw ? row.idRaw : (row.idMasked || 'XXXX-XXXX-1048')}
-
-                      </div>
-
-                    </td>
-
-                    <td style={{ padding: '10px 12px' }}>
-
-                      <div style={{ color: 'var(--police-navy-800)', fontWeight: 600 }}>{row.categoryName}</div>
-
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{row.districtName}</div>
-
-                    </td>
-
-                    <td style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-
-                      {row.tshirtSize && row.tshirtSize !== 'N/A' ? row.tshirtSize : <span style={{ color: '#94a3b8', fontSize: '0.78rem' }}>N/A (कम्युनिटी)</span>}
-
-                    </td>
-
-                    <td style={{ padding: '10px 12px' }}>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-
-                        <button
-
-                          onClick={() => toggleBibCollection(row.id)}
-
-                          style={{
-
-                            padding: '3px 8px',
-
-                            borderRadius: '4px',
-
-                            fontSize: '0.72rem',
-
-                            fontWeight: 700,
-
-                            background: row.bibCollected ? '#dcfce7' : '#fee2e2',
-
-                            color: row.bibCollected ? '#15803d' : '#b91c1c',
-
-                            border: `1px solid ${row.bibCollected ? '#86efac' : '#fca5a5'}`,
-
-                            cursor: 'pointer',
-
-                            display: 'inline-flex',
-
-                            alignItems: 'center',
-
-                            gap: '4px'
-
-                          }}
-
-                        >
-
-                          {row.bibCollected ? '✓ किट प्राप्त' : 'पेंडिंग'}
-
-                        </button>
-
-                        {row.physicalBibNumber && (
-
-                          <span style={{ fontSize: '0.68rem', fontFamily: 'monospace', color: '#b91c1c', fontWeight: 900, background: '#fef2f2', padding: '1px 6px', borderRadius: '4px', border: '1px solid #fecaca' }}>
-
-                            Bib: #{row.physicalBibNumber}
-
-                          </span>
-
-                        )}
-
-                        {row.rfidTagId && (
-
-                          <span style={{ fontSize: '0.66rem', fontFamily: 'monospace', color: 'var(--police-navy-700)', fontWeight: 800 }}>
-
-                            RFID: #{row.rfidTagId}
-
-                          </span>
-
-                        )}
-
-                      </div>
-
-                    </td>
-
-                    <td style={{ padding: '10px 12px' }}>
-
-                      <div style={{ fontWeight: 800, color: 'var(--police-navy-900)' }}>{row.finishTime || 'Running...'}</div>
-
-                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Net: {row.chipTime || 'N/A'}</div>
-
-                    </td>
-
-                    <td style={{ padding: '10px 12px' }}>
-
-                      <div style={{ fontSize: '0.72rem', fontFamily: 'monospace', color: 'var(--police-gold-700)', fontWeight: 800 }}>
-
-                        {row.certificateId}
-
-                      </div>
-
-                      <div style={{ fontSize: '0.68rem', color: '#059669', display: 'flex', alignItems: 'center', gap: '3px' }}>
-
-                        <Send size={10} /> Auto-Dispatched
-
-                      </div>
-
-                    </td>
-
-                  </tr>
-
-                ))}
-
-              </tbody>
-
-            </table>
-
-          </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem', color: 'var(--text-body)' }}>
+                  <thead style={{ background: '#f8fafc', color: '#475569', textTransform: 'uppercase', fontSize: '0.72rem', position: 'sticky', top: 0, zIndex: 2, borderBottom: '1.5px solid #e2e8f0', fontWeight: 800 }}>
+                    <tr>
+                      <th style={{ padding: '10px 12px' }}>{isHindi ? 'बिब #' : 'Bib #'}</th>
+                      <th style={{ padding: '10px 12px' }}>{isHindi ? 'धावक विवरण व संपर्क' : 'Runner Details & Contact'}</th>
+                      <th style={{ padding: '10px 12px' }}>{isHindi ? 'कैटेगरी & जिला' : 'Category & District'}</th>
+                      <th style={{ padding: '10px 12px' }}>{isHindi ? 'टी-शर्ट' : 'T-Shirt'}</th>
+                      <th style={{ padding: '10px 12px' }}>{isHindi ? 'एक्सपो स्टेटस & RFID' : 'Expo Status & RFID'}</th>
+                      <th style={{ padding: '10px 12px' }}>{isHindi ? 'रेस समय' : 'Race Time'}</th>
+                      <th style={{ padding: '10px 12px' }}>{isHindi ? 'सर्टिफिकेट ID' : 'Certificate ID'}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedList.map((row) => (
+                      <tr key={row.id} style={{ borderBottom: '1px solid var(--border-subtle)', background: '#ffffff' }}>
+                        <td style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--crimson-600)', fontFamily: 'monospace' }}>
+                          {row.bibNumber}
+                        </td>
+                        <td style={{ padding: '10px 12px' }}>
+                          <div style={{ fontWeight: 700, color: 'var(--police-navy-900)' }}>{row.fullName}</div>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '2px' }}>
+                            <a href={`tel:${row.mobile}`} style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: 600 }}>📞 {row.mobile}</a>
+                            {row.email && row.email !== 'police.run@rajasthan.gov.in' && (
+                              <span style={{ color: '#475569' }}>✉️ {row.email}</span>
+                            )}
+                            <span style={{ background: '#fee2e2', color: '#991b1b', padding: '1px 5px', borderRadius: '3px', fontWeight: 800, fontSize: '0.67rem' }}>
+                              🩸 {row.bloodGroup || 'O+'}
+                            </span>
+                            {row.medicalCondition && row.medicalCondition !== 'None' && (
+                              <span style={{ background: '#fef3c7', color: '#92400e', padding: '1px 5px', borderRadius: '3px', fontWeight: 800, fontSize: '0.67rem' }} title={row.medicalNotes || row.medicalCondition}>
+                                ⚠️ {row.medicalCondition}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td style={{ padding: '10px 12px' }}>
+                          <div style={{ color: 'var(--police-navy-800)', fontWeight: 600 }}>{row.categoryName}</div>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{row.districtName}</div>
+                        </td>
+                        <td style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-900)' }}>
+                          {row.tshirtSize && row.tshirtSize !== 'N/A' ? row.tshirtSize : <span style={{ color: '#94a3b8', fontSize: '0.78rem' }}>N/A</span>}
+                        </td>
+                        <td style={{ padding: '10px 12px' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                            <button
+                              onClick={() => toggleBibCollection(row.id)}
+                              style={{
+                                padding: '3px 8px',
+                                borderRadius: '4px',
+                                fontSize: '0.72rem',
+                                fontWeight: 700,
+                                background: row.bibCollected ? '#dcfce7' : '#fee2e2',
+                                color: row.bibCollected ? '#15803d' : '#b91c1c',
+                                border: `1px solid ${row.bibCollected ? '#86efac' : '#fca5a5'}`,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px'
+                              }}
+                            >
+                              {row.bibCollected ? (isHindi ? '✓ किट प्राप्त' : '✓ Kit Collected') : (isHindi ? '⏳ किट पेंडिंग' : '⏳ Kit Pending')}
+                            </button>
+                            {row.physicalBibNumber && (
+                              <span style={{ fontSize: '0.68rem', fontFamily: 'monospace', color: '#b91c1c', fontWeight: 900, background: '#fef2f2', padding: '1px 6px', borderRadius: '4px', border: '1px solid #fecaca' }}>
+                                Bib: #{row.physicalBibNumber}
+                              </span>
+                            )}
+                            {row.rfidTagId && (
+                              <span style={{ fontSize: '0.66rem', fontFamily: 'monospace', color: 'var(--police-navy-700)', fontWeight: 800 }}>
+                                RFID: #{row.rfidTagId}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td style={{ padding: '10px 12px' }}>
+                          <div style={{ fontWeight: 800, color: 'var(--police-navy-900)' }}>{row.finishTime || 'Running...'}</div>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Net: {row.chipTime || 'N/A'}</div>
+                        </td>
+                        <td style={{ padding: '10px 12px' }}>
+                          <div style={{ fontSize: '0.72rem', fontFamily: 'monospace', color: 'var(--police-gold-700)', fontWeight: 800 }}>
+                            {row.certificateId}
+                          </div>
+                          <div style={{ fontSize: '0.68rem', color: '#059669', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                            <Send size={10} /> {isHindi ? 'स्वतः जारी' : 'Auto-Dispatched'}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </>
           )}
+
+          {/* Clean Modern Pagination Toolbar (15-20 rows view) */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '12px',
+            padding: '12px 16px',
+            background: '#ffffff',
+            border: '1.5px solid #e2e8f0',
+            borderTop: 'none',
+            borderRadius: '0 0 8px 8px',
+            fontSize: '0.8rem',
+            color: '#475569'
+          }}>
+            {/* Left: Range and Total Count */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>
+                {isHindi ? (
+                  <>कुल <strong>{totalFilteredCount}</strong> में से <strong>{totalFilteredCount === 0 ? 0 : startIndex + 1} - {endIndex}</strong> धावक प्रदर्शित</>
+                ) : (
+                  <>Showing <strong>{totalFilteredCount === 0 ? 0 : startIndex + 1} - {endIndex}</strong> of <strong>{totalFilteredCount}</strong> runners</>
+                )}
+              </span>
+            </div>
+
+            {/* Middle: Page Navigation Buttons */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <button
+                type="button"
+                onClick={() => setCurrentPage(1)}
+                disabled={validCurrentPage <= 1}
+                style={{
+                  padding: '5px 9px',
+                  borderRadius: '5px',
+                  border: '1px solid #cbd5e1',
+                  background: validCurrentPage <= 1 ? '#f1f5f9' : '#ffffff',
+                  color: validCurrentPage <= 1 ? '#94a3b8' : '#1e293b',
+                  fontWeight: 700,
+                  cursor: validCurrentPage <= 1 ? 'not-allowed' : 'pointer'
+                }}
+                title={isHindi ? "पहला पृष्ठ" : "First Page"}
+              >
+                «
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={validCurrentPage <= 1}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '5px',
+                  border: '1px solid #cbd5e1',
+                  background: validCurrentPage <= 1 ? '#f1f5f9' : '#ffffff',
+                  color: validCurrentPage <= 1 ? '#94a3b8' : '#1e293b',
+                  fontWeight: 700,
+                  cursor: validCurrentPage <= 1 ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {isHindi ? '‹ पिछला' : '‹ Prev'}
+              </button>
+
+              <span style={{ padding: '0 8px', fontWeight: 700, color: '#0f172a' }}>
+                {isHindi ? `पृष्ठ ${validCurrentPage} / ${totalPages}` : `Page ${validCurrentPage} of ${totalPages}`}
+              </span>
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={validCurrentPage >= totalPages}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '5px',
+                  border: '1px solid #cbd5e1',
+                  background: validCurrentPage >= totalPages ? '#f1f5f9' : '#ffffff',
+                  color: validCurrentPage >= totalPages ? '#94a3b8' : '#1e293b',
+                  fontWeight: 700,
+                  cursor: validCurrentPage >= totalPages ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {isHindi ? 'अगला ›' : 'Next ›'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={validCurrentPage >= totalPages}
+                style={{
+                  padding: '5px 9px',
+                  borderRadius: '5px',
+                  border: '1px solid #cbd5e1',
+                  background: validCurrentPage >= totalPages ? '#f1f5f9' : '#ffffff',
+                  color: validCurrentPage >= totalPages ? '#94a3b8' : '#1e293b',
+                  fontWeight: 700,
+                  cursor: validCurrentPage >= totalPages ? 'not-allowed' : 'pointer'
+                }}
+                title={isHindi ? "अंतिम पृष्ठ" : "Last Page"}
+              >
+                »
+              </button>
+            </div>
+
+            {/* Right: Page Size Selector */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '0.76rem', color: '#64748b' }}>
+                {isHindi ? 'प्रति पृष्ठ:' : 'Per page:'}
+              </span>
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                style={{
+                  padding: '4px 8px',
+                  borderRadius: '5px',
+                  border: '1px solid #cbd5e1',
+                  background: '#ffffff',
+                  color: '#1e293b',
+                  fontSize: '0.78rem',
+                  fontWeight: 700
+                }}
+              >
+                <option value={15}>{isHindi ? '15 धावक' : '15 rows'}</option>
+                <option value={20}>{isHindi ? '20 धावक' : '20 rows'}</option>
+                <option value={50}>{isHindi ? '50 धावक' : '50 rows'}</option>
+                <option value={100}>{isHindi ? '100 धावक' : '100 rows'}</option>
+              </select>
+            </div>
+          </div>
 
         </>
 
