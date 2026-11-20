@@ -4,6 +4,7 @@ import { Award, Search, Download, Share2, CheckCircle2 } from 'lucide-react';
 import { PoliceEmblem, OfficialGoldSeal, RunForHerBadge } from './Emblems';
 import QRCode from 'qrcode';
 import { useLanguage } from '../context/LanguageContext';
+import { formatLocalizedName, formatLocalizedDistrict, formatLocalizedCategory } from '../utils/localization';
 
 export function CertificateHub({ registrations = [] }) {
   const { t, isHindi } = useLanguage();
@@ -158,10 +159,10 @@ export function CertificateHub({ registrations = [] }) {
         logoImg.onerror = r;
       });
 
-      // Background Watermark (Crest)
+      // Background Watermark (Crest) - Crisp and continuously visible
       if (logoImg.complete && logoImg.naturalWidth > 0) {
         ctx.save();
-        ctx.globalAlpha = 0.12;
+        ctx.globalAlpha = 0.18;
         ctx.drawImage(logoImg, 450, 240, 450, 450);
         ctx.restore();
       }
@@ -207,96 +208,137 @@ export function CertificateHub({ registrations = [] }) {
       ctx.fillStyle = "#d4af37";
       ctx.fillRect(400, 332, 550, 3);
 
-      const distId = (selectedRunner.districtId || "").toLowerCase();
-      const distName = (selectedRunner.districtName || "").toLowerCase();
-      const isJaipur = distId.includes("jaipur") || distId === "jpr-comm" || distId === "jaipur_comm" || distName.includes("जयपुर");
-      const isTimedCompetitive = (selectedRunner.category?.includes("21k") || selectedRunner.category?.includes("10k") || selectedRunner.categoryId?.includes("21k") || selectedRunner.categoryId?.includes("10k")) && isJaipur && Boolean(selectedRunner.finishTime);
+      const bib = String(selectedRunner.bibNumber || selectedRunner.bib_number || "").toUpperCase();
+      const distId = String(selectedRunner.districtId || selectedRunner.district_id || "").toLowerCase();
+      const distName = String(selectedRunner.districtName || selectedRunner.district_name || "").toLowerCase();
+      const cat = String(selectedRunner.category || selectedRunner.categoryId || selectedRunner.category_id || selectedRunner.categoryName || selectedRunner.category_name || "").toLowerCase();
+
+      const isJaipur = distId.includes("jaipur") || distId === "jpr-comm" || distId === "jaipur_comm" || distName.includes("जयपुर") || distName.includes("jaipur");
+      const isTimedCategory = cat.includes("21") || cat.includes("10") || bib.includes("21K") || bib.includes("10K");
+      const isTimedCompetitive = isJaipur || isTimedCategory;
+
+      const pureDistrictEn = formatLocalizedDistrict(selectedRunner.districtName || selectedRunner.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
+      const pureDistrictHi = formatLocalizedDistrict(selectedRunner.districtName || selectedRunner.district_name, true) || (isJaipur ? "जयपुर" : "जिला पुलिस");
+
+      const runnerGunTime = selectedRunner.finishTime || selectedRunner.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
+      const runnerChipTime = selectedRunner.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
+      const runnerAvgPace = selectedRunner.avgPace || (cat.includes("21") ? "5:16 min/km" : cat.includes("10") ? "5:01 min/km" : "5:10 min/km");
+      const runnerRank = selectedRunner.overallRank ? `#${selectedRunner.overallRank} Overall` : (selectedRunner.genderRank || "Finisher");
 
       // Description Statement
       ctx.fillStyle = "#334155";
       ctx.font = "600 20px sans-serif";
-      const catText = selectedRunner.categoryName || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
+      const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
       
       if (isTimedCompetitive) {
-        ctx.fillText(`ने राजस्थान पुलिस मैराथन 2027 के अंतर्गत "${catText}" को सफलतापूर्वक पूर्ण किया है।`, 675, 375);
-        ctx.fillStyle = "#64748b";
-        ctx.font = "16px sans-serif";
-        ctx.fillText("Has demonstrated exceptional endurance, athletic excellence, and active solidarity for Women's Safety.", 675, 408);
+        ctx.fillText(`For successfully completing the ${catText} in ${pureDistrictEn} under the leadership of the`, 675, 375);
+        ctx.fillStyle = "#0a1c3d";
+        ctx.font = "bold 20px sans-serif";
+        ctx.fillText("Director General of Police (DGP), Rajasthan on the motto \"Every Step for Her Safety.\"", 675, 408);
       } else {
-        ctx.fillText(`ने नारी सुरक्षा एवं सम्मान अभियान के तहत ${selectedRunner.districtName || 'जिला पुलिस'} में "${catText}" को पूर्ण किया है।`, 675, 375);
-        ctx.fillStyle = "#64748b";
-        ctx.font = "16px sans-serif";
-        ctx.fillText("For exemplary participation and commitment towards Women's Safety, Dignity & Empowerment Movement.", 675, 408);
+        ctx.fillText(`For exemplary participation in Women's Safety & Empowerment and completing the ${catText} in`, 675, 375);
+        ctx.fillStyle = "#0a1c3d";
+        ctx.font = "bold 20px sans-serif";
+        ctx.fillText(`${pureDistrictEn} under the leadership of the District Police on the motto \"Every Step for Her Safety.\"`, 675, 408);
       }
 
-      // Metrics Pillars Box
-      ctx.fillStyle = "#f1f5f9";
+      // Metrics Pillars Box - Semi-transparent background so the watermark crest is continuous and beautifully visible!
+      ctx.fillStyle = "rgba(241, 245, 249, 0.45)";
       ctx.fillRect(150, 445, 1050, 105);
-      ctx.strokeStyle = "#cbd5e1";
+      ctx.strokeStyle = "rgba(212, 175, 55, 0.5)";
       ctx.lineWidth = 1.5;
       ctx.strokeRect(150, 445, 1050, 105);
 
       if (isTimedCompetitive) {
-        // Pillar 1: Bib Number
+        // 5 Columns: BIB NUMBER | GUN TIME | CHIP TIME | AVG PACE | RANK
+        // Column 1: BIB NUMBER
         ctx.fillStyle = "#64748b";
-        ctx.font = "bold 13px sans-serif";
-        ctx.fillText("OFFICIAL BIB NUMBER", 325, 480);
+        ctx.font = "bold 12px sans-serif";
+        ctx.fillText("BIB NUMBER", 255, 480);
         ctx.fillStyle = "#dc2626";
-        ctx.font = "900 28px monospace";
-        ctx.fillText(selectedRunner.bibNumber || "RJ-21K-1001", 325, 520);
+        ctx.font = "900 22px monospace";
+        ctx.fillText(selectedRunner.bibNumber || "RJ-21K-1001", 255, 520);
 
         // Divider 1
-        ctx.strokeStyle = "#cbd5e1";
+        ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
         ctx.beginPath();
-        ctx.moveTo(500, 455);
-        ctx.lineTo(500, 540);
+        ctx.moveTo(360, 455);
+        ctx.lineTo(360, 540);
         ctx.stroke();
 
-        // Pillar 2: Official Finish Time
+        // Column 2: GUN TIME
         ctx.fillStyle = "#64748b";
-        ctx.font = "bold 13px sans-serif";
-        ctx.fillText("OFFICIAL FINISH TIME", 675, 480);
+        ctx.font = "bold 12px sans-serif";
+        ctx.fillText("GUN TIME", 465, 480);
         ctx.fillStyle = "#0a1c3d";
-        ctx.font = "900 28px monospace";
-        ctx.fillText(selectedRunner.finishTime || "00:48:32", 675, 520);
+        ctx.font = "900 22px monospace";
+        ctx.fillText(runnerGunTime, 465, 520);
 
         // Divider 2
         ctx.beginPath();
-        ctx.moveTo(850, 455);
-        ctx.lineTo(850, 540);
+        ctx.moveTo(570, 455);
+        ctx.lineTo(570, 540);
         ctx.stroke();
 
-        // Pillar 3: Venue & Rank
+        // Column 3: CHIP TIME
         ctx.fillStyle = "#64748b";
-        ctx.font = "bold 13px sans-serif";
-        ctx.fillText("RANK & VENUE", 1025, 480);
+        ctx.font = "bold 12px sans-serif";
+        ctx.fillText("CHIP TIME", 675, 480);
+        ctx.fillStyle = "#0a1c3d";
+        ctx.font = "900 22px monospace";
+        ctx.fillText(runnerChipTime, 675, 520);
+
+        // Divider 3
+        ctx.beginPath();
+        ctx.moveTo(780, 455);
+        ctx.lineTo(780, 540);
+        ctx.stroke();
+
+        // Column 4: AVG PACE
+        ctx.fillStyle = "#64748b";
+        ctx.font = "bold 12px sans-serif";
+        ctx.fillText("AVG PACE", 885, 480);
+        ctx.fillStyle = "#0a1c3d";
+        ctx.font = "900 22px monospace";
+        ctx.fillText(runnerAvgPace, 885, 520);
+
+        // Divider 4
+        ctx.beginPath();
+        ctx.moveTo(990, 455);
+        ctx.lineTo(990, 540);
+        ctx.stroke();
+
+        // Column 5: RANK
+        ctx.fillStyle = "#64748b";
+        ctx.font = "bold 12px sans-serif";
+        ctx.fillText("OFFICIAL RANK", 1095, 480);
         ctx.fillStyle = "#047857";
-        ctx.font = "800 22px sans-serif";
-        ctx.fillText(selectedRunner.genderRank ? `${selectedRunner.genderRank} • Jaipur Flagship` : "Finisher • Jaipur", 1025, 520);
+        ctx.font = "800 20px sans-serif";
+        ctx.fillText(runnerRank, 1095, 520);
       } else {
-        // District Level: No Empty Timers! High Dignity Awareness Badges
+        // District Level: Pure District & Honorary Ambassador Recognition
         // Pillar 1: Bib Number
         ctx.fillStyle = "#64748b";
         ctx.font = "bold 13px sans-serif";
-        ctx.fillText("OFFICIAL BIB NUMBER", 325, 480);
+        ctx.fillText("REGISTRATION ID", 325, 480);
         ctx.fillStyle = "#dc2626";
         ctx.font = "900 28px monospace";
         ctx.fillText(selectedRunner.bibNumber || "RJ-05K-3001", 325, 520);
 
         // Divider 1
-        ctx.strokeStyle = "#cbd5e1";
+        ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
         ctx.beginPath();
         ctx.moveTo(500, 455);
         ctx.lineTo(500, 540);
         ctx.stroke();
 
-        // Pillar 2: District Police Jurisdiction
+        // Pillar 2: Pure District (No Commissionerate or Extra Suffixes)
         ctx.fillStyle = "#64748b";
         ctx.font = "bold 13px sans-serif";
         ctx.fillText("POLICE DISTRICT", 675, 480);
         ctx.fillStyle = "#0a1c3d";
-        ctx.font = "900 22px sans-serif";
-        ctx.fillText(selectedRunner.districtName || "District Police", 675, 520);
+        ctx.font = "900 24px sans-serif";
+        ctx.fillText(pureDistrictEn, 675, 520);
 
         // Divider 2
         ctx.beginPath();
@@ -331,7 +373,7 @@ export function CertificateHub({ registrations = [] }) {
         ctx.fillText("DIRECTOR GENERAL OF POLICE", 280, 748);
         ctx.fillStyle = "#64748b";
         ctx.font = "13px sans-serif";
-        ctx.fillText("Rajasthan Police, Jaipur", 280, 768);
+        ctx.fillText("Rajasthan Police Headquarters, Jaipur", 280, 768);
       } else {
         ctx.fillText("Superintendent of Police", 280, 715);
         ctx.fillStyle = "#0a1c3d";
@@ -340,7 +382,7 @@ export function CertificateHub({ registrations = [] }) {
         ctx.fillText("SUPERINTENDENT OF POLICE (SP / DCP)", 280, 748);
         ctx.fillStyle = "#64748b";
         ctx.font = "13px sans-serif";
-        ctx.fillText(selectedRunner.districtName ? `${selectedRunner.districtName}, Rajasthan` : "District Police, Rajasthan", 280, 768);
+        ctx.fillText(`${pureDistrictEn}, Rajasthan`, 280, 768);
       }
 
       // Center: Official Seal
@@ -553,10 +595,23 @@ export function CertificateHub({ registrations = [] }) {
 
   const isIssued = checkRunnerIssued(selectedRunner);
 
-  const distId = (selectedRunner.districtId || "").toLowerCase();
-  const distName = (selectedRunner.districtName || "").toLowerCase();
-  const isJaipur = distId.includes("jaipur") || distId === "jpr-comm" || distId === "jaipur_comm" || distName.includes("जयपुर");
-  const isTimedCompetitive = (selectedRunner.category?.includes("21k") || selectedRunner.category?.includes("10k") || selectedRunner.categoryId?.includes("21k") || selectedRunner.categoryId?.includes("10k")) && isJaipur && Boolean(selectedRunner.finishTime);
+  const bib = String(selectedRunner?.bibNumber || selectedRunner?.bib_number || "").toUpperCase();
+  const distId = String(selectedRunner?.districtId || selectedRunner?.district_id || "").toLowerCase();
+  const distName = String(selectedRunner?.districtName || selectedRunner?.district_name || "").toLowerCase();
+  const cat = String(selectedRunner?.category || selectedRunner?.categoryId || selectedRunner?.category_id || selectedRunner?.categoryName || selectedRunner?.category_name || "").toLowerCase();
+
+  const isJaipur = distId.includes("jaipur") || distId === "jpr-comm" || distId === "jaipur_comm" || distName.includes("जयपुर") || distName.includes("jaipur");
+  const isTimedCategory = cat.includes("21") || cat.includes("10") || bib.includes("21K") || bib.includes("10K");
+  const isTimedCompetitive = isJaipur || isTimedCategory;
+
+  const pureDistrictEn = formatLocalizedDistrict(selectedRunner?.districtName || selectedRunner?.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
+  const pureDistrictHi = formatLocalizedDistrict(selectedRunner?.districtName || selectedRunner?.district_name, true) || (isJaipur ? "जयपुर" : "जिला पुलिस");
+  const pureDistrict = isHindi ? pureDistrictHi : pureDistrictEn;
+
+  const runnerGunTime = selectedRunner?.finishTime || selectedRunner?.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
+  const runnerChipTime = selectedRunner?.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
+  const runnerAvgPace = selectedRunner?.avgPace || (cat.includes("21") ? "5:16 min/km" : cat.includes("10") ? "5:01 min/km" : "5:10 min/km");
+  const runnerRank = selectedRunner?.overallRank ? `#${selectedRunner.overallRank} Overall` : (selectedRunner?.genderRank || "Finisher");
 
   return (
     <section id="certificates" className="section-padding" style={{ position: 'relative', background: '#ffffff', borderTop: '1px solid var(--border-subtle)' }}>
@@ -679,17 +734,17 @@ export function CertificateHub({ registrations = [] }) {
               overflow: 'hidden',
               minWidth: '580px' // Ensures standard certificate layout doesn't squash on small screens
             }}>
-              {/* Watermark Rajasthan Police Crest */}
+              {/* Watermark Rajasthan Police Crest - Crisp & continuously visible behind cards */}
               <div style={{
                 position: 'absolute',
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                opacity: 0.12,
+                opacity: 0.20,
                 pointerEvents: 'none',
                 zIndex: 0
               }}>
-                <PoliceEmblem size={380} />
+                <PoliceEmblem size={400} />
               </div>
 
               <div style={{ position: 'relative', zIndex: 1 }}>
@@ -705,7 +760,9 @@ export function CertificateHub({ registrations = [] }) {
                         RAJASTHAN POLICE
                       </div>
                       <div style={{ fontSize: '0.75rem', color: isTimedCompetitive ? 'var(--text-muted)' : 'var(--police-gold-700)', fontWeight: 700 }}>
-                        {isTimedCompetitive ? 'Statewide Flagship Half Marathon' : `जिला पुलिस • ${selectedRunner.districtName || 'Rajasthan Police'}`}
+                        {isTimedCompetitive 
+                          ? (isHindi ? 'राजस्थान पुलिस मुख्यालय • जयपुर' : 'Rajasthan Police Headquarters • Jaipur') 
+                          : (isHindi ? `जिला पुलिस • ${pureDistrictHi}` : `District Police • ${pureDistrictEn}`)}
                       </div>
                     </div>
                   </div>
@@ -758,31 +815,41 @@ export function CertificateHub({ registrations = [] }) {
                     padding: '0 24px 2px 24px',
                     letterSpacing: '0.02em'
                   }}>
-                    {selectedRunner.fullName}
+                    {formatLocalizedName(selectedRunner.fullName, false)}
                   </div>
                 </div>
 
                 {/* Statement */}
                 <p style={{ textAlign: 'center', fontSize: '0.88rem', color: 'var(--text-body)', maxWidth: '580px', margin: '0 auto 18px auto', lineHeight: 1.5 }}>
                   {isTimedCompetitive ? (
-                    <>For successfully completing the <strong>{selectedRunner.categoryName || '21 KM Half Marathon'}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Her Safety."</em></>
+                    isHindi ? (
+                      <>ने राजस्थान पुलिस मैराथन 2027 के अंतर्गत <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, true) || '21 किमी हाफ मैराथन'}</strong> ({pureDistrictHi}) को <strong>पुलिस महानिदेशक (DGP), राजस्थान</strong> के नेतृत्व में <em>"हर कदम नारी सुरक्षा के लिए"</em> के संकल्प के साथ सफलतापूर्वक पूर्ण किया है।</>
+                    ) : (
+                      <>For successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Her Safety."</em></>
+                    )
                   ) : (
-                    <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{selectedRunner.categoryName || '5 KM Community Run'}</strong> in <strong>{selectedRunner.districtName || 'Rajasthan'}</strong> under the leadership of the District Police on the motto <em>"Every Step for Her Safety."</em></>
+                    isHindi ? (
+                      <>ने नारी सुरक्षा एवं सम्मान अभियान के तहत <strong>{pureDistrictHi}</strong> में <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, true) || '5 किमी कम्युनिटी रन'}</strong> को जिला पुलिस के नेतृत्व में <em>"हर कदम नारी सुरक्षा के लिए"</em> के संकल्प के साथ पूर्ण किया है।</>
+                    ) : (
+                      <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Her Safety."</em></>
+                    )
                   )}
                 </p>
 
                 {/* Metrics Matrix: Dual Mode (Timed Grid vs District Awareness Badges) */}
                 {isTimedCompetitive ? (
                   <div style={{
-                    background: 'var(--police-navy-50)',
-                    border: '1px solid var(--border-medium)',
-                    borderRadius: '6px',
+                    background: 'rgba(241, 245, 249, 0.45)',
+                    backdropFilter: 'blur(1.5px)',
+                    border: '1.5px solid rgba(212, 175, 55, 0.45)',
+                    borderRadius: '8px',
                     padding: '10px 16px',
                     display: 'grid',
                     gridTemplateColumns: 'repeat(5, 1fr)',
                     gap: '8px',
                     textAlign: 'center',
-                    marginBottom: '20px'
+                    marginBottom: '20px',
+                    position: 'relative'
                   }}>
                     <div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>BIB NUMBER</div>
@@ -790,44 +857,46 @@ export function CertificateHub({ registrations = [] }) {
                     </div>
                     <div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>GUN TIME</div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0a1c3d' }}>{selectedRunner.finishTime || '00:48:32'}</div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerGunTime}</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>CHIP TIME</div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0a1c3d' }}>{selectedRunner.chipTime || '00:47:15'}</div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerChipTime}</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>AVG PACE</div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0a1c3d' }}>{selectedRunner.avgPace || '4:43 min/km'}</div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerAvgPace}</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>RANK</div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#047857' }}>{selectedRunner.genderRank || 'Finisher'}</div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#047857' }}>{runnerRank}</div>
                     </div>
                   </div>
                 ) : (
                   <div style={{
-                    background: '#f8fafc',
-                    border: '1.5px solid var(--police-gold-500)',
-                    borderRadius: '6px',
+                    background: 'rgba(255, 255, 255, 0.45)',
+                    backdropFilter: 'blur(1.5px)',
+                    border: '1.5px solid rgba(212, 175, 55, 0.45)',
+                    borderRadius: '8px',
                     padding: '12px 18px',
                     display: 'grid',
                     gridTemplateColumns: 'repeat(3, 1fr)',
                     gap: '12px',
                     textAlign: 'center',
-                    marginBottom: '20px'
+                    marginBottom: '20px',
+                    position: 'relative'
                   }}>
                     <div>
-                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>BIB NUMBER</div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>REGISTRATION ID</div>
                       <div style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--crimson-600)', fontFamily: 'monospace' }}>{selectedRunner.bibNumber}</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>POLICE DISTRICT</div>
-                      <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0a1c3d' }}>{selectedRunner.districtName || 'जिला पुलिस'}</div>
+                      <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0a1c3d' }}>{pureDistrict}</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>HONORARY DESIGNATION</div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#047857' }}>Women Safety Ambassador</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#047857' }}>{isHindi ? 'महिला सुरक्षा दूत' : 'Women Safety Ambassador'}</div>
                     </div>
                   </div>
                 )}
@@ -850,7 +919,7 @@ export function CertificateHub({ registrations = [] }) {
                       {isTimedCompetitive ? 'DIRECTOR GENERAL OF POLICE' : 'SUPERINTENDENT OF POLICE (SP / DCP)'}
                     </div>
                     <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>
-                      {isTimedCompetitive ? 'Rajasthan, Jaipur' : `${selectedRunner.districtName || 'District Police'}, Rajasthan`}
+                      {isTimedCompetitive ? 'Rajasthan Police Headquarters, Jaipur' : `${pureDistrictEn}, Rajasthan`}
                     </div>
                   </div>
 

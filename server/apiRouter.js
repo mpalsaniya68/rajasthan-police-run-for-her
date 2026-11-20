@@ -1362,8 +1362,10 @@ export async function handleApiRequest(req, res) {
       
       const distLower = (r.district_id || "").toLowerCase();
       const distNameLower = (r.district_name || "").toLowerCase();
-      const isJaipurVenue = distLower.includes("jaipur") || distLower === "jpr-comm" || distLower === "jaipur_comm" || distNameLower.includes("जयपुर");
-      const isTimedCompetitive = (r.category_id === "21k" || r.category_id === "10k") && isJaipurVenue;
+      const isJaipurVenue = distLower.includes("jaipur") || distLower === "jpr-comm" || distLower === "jaipur_comm" || distNameLower.includes("जयपुर") || distNameLower.includes("jaipur");
+      const catLower = (r.category_id || r.category_name || "").toLowerCase();
+      const bibUpper = (r.bib_number || "").toUpperCase();
+      const isTimedCompetitive = catLower.includes("21") || catLower.includes("10") || bibUpper.includes("21K") || bibUpper.includes("10K") || isJaipurVenue;
       const certTemplateType = isTimedCompetitive ? "JAIPUR_TIMED" : "DISTRICT_AWARENESS";
 
       const formattedIssueDate = r.certificate_issued_at 
@@ -1383,10 +1385,10 @@ export async function handleApiRequest(req, res) {
           districtId: r.district_id,
           districtName: r.district_name,
           mobile: r.masked_mobile,
-          finishTime: isTimedCompetitive ? (r.finish_time || "00:48:32") : null,
-          chipTime: isTimedCompetitive ? (r.finish_time ? `00:${Math.max(10, parseInt(r.finish_time.split(':')[1] || 45) - 1)}:${r.finish_time.split(':')[2] || '14'}` : "00:47:18") : null,
-          avgPace: isTimedCompetitive ? "4:52 min/km" : null,
-          overallRank: isTimedCompetitive ? (r.overall_rank || "Official Finisher") : null,
+          finishTime: isTimedCompetitive ? (r.finish_time || "01:52:18") : null,
+          chipTime: isTimedCompetitive ? (r.finish_time ? `01:${Math.max(10, parseInt(r.finish_time.split(':')[1] || 50) - 1)}:${r.finish_time.split(':')[2] || '14'}` : "01:51:04") : null,
+          avgPace: isTimedCompetitive ? "5:16 min/km" : null,
+          overallRank: isTimedCompetitive ? (r.overall_rank || "Finisher") : null,
           genderRank: isTimedCompetitive ? (r.gender_rank || "Finisher") : null,
           certificateId: r.certificate_id,
           status: r.status,
