@@ -121,7 +121,7 @@ export function getJaipurRouteConfig(p) {
  * Creative Horizontal SVG Route Map Card + Clickable Albert Hall Google Maps Link & QR
  * Used in both On-Screen E-Pass Preview and A4 PDF Print!
  */
-export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = false, isHindi = true }) {
+export function HorizontalRouteMapCard({ route, locationQrUrl, hideHeader = false, isHindi = false }) {
   if (!route) return null;
 
   const outCount = route.outbound.length;

@@ -954,10 +954,10 @@ export function RegistrationPage({
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(isHindi ? "पंजीकरण संख्या" : "REGISTRATION NO.", bibCenterX, 198);
+      ctx.fillText("REGISTRATION NO.", bibCenterX, 198);
       ctx.fillStyle = "#94a3b8";
       ctx.font = "bold 11px sans-serif";
-      ctx.fillText(isHindi ? "REGISTRATION ID" : "OFFICIAL PASS", bibCenterX, 218);
+      ctx.fillText("OFFICIAL PASS", bibCenterX, 218);
 
       // Dedicated Inner Card for Bib Number (280px wide, centered)
       const badgeX = 55;
@@ -987,7 +987,7 @@ export function RegistrationPage({
       drawRRect(badgeX, 318, badgeW, 44, 8);
       ctx.fill();
 
-      const catText = formatLocalizedCategory(p.categoryName || "21 KM Half Marathon", isHindi);
+      const catText = formatLocalizedCategory(p.categoryName || "21 KM Half Marathon", false);
       let catFontSize = 17;
       ctx.font = `bold ${catFontSize}px sans-serif`;
       while (ctx.measureText(catText).width > 250 && catFontSize > 12) {
@@ -1001,8 +1001,7 @@ export function RegistrationPage({
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 15px sans-serif";
       const eventModeStr = (p.tshirtSize && p.tshirtSize !== 'N/A') ? `  |  Size: ${p.tshirtSize}` : '';
-      const bloodLabel = isHindi ? "रक्त समूह" : "Blood Group";
-      ctx.fillText(`${bloodLabel}: ${p.bloodGroup || 'B+'}${eventModeStr}`, bibCenterX, 396);
+      ctx.fillText(`Blood Group: ${p.bloodGroup || 'B+'}${eventModeStr}`, bibCenterX, 396);
 
       // Divider Line
       ctx.strokeStyle = "#e2e8f0";
@@ -1015,19 +1014,19 @@ export function RegistrationPage({
       // Reporting & Venue Info
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText(isHindi ? "रिपोर्टिंग: 3 जन 2027, 05:00 AM" : "Reporting: 3 Jan 2027, 05:00 AM", bibCenterX, 452);
+      ctx.fillText("Reporting: 3 Jan 2027, 05:00 AM", bibCenterX, 452);
       if (p.physicalBibNumber) {
         ctx.fillStyle = "#b91c1c";
         ctx.font = "bold 13px sans-serif";
-        ctx.fillText(isHindi ? `आवंटित फिजिकल बिब: #${p.physicalBibNumber}` : `Allotted Physical Bib: #${p.physicalBibNumber}`, bibCenterX, 482);
+        ctx.fillText(`Allotted Physical Bib: #${p.physicalBibNumber}`, bibCenterX, 482);
       } else if (routeConfig) {
         ctx.fillStyle = "#64748b";
         ctx.font = "bold 13px sans-serif";
-        ctx.fillText(isHindi ? "गेट नंबर 2 • अल्बर्ट हॉल, जयपुर" : "Gate No. 2 • Albert Hall, Jaipur", bibCenterX, 482);
+        ctx.fillText("Gate No. 2 • Albert Hall, Jaipur", bibCenterX, 482);
       } else {
         ctx.fillStyle = "#64748b";
         ctx.font = "bold 13px sans-serif";
-        ctx.fillText(isHindi ? "पुलिस लाइन / जिला वेन्यू" : "Police Lines / District Venue", bibCenterX, 482);
+        ctx.fillText("Police Lines / District Venue", bibCenterX, 482);
       }
       ctx.textAlign = "left";
 
@@ -1037,8 +1036,8 @@ export function RegistrationPage({
       const detailsX = 380;
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText(isHindi ? "धावक का पूरा नाम (RUNNER FULL NAME):" : "RUNNER FULL NAME:", detailsX, 198);
-      const nameStr = formatLocalizedName(p.fullName || (isHindi ? "पंजीकृत धावक" : "Registered Runner"), isHindi);
+      ctx.fillText("RUNNER FULL NAME:", detailsX, 198);
+      const nameStr = formatLocalizedName(p.fullName || "Registered Runner", false);
       let nameFontSize = 26;
       ctx.font = `bold ${nameFontSize}px sans-serif`;
       while (ctx.measureText(nameStr).width > 480 && nameFontSize > 18) {
@@ -1050,15 +1049,15 @@ export function RegistrationPage({
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText(isHindi ? "आयोजन स्थल (REPORTING VENUE):" : "REPORTING VENUE:", detailsX, 282);
+      ctx.fillText("REPORTING VENUE:", detailsX, 282);
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 21px sans-serif";
-      ctx.fillText("📍 " + formatLocalizedDistrict(cleanDistrict, isHindi), detailsX, 314);
+      ctx.fillText("📍 " + formatLocalizedDistrict(cleanDistrict, false), detailsX, 314);
 
       let nextY = 366;
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText(isHindi ? "पंजीकृत मोबाइल एवं ईमेल (MOBILE & EMAIL):" : "REGISTERED MOBILE & EMAIL:", detailsX, nextY);
+      ctx.fillText("REGISTERED MOBILE & EMAIL:", detailsX, nextY);
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 18px sans-serif";
       ctx.fillText(`📞 +91 ${p.mobile || ''}`, detailsX, nextY + 28);
@@ -1070,10 +1069,10 @@ export function RegistrationPage({
       const emergencyY = nextY + 78;
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText(isHindi ? "आपातकालीन संपर्क (EMERGENCY CONTACT):" : "EMERGENCY CONTACT:", detailsX, emergencyY);
+      ctx.fillText("EMERGENCY CONTACT:", detailsX, emergencyY);
       ctx.fillStyle = "#991b1b";
       ctx.font = "bold 17px sans-serif";
-      ctx.fillText(formatLocalizedName(p.emergencyContact, isHindi) || (isHindi ? "पुलिस सहायता केंद्र 112" : "Police Helpline 112"), detailsX, emergencyY + 28);
+      ctx.fillText(formatLocalizedName(p.emergencyContact, false) || "Police Helpline 112", detailsX, emergencyY + 28);
 
       // 5. Right Section: Security QR Code
       const qrBoxX = 910;
@@ -1127,11 +1126,11 @@ export function RegistrationPage({
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 15px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(isHindi ? "गेट नंबर 2 पर स्कैन हेतु" : "For Gate No. 2 Scan", qrBoxX + 125, 435);
+      ctx.fillText("For Gate No. 2 Scan", qrBoxX + 125, 435);
       ctx.fillStyle = "#64748b";
       ctx.font = "13px sans-serif";
-      ctx.fillText(isHindi ? "सुरक्षा सत्यापन टोकन" : "Security Verification Token", qrBoxX + 125, 460);
-      ctx.fillText(isHindi ? "RFID चिप युक्त" : "RFID Enabled", qrBoxX + 125, 482);
+      ctx.fillText("Security Verification Token", qrBoxX + 125, 460);
+      ctx.fillText("RFID Enabled", qrBoxX + 125, 482);
       ctx.textAlign = "left";
 
       // 6. Creative Horizontal Jaipur Route Map Panel + Albert Hall Google Maps QR (Only for Jaipur Runners)
@@ -1147,11 +1146,11 @@ export function RegistrationPage({
       ctx.fillStyle = "#fef08a";
       ctx.font = "bold 17px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(isHindi ? "★ सेवार्थ कटिबद्धता • राजस्थान पुलिस ★" : "★ Committed to Serve • Rajasthan Police ★", 600, footerY + 32);
+      ctx.fillText("★ Committed to Serve • Rajasthan Police ★", 600, footerY + 32);
 
       ctx.fillStyle = "#e2e8f0";
       ctx.font = "13px sans-serif";
-      ctx.fillText(isHindi ? "24×7 महिला गरिमा हेल्पलाइन: 1090 | आपातकालीन सेवा: 112 | पोर्टल: police.rajasthan.gov.in" : "24×7 Women Helpline: 1090 | Emergency: 112 | Portal: police.rajasthan.gov.in", 600, footerY + 55);
+      ctx.fillText("24×7 Women Helpline: 1090 | Emergency: 112 | Portal: police.rajasthan.gov.in", 600, footerY + 55);
       ctx.textAlign = "left";
 
       // 8. Download directly as PNG file into user's device Downloads folder
@@ -1411,7 +1410,7 @@ export function RegistrationPage({
                   {/* Left: Registration ID & Category */}
                   <div style={{ textAlign: 'center', background: 'var(--police-navy-50)', padding: '20px', borderRadius: '12px', border: '1.5px dashed var(--police-navy-800)' }}>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase' }}>
-                      {isHindi ? 'पंजीकरण संख्या' : 'Registration No.'}
+                      Registration No.
                     </div>
                     <div style={{ fontSize: 'clamp(2rem, 4.5vw, 2.75rem)', fontWeight: 900, color: 'var(--police-navy-950)', letterSpacing: '1.5px', margin: '6px 0' }}>
                       {registeredParticipant.bibNumber}
@@ -1425,7 +1424,7 @@ export function RegistrationPage({
                       fontWeight: 800,
                       fontSize: '0.86rem'
                     }}>
-                      {formatLocalizedCategory(registeredParticipant.categoryName, isHindi)}
+                      {formatLocalizedCategory(registeredParticipant.categoryName, false)}
                     </div>
                     {registeredParticipant.physicalBibNumber && (
                       <div style={{
@@ -1438,7 +1437,7 @@ export function RegistrationPage({
                         fontWeight: 800,
                         color: '#065f46'
                       }}>
-                        🏷️ {isHindi ? 'आवंटित फिजिकल बिब:' : 'Allotted Physical Bib:'} #{registeredParticipant.physicalBibNumber}
+                        🏷️ Allotted Physical Bib: #{registeredParticipant.physicalBibNumber}
                       </div>
                     )}
                   </div>
@@ -1446,13 +1445,13 @@ export function RegistrationPage({
                   {/* Middle: Runner Identity */}
                   <div>
                     <div style={{ marginBottom: '10px' }}>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>{isHindi ? 'धावक का नाम' : 'Runner Full Name'}</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>{formatLocalizedName(registeredParticipant.fullName, isHindi)}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>Runner Full Name</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>{formatLocalizedName(registeredParticipant.fullName, false)}</div>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
                       <div>
-                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>{isHindi ? 'रक्त समूह' : 'Blood Group'}</div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>Blood Group</div>
                         <div style={{ fontSize: '0.95rem', fontWeight: 900, color: 'var(--crimson-600)' }}>
                           {registeredParticipant.bloodGroup || 'B+'}
                         </div>
@@ -1460,16 +1459,16 @@ export function RegistrationPage({
                       <div>
                         {registeredParticipant.tshirtSize && registeredParticipant.tshirtSize !== 'N/A' ? (
                           <>
-                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>{isHindi ? 'टी-शर्ट साइज़' : 'T-Shirt Size'}</div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>T-Shirt Size</div>
                             <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
                               Size {registeredParticipant.tshirtSize}
                             </div>
                           </>
                         ) : (
                           <>
-                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>{isHindi ? 'इवेंट प्रकार' : 'Event Type'}</div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>Event Type</div>
                             <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-                              {isHindi ? 'कम्युनिटी रन' : 'Community Run'}
+                              Community Run
                             </div>
                           </>
                         )}
@@ -1477,18 +1476,18 @@ export function RegistrationPage({
                     </div>
 
                     <div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>{isHindi ? 'आयोजन स्थल' : 'Reporting Venue'}</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>Reporting Venue</div>
                       <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--police-navy-800)' }}>
-                        📍 {formatLocalizedDistrict(registeredParticipant.districtName, isHindi)}
+                        📍 {formatLocalizedDistrict(formatCleanDistrictName(registeredParticipant), false)}
                       </div>
                     </div>
 
                     <div style={{ marginTop: '10px', background: 'var(--police-navy-50)', padding: '8px 12px', borderRadius: '8px', fontSize: '0.78rem', color: 'var(--police-navy-950)', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       {registeredParticipant.mobile && (
-                        <div><strong>{isHindi ? 'मोबाइल:' : 'Mobile:'}</strong> +91 {registeredParticipant.mobile}</div>
+                        <div><strong>Mobile:</strong> +91 {registeredParticipant.mobile}</div>
                       )}
                       {registeredParticipant.email && (
-                        <div><strong>{isHindi ? 'ईमेल:' : 'Email:'}</strong> {registeredParticipant.email}</div>
+                        <div><strong>Email:</strong> {registeredParticipant.email}</div>
                       )}
                     </div>
                   </div>
@@ -1507,12 +1506,12 @@ export function RegistrationPage({
                         <img src={qrCodeDataUrl} alt="Security Entry QR Token" style={{ width: '130px', height: '130px', display: 'block' }} />
                       ) : (
                         <div style={{ width: '130px', height: '130px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem' }}>
-                          {isHindi ? 'QR कोड लोड हो रहा है...' : 'Loading QR Code...'}
+                          Loading QR Code...
                         </div>
                       )}
                     </div>
                     <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, marginTop: '6px' }}>
-                      {isHindi ? 'गेट नंबर 2 पर स्कैन हेतु' : 'For Scan at Gate No. 2'}
+                      For Scan at Gate No. 2
                     </div>
                   </div>
                 </div>
@@ -1531,10 +1530,10 @@ export function RegistrationPage({
                   color: 'var(--text-muted)'
                 }}>
                   <div>
-                    <strong>{isHindi ? 'रिपोर्टिंग समय:' : 'Reporting Time:'}</strong> {isHindi ? '3 जनवरी 2027, प्रातः 05:00 बजे' : '3 Jan 2027, 05:00 AM'}
+                    <strong>Reporting Time:</strong> 3 Jan 2027, 05:00 AM
                   </div>
                   <div style={{ color: 'var(--police-gold-700)', fontWeight: 800 }}>
-                    ★ {isHindi ? 'सेवार्थ कटिबद्धता' : 'Committed to Serve'} ★
+                    ★ Committed to Serve • Rajasthan Police ★
                   </div>
                 </div>
 
@@ -1542,6 +1541,7 @@ export function RegistrationPage({
                 <HorizontalRouteMapCard
                   route={getJaipurRouteConfig(registeredParticipant)}
                   locationQrUrl={locationQrUrl}
+                  isHindi={false}
                 />
               </div>
 

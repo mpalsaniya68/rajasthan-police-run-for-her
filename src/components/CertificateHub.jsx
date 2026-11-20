@@ -197,7 +197,7 @@ export function CertificateHub({ registrations = [] }) {
 
       ctx.fillStyle = "#64748b";
       ctx.font = "italic 16px sans-serif";
-      ctx.fillText("यह गर्वपूर्वक प्रमाणित किया जाता है कि (This is to proudly certify that)", 675, 252);
+      ctx.fillText("This official certificate is proudly awarded to", 675, 252);
 
       // Runner Name
       ctx.fillStyle = "#0a1c3d";
@@ -317,10 +317,10 @@ export function CertificateHub({ registrations = [] }) {
         ctx.fillText(runnerRank, 1095, 520);
       } else {
         // District Level: Pure District & Honorary Ambassador Recognition
-        // Pillar 1: Bib Number
+        // Pillar 1: Registration Number
         ctx.fillStyle = "#64748b";
         ctx.font = "bold 13px sans-serif";
-        ctx.fillText("REGISTRATION ID", 325, 480);
+        ctx.fillText("REGISTRATION NO.", 325, 480);
         ctx.fillStyle = "#dc2626";
         ctx.font = "900 28px monospace";
         ctx.fillText(selectedRunner.bibNumber || "RJ-05K-3001", 325, 520);
@@ -358,7 +358,7 @@ export function CertificateHub({ registrations = [] }) {
       // Event Date & Authority
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText(`आयोजन तिथि: 3 जनवरी 2027 • ${isTimedCompetitive ? 'प्रतिस्पर्धी फिनिशर प्रमाण पत्र' : 'डिजिटल सहभागिता एवं सुरक्षा संकल्प प्रमाण पत्र'}`, 675, 595);
+      ctx.fillText(`Event Date: 3 January 2027 • ${isTimedCompetitive ? 'Official Finisher Certificate' : 'Participation & Women Safety Ambassador Certificate'}`, 675, 595);
 
       // Bottom Signatures & Seal Section
       ctx.textAlign = "center";
@@ -606,7 +606,7 @@ export function CertificateHub({ registrations = [] }) {
 
   const pureDistrictEn = formatLocalizedDistrict(selectedRunner?.districtName || selectedRunner?.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
   const pureDistrictHi = formatLocalizedDistrict(selectedRunner?.districtName || selectedRunner?.district_name, true) || (isJaipur ? "जयपुर" : "जिला पुलिस");
-  const pureDistrict = isHindi ? pureDistrictHi : pureDistrictEn;
+  const pureDistrict = pureDistrictEn;
 
   const runnerGunTime = selectedRunner?.finishTime || selectedRunner?.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
   const runnerChipTime = selectedRunner?.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
@@ -761,8 +761,8 @@ export function CertificateHub({ registrations = [] }) {
                       </div>
                       <div style={{ fontSize: '0.75rem', color: isTimedCompetitive ? 'var(--text-muted)' : 'var(--police-gold-700)', fontWeight: 700 }}>
                         {isTimedCompetitive 
-                          ? (isHindi ? 'राजस्थान पुलिस मुख्यालय • जयपुर' : 'Rajasthan Police Headquarters • Jaipur') 
-                          : (isHindi ? `जिला पुलिस • ${pureDistrictHi}` : `District Police • ${pureDistrictEn}`)}
+                          ? 'Rajasthan Police Headquarters • Jaipur' 
+                          : `District Police • ${pureDistrictEn}`}
                       </div>
                     </div>
                   </div>
@@ -822,17 +822,9 @@ export function CertificateHub({ registrations = [] }) {
                 {/* Statement */}
                 <p style={{ textAlign: 'center', fontSize: '0.88rem', color: 'var(--text-body)', maxWidth: '580px', margin: '0 auto 18px auto', lineHeight: 1.5 }}>
                   {isTimedCompetitive ? (
-                    isHindi ? (
-                      <>ने राजस्थान पुलिस मैराथन 2027 के अंतर्गत <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, true) || '21 किमी हाफ मैराथन'}</strong> ({pureDistrictHi}) को <strong>पुलिस महानिदेशक (DGP), राजस्थान</strong> के नेतृत्व में <em>"हर कदम नारी सुरक्षा के लिए"</em> के संकल्प के साथ सफलतापूर्वक पूर्ण किया है।</>
-                    ) : (
-                      <>For successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Her Safety."</em></>
-                    )
+                    <>For successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Her Safety."</em></>
                   ) : (
-                    isHindi ? (
-                      <>ने नारी सुरक्षा एवं सम्मान अभियान के तहत <strong>{pureDistrictHi}</strong> में <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, true) || '5 किमी कम्युनिटी रन'}</strong> को जिला पुलिस के नेतृत्व में <em>"हर कदम नारी सुरक्षा के लिए"</em> के संकल्प के साथ पूर्ण किया है।</>
-                    ) : (
-                      <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Her Safety."</em></>
-                    )
+                    <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Her Safety."</em></>
                   )}
                 </p>
 
@@ -887,16 +879,16 @@ export function CertificateHub({ registrations = [] }) {
                     position: 'relative'
                   }}>
                     <div>
-                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>REGISTRATION ID</div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>REGISTRATION NO.</div>
                       <div style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--crimson-600)', fontFamily: 'monospace' }}>{selectedRunner.bibNumber}</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>POLICE DISTRICT</div>
-                      <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0a1c3d' }}>{pureDistrict}</div>
+                      <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0a1c3d' }}>{pureDistrictEn}</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>HONORARY DESIGNATION</div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#047857' }}>{isHindi ? 'महिला सुरक्षा दूत' : 'Women Safety Ambassador'}</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#047857' }}>Women Safety Ambassador</div>
                     </div>
                   </div>
                 )}

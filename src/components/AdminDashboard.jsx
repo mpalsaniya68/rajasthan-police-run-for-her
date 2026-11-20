@@ -4774,7 +4774,7 @@ export function AdminDashboard({
 
                   const pureDistrictEn = formatLocalizedDistrict(previewCertRunner?.districtName || previewCertRunner?.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
                   const pureDistrictHi = formatLocalizedDistrict(previewCertRunner?.districtName || previewCertRunner?.district_name, true) || (isJaipur ? "जयपुर" : "जिला पुलिस");
-                  const pureDistrict = isHindi ? pureDistrictHi : pureDistrictEn;
+                  const pureDistrict = pureDistrictEn;
 
                   const runnerGunTime = previewCertRunner?.finishTime || previewCertRunner?.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
                   const runnerChipTime = previewCertRunner?.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
@@ -4819,8 +4819,8 @@ export function AdminDashboard({
                               </div>
                               <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700 }}>
                                 {isTimedCompetitive
-                                  ? (isHindi ? 'राजस्थान पुलिस मुख्यालय • जयपुर' : 'Rajasthan Police Headquarters • Jaipur')
-                                  : (isHindi ? `जिला पुलिस • ${pureDistrictHi}` : `District Police • ${pureDistrictEn}`)}
+                                  ? 'Rajasthan Police Headquarters • Jaipur'
+                                  : `District Police • ${pureDistrictEn}`}
                               </div>
                             </div>
                           </div>
@@ -4852,17 +4852,9 @@ export function AdminDashboard({
 
                         <p style={{ fontSize: '0.8rem', color: '#334155', maxWidth: '520px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
                           {isTimedCompetitive ? (
-                            isHindi ? (
-                              <>ने राजस्थान पुलिस मैराथन 2027 के अंतर्गत <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, true) || '21 किमी हाफ मैराथन'}</strong> ({pureDistrictHi}) को <strong>पुलिस महानिदेशक (DGP), राजस्थान</strong> के नेतृत्व में <em>"हर कदम नारी सुरक्षा के लिए"</em> के संकल्प के साथ सफलतापूर्वक पूर्ण किया है।</>
-                            ) : (
-                              <>For successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Her Safety."</em></>
-                            )
+                            <>For successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Her Safety."</em></>
                           ) : (
-                            isHindi ? (
-                              <>ने नारी सुरक्षा एवं सम्मान अभियान के तहत <strong>{pureDistrictHi}</strong> में <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, true) || '5 किमी कम्युनिटी रन'}</strong> को जिला पुलिस के नेतृत्व में <em>"हर कदम नारी सुरक्षा के लिए"</em> के संकल्प के साथ पूर्ण किया है।</>
-                            ) : (
-                              <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Her Safety."</em></>
-                            )
+                            <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Her Safety."</em></>
                           )}
                         </p>
 
@@ -4900,8 +4892,8 @@ export function AdminDashboard({
                             position: 'relative'
                           }}>
                             <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626', fontFamily: 'monospace' }}>{previewCertRunner.bibNumber}</div></div>
-                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>POLICE DISTRICT</div><div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0a1c3d' }}>{pureDistrict}</div></div>
-                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>HONORARY DESIGNATION</div><div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#047857' }}>{isHindi ? 'महिला सुरक्षा दूत' : 'Women Safety Ambassador'}</div></div>
+                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>POLICE DISTRICT</div><div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0a1c3d' }}>{pureDistrictEn}</div></div>
+                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>HONORARY DESIGNATION</div><div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#047857' }}>Women Safety Ambassador</div></div>
                           </div>
                         )}
 

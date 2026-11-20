@@ -71,10 +71,10 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
   }, [activeSlide, slideCount]);
 
   const countdownItems = [
-    { label: t('days'), val: String(timeLeft.days).padStart(2, '0') },
-    { label: t('hours'), val: String(timeLeft.hours).padStart(2, '0') },
-    { label: t('mins'), val: String(timeLeft.minutes).padStart(2, '0') },
-    { label: t('secs'), val: String(timeLeft.seconds).padStart(2, '0') }
+    { label: 'DAYS', val: String(timeLeft.days).padStart(2, '0') },
+    { label: 'HOURS', val: String(timeLeft.hours).padStart(2, '0') },
+    { label: 'MINUTES', val: String(timeLeft.minutes).padStart(2, '0') },
+    { label: 'SECONDS', val: String(timeLeft.seconds).padStart(2, '0') }
   ];
 
   return (
@@ -197,7 +197,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
                 textShadow: '0 2px 8px rgba(0, 0, 0, 0.75)'
               }}>
                 <Timer size={15} color="#fde68a" />
-                <span>{isHindi ? 'रेस दिवस उल्टी गिनती' : 'EVENT COUNTDOWN'}</span>
+                <span>RACE DAY COUNTDOWN</span>
               </div>
 
               <div className="hero-countdown-row">
