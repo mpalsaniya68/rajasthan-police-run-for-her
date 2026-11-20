@@ -895,7 +895,7 @@ export function AdminDashboard({
 
     window.open('/api/admin/export', '_blank');
 
-    setExportNotice(`सम्पूर्ण राज्य (All 50 Districts) का सुरक्षित मास्टर डेटाबेस एक्सपोर्ट प्रारंभ हुआ!`);
+    setExportNotice(`सम्पूर्ण राज्य (All 41 Districts) का सुरक्षित मास्टर डेटाबेस एक्सपोर्ट प्रारंभ हुआ!`);
 
     setTimeout(() => setExportNotice(null), 4500);
 
@@ -2229,7 +2229,7 @@ export function AdminDashboard({
 
                       <Download size={15} color="var(--police-gold-400)" />
 
-                      <span>{isHindi ? '🌐 सम्पूर्ण राजस्थान मास्टर CSV डाउनलोड' : '🌐 Download Statewide Master CSV (All 50 Districts)'}</span>
+                      <span>{isHindi ? '🌐 सम्पूर्ण राजस्थान (All 41 Districts Master CSV)' : '🌐 Download Statewide Master CSV (All 41 Districts)'}</span>
 
                     </button>
 
