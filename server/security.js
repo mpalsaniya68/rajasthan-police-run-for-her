@@ -573,6 +573,7 @@ export const registrationLimiter = new SlidingRateLimiter(20, 60000); // 20 regs
 export const bulkRegistrationLimiter = new SlidingRateLimiter(5, 60000); // 5 bulk uploads/min per IP
 export const adminLoginLimiter = new SlidingRateLimiter(5, 60000); // 5 login attempts/min per IP
 export const otpRequestLimiter = new SlidingRateLimiter(5, 60000); // 5 OTP sends/min per IP
+export const passSearchLimiter = new SlidingRateLimiter(40, 60000); // 40 searches/min per IP
 export const dispatchLimiter = new SlidingRateLimiter(5, 600000); // 5 SMS certificate dispatches/10min per IP
 
 /**

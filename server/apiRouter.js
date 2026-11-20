@@ -25,6 +25,7 @@ import {
   registrationLimiter,
   bulkRegistrationLimiter,
   adminLoginLimiter,
+  passSearchLimiter,
   dispatchLimiter,
   sanitizeCsvCell
 } from "./security.js";
@@ -396,7 +397,10 @@ export async function handleApiRequest(req, res) {
       "Content-Type": "application/json; charset=utf-8",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Timing-Key"
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Timing-Key",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "SAMEORIGIN",
+      "Cache-Control": "no-store, no-cache, must-revalidate"
     });
     res.end(JSON.stringify(data));
   };
@@ -557,6 +561,9 @@ export async function handleApiRequest(req, res) {
 
     // 1d. Privacy-Protected E-Pass Search (Sub-millisecond L1 Cache + Indexed DB)
     if (pathname === "/pass/search" && (method === "POST" || method === "GET")) {
+      if (passSearchLimiter.isRateLimited(clientIp)) {
+        return error("अत्यधिक खोज प्रयास। कृपया 1 मिनट बाद पुनः प्रयास करें (Rate limit exceeded)।", 429);
+      }
       const startTime = performance.now();
       let q = "";
       if (method === "POST") {
@@ -1890,10 +1897,7 @@ export async function handleApiRequest(req, res) {
         }
 
         const rawMaster = (process.env.EXPO_PASSCODE || "Expo@RajPol#2027").replace(/^["']|["']$/g, "").trim();
-        const isMasterMatch = inputPasscode === rawMaster || 
-                              inputPasscode === "Expo@RajPol#2027" || 
-                              inputPasscode.toLowerCase() === "expo@rajpol#2027" ||
-                              inputPasscode === "RajPol@PHQ#2027";
+        const isMasterMatch = Boolean(rawMaster && inputPasscode === rawMaster);
         const isPassValid = verifyPassword(inputPasscode, u.password_hash) || isMasterMatch;
 
         if (!isPassValid) {
@@ -1947,16 +1951,8 @@ export async function handleApiRequest(req, res) {
       }
 
       // Step B: Station-Based Generic Login with Master Passcode (Fallback / Supervisor Mode)
-      const rawPasscode = (process.env.EXPO_PASSCODE || "").replace(/^["']|["']$/g, "").trim();
-      let isValidMaster = false;
-      if (rawPasscode) {
-        isValidMaster = (inputPasscode === rawPasscode);
-      } else {
-        isValidMaster = 
-          inputPasscode === "Expo@RajPol#2027" || 
-          inputPasscode.toLowerCase() === "expo@rajpol#2027" || 
-          inputPasscode === "RajPol@PHQ#2027";
-      }
+      const rawPasscode = (process.env.EXPO_PASSCODE || "Expo@RajPol#2027").replace(/^["']|["']$/g, "").trim();
+      const isValidMaster = Boolean(rawPasscode && inputPasscode === rawPasscode);
 
       if (!isValidMaster) {
         return error("अमान्य क्रेडेंशियल्स! वॉलंटियर आईडी नहीं मिली या सुरक्षा पासवर्ड गलत है।", 401);
@@ -2060,7 +2056,6 @@ export async function handleApiRequest(req, res) {
           mobile: v.mobile || '',
           counterId: v.counter_id || '',
           counterName: v.counter_name || '',
-          plainPasscode: v.plain_passcode || 'Vol#2027',
           status: v.status || 'ACTIVE',
           districtId: v.district_id || 'jaipur_comm',
           districtName: v.district_name || 'जयपुर पुलिस आयुक्तालय',
