@@ -255,21 +255,34 @@ export function CertificateHub({ registrations = [] }) {
       ctx.font = "italic 16.5px sans-serif";
       ctx.fillText("This official certificate is proudly awarded to", 675, 280);
 
-      // 3. RUNNER NAME in 'Segoe Script' Font
+      // 3. RUNNER NAME in 'Adine Kirnberg' Calligraphy Font (Directly touching underline)
+      try {
+        if (typeof document !== 'undefined' && document.fonts && !document.fonts.check('16px "Adine Kirnberg"')) {
+          const adineFont = new FontFace('Adine Kirnberg', 'url(/fonts/ADINEKIR.TTF)');
+          await adineFont.load();
+          document.fonts.add(adineFont);
+        }
+      } catch (fontErr) {
+        console.warn('Adine Kirnberg font loading fallback:', fontErr);
+      }
+
       const runnerName = formatLocalizedName(selectedRunner.fullName, false) || "Madan";
-      let nameFontSize = 48;
-      ctx.font = `bold ${nameFontSize}px 'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive`;
-      while (ctx.measureText(runnerName).width > 700 && nameFontSize > 24) {
+      let nameFontSize = 64;
+      ctx.font = `${nameFontSize}px 'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive`;
+      while (ctx.measureText(runnerName).width > 740 && nameFontSize > 30) {
         nameFontSize -= 2;
-        ctx.font = `bold ${nameFontSize}px 'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive`;
+        ctx.font = `${nameFontSize}px 'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive`;
       }
       ctx.fillStyle = "#0a1c3d";
-      ctx.fillText(runnerName, 675, 345);
+      ctx.textAlign = "center";
+      // Text placed with baseline at 350
+      ctx.fillText(runnerName, 675, 350);
 
       const measuredNameW = ctx.measureText(runnerName).width;
-      const underlineW = Math.max(measuredNameW + 50, 280);
+      const underlineW = Math.max(measuredNameW + 60, 320);
+      // Underline directly touching the base of the name at Y: 354 (only 4px below baseline)
       ctx.fillStyle = "#0a1c3d";
-      ctx.fillRect(675 - underlineW / 2, 362, underlineW, 2.5);
+      ctx.fillRect(675 - underlineW / 2, 354, underlineW, 2.5);
 
       // 4. STATEMENT (Exact 2 lines matching preview)
       ctx.fillStyle = "#334155";
@@ -870,18 +883,20 @@ export function CertificateHub({ registrations = [] }) {
 
                   {/* Presented To */}
                   <div style={{ textAlign: 'center', marginBottom: '14px' }}>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '4px' }}>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '2px' }}>
                       This official certificate is proudly awarded to
                     </div>
                     <div style={{
-                      fontSize: '2.4rem',
-                      fontWeight: 700,
+                      fontSize: 'clamp(2.6rem, 4.4vw, 3.4rem)',
+                      lineHeight: 1.0,
+                      fontWeight: 400,
                       color: '#0a1c3d',
-                      fontFamily: "'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive",
+                      fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
                       borderBottom: '2.5px solid #0a1c3d',
                       display: 'inline-block',
-                      padding: '0 28px 2px 28px',
-                      marginBottom: '8px'
+                      padding: '0 32px 0px 32px',
+                      marginTop: '0px',
+                      marginBottom: '6px'
                     }}>
                       {formatLocalizedName(selectedRunner.fullName, false)}
                     </div>

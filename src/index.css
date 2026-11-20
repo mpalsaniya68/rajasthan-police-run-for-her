@@ -33,6 +33,23 @@ body {
   font-display: swap;
 }
 
+/* Authentic Adine Kirnberg Calligraphy Script Font for Certificates */
+@font-face {
+  font-family: 'Adine Kirnberg';
+  src: url('/fonts/ADINEKIR.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Adine Kirnberg Regular';
+  src: url('/fonts/ADINEKIR.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* Official Rajasthan Police Colors */
   --police-navy-950: #051126;

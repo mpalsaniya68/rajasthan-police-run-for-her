@@ -4839,14 +4839,15 @@ export function AdminDashboard({
                           This official certificate is proudly awarded to
                         </div>
                         <div style={{
-                          fontSize: '1.9rem',
-                          fontWeight: 700,
+                          fontSize: '2.4rem',
+                          lineHeight: 1.0,
+                          fontWeight: 400,
                           color: '#0a1c3d',
-                          fontFamily: "'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive",
+                          fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
                           borderBottom: '2px solid #0a1c3d',
                           display: 'inline-block',
-                          padding: '0 20px 2px 20px',
-                          marginBottom: '12px'
+                          padding: '0 24px 0px 24px',
+                          marginBottom: '10px'
                         }}>
                           {formatLocalizedName(previewCertRunner.fullName, false)}
                         </div>
