@@ -403,8 +403,6 @@ export function RegistrationPage({
           dob: d.dob || "2000-01-01",
           mobile: d.mobile || "7023233248",
           email: d.email || "manvi8648@gmail.com",
-          idType: d.idType || "Aadhaar",
-          idMasked: d.idMasked || "XXXX-XXXX-2109",
           bloodGroup: d.bloodGroup || "B+",
           medicalCondition: d.medicalCondition || "None / Fully Fit",
           medicalNotes: d.medicalNotes || "",
@@ -434,8 +432,6 @@ export function RegistrationPage({
           dob: d.dob || "2000-01-01",
           mobile: d.mobile || "7023233248",
           email: d.email || "manvi8648@gmail.com",
-          idType: d.idType || "Aadhaar",
-          idMasked: d.idMasked || "XXXX-XXXX-2109",
           bloodGroup: d.bloodGroup || "B+",
           medicalCondition: d.medicalCondition || "None / Fully Fit",
           medicalNotes: d.medicalNotes || "",
@@ -958,8 +954,7 @@ export function RegistrationPage({
       ctx.fillStyle = "#cbd5e1";
       ctx.font = "14px sans-serif";
       ctx.textAlign = "right";
-      ctx.fillText("गृह विभाग, राजस्थान सरकार", 1150, 64);
-      ctx.fillText("प्रमाण पत्र आईडी: " + (p.certificateId || "RJ-POL-2027"), 1150, 96);
+      ctx.fillText("गृह विभाग, राजस्थान सरकार", 1150, 80);
       ctx.textAlign = "left";
 
       // Helper for rounded rectangle across all canvas contexts
@@ -1057,12 +1052,9 @@ export function RegistrationPage({
         ctx.font = "bold 13px sans-serif";
         ctx.fillText(`आवंटित फिजिकल बिब: #${p.physicalBibNumber}`, bibCenterX, 494);
       } else if (routeConfig) {
-        ctx.fillStyle = "#1d4ed8";
+        ctx.fillStyle = "#64748b";
         ctx.font = "bold 12px sans-serif";
-        ctx.fillText("RFID बिब एक्सपो काउंटर पर दिया जाएगा", bibCenterX, 494);
-        ctx.fillStyle = "#94a3b8";
-        ctx.font = "12px sans-serif";
-        ctx.fillText("गेट नंबर 2 • अल्बर्ट हॉल", bibCenterX, 518);
+        ctx.fillText("गेट नंबर 2 • अल्बर्ट हॉल, जयपुर", bibCenterX, 494);
       } else {
         ctx.fillStyle = "#94a3b8";
         ctx.font = "12px sans-serif";
@@ -1072,7 +1064,6 @@ export function RegistrationPage({
 
       // 4. Middle Section: Runner Details
       const cleanDistrict = formatCleanDistrictName(p);
-      const hasRealId = Boolean(p.idMasked && !/^X+[-X]*$/i.test(String(p.idMasked).trim()) && p.idMasked !== 'XXXX-XXXX-1234');
 
       const detailsX = 380;
       ctx.fillStyle = "#64748b";
@@ -1096,22 +1087,16 @@ export function RegistrationPage({
       ctx.fillText("📍 " + cleanDistrict, detailsX, 314);
 
       let nextY = 366;
-      if (hasRealId) {
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 14px sans-serif";
-        ctx.fillText("पहचान पत्र (GOVT ID TYPE & NUMBER):", detailsX, nextY);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.font = "bold 19px sans-serif";
-        ctx.fillText(`${p.idType || 'Aadhaar'}: ${p.idMasked}`, detailsX, nextY + 28);
-        nextY += 72;
-      }
-
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText("पंजीकृत मोबाइल एवं ईमेल:", detailsX, nextY);
+      ctx.fillText("पंजीकृत मोबाइल एवं ईमेल (MOBILE & EMAIL):", detailsX, nextY);
       ctx.fillStyle = "#0a1c3d";
-      ctx.font = "18px sans-serif";
-      ctx.fillText(`📞 ${p.mobile || ''}   ✉️ ${p.email || ''}`, detailsX, nextY + 30);
+      ctx.font = "bold 18px sans-serif";
+      ctx.fillText(`📞 +91 ${p.mobile || ''}`, detailsX, nextY + 28);
+      ctx.fillStyle = "#475569";
+      ctx.font = "16px sans-serif";
+      ctx.fillText(`✉️ ${p.email || ''}`, detailsX, nextY + 54);
+      nextY += 72;
 
       const emergencyY = nextY + 78;
       ctx.fillStyle = "#64748b";
@@ -1440,7 +1425,7 @@ export function RegistrationPage({
                     }}>
                       {registeredParticipant.categoryName}
                     </div>
-                    {registeredParticipant.physicalBibNumber ? (
+                    {registeredParticipant.physicalBibNumber && (
                       <div style={{
                         marginTop: '10px',
                         padding: '5px 10px',
@@ -1453,20 +1438,7 @@ export function RegistrationPage({
                       }}>
                         🏷️ आवंटित फिजिकल बिब: #{registeredParticipant.physicalBibNumber}
                       </div>
-                    ) : getJaipurRouteConfig(registeredParticipant) ? (
-                      <div style={{
-                        marginTop: '10px',
-                        padding: '5px 10px',
-                        background: '#eff6ff',
-                        border: '1px solid #bfdbfe',
-                        borderRadius: '6px',
-                        fontSize: '0.73rem',
-                        fontWeight: 700,
-                        color: '#1e40af'
-                      }}>
-                        ℹ️ RFID बिब एक्सपो काउंटर पर दिया जाएगा
-                      </div>
-                    ) : null}
+                    )}
                   </div>
 
                   {/* Middle: Runner Identity & Medical Badge */}
@@ -1509,12 +1481,12 @@ export function RegistrationPage({
                       </div>
                     </div>
 
-                    <div style={{ marginTop: '10px', background: 'var(--police-navy-50)', padding: '8px 12px', borderRadius: '8px', fontSize: '0.76rem', color: 'var(--police-navy-900)', border: '1px solid var(--border-subtle)' }}>
-                      {registeredParticipant.idMasked && !/^X+[-X]*$/i.test(String(registeredParticipant.idMasked).trim()) && registeredParticipant.idMasked !== 'XXXX-XXXX-1234' && (
-                        <div><strong>पहचान पत्र (Govt ID):</strong> {registeredParticipant.idType || 'Aadhaar'} ({registeredParticipant.idMasked})</div>
+                    <div style={{ marginTop: '10px', background: 'var(--police-navy-50)', padding: '8px 12px', borderRadius: '8px', fontSize: '0.78rem', color: 'var(--police-navy-950)', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      {registeredParticipant.mobile && (
+                        <div><strong>मोबाइल:</strong> +91 {registeredParticipant.mobile}</div>
                       )}
                       {registeredParticipant.email && (
-                        <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '2px' }}><strong>ईमेल:</strong> {registeredParticipant.email}</div>
+                        <div><strong>ईमेल:</strong> {registeredParticipant.email}</div>
                       )}
                     </div>
 
@@ -1568,12 +1540,9 @@ export function RegistrationPage({
                   alignItems: 'center',
                   flexWrap: 'wrap',
                   gap: '8px',
-                  fontSize: '0.76rem',
+                  fontSize: '0.78rem',
                   color: 'var(--text-muted)'
                 }}>
-                  <div>
-                    <strong>प्रमाण पत्र आईडी:</strong> {registeredParticipant.certificateId}
-                  </div>
                   <div>
                     <strong>रिपोर्टिंग समय:</strong> 3 जनवरी 2027, प्रातः 05:00 बजे
                   </div>

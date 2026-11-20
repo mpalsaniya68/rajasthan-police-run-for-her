@@ -1,3 +1,4 @@
+import { TagPlusIcon } from 'lucide-react';
 import React from 'react';
 
 // Official Rajasthan Police Emblem (Uses the authentic official circular crest with Red & Blue half, Vijay Stambh, and Sevārth Katibaddhatā)
@@ -110,3 +111,6 @@ export function OfficialGoldSeal({ size = 80 }) {
     </div>
   );
 }
+
+
+

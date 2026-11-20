@@ -102,31 +102,6 @@ export function Navbar({
               <span>{t('womenHelpline')}</span>
             </div>
 
-            {/* Language Toggle Button (Utility Bar) */}
-            <button
-              onClick={toggleLanguage}
-              style={{
-                background: '#1e3a8a',
-                color: '#fde68a',
-                border: '1.5px solid #3b82f6',
-                borderRadius: '4px',
-                padding: '2px 9px',
-                fontSize: '0.74rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                transition: 'all 0.2s ease'
-              }}
-              aria-label={isHindi ? "Switch site to English" : "वेबसाइट को हिन्दी में बदलें"}
-              title={isHindi ? "Switch site to English" : "वेबसाइट को हिन्दी में बदलें"}
-            >
-              <Globe size={12} color="#fde68a" />
-              <span>{isHindi ? 'English' : 'हिन्दी'}</span>
-            </button>
-
             {/* Accessibility Font Size Controls (WCAG 1.4.4) */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} className="d-tablet-inline">
               <span style={{ color: '#94a3b8', fontSize: '0.72rem' }}>Font:</span>
@@ -320,37 +295,13 @@ export function Navbar({
             })}
           </nav>
 
-          {/* Right Nav Utilities: Language Toggle + Admin / Expo Station Button */}
+          {/* Right Nav Utilities: Admin / Expo Station Button */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
             marginLeft: 'auto'
           }}>
-            {/* Desktop Language Switch Toggle */}
-            <button
-              onClick={toggleLanguage}
-              style={{
-                background: 'rgba(255, 255, 255, 0.12)',
-                color: '#fde68a',
-                border: '1px solid rgba(253, 230, 138, 0.4)',
-                padding: '6px 12px',
-                borderRadius: '4px',
-                fontSize: '0.8rem',
-                fontWeight: 800,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s ease'
-              }}
-              title={isHindi ? "Switch to English" : "हिन्दी में बदलें"}
-            >
-              <Languages size={14} color="#fde68a" />
-              <span>{isHindi ? 'English' : 'हिन्दी'}</span>
-            </button>
-
             <button
               id="btn-nav-admin-login"
               onClick={() => handleNav(navAdminTarget)}
