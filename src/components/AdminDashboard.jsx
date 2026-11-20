@@ -4839,9 +4839,10 @@ export function AdminDashboard({
                           This official certificate is proudly awarded to
                         </div>
                         <div style={{
-                          fontSize: '1.45rem',
-                          fontWeight: 900,
+                          fontSize: '1.9rem',
+                          fontWeight: 700,
                           color: '#0a1c3d',
+                          fontFamily: "'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive",
                           borderBottom: '2px solid #0a1c3d',
                           display: 'inline-block',
                           padding: '0 20px 2px 20px',

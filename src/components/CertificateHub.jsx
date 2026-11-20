@@ -159,74 +159,13 @@ export function CertificateHub({ registrations = [] }) {
         logoImg.onerror = r;
       });
 
-      // Background Watermark (Crest) - Crisp and continuously visible
+      // Background Watermark (Crest) - Crisp and continuously visible behind text
       if (logoImg.complete && logoImg.naturalWidth > 0) {
         ctx.save();
-        ctx.globalAlpha = 0.18;
-        ctx.drawImage(logoImg, 450, 240, 450, 450);
+        ctx.globalAlpha = 0.16;
+        ctx.drawImage(logoImg, 465, 250, 420, 420);
         ctx.restore();
       }
-
-      // Top Police Logo
-      if (logoImg.complete && logoImg.naturalWidth > 0) {
-        ctx.drawImage(logoImg, 60, 52, 95, 95);
-      }
-
-      // Header Texts
-      ctx.fillStyle = "#996515";
-      ctx.font = "bold 15px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("GOVERNMENT OF RAJASTHAN • RAJASTHAN POLICE HEADQUARTERS, JAIPUR", 675, 78);
-
-      ctx.fillStyle = "#0a1c3d";
-      ctx.font = "900 32px sans-serif";
-      ctx.fillText("RAJASTHAN POLICE MARATHON 2027", 675, 118);
-
-      ctx.fillStyle = "#dc2626";
-      ctx.font = "bold 18px sans-serif";
-      ctx.fillText("RUN FOR HER • STATEWIDE WOMEN SAFETY & EMPOWERMENT INITIATIVE", 675, 146);
-
-      // Top Right: RUN FOR HER Circular Badge
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(1265, 96, 36, 0, 2 * Math.PI);
-      ctx.fillStyle = "#dc2626";
-      ctx.fill();
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "#fde68a";
-      ctx.stroke();
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 10.5px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("RUN FOR", 1265, 93);
-      ctx.fillText("HER 2027", 1265, 108);
-      ctx.restore();
-
-      // Golden Divider
-      ctx.fillStyle = "#d4af37";
-      ctx.fillRect(150, 168, 1050, 3);
-
-      // Certificate Title
-      ctx.fillStyle = "#0a1c3d";
-      ctx.font = "800 25px sans-serif";
-      ctx.fillText("OFFICIAL FINISHER CERTIFICATE OF EXCELLENCE", 675, 214);
-
-      ctx.fillStyle = "#996515";
-      ctx.font = "bold 15px sans-serif";
-      ctx.fillText("WOMEN'S SAFETY, DIGNITY & EMPOWERMENT MOVEMENT", 675, 240);
-
-      ctx.fillStyle = "#64748b";
-      ctx.font = "italic 16.5px sans-serif";
-      ctx.fillText("This official certificate is proudly awarded to", 675, 282);
-
-      // Runner Name
-      ctx.fillStyle = "#0a1c3d";
-      ctx.font = "900 48px sans-serif";
-      ctx.fillText(selectedRunner.fullName || "Valued Participant", 675, 345);
-
-      // Underline under Name
-      ctx.fillStyle = "#d4af37";
-      ctx.fillRect(380, 362, 590, 3);
 
       const bib = String(selectedRunner.bibNumber || selectedRunner.bib_number || "").toUpperCase();
       const distId = String(selectedRunner.districtId || selectedRunner.district_id || "").toLowerCase();
@@ -238,218 +177,249 @@ export function CertificateHub({ registrations = [] }) {
       const isTimedCompetitive = isJaipur || isTimedCategory;
 
       const pureDistrictEn = formatLocalizedDistrict(selectedRunner.districtName || selectedRunner.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
-      const pureDistrictHi = formatLocalizedDistrict(selectedRunner.districtName || selectedRunner.district_name, true) || (isJaipur ? "जयपुर" : "जिला पुलिस");
 
       const runnerGunTime = selectedRunner.finishTime || selectedRunner.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
       const runnerChipTime = selectedRunner.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
       const runnerAvgPace = selectedRunner.avgPace || (cat.includes("21") ? "5:16 min/km" : cat.includes("10") ? "5:01 min/km" : "5:10 min/km");
       const runnerRank = selectedRunner.overallRank ? `#${selectedRunner.overallRank} Overall` : (selectedRunner?.genderRank || "Finisher");
 
-      // Description Statement
-      ctx.fillStyle = "#334155";
-      ctx.font = "600 20px sans-serif";
-      const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
-      
-      if (isTimedCompetitive) {
-        ctx.fillText(`For successfully completing the ${catText} in ${pureDistrictEn} under the leadership of the`, 675, 408);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.font = "bold 20px sans-serif";
-        ctx.fillText("Director General of Police (DGP), Rajasthan on the motto \"Every Step for Her Safety.\"", 675, 440);
-      } else {
-        ctx.fillText(`For exemplary participation in Women's Safety & Empowerment and completing the ${catText} in`, 675, 408);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.font = "bold 20px sans-serif";
-        ctx.fillText(`${pureDistrictEn} under the leadership of the District Police on the motto \"Every Step for Her Safety.\"`, 675, 440);
+      // 1. TOP HEADER (Identical to Preview)
+      // Top Left: Police Logo Emblem
+      if (logoImg.complete && logoImg.naturalWidth > 0) {
+        ctx.drawImage(logoImg, 55, 52, 76, 76);
       }
 
-      // Metrics Pillars Box - Semi-transparent background so the watermark crest is continuous and beautifully visible!
-      ctx.fillStyle = "rgba(241, 245, 249, 0.45)";
-      ctx.fillRect(140, 485, 1070, 115);
-      ctx.strokeStyle = "rgba(212, 175, 55, 0.5)";
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(140, 485, 1070, 115);
+      // Top Left: Authority Text Stack
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#b45309";
+      ctx.font = "bold 13.5px sans-serif";
+      ctx.fillText("GOVERNMENT OF RAJASTHAN", 145, 72);
 
-      if (isTimedCompetitive) {
-        // 5 Columns: REGISTRATION NO. | GUN TIME | CHIP TIME | AVG PACE | RANK
-        // Column 1: REGISTRATION NO.
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 12.5px sans-serif";
-        ctx.fillText("REGISTRATION NO.", 247, 522);
-        ctx.fillStyle = "#dc2626";
-        ctx.font = "900 23px monospace";
-        ctx.fillText(selectedRunner.bibNumber || "RJ-21K-1001", 247, 568);
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "900 28px sans-serif";
+      ctx.fillText("RAJASTHAN POLICE", 145, 101);
 
-        // Divider 1
-        ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
-        ctx.beginPath();
-        ctx.moveTo(354, 495);
-        ctx.lineTo(354, 590);
-        ctx.stroke();
-
-        // Column 2: GUN TIME
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 12.5px sans-serif";
-        ctx.fillText("GUN TIME", 461, 522);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.font = "900 23px monospace";
-        ctx.fillText(runnerGunTime, 461, 568);
-
-        // Divider 2
-        ctx.beginPath();
-        ctx.moveTo(568, 495);
-        ctx.lineTo(568, 590);
-        ctx.stroke();
-
-        // Column 3: CHIP TIME
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 12.5px sans-serif";
-        ctx.fillText("CHIP TIME", 675, 522);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.font = "900 23px monospace";
-        ctx.fillText(runnerChipTime, 675, 568);
-
-        // Divider 3
-        ctx.beginPath();
-        ctx.moveTo(782, 495);
-        ctx.lineTo(782, 590);
-        ctx.stroke();
-
-        // Column 4: AVG PACE
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 12.5px sans-serif";
-        ctx.fillText("AVG PACE", 889, 522);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.font = "900 23px monospace";
-        ctx.fillText(runnerAvgPace, 889, 568);
-
-        // Divider 4
-        ctx.beginPath();
-        ctx.moveTo(996, 495);
-        ctx.lineTo(996, 590);
-        ctx.stroke();
-
-        // Column 5: RANK
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 12.5px sans-serif";
-        ctx.fillText("OFFICIAL RANK", 1103, 522);
-        ctx.fillStyle = "#047857";
-        ctx.font = "800 21px sans-serif";
-        ctx.fillText(runnerRank, 1103, 568);
-      } else {
-        // District Level: Pure District & Honorary Ambassador Recognition
-        // Pillar 1: Registration Number
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 13px sans-serif";
-        ctx.fillText("REGISTRATION NO.", 320, 522);
-        ctx.fillStyle = "#dc2626";
-        ctx.font = "900 28px monospace";
-        ctx.fillText(selectedRunner.bibNumber || "RJ-05K-3001", 320, 568);
-
-        // Divider 1
-        ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
-        ctx.beginPath();
-        ctx.moveTo(500, 495);
-        ctx.lineTo(500, 590);
-        ctx.stroke();
-
-        // Pillar 2: Pure District (No Commissionerate or Extra Suffixes)
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 13px sans-serif";
-        ctx.fillText("POLICE DISTRICT", 675, 522);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.font = "900 25px sans-serif";
-        ctx.fillText(pureDistrictEn, 675, 568);
-
-        // Divider 2
-        ctx.beginPath();
-        ctx.moveTo(850, 495);
-        ctx.lineTo(850, 590);
-        ctx.stroke();
-
-        // Pillar 3: Ambassador Recognition
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 13px sans-serif";
-        ctx.fillText("HONORARY DESIGNATION", 1030, 522);
-        ctx.fillStyle = "#047857";
-        ctx.font = "800 19px sans-serif";
-        ctx.fillText("Women Safety Ambassador", 1030, 568);
-      }
-
-      // Event Date & Authority
       ctx.fillStyle = "#64748b";
-      ctx.font = "bold 14px sans-serif";
-      ctx.fillText(`Event Date: 3 January 2027 • ${isTimedCompetitive ? 'Official Finisher Certificate' : 'Participation & Women Safety Ambassador Certificate'}`, 675, 634);
+      ctx.font = "bold 13.5px sans-serif";
+      ctx.fillText(isTimedCompetitive ? "Rajasthan Police Headquarters • Jaipur" : `District Police • ${pureDistrictEn}`, 145, 122);
 
-      // Subtle Divider before Footer
-      ctx.fillStyle = "rgba(212, 175, 55, 0.4)";
-      ctx.fillRect(160, 662, 1030, 1.5);
-
-      // Bottom Signatures & Seal Section (Anchored firmly near the bottom border)
-      ctx.textAlign = "center";
-
-      if (isTimedCompetitive) {
-        ctx.font = "italic bold 28px serif";
-        ctx.fillStyle = "#0a1c3d";
-        ctx.fillText("Rajeev Sharma, IPS", 280, 748);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.fillRect(175, 760, 210, 2);
-        ctx.font = "bold 15px sans-serif";
-        ctx.fillText("DIRECTOR GENERAL OF POLICE", 280, 784);
-        ctx.fillStyle = "#64748b";
-        ctx.font = "13px sans-serif";
-        ctx.fillText("Rajasthan Police Headquarters, Jaipur", 280, 806);
-        ctx.font = "12px sans-serif";
-        ctx.fillText("Government of Rajasthan", 280, 826);
-      } else {
-        ctx.font = "italic bold 28px serif";
-        ctx.fillStyle = "#0a1c3d";
-        ctx.fillText("Superintendent of Police", 280, 748);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.fillRect(175, 760, 210, 2);
-        ctx.font = "bold 15px sans-serif";
-        ctx.fillText("SUPERINTENDENT OF POLICE (SP / DCP)", 280, 784);
-        ctx.fillStyle = "#64748b";
-        ctx.font = "13px sans-serif";
-        ctx.fillText(`${pureDistrictEn}, Rajasthan`, 280, 806);
-        ctx.font = "12px sans-serif";
-        ctx.fillText("Rajasthan Police", 280, 826);
-      }
-
-      // Center: Official Seal
+      // Top Right: RUN FOR HER 2027 Badge
+      const badgeCX = 1255;
+      const badgeCY = 76;
       ctx.save();
       ctx.beginPath();
-      ctx.arc(675, 755, 54, 0, 2 * Math.PI);
-      ctx.fillStyle = "#fef3c7";
+      ctx.arc(badgeCX, badgeCY, 24, 0, 2 * Math.PI);
+      ctx.fillStyle = "#e11d48";
       ctx.fill();
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#d4af37";
-      ctx.stroke();
-      if (logoImg.complete && logoImg.naturalWidth > 0) {
-        ctx.drawImage(logoImg, 640, 720, 70, 70);
-      }
-      ctx.restore();
-      ctx.fillStyle = "#996515";
-      ctx.font = "900 12px sans-serif";
-      ctx.fillText("★ OFFICIAL SEAL ★", 675, 832);
-      ctx.fillStyle = "#64748b";
-      ctx.font = "bold 11px sans-serif";
-      ctx.fillText("SEVARTH KATIBADDHATA", 675, 850);
 
-      // Right: QR Code
+      // White runner silhouette icon
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2.2;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.arc(badgeCX + 2, badgeCY - 11, 3.5, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(badgeCX + 2, badgeCY - 6);
+      ctx.lineTo(badgeCX - 1, badgeCY + 4);
+      ctx.lineTo(badgeCX + 6, badgeCY + 13);
+      ctx.moveTo(badgeCX - 1, badgeCY + 4);
+      ctx.lineTo(badgeCX - 7, badgeCY + 13);
+      ctx.moveTo(badgeCX - 5, badgeCY - 2);
+      ctx.lineTo(badgeCX + 1, badgeCY - 3);
+      ctx.lineTo(badgeCX + 8, badgeCY + 1);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = "#dc2626";
+      ctx.font = "bold 12.5px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("RUN FOR HER 2027", badgeCX, 122);
+
+      // Full Width Golden Line below Header
+      ctx.fillStyle = "#d4af37";
+      ctx.fillRect(45, 142, 1260, 2);
+
+      // 2. CERTIFICATE TITLE & AWARD
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "bold 34px Georgia, serif";
+      ctx.textAlign = "center";
+      ctx.fillText("CERTIFICATE OF ACCOMPLISHMENT", 675, 206);
+
+      ctx.fillStyle = "#b45309";
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText("WOMEN'S SAFETY, DIGNITY & EMPOWERMENT MOVEMENT", 675, 236);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "italic 16.5px sans-serif";
+      ctx.fillText("This official certificate is proudly awarded to", 675, 280);
+
+      // 3. RUNNER NAME in 'Segoe Script' Font
+      const runnerName = formatLocalizedName(selectedRunner.fullName, false) || "Madan";
+      let nameFontSize = 48;
+      ctx.font = `bold ${nameFontSize}px 'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive`;
+      while (ctx.measureText(runnerName).width > 700 && nameFontSize > 24) {
+        nameFontSize -= 2;
+        ctx.font = `bold ${nameFontSize}px 'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive`;
+      }
+      ctx.fillStyle = "#0a1c3d";
+      ctx.fillText(runnerName, 675, 345);
+
+      const measuredNameW = ctx.measureText(runnerName).width;
+      const underlineW = Math.max(measuredNameW + 50, 280);
+      ctx.fillStyle = "#0a1c3d";
+      ctx.fillRect(675 - underlineW / 2, 362, underlineW, 2.5);
+
+      // 4. STATEMENT (Exact 2 lines matching preview)
+      ctx.fillStyle = "#334155";
+      ctx.font = "18px Georgia, serif";
+      const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
+
+      if (isTimedCompetitive) {
+        ctx.fillText(`For successfully completing the ${catText} in ${pureDistrictEn} under the leadership`, 675, 416);
+        ctx.fillText("of the Director General of Police (DGP), Rajasthan on the motto \"Every Step for Her Safety.\"", 675, 444);
+      } else {
+        ctx.fillText("For exemplary participation in the Women's Safety, Dignity & Empowerment Movement", 675, 416);
+        ctx.fillText(`and successfully completing the ${catText} in ${pureDistrictEn} under the leadership of the District Police on the motto "Every Step for Her Safety."`, 675, 444);
+      }
+
+      // 5. METRICS BOX (Exact 5-column / 3-column card)
+      const drawRRect = (x, y, w, h, r) => {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      };
+
+      const boxX = 80;
+      const boxY = 486;
+      const boxW = 1190;
+      const boxH = 92;
+
+      ctx.fillStyle = "rgba(241, 245, 249, 0.45)";
+      ctx.strokeStyle = "rgba(212, 175, 55, 0.5)";
+      ctx.lineWidth = 1.5;
+      drawRRect(boxX, boxY, boxW, boxH, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      if (isTimedCompetitive) {
+        const colW = boxW / 5;
+        const cols = [
+          { label: "REGISTRATION NO.", val: selectedRunner.bibNumber || "RJ-21K-1001", color: "#dc2626", font: "bold 20px monospace" },
+          { label: "GUN TIME", val: runnerGunTime, color: "#0a1c3d", font: "bold 20px monospace" },
+          { label: "CHIP TIME", val: runnerChipTime, color: "#0a1c3d", font: "bold 20px monospace" },
+          { label: "AVG PACE", val: runnerAvgPace, color: "#0a1c3d", font: "bold 20px sans-serif" },
+          { label: "RANK", val: runnerRank, color: "#047857", font: "bold 20px sans-serif" }
+        ];
+
+        cols.forEach((col, idx) => {
+          const cx = boxX + colW * idx + colW / 2;
+          ctx.fillStyle = "#64748b";
+          ctx.font = "bold 12px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(col.label, cx, boxY + 36);
+
+          ctx.fillStyle = col.color;
+          ctx.font = col.font;
+          ctx.fillText(col.val, cx, boxY + 68);
+
+          if (idx < cols.length - 1) {
+            const divX = boxX + colW * (idx + 1);
+            ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(divX, boxY + 14);
+            ctx.lineTo(divX, boxY + boxH - 14);
+            ctx.stroke();
+          }
+        });
+      } else {
+        const colW = boxW / 3;
+        const cols = [
+          { label: "REGISTRATION NO.", val: selectedRunner.bibNumber || "RJ-05K-3001", color: "#dc2626", font: "bold 24px monospace" },
+          { label: "POLICE DISTRICT", val: pureDistrictEn, color: "#0a1c3d", font: "bold 22px sans-serif" },
+          { label: "HONORARY DESIGNATION", val: "Women Safety Ambassador", color: "#047857", font: "bold 19px sans-serif" }
+        ];
+
+        cols.forEach((col, idx) => {
+          const cx = boxX + colW * idx + colW / 2;
+          ctx.fillStyle = "#64748b";
+          ctx.font = "bold 13px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(col.label, cx, boxY + 36);
+
+          ctx.fillStyle = col.color;
+          ctx.font = col.font;
+          ctx.fillText(col.val, cx, boxY + 68);
+
+          if (idx < cols.length - 1) {
+            const divX = boxX + colW * (idx + 1);
+            ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(divX, boxY + 14);
+            ctx.lineTo(divX, boxY + boxH - 14);
+            ctx.stroke();
+          }
+        });
+      }
+
+      // 6. BOTTOM FOOTER (Exact match to Preview)
+      // Left: IPS / SP Signature
+      const sigX = 190;
+      ctx.textAlign = "center";
+      if (isTimedCompetitive) {
+        ctx.font = "italic bold 25px serif";
+        ctx.fillStyle = "#0a1c3d";
+        ctx.fillText("Rajeev Sharma, IPS", sigX, 726);
+        ctx.fillRect(sigX - 90, 736, 180, 2);
+        ctx.font = "bold 13.5px sans-serif";
+        ctx.fillText("DIRECTOR GENERAL OF POLICE", sigX, 756);
+        ctx.fillStyle = "#64748b";
+        ctx.font = "12px sans-serif";
+        ctx.fillText("Rajasthan Police Headquarters, Jaipur", sigX, 774);
+      } else {
+        ctx.font = "italic bold 25px serif";
+        ctx.fillStyle = "#0a1c3d";
+        ctx.fillText("Superintendent of Police", sigX, 726);
+        ctx.fillRect(sigX - 90, 736, 180, 2);
+        ctx.font = "bold 13.5px sans-serif";
+        ctx.fillText("SUPERINTENDENT OF POLICE (SP / DCP)", sigX, 756);
+        ctx.fillStyle = "#64748b";
+        ctx.font = "12px sans-serif";
+        ctx.fillText(`${pureDistrictEn}, Rajasthan`, sigX, 774);
+      }
+
+      // Center: Rajasthan Police Logo Emblem (Exact as in preview)
+      if (logoImg.complete && logoImg.naturalWidth > 0) {
+        ctx.drawImage(logoImg, 675 - 30, 716, 60, 60);
+      }
+
+      // Right: Security QR Code
       if (qrCodeUrl) {
         const qrImg = new Image();
         qrImg.src = qrCodeUrl;
-        await new Promise(r => { qrImg.onload = r; qrImg.onerror = r; });
+        await new Promise((r) => { qrImg.onload = r; qrImg.onerror = r; });
         if (qrImg.complete) {
-          ctx.drawImage(qrImg, 1015, 688, 110, 110);
+          ctx.drawImage(qrImg, 1175, 704, 76, 76);
+          ctx.strokeStyle = "#cbd5e1";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(1175, 704, 76, 76);
         }
       }
       ctx.fillStyle = "#0a1c3d";
-      ctx.font = "bold 13.5px monospace";
-      ctx.fillText(selectedRunner.certificateId || "RJ-POL-2027-CERT", 1070, 824);
-      ctx.fillStyle = "#15803d";
-      ctx.font = "bold 12px sans-serif";
-      ctx.fillText("✓ Digitally Verified Record", 1070, 844);
+      ctx.font = "bold 13px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(selectedRunner.certificateId || "RJ-POL-2027-CERT", 1213, 796);
 
       // Convert Canvas to PNG and Trigger Download
       canvas.toBlob((blob) => {
@@ -904,15 +874,14 @@ export function CertificateHub({ registrations = [] }) {
                       This official certificate is proudly awarded to
                     </div>
                     <div style={{
-                      fontSize: '1.85rem',
-                      fontWeight: 900,
+                      fontSize: '2.4rem',
+                      fontWeight: 700,
                       color: '#0a1c3d',
-                      fontFamily: 'var(--font-heading)',
-                      textTransform: 'uppercase',
+                      fontFamily: "'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive",
                       borderBottom: '2.5px solid #0a1c3d',
                       display: 'inline-block',
-                      padding: '0 24px 2px 24px',
-                      letterSpacing: '0.02em'
+                      padding: '0 28px 2px 28px',
+                      marginBottom: '8px'
                     }}>
                       {formatLocalizedName(selectedRunner.fullName, false)}
                     </div>
@@ -1023,22 +992,16 @@ export function CertificateHub({ registrations = [] }) {
                     </div>
                   </div>
 
-                  <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <OfficialGoldSeal size={74} />
-                    <div style={{ fontSize: '0.62rem', fontWeight: 800, color: 'var(--police-gold-700)', textTransform: 'uppercase', marginTop: '4px', letterSpacing: '0.04em' }}>
-                      Official Seal
-                    </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <PoliceEmblem size={56} />
                   </div>
 
-                  <div style={{ textAlign: 'center', minWidth: '130px' }}>
+                  <div style={{ textAlign: 'center', minWidth: '110px' }}>
                     {qrCodeUrl && (
                       <img src={qrCodeUrl} alt="Verify QR" style={{ width: '68px', height: '68px', border: '1px solid var(--border-subtle)', padding: '2px', borderRadius: '4px', display: 'inline-block' }} />
                     )}
                     <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0a1c3d', marginTop: '3px', fontFamily: 'monospace' }}>
                       {selectedRunner.certificateId}
-                    </div>
-                    <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#16a34a' }}>
-                      ✓ Digitally Verified Record
                     </div>
                   </div>
                 </div>
