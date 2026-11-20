@@ -407,7 +407,7 @@ export function AdminDashboard({
           });
         }
         setCertFeedback({ type: 'success', message: res.message || `✅ सूचना SMS/Email सफलतापूर्वक प्रेषित! (${runner.fullName})` });
-        alert(`✅ सूचना SMS/WhatsApp सफलतापूर्वक प्रेषित!\n\nधावक: ${runner.fullName}\nबिब: ${runner.bibNumber}\nसर्टिफिकेट ID: ${runner.certificateId || 'RJ-POL-2027-ISSUED'}`);
+        alert(`✅ सूचना SMS/WhatsApp सफलतापूर्वक प्रेषित!\n\nधावक: ${runner.fullName}\nपंजीकरण संख्या: ${runner.bibNumber}\nसर्टिफिकेट ID: ${runner.certificateId || 'RJ-POL-2027-ISSUED'}`);
       } else {
         setCertFeedback({ type: 'error', message: res?.error || res?.message || "सूचना प्रेषण विफल।" });
         alert(res?.error || res?.message || "सूचना प्रेषण विफल।");
@@ -515,7 +515,7 @@ export function AdminDashboard({
 
       setScannedRunner(null);
 
-      setKitActionMsg({ type: 'error', text: `धावक "${q}" नहीं मिला। कृपया बिब संख्या या मोबाइल नंबर दोबारा जांचें।` });
+      setKitActionMsg({ type: 'error', text: isHindi ? `धावक "${q}" नहीं मिला। कृपया पंजीकरण संख्या या मोबाइल नंबर दोबारा जांचें।` : `Runner "${q}" not found. Please verify registration number or mobile number.` });
 
     }
 
@@ -564,7 +564,9 @@ export function AdminDashboard({
 
           type: 'success', 
 
-          text: `सफलतापूर्वक किट आवंटित! ${assignedPhys ? `फिजिकल बिब #${assignedPhys} • ` : ''}RFID चिप #${rfidTagInput.trim()} धावक ${scannedRunner.fullName} (Reg ID: ${scannedRunner.bibNumber}) को हैंडओवर की गई।` 
+          text: isHindi 
+            ? `सफलतापूर्वक किट आवंटित! RFID चिप #${rfidTagInput.trim()} धावक ${scannedRunner.fullName} (पंजीकरण सं: ${scannedRunner.bibNumber}) को हैंडओवर की गई।`
+            : `Kit allocated successfully! RFID chip #${rfidTagInput.trim()} handed over to runner ${scannedRunner.fullName} (Reg No: ${scannedRunner.bibNumber}).` 
 
         });
 
@@ -1509,7 +1511,7 @@ export function AdminDashboard({
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#c2410c', textTransform: 'uppercase' }}>
-                  {isHindi ? 'किट व बिब वितरण' : 'Kit & Bib Handover'}
+                  {isHindi ? 'किट वितरण' : 'Kit Handover'}
                 </span>
                 <Shirt size={15} color="#f97316" />
               </div>
@@ -1625,7 +1627,7 @@ export function AdminDashboard({
                 }}
               >
                 <PackageCheck size={16} color={adminTab === "kit_counter" ? "#2563eb" : "#64748b"} />
-                <span>{isHindi ? 'RFID किट व बिब आवंटन' : 'RFID Kit & Bib Allotment'}</span>
+                <span>{isHindi ? 'RFID किट आवंटन' : 'RFID Kit Allotment'}</span>
                 <span style={{
                   background: '#fef3c7',
                   color: '#92400e',
@@ -2114,8 +2116,8 @@ export function AdminDashboard({
 
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                     {isHindi 
-                      ? 'चयनित जिले का पूरा विवरण, बिब, मोबाइल एवं साइज अलग स्प्रेडशीट में सेव होगा।'
-                      : 'Full details, bibs, mobile numbers and sizes of selected district will be exported.'}
+                      ? 'चयनित जिले का पूरा विवरण, पंजीकरण संख्या, मोबाइल एवं साइज अलग स्प्रेडशीट में सेव होगा।'
+                      : 'Full details, registration numbers, mobile numbers and sizes of selected district will be exported.'}
                   </div>
 
                 </div>
@@ -2882,7 +2884,7 @@ export function AdminDashboard({
                 </h3>
               </div>
               <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: '#64748b' }}>
-                {isHindi ? 'धावक का बिब नंबर या मोबाइल नंबर सर्च करें। रक्त समूह (Blood Group) व पहचान की पुष्टि कर छाती बिब व RFID टैग सुपुर्द करें।' : 'Search runner Bib number or mobile number. Verify blood group and identity before handing over Bib & RFID tag.'}
+                {isHindi ? 'धावक का पंजीकरण नंबर या मोबाइल नंबर सर्च करें। रक्त समूह (Blood Group) व पहचान की पुष्टि कर किट व RFID टैग सुपुर्द करें।' : 'Search runner registration number or mobile number. Verify blood group and identity before handing over kit & RFID tag.'}
               </p>
             </div>
 
@@ -4878,7 +4880,7 @@ export function AdminDashboard({
                             marginBottom: '18px',
                             position: 'relative'
                           }}>
-                            <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>BIB NUMBER</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#dc2626' }}>{previewCertRunner.bibNumber}</div></div>
+                            <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#dc2626' }}>{previewCertRunner.bibNumber}</div></div>
                             <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>GUN TIME</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerGunTime}</div></div>
                             <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>CHIP TIME</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerChipTime}</div></div>
                             <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>AVG PACE</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerAvgPace}</div></div>
@@ -4897,7 +4899,7 @@ export function AdminDashboard({
                             marginBottom: '18px',
                             position: 'relative'
                           }}>
-                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION ID</div><div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626', fontFamily: 'monospace' }}>{previewCertRunner.bibNumber}</div></div>
+                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626', fontFamily: 'monospace' }}>{previewCertRunner.bibNumber}</div></div>
                             <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>POLICE DISTRICT</div><div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0a1c3d' }}>{pureDistrict}</div></div>
                             <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>HONORARY DESIGNATION</div><div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#047857' }}>{isHindi ? 'महिला सुरक्षा दूत' : 'Women Safety Ambassador'}</div></div>
                           </div>

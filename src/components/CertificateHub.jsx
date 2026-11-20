@@ -85,7 +85,7 @@ export function CertificateHub({ registrations = [] }) {
       if (!checkRunnerIssued(foundLocal)) {
         openNotIssuedPopup();
       } else {
-        setSearchFeedback({ type: 'success', message: `धावक रिकॉर्ड प्राप्त हुआ: ${foundLocal.fullName} (Bib: ${foundLocal.bibNumber})` });
+        setSearchFeedback({ type: 'success', message: isHindi ? `धावक रिकॉर्ड प्राप्त हुआ: ${foundLocal.fullName} (पंजीकरण सं: ${foundLocal.bibNumber})` : `Runner record found: ${foundLocal.fullName} (Reg No: ${foundLocal.bibNumber})` });
       }
       return;
     }
@@ -250,11 +250,11 @@ export function CertificateHub({ registrations = [] }) {
       ctx.strokeRect(150, 445, 1050, 105);
 
       if (isTimedCompetitive) {
-        // 5 Columns: BIB NUMBER | GUN TIME | CHIP TIME | AVG PACE | RANK
-        // Column 1: BIB NUMBER
+        // 5 Columns: REGISTRATION NO. | GUN TIME | CHIP TIME | AVG PACE | RANK
+        // Column 1: REGISTRATION NO.
         ctx.fillStyle = "#64748b";
         ctx.font = "bold 12px sans-serif";
-        ctx.fillText("BIB NUMBER", 255, 480);
+        ctx.fillText("REGISTRATION NO.", 255, 480);
         ctx.fillStyle = "#dc2626";
         ctx.font = "900 22px monospace";
         ctx.fillText(selectedRunner.bibNumber || "RJ-21K-1001", 255, 520);
@@ -658,7 +658,7 @@ export function CertificateHub({ registrations = [] }) {
           <form onSubmit={handleSearch} style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
             <input
               type="text"
-              placeholder="बिब # या मोबाइल नंबर..."
+              placeholder={isHindi ? "पंजीकरण सं. या मोबाइल नंबर..." : "Registration No. or Mobile..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -852,7 +852,7 @@ export function CertificateHub({ registrations = [] }) {
                     position: 'relative'
                   }}>
                     <div>
-                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>BIB NUMBER</div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>REGISTRATION NO.</div>
                       <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--crimson-600)' }}>{selectedRunner.bibNumber}</div>
                     </div>
                     <div>

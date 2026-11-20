@@ -954,7 +954,7 @@ export function RegistrationPage({
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(isHindi ? "पंजीकरण संख्या" : "REGISTRATION ID", bibCenterX, 198);
+      ctx.fillText(isHindi ? "पंजीकरण संख्या" : "REGISTRATION NO.", bibCenterX, 198);
       ctx.fillStyle = "#94a3b8";
       ctx.font = "bold 11px sans-serif";
       ctx.fillText(isHindi ? "REGISTRATION ID" : "OFFICIAL PASS", bibCenterX, 218);
@@ -1411,7 +1411,7 @@ export function RegistrationPage({
                   {/* Left: Registration ID & Category */}
                   <div style={{ textAlign: 'center', background: 'var(--police-navy-50)', padding: '20px', borderRadius: '12px', border: '1.5px dashed var(--police-navy-800)' }}>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase' }}>
-                      {isHindi ? 'पंजीकरण संख्या' : 'Registration ID'}
+                      {isHindi ? 'पंजीकरण संख्या' : 'Registration No.'}
                     </div>
                     <div style={{ fontSize: 'clamp(2rem, 4.5vw, 2.75rem)', fontWeight: 900, color: 'var(--police-navy-950)', letterSpacing: '1.5px', margin: '6px 0' }}>
                       {registeredParticipant.bibNumber}

@@ -1416,7 +1416,7 @@ export async function handleApiRequest(req, res) {
       const runnerId = (body.id || body.participantId || "").trim();
 
       if (!certId && !bibNumber && !mobile && !runnerId) {
-        return error("Certificate ID अथवा Bib Number आवश्यक है।", 400);
+        return error("Certificate ID अथवा Registration Number आवश्यक है।", 400);
       }
 
       // 1. Search L1 Cache and participants table across all possible identifier columns
@@ -2953,7 +2953,7 @@ export async function handleApiRequest(req, res) {
       const rowsRes = await db.execute({ sql: exportSql, args });
 
       const headers = [
-        "Bib Number", "Full Name", "Gender", "DOB", "Mobile", "Blood Group",
+        "Registration No.", "Full Name", "Gender", "DOB", "Mobile", "Blood Group",
         "Category", "District", "T-Shirt", "Certificate ID", "Status", "Finish Time", "Created At"
       ];
 

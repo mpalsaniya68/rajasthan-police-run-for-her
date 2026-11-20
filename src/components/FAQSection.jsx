@@ -68,7 +68,7 @@ export function FAQSection({ onNavigate }) {
     },
     {
       q: "Can multiple members from a family or group register individually?",
-      a: "Yes, each participant can enter their individual details to receive their unique personal E-Pass and BIB number."
+      a: "Yes, each participant can enter their individual details to receive their unique personal E-Pass and registration number."
     },
     {
       q: "What medical and emergency support is available along the race route?",
