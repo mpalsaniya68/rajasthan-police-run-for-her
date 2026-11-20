@@ -3,6 +3,7 @@ import {
   Send, MessageSquare, CheckCircle2, AlertCircle, RefreshCw, Check
 } from 'lucide-react';
 import { apiSendBroadcast, apiGetBroadcastHistory } from '../services/api';
+import { formatLocalizedName, formatLocalizedDistrict, formatLocalizedCategory } from '../utils/localization';
 
 export function getBroadcastCampaigns(isDistrictRole, districtName = "जयपुर") {
   if (isDistrictRole) {
@@ -312,7 +313,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
   // Resolved sample for live phone preview
   const sampleRunner = isDistrictRole
     ? (targetedRunners[0] && targetedRunners[0].categoryName?.includes("5") ? targetedRunners[0] : {
-        fullName: "कविता मीणा (Kavita Meena)",
+        fullName: "कविता मीणा",
         bibNumber: "RJ-ALW-05K-3042",
         categoryName: "5 KM Community Run",
         districtName: `${districtName} पुलिस`,
@@ -344,10 +345,10 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
   }
 
   const resolvedPreview = previewText
-    .replace(/\{name\}/g, sampleRunner.fullName)
+    .replace(/\{name\}/g, formatLocalizedName(sampleRunner.fullName, true))
     .replace(/\{bib\}/g, sampleRunner.bibNumber)
-    .replace(/\{category\}/g, sampleRunner.categoryName || "5 KM Community Run")
-    .replace(/\{district\}/g, sampleRunner.districtName || districtName)
+    .replace(/\{category\}/g, formatLocalizedCategory(sampleRunner.categoryName || "5 KM Community Run", true))
+    .replace(/\{district\}/g, formatLocalizedDistrict(sampleRunner.districtName || districtName, true))
     .replace(/\{certId\}/g, sampleRunner.certificateId)
     .replace(/\{tshirtSize\}/g, sampleRunner.tshirtSize || "")
     .replace(/बिब नंबर/g, "पंजीकरण संख्या")
