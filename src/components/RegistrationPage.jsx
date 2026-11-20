@@ -949,13 +949,7 @@ export function RegistrationPage({
 
       ctx.fillStyle = "#fef08a";
       ctx.font = "bold 20px sans-serif";
-      ctx.fillText("★ RUN FOR HER • OFFICIAL DIGITAL ENTRY PASS & ADMIT CARD ★", 154, 102);
-
-      ctx.fillStyle = "#cbd5e1";
-      ctx.font = "14px sans-serif";
-      ctx.textAlign = "right";
-      ctx.fillText("गृह विभाग, राजस्थान सरकार", 1150, 80);
-      ctx.textAlign = "left";
+      ctx.fillText("★ RUN FOR HER • DIGITAL ENTRY PASS ★", 154, 102);
 
       // Helper for rounded rectangle across all canvas contexts
       const drawRRect = (x, y, w, h, r) => {
@@ -1040,25 +1034,22 @@ export function RegistrationPage({
       ctx.lineTo(335, 418);
       ctx.stroke();
 
-      // Entry Status & Reporting
-      ctx.fillStyle = "#059669";
-      ctx.font = "bold 15px sans-serif";
-      ctx.fillText("✓ प्रवेश अधिकृत (Entry Approved)", bibCenterX, 444);
-      ctx.fillStyle = "#64748b";
-      ctx.font = "bold 13px sans-serif";
-      ctx.fillText("रिपोर्टिंग: 3 जन 2027, 05:00 AM", bibCenterX, 468);
+      // Reporting & Venue Info
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("रिपोर्टिंग: 3 जन 2027, 05:00 AM", bibCenterX, 452);
       if (p.physicalBibNumber) {
         ctx.fillStyle = "#b91c1c";
         ctx.font = "bold 13px sans-serif";
-        ctx.fillText(`आवंटित फिजिकल बिब: #${p.physicalBibNumber}`, bibCenterX, 494);
+        ctx.fillText(`आवंटित फिजिकल बिब: #${p.physicalBibNumber}`, bibCenterX, 482);
       } else if (routeConfig) {
         ctx.fillStyle = "#64748b";
-        ctx.font = "bold 12px sans-serif";
-        ctx.fillText("गेट नंबर 2 • अल्बर्ट हॉल, जयपुर", bibCenterX, 494);
+        ctx.font = "bold 13px sans-serif";
+        ctx.fillText("गेट नंबर 2 • अल्बर्ट हॉल, जयपुर", bibCenterX, 482);
       } else {
-        ctx.fillStyle = "#94a3b8";
-        ctx.font = "12px sans-serif";
-        ctx.fillText("पुलिस लाइन / जिला वेन्यू", bibCenterX, 494);
+        ctx.fillStyle = "#64748b";
+        ctx.font = "bold 13px sans-serif";
+        ctx.fillText("पुलिस लाइन / जिला वेन्यू", bibCenterX, 482);
       }
       ctx.textAlign = "left";
 
@@ -1179,7 +1170,7 @@ export function RegistrationPage({
       ctx.fillStyle = "#fef08a";
       ctx.font = "bold 17px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("★ सेवार्थ कटिबद्धता • राजस्थान पुलिस मुख्यालय, जयपुर ★", 600, footerY + 32);
+      ctx.fillText("★ सेवार्थ कटिबद्धता • राजस्थान पुलिस ★", 600, footerY + 32);
 
       ctx.fillStyle = "#e2e8f0";
       ctx.font = "13px sans-serif";
@@ -1394,7 +1385,7 @@ export function RegistrationPage({
                         RAJASTHAN POLICE MARATHON 2027
                       </div>
                       <div style={{ fontSize: '0.78rem', color: 'var(--crimson-600)', fontWeight: 800 }}>
-                        ★ RUN FOR HER • OFFICIAL ENTRY PASS ★
+                        ★ RUN FOR HER • DIGITAL ENTRY PASS ★
                       </div>
                     </div>
                   </div>
