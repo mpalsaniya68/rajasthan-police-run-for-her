@@ -731,15 +731,17 @@ input:focus, select:focus, textarea:focus {
 
   /* The Pure Official Finisher Certificate */
   .printable-certificate {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
     visibility: visible !important;
     box-sizing: border-box !important;
-    width: 278mm !important;
-    height: 194mm !important;
-    max-width: 278mm !important;
-    max-height: 194mm !important;
-    margin: 7mm auto !important;
-    padding: 22px 30px 16px 30px !important;
+    width: 280mm !important;
+    height: 196mm !important;
+    max-width: 280mm !important;
+    max-height: 196mm !important;
+    margin: 5mm auto !important;
+    padding: 18mm 22mm 14mm 22mm !important;
     background: #ffffff !important;
     border: 8px double #b45309 !important;
     border-radius: 6px !important;
@@ -752,6 +754,22 @@ input:focus, select:focus, textarea:focus {
     break-after: avoid !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  .printable-certificate .cert-inner-content {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: 100% !important;
+    width: 100% !important;
+    flex: 1 !important;
+  }
+
+  .printable-certificate .cert-footer-content {
+    margin-top: auto !important;
+    padding-top: 14px !important;
+    border-top: 1.5px solid #cbd5e1 !important;
+    width: 100% !important;
   }
 
   .printable-certificate * {
