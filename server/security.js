@@ -115,22 +115,144 @@ export function hashIdNumber(idType, idNumber) {
  * 3. Secure Bib Generation
  * Generates official high-authority Bib numbers based on category
  */
-export function generateBibNumber(categoryId, counter) {
-  const pad = String(counter).padStart(4, "0");
-  switch (categoryId) {
-    case "21k":
-      return `RJ-21K-${pad}`;
-    case "10k":
-      return `RJ-10K-${pad}`;
-    case "5k":
-      return `RJ-05K-${pad}`;
-    case "3k":
-      return `RJ-03K-${pad}`;
-    case "2k":
-      return `RJ-02K-${pad}`;
-    default:
-      return `RJ-GEN-${pad}`;
+export const DISTRICT_CODE_MAP = {
+  // Flagship (State Capital)
+  jaipur: "JP",
+  jaipur_comm: "JP",
+  "jpr-comm": "JP",
+  jpr: "JP",
+
+  // Districts
+  alwar: "ALW",
+  alw: "ALW",
+  ajmer: "AJM",
+  ajm: "AJM",
+  banswara: "BSW",
+  bsw: "BSW",
+  baran: "BRN",
+  brn: "BRN",
+  barmer: "BMR",
+  bmr: "BMR",
+  balotra: "BLT",
+  blt: "BLT",
+  beawar: "BWR",
+  bwr: "BWR",
+  bharatpur: "BTP",
+  btp: "BTP",
+  bhilwara: "BHL",
+  bhl: "BHL",
+  bhiwadi: "BHW",
+  bhw: "BHW",
+  bikaner: "BKN",
+  bkn: "BKN",
+  bundi: "BND",
+  bnd: "BND",
+  chittorgarh: "CHT",
+  cht: "CHT",
+  churu: "CHU",
+  chu: "CHU",
+  dausa: "DSA",
+  dsa: "DSA",
+  deeg: "DEG",
+  deg: "DEG",
+  dholpur: "DHP",
+  dhp: "DHP",
+  didwana: "DID",
+  "didwana-kuchaman": "DID",
+  did: "DID",
+  dungarpur: "DNG",
+  dng: "DNG",
+  hanumangarh: "HNM",
+  hnm: "HNM",
+  jaisalmer: "JSM",
+  jsm: "JSM",
+  jalore: "JLR",
+  jlr: "JLR",
+  jhalawar: "JHL",
+  jhl: "JHL",
+  jhunjhunu: "JJN",
+  jjn: "JJN",
+  jodhpur: "JDH",
+  jodhpur_comm: "JDH",
+  "jdh-comm": "JDH",
+  jdh: "JDH",
+  karauli: "KRL",
+  krl: "KRL",
+  khairthal: "KHT",
+  "khairthal-tijara": "KHT",
+  kht: "KHT",
+  kota: "KTA",
+  kota_city: "KTA",
+  kota_rural: "KTA",
+  "kta-city": "KTA",
+  kta: "KTA",
+  kotputli: "KTP",
+  "kotputli-behror": "KTP",
+  ktp: "KTP",
+  nagaur: "NGR",
+  ngr: "NGR",
+  pali: "PLI",
+  pli: "PLI",
+  phalodi: "PHL",
+  phl: "PHL",
+  pratapgarh: "PRT",
+  prt: "PRT",
+  rajsamand: "RSM",
+  rsm: "RSM",
+  salumber: "SLM",
+  slm: "SLM",
+  sawai_madhopur: "SWM",
+  swm: "SWM",
+  sikar: "SKR",
+  skr: "SKR",
+  sirohi: "SRH",
+  srh: "SRH",
+  sri_ganganagar: "SGN",
+  sgn: "SGN",
+  tonk: "TNK",
+  tnk: "TNK",
+  udaipur: "UDR",
+  udr: "UDR"
+};
+
+export function getDistrictCode(districtId = "") {
+  if (!districtId) return "DIS";
+  const clean = String(districtId).toLowerCase().trim().replace(/[-_ ]+/g, "_");
+  if (DISTRICT_CODE_MAP[clean]) return DISTRICT_CODE_MAP[clean];
+  for (const [key, code] of Object.entries(DISTRICT_CODE_MAP)) {
+    if (clean.includes(key) || key.includes(clean)) return code;
   }
+  return clean.slice(0, 3).toUpperCase();
+}
+
+/**
+ * 3. Secure Registration / Bib ID Generation
+ * - Jaipur Flagship: Maintains standard marathon format RJ-{catCode}-{pad} (e.g. RJ-21K-1001, RJ-05K-1001)
+ * - Other Districts: Option B format with district code RJ-{distCode}-{catCode}-{pad} (e.g. RJ-ALW-05K-1001, RJ-KTA-05K-1001)
+ */
+export function generateBibNumber(categoryId, counter, districtId = "jaipur") {
+  const pad = String(counter).padStart(4, "0");
+  const dStr = String(districtId || "").toLowerCase();
+  const isJaipur = !districtId || dStr.includes("jpr") || dStr.includes("jaipur") || dStr === "jaipur_comm";
+
+  let catCode = "GEN";
+  switch (categoryId) {
+    case "21k": catCode = "21K"; break;
+    case "10k": catCode = "10K"; break;
+    case "5k": catCode = "05K"; break;
+    case "3k": catCode = "03K"; break;
+    case "2k": catCode = "02K"; break;
+    default: catCode = (categoryId || "GEN").toUpperCase();
+  }
+
+  // 1. Jaipur: Keep classic format RJ-21K-1001, RJ-05K-1001
+  if (isJaipur) {
+    return `RJ-${catCode}-${pad}`;
+  }
+
+  // 2. Other Districts: Option B district-scoped format RJ-{distCode}-{catCode}-{pad}
+  const distCode = getDistrictCode(districtId);
+  return `RJ-${distCode}-${catCode}-${pad}`;
 }
 
 /**

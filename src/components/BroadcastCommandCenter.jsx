@@ -313,7 +313,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
   const sampleRunner = isDistrictRole
     ? (targetedRunners[0] && targetedRunners[0].categoryName?.includes("5") ? targetedRunners[0] : {
         fullName: "कविता मीणा (Kavita Meena)",
-        bibNumber: "RJ-05K-3042",
+        bibNumber: "RJ-ALW-05K-3042",
         categoryName: "5 KM Community Run",
         districtName: `${districtName} पुलिस`,
         tshirtSize: "N/A",
@@ -728,7 +728,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input
                     type="text"
-                    placeholder={isDistrictRole ? "उदा. RJ-05K-3042 या 9829012345" : "उदा. RJ-21K-1009 या 9829012345"}
+                    placeholder={isDistrictRole ? "उदा. RJ-ALW-05K-1001 या 9829012345" : "उदा. RJ-21K-1009 या 9829012345"}
                     value={singleSearchQuery}
                     onChange={(e) => setSingleSearchQuery(e.target.value)}
                     style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.88rem' }}

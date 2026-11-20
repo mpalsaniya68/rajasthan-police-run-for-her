@@ -6,6 +6,7 @@ import {
   dispatchGatewaySms, 
   resolveMessagePlaceholders 
 } from "./notifications.js";
+import { generateBibNumber, getDistrictCode } from "./security.js";
 
 const bootstrapUsername = "broadcast-test-admin";
 const bootstrapPassword = "broadcast-test-pass-2026";
@@ -105,6 +106,20 @@ test("Unit Test: resolveMessagePlaceholders omits T-shirt line cleanly when tshi
   assert.ok(!resolved.includes("N/A"));
   assert.ok(resolved.includes("कविता मीणा"));
   assert.ok(resolved.includes("RJ-05K-3042"));
+});
+
+test("Unit Test: generateBibNumber formats Jaipur vs Other Districts correctly", () => {
+  // Jaipur keeps standard format
+  assert.equal(generateBibNumber("21k", 1001, "jaipur_comm"), "RJ-21K-1001");
+  assert.equal(generateBibNumber("10k", 2005, "jaipur"), "RJ-10K-2005");
+  assert.equal(generateBibNumber("5k", 3012, "JPR-COMM"), "RJ-05K-3012");
+
+  // Other Districts include District Code (Option B)
+  assert.equal(generateBibNumber("5k", 1001, "alwar"), "RJ-ALW-05K-1001");
+  assert.equal(generateBibNumber("5k", 1002, "jdh-comm"), "RJ-JDH-05K-1002");
+  assert.equal(generateBibNumber("2k", 1003, "kota_city"), "RJ-KTA-02K-1003");
+  assert.equal(generateBibNumber("5k", 1004, "udr"), "RJ-UDR-05K-1004");
+  assert.equal(generateBibNumber("5k", 1005, "bikaner"), "RJ-BKN-05K-1005");
 });
 
 test("Unit Test: dispatchGatewayWhatsApp and dispatchGatewaySms simulate successfully", async () => {

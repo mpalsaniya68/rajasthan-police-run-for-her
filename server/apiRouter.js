@@ -8,6 +8,7 @@ import {
   maskIdNumber,
   hashIdNumber,
   generateBibNumber,
+  getDistrictCode,
   generateCertificateId,
   generateSecureQrToken,
   verifyPassword,
@@ -1069,7 +1070,7 @@ export async function handleApiRequest(req, res) {
         args: [data.categoryId]
       });
       const counter = Number(seqRes.rows[0]?.last_seq) || (Date.now() % 9000 + 1000);
-      const bibNumber = generateBibNumber(data.categoryId, counter);
+      const bibNumber = generateBibNumber(data.categoryId, counter, data.districtId);
       const certificateId = generateCertificateId();
       const qrToken = generateSecureQrToken(bibNumber, certificateId);
       const participantId = `P-${crypto.randomBytes(4).toString("hex")}`;
@@ -3408,7 +3409,7 @@ export async function handleApiRequest(req, res) {
       const isDistrict = adminUser.role === "DISTRICT";
       const sampleRunner = runners[0] || (isDistrict ? {
         fullName: "कविता मीणा (Kavita Meena)",
-        bibNumber: `RJ-05K-${adminUser.districtId || '3042'}`,
+        bibNumber: `RJ-${getDistrictCode(adminUser.districtId || adminUser.districtName || 'alwar')}-05K-3042`,
         categoryName: "5 KM Community Run",
         districtName: adminUser.districtName || "अलवर पुलिस",
         tshirtSize: "N/A",
