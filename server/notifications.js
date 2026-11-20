@@ -126,7 +126,7 @@ export async function dispatchGatewaySms({ mobile, message, templateId = "" }) {
 export async function sendRegistrationNotification(participant) {
   const { fullName, mobile, bibNumber, categoryName, certificateId } = participant;
 
-  const smsText = `राजस्थान पुलिस मैराथन 2027 'RUN FOR HER': प्रिय ${fullName}, आपका पंजीकरण सफल रहा! बिब नंबर: ${bibNumber}, श्रेणी: ${categoryName}। ई-पास: https://police.rajasthan.gov.in/epass/${certificateId} | सहायता: 112/1090`;
+  const smsText = `राजस्थान पुलिस मैराथन 2027 'RUN FOR HER': प्रिय ${fullName}, आपका पंजीकरण सफल रहा! पंजीकरण संख्या: ${bibNumber}, श्रेणी: ${categoryName}। ई-पास: https://police.rajasthan.gov.in/epass/${certificateId} | सहायता: 112/1090`;
 
   const dispatchResult = await dispatchGatewaySms({
     mobile,
@@ -375,31 +375,31 @@ export const BROADCAST_TEMPLATES = {
     id: "CONFIRMATION",
     title: "पंजीकरण एवं ई-पास पुष्टि",
     defaultChannel: "BOTH",
-    text: `🏛️ राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'\n\nप्रिय {name},\nआपका पंजीकरण सफल रहा है!\n\n🏷️ बिब नंबर: {bib}\n🏃 दौड़ श्रेणी: {category}\n📍 स्थान: {district}\n\n📲 अपना डिजिटल ई-पास व क्यूआर कोड तुरंत डाउनलोड करें:\n👉 https://police.rajasthan.gov.in/epass/{certId}\n\nहेल्पलाइन: 112 / 1090\n- राजस्थान पुलिस मुख्यालय`
+    text: `🏛️ राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'\n\nप्रिय {name},\nआपका पंजीकरण सफल रहा है!\n\n🔢 पंजीकरण संख्या: {bib}\n🏃 दौड़ श्रेणी: {category}\n📍 स्थान: {district}\n👕 टी-शर्ट साइज़: {tshirtSize}\n\n📲 अपना डिजिटल ई-पास व क्यूआर कोड तुरंत डाउनलोड करें:\n👉 https://police.rajasthan.gov.in/epass/{certId}\n\nहेल्पलाइन: 112 / 1090\n- राजस्थान पुलिस मुख्यालय`
   },
   PROMOTION: {
     id: "PROMOTION",
     title: "नारी सुरक्षा जन-आंदोलन एवं मैराथन आमंत्रण",
     defaultChannel: "WHATSAPP",
-    text: `🌸 राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'\n\nनमस्ते {name},\n"हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के लिए"\n\n3 जनवरी 2027 को अल्बर्ट हॉल, जयपुर एवं प्रदेश के समस्त 41 जिलों में आयोजित होने वाली ऐतिहासिक मैराथन में भाग लें। अपने परिजनों एवं मित्रों को भी इस राज्यव्यापी अभियान से जोड़ें।\n\nपंजीकरण पोर्टल:\n👉 https://police.rajasthan.gov.in/marathon\n\n- पुलिस महानिदेशक कार्यालय, राजस्थान पुलिस`
+    text: `🌸 राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'\n\nनमस्ते {name},\n"हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के लिए"\n\n3 जनवरी 2027 को जयपुर एवं प्रदेश के समस्त 50 जिलों में आयोजित होने वाली ऐतिहासिक मैराथन में भाग लें। अपने परिजनों एवं मित्रों को भी इस राज्यव्यापी अभियान से जोड़ें।\n\nपंजीकरण पोर्टल:\n👉 https://police.rajasthan.gov.in/marathon\n\n- पुलिस महानिदेशक कार्यालय, राजस्थान पुलिस`
   },
   EXPO_KIT_REMINDER: {
     id: "EXPO_KIT_REMINDER",
-    title: "एक्सपो किट (टी-शर्ट एवं RFID बिब) संग्रह रिमाइंडर",
+    title: "एक्सपो किट (टी-शर्ट एवं RFID) संग्रह रिमाइंडर",
     defaultChannel: "BOTH",
-    text: `👕 राजस्थान पुलिस मैराथन 2027 — किट सूचना\n\nआदरणीय {name},\nआपकी प्रतिभागी किट (साइज: {tshirtSize} एवं बिब #{bib}) तैयार है।\n\n📅 किट वितरण: 1 एवं 2 जनवरी 2027\n⏰ समय: प्रातः 10:00 AM से सायं 07:00 PM\n📍 स्थान: अल्बर्ट हॉल मैराथन एक्सपो काउंटर, जेएलएन मार्ग, जयपुर\n\nकृपया अपना ई-पास अथवा एसएमएस दिखाकर किट अवश्य प्राप्त करें।\n- राजस्थान पुलिस एक्सपो समिति`
+    text: `👕 राजस्थान पुलिस मैराथन 2027 — किट सूचना\n\nआदरणीय {name},\nआपकी प्रतिभागी किट (साइज: {tshirtSize} एवं पंजीकरण संख्या #{bib}) तैयार है।\n\n📅 किट वितरण: 1 एवं 2 जनवरी 2027\n⏰ समय: प्रातः 10:00 AM से सायं 07:00 PM\n📍 स्थान: अल्बर्ट हॉल मैराथन एक्सपो काउंटर, जेएलएन मार्ग, जयपुर\n\nकृपया अपना ई-पास अथवा एसएमएस दिखाकर किट अवश्य प्राप्त करें।\n- राजस्थान पुलिस एक्सपो समिति`
   },
   RACE_REMINDER: {
     id: "RACE_REMINDER",
-    title: "रेस दिवस फ्लैग-ऑफ समय एवं रूट/पार्किंग एडवाइजरी",
+    title: "रेस दिवस फ्लैग-ऑफ समय एवं एडवाइजरी",
     defaultChannel: "BOTH",
-    text: `⚡ राजस्थान पुलिस मैराथन 2027 — रेस दिवस एडवाइजरी\n\nप्रिय धावक {name},\nमैराथन दिवस में केवल कुछ घंटे शेष हैं!\n\n⏰ रिपोर्टिंग समय: प्रातः 05:00 AM (3 जनवरी)\n🏁 फ्लैग-ऑफ: प्रातः 06:00 AM\n📍 वेन्यू: अल्बर्ट हॉल, रामनिवास बाग, जयपुर\n🅿️ पार्किंग: रामनिवास बाग अंडरपास (निःशुल्क)\n\nकृपया अपना बिब #{bib} सीने पर अवश्य लगाएं।\n- कंट्रोल रूम, राजस्थान पुलिस`
+    text: `⚡ राजस्थान पुलिस मैराथन 2027 — रेस दिवस एडवाइजरी\n\nप्रिय धावक {name},\nमैराथन दिवस में केवल कुछ घंटे शेष हैं!\n\n⏰ रिपोर्टिंग समय: प्रातः 05:00 AM (3 जनवरी)\n🏁 फ्लैग-ऑफ: प्रातः 06:00 AM\n📍 वेन्यू: {district}\n\nकृपया अपना ई-पास व पंजीकरण संख्या #{bib} साथ रखें।\n- कंट्रोल रूम, राजस्थान पुलिस`
   },
   CUSTOM: {
     id: "CUSTOM",
     title: "विशेष संदेश (Custom Broadcast)",
     defaultChannel: "BOTH",
-    text: `राजस्थान पुलिस मैराथन 2027: प्रिय {name}, आपका बिब नंबर {bib} है। कृपया समय पर रिपोर्ट करें। - राजस्थान पुलिस`
+    text: `राजस्थान पुलिस मैराथन 2027: प्रिय {name}, आपकी पंजीकरण संख्या {bib} ({category}) है। राजस्थान पुलिस नारी सुरक्षा संकल्प में आपके उत्साह की सराहना करती है। - राजस्थान पुलिस`
   }
 };
 
@@ -413,15 +413,30 @@ export function resolveMessagePlaceholders(templateText, runner = {}) {
   const cat = runner.categoryName || runner.category_name || "21 KM Half Marathon";
   const dist = runner.districtName || runner.district_name || "जयपुर";
   const cert = runner.certificateId || runner.certificate_id || "CERT-XXXX";
-  const size = runner.tshirtSize || runner.tshirt_size || "M";
+  const rawSize = runner.tshirtSize || runner.tshirt_size || "";
+  const hasTshirt = rawSize && 
+    rawSize !== "N/A" && 
+    rawSize !== "none" && 
+    !rawSize.toLowerCase().includes("n/a");
 
-  return templateText
+  let text = templateText;
+
+  // If runner does not get a T-shirt (e.g. District non-timed event or N/A), omit the T-shirt line completely!
+  if (!hasTshirt) {
+    text = text
+      .split('\n')
+      .filter(line => !line.includes('{tshirtSize}') && !line.includes('टी-शर्ट') && !line.includes('T-Shirt') && !line.includes('tshirt'))
+      .join('\n');
+  }
+
+  return text
     .replace(/\{name\}/g, name)
     .replace(/\{bib\}/g, bib)
     .replace(/\{category\}/g, cat)
     .replace(/\{district\}/g, dist)
     .replace(/\{certId\}/g, cert)
-    .replace(/\{tshirtSize\}/g, size);
+    .replace(/\{tshirtSize\}/g, rawSize || "")
+    .replace(/बिब नंबर/g, "पंजीकरण संख्या");
 }
 
 

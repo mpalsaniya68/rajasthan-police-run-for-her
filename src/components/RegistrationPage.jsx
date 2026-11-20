@@ -201,7 +201,7 @@ export function RegistrationPage({
     if (e) e.preventDefault();
     const q = findQuery.trim();
     if (!q) {
-      alert("कृपया अपना 10-अंकीय मोबाइल नंबर या बिब संख्या दर्ज करें।");
+      alert("कृपया अपना 10-अंकीय मोबाइल नंबर या पंजीकरण संख्या दर्ज करें।");
       return;
     }
     setIsFinding(true);
@@ -291,7 +291,7 @@ export function RegistrationPage({
           setFindResults([localRunner]);
           setSelectedPassToUnlock(localRunner);
         } else {
-          setFindSearchError(res?.error || "दर्ज किए गए मोबाइल नंबर या बिब संख्या से कोई अधिकृत ई-पास रिकॉर्ड नहीं मिला।");
+          setFindSearchError(res?.error || "दर्ज किए गए मोबाइल नंबर या पंजीकरण संख्या से कोई अधिकृत ई-पास रिकॉर्ड नहीं मिला।");
         }
       }
     } catch (err) {
@@ -1820,7 +1820,7 @@ export function RegistrationPage({
               {/* Search Form */}
               <form onSubmit={handleFindPass} style={{ marginBottom: '28px' }}>
                 <label style={{ display: 'block', fontSize: '0.92rem', fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
-                  अपना पंजीकृत 10-अंकीय मोबाइल नंबर या बिब संख्या दर्ज करें:
+                  {isHindi ? 'अपना पंजीकृत 10-अंकीय मोबाइल नंबर या पंजीकरण संख्या दर्ज करें:' : 'Enter your registered 10-digit mobile number or registration number:'}
                 </label>
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                   <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>

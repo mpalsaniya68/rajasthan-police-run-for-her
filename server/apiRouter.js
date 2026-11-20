@@ -3405,14 +3405,22 @@ export async function handleApiRequest(req, res) {
       const runners = countRes.rows || [];
       const recipientsCount = runners.length;
 
-      const sampleRunner = runners[0] || {
+      const isDistrict = adminUser.role === "DISTRICT";
+      const sampleRunner = runners[0] || (isDistrict ? {
+        fullName: "कविता मीणा (Kavita Meena)",
+        bibNumber: `RJ-05K-${adminUser.districtId || '3042'}`,
+        categoryName: "5 KM Community Run",
+        districtName: adminUser.districtName || "अलवर पुलिस",
+        tshirtSize: "N/A",
+        certificateId: `RJ-POL-2027-${adminUser.districtId || '3042'}`
+      } : {
         fullName: "सुनीता चौधरी",
         bibNumber: "RJ-21K-1009",
         categoryName: "21 KM Half Marathon",
         districtName: "जयपुर",
-        tshirtSize: "M",
-        certificateId: "CERT-2027-DEMO"
-      };
+        tshirtSize: "L (Large)",
+        certificateId: "RPM-2027-CONF-8821"
+      });
       const samplePreview = resolveMessagePlaceholders(message, sampleRunner);
       const now = new Date().toISOString();
 

@@ -4,21 +4,124 @@ import {
 } from 'lucide-react';
 import { apiSendBroadcast, apiGetBroadcastHistory } from '../services/api';
 
-const CAMPAIGNS = [
-  {
-    id: "CONFIRMATION",
-    badge: "रजिस्ट्रेशन पुष्टि",
-    title: "पंजीकरण एवं ई-पास पुष्टि",
-    desc: "नये पंजीकृत धावकों को ई-पास, बिब नंबर व स्वागत संदेश प्रेषण",
-    icon: "🎫",
-    defaultChannel: "BOTH",
-    defaultAudience: "all",
-    text: `🏛️ *राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'*
+export function getBroadcastCampaigns(isDistrictRole, districtName = "जयपुर") {
+  if (isDistrictRole) {
+    return [
+      {
+        id: "CONFIRMATION",
+        badge: "रजिस्ट्रेशन पुष्टि",
+        title: "पंजीकरण एवं ई-पास पुष्टि",
+        desc: "नये पंजीकृत धावकों को ई-पास, पंजीकरण संख्या व स्वागत संदेश प्रेषण",
+        icon: "🎫",
+        defaultChannel: "BOTH",
+        defaultAudience: "all",
+        text: `🏛️ *राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'*
 
 प्रिय *{name}*,
 आपका पंजीकरण सफल रहा है! राजस्थान पुलिस परिवार इस ऐतिहासिक नारी सुरक्षा जन-आंदोलन में आपका हार्दिक स्वागत करता है।
 
-🏷️ *बिब नंबर:* {bib}
+🔢 *पंजीकरण संख्या:* {bib}
+🏃 *दौड़ श्रेणी:* {category}
+📍 *आयोजन स्थल:* {district}
+
+📲 *अपना डिजिटल ई-पास व क्यूआर कोड तुरंत डाउनलोड करें:*
+👉 https://police.rajasthan.gov.in/epass/{certId}
+
+कृपया दौड़ दिवस पर अपना ई-पास व मूल फोटो पहचान पत्र साथ लाएं।
+📞 24x7 हेल्पलाइन: 112 / 1090
+- पुलिस अधीक्षक (SP) कार्यालय, ${districtName}`
+      },
+      {
+        id: "PROMOTION",
+        badge: "प्रमोशन व जागरूकता",
+        title: "नारी सुरक्षा जन-आंदोलन एवं मैराथन आमंत्रण",
+        desc: "महिला सुरक्षा, सम्मान एवं सशक्तिकरण संकल्प का जिला स्तरीय प्रचार",
+        icon: "📣",
+        defaultChannel: "WHATSAPP",
+        defaultAudience: "all",
+        text: `🌸 *राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'*
+
+नमस्ते *{name}*,
+*"हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के लिए"*
+
+3 जनवरी 2027 को ${districtName} में आयोजित होने वाली ऐतिहासिक मैराथन का हिस्सा बनें।
+
+स्वयं दौड़ें और अपने परिजनों, मित्रों व सहकर्मियों को भी नारी सुरक्षा के इस राज्यव्यापी संकल्प से जोड़ें।
+
+👉 *ऑनलाइन पोर्टल:* https://police.rajasthan.gov.in/marathon
+📞 महिला हेल्पलाइन (गरिमा): 1090 | आपातकाल: 112
+
+- जिला पुलिस ${districtName} सदैव आपकी सेवा व सुरक्षा में तत्पर`
+      },
+      {
+        id: "DISTRICT_EVENT_REMINDER",
+        badge: "दौड़ स्थल सूचना",
+        title: "दौड़ स्थल, समय एवं ई-पास सूचना",
+        desc: "पंजीकृत धावकों को रिपोर्टिंग स्थल, समय एवं डिजिटल ई-पास साथ लाने की सूचना",
+        icon: "📍",
+        defaultChannel: "BOTH",
+        defaultAudience: "all",
+        text: `📍 *राजस्थान पुलिस मैराथन 2027 — ${districtName} दौड़ सूचना*
+
+प्रिय धावक *{name}*,
+राजस्थान पुलिस मैराथन 'RUN FOR HER' में भाग लेने हेतु आपकी पंजीकरण संख्या *{bib}* है।
+
+📅 *दिनांक:* 3 जनवरी 2027
+⏰ *रिपोर्टिंग समय:* प्रातः 06:30 AM
+📍 *स्थल:* जिला पुलिस लाइन / कलेक्ट्रेट, ${districtName}
+
+⚠️ *महत्वपूर्ण:* दौड़ स्थल पर प्रवेश हेतु अपना डिजिटल ई-पास (QR कोड) मोबाइल में अथवा प्रिंट साथ लाएं। (प्रवेश पर डिजिटल स्कैनर द्वारा सत्यापन किया जाएगा)।
+- पुलिस अधीक्षक (SP) कार्यालय, ${districtName}`
+      },
+      {
+        id: "RACE_REMINDER",
+        badge: "रेस दिवस एडवाइजरी",
+        title: "रेस दिवस समय एवं सुरक्षा/मार्ग एडवाइजरी",
+        desc: "रेस दिवस रिपोर्टिंग, फ्लैग-ऑफ व रूट सुरक्षा सूचना",
+        icon: "⚡",
+        defaultChannel: "BOTH",
+        defaultAudience: "all",
+        text: `⚡ *राजस्थान पुलिस मैराथन 2027 — रेस दिवस एडवाइजरी*
+
+प्रिय धावक *{name}*,
+मैराथन दिवस में केवल कुछ घंटे शेष हैं! अपनी तैयारी पूर्ण रखें:
+
+⏰ *रिपोर्टिंग समय:* प्रातः 06:30 AM (3 जनवरी 2027)
+🏁 *फ्लैग-ऑफ:* प्रातः 07:00 AM (${districtName})
+📍 *स्थान:* जिला पुलिस लाइन मैदान, ${districtName}
+
+कृपया अपना डिजिटल ई-पास साथ रखें (पंजीकरण संख्या: *{bib}*)। मार्ग में सुरक्षा, प्राथमिक चिकित्सा व पेयजल व्यवस्था उपलब्ध रहेगी।
+- जिला पुलिस नियंत्रण कक्ष, ${districtName}`
+      },
+      {
+        id: "CUSTOM",
+        badge: "कस्टम संदेश",
+        title: "विशेष संदेश (Custom Broadcast)",
+        desc: "अपनी आवश्यकतानुसार व्यक्तिगत टेक्स्ट व टैग्स के साथ सीधा संदेश भेजें",
+        icon: "✍️",
+        defaultChannel: "BOTH",
+        defaultAudience: "all",
+        text: `राजस्थान पुलिस मैराथन 2027: प्रिय {name}, आपकी पंजीकरण संख्या {bib} ({category}) है। राजस्थान पुलिस नारी सुरक्षा संकल्प में आपके उत्साह की सराहना करती है। - जिला पुलिस ${districtName}`
+      }
+    ];
+  }
+
+  // PHQ (Statewide / Flagship)
+  return [
+    {
+      id: "CONFIRMATION",
+      badge: "रजिस्ट्रेशन पुष्टि",
+      title: "पंजीकरण एवं ई-पास पुष्टि",
+      desc: "नये पंजीकृत धावकों को ई-पास, पंजीकरण संख्या व स्वागत संदेश प्रेषण",
+      icon: "🎫",
+      defaultChannel: "BOTH",
+      defaultAudience: "all",
+      text: `🏛️ *राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'*
+
+प्रिय *{name}*,
+आपका पंजीकरण सफल रहा है! राजस्थान पुलिस परिवार इस ऐतिहासिक नारी सुरक्षा जन-आंदोलन में आपका हार्दिक स्वागत करता है।
+
+🔢 *पंजीकरण संख्या:* {bib}
 🏃 *दौड़ श्रेणी:* {category}
 📍 *आयोजन स्थल:* {district}
 👕 *टी-शर्ट साइज़:* {tshirtSize}
@@ -29,21 +132,21 @@ const CAMPAIGNS = [
 कृपया दौड़ दिवस पर अपना ई-पास व मूल फोटो पहचान पत्र साथ लाएं।
 📞 24x7 हेल्पलाइन: 112 / 1090
 - पुलिस महानिदेशक कार्यालय, राजस्थान पुलिस`
-  },
-  {
-    id: "PROMOTION",
-    badge: "प्रमोशन व जागरूकता",
-    title: "नारी सुरक्षा जन-आंदोलन एवं मैराथन आमंत्रण",
-    desc: "महिला सुरक्षा, सम्मान एवं सशक्तिकरण संकल्प का राज्यव्यापी प्रचार",
-    icon: "📣",
-    defaultChannel: "WHATSAPP",
-    defaultAudience: "all",
-    text: `🌸 *राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'*
+    },
+    {
+      id: "PROMOTION",
+      badge: "प्रमोशन व जागरूकता",
+      title: "नारी सुरक्षा जन-आंदोलन एवं मैराथन आमंत्रण",
+      desc: "महिला सुरक्षा, सम्मान एवं सशक्तिकरण संकल्प का राज्यव्यापी प्रचार",
+      icon: "📣",
+      defaultChannel: "WHATSAPP",
+      defaultAudience: "all",
+      text: `🌸 *राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'*
 
 नमस्ते *{name}*,
 *"हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के लिए"*
 
-3 जनवरी 2027 को जयपुर अल्बर्ट हॉल एवं प्रदेश के समस्त 41 पुलिस जिलों में आयोजित होने वाली ऐतिहासिक मैराथन का हिस्सा बनें।
+3 जनवरी 2027 को जयपुर अल्बर्ट हॉल एवं प्रदेश के समस्त 50 पुलिस जिलों में आयोजित होने वाली ऐतिहासिक मैराथन का हिस्सा बनें।
 
 स्वयं दौड़ें और अपने परिजनों, मित्रों व सहकर्मियों को भी नारी सुरक्षा के इस राज्यव्यापी संकल्प से जोड़ें।
 
@@ -51,19 +154,19 @@ const CAMPAIGNS = [
 📞 महिला हेल्पलाइन (गरिमा): 1090 | आपातकाल: 112
 
 - राजस्थान पुलिस सदैव आपकी सेवा व सुरक्षा में तत्पर`
-  },
-  {
-    id: "EXPO_KIT_REMINDER",
-    badge: "एक्सपो किट पिक-अप",
-    title: "एक्सपो किट (टी-शर्ट एवं RFID बिब) संग्रह रिमाइंडर",
-    desc: "विशेषकर उन धावकों को रिमाइंडर जिनकी किट अभी तक पेंडिंग है",
-    icon: "👕",
-    defaultChannel: "BOTH",
-    defaultAudience: "kit_pending",
-    text: `👕 *राजस्थान पुलिस मैराथन 2027 — किट वितरण सूचना*
+    },
+    {
+      id: "EXPO_KIT_REMINDER",
+      badge: "एक्सपो किट पिक-अप",
+      title: "एक्सपो किट (टी-शर्ट एवं RFID) संग्रह रिमाइंडर",
+      desc: "विशेषकर उन धावकों को रिमाइंडर जिनकी किट अभी तक पेंडिंग है (जयपुर)",
+      icon: "👕",
+      defaultChannel: "BOTH",
+      defaultAudience: "kit_pending",
+      text: `👕 *राजस्थान पुलिस मैराथन 2027 — किट वितरण सूचना*
 
 आदरणीय *{name}*,
-आपकी रनर किट (टी-शर्ट साइज़: *{tshirtSize}* एवं आरएफआईडी बिब *#{bib}*) एक्सपो काउंटर पर तैयार है।
+आपकी रनर किट (टी-शर्ट साइज़: *{tshirtSize}* एवं पंजीकरण संख्या *#{bib}*) एक्सपो काउंटर पर तैयार है।
 
 📅 *वितरण तिथि:* 1 एवं 2 जनवरी 2027
 ⏰ *समय:* प्रातः 10:00 AM से सायं 07:00 PM
@@ -71,16 +174,16 @@ const CAMPAIGNS = [
 
 ⚠️ *महत्वपूर्ण:* किट प्राप्त करने हेतु अपना ई-पास (QR कोड) अथवा यह एसएमएस काउंटर पर दिखाएं।
 - एक्सपो प्रबंधन समिति, राजस्थान पुलिस`
-  },
-  {
-    id: "RACE_REMINDER",
-    badge: "रेस दिवस एडवाइजरी",
-    title: "रेस दिवस फ्लैग-ऑफ समय एवं रूट/पार्किंग एडवाइजरी",
-    desc: "रेस से 1-2 दिन पूर्व रिपोर्टिंग, फ्लैग-ऑफ, वेन्यू व पार्किंग सूचना",
-    icon: "⚡",
-    defaultChannel: "BOTH",
-    defaultAudience: "all",
-    text: `⚡ *राजस्थान पुलिस मैराथन 2027 — रेस दिवस एडवाइजरी*
+    },
+    {
+      id: "RACE_REMINDER",
+      badge: "रेस दिवस एडवाइजरी",
+      title: "रेस दिवस फ्लैग-ऑफ समय एवं रूट/पार्किंग एडवाइजरी",
+      desc: "रेस से 1-2 दिन पूर्व रिपोर्टिंग, फ्लैग-ऑफ, वेन्यू व पार्किंग सूचना",
+      icon: "⚡",
+      defaultChannel: "BOTH",
+      defaultAudience: "all",
+      text: `⚡ *राजस्थान पुलिस मैराथन 2027 — रेस दिवस एडवाइजरी*
 
 प्रिय धावक *{name}*,
 मैराथन दिवस में केवल कुछ घंटे शेष हैं! अपनी तैयारी पूर्ण रखें:
@@ -90,36 +193,42 @@ const CAMPAIGNS = [
 📍 *स्थान:* अल्बर्ट हॉल म्यूजियम gantry, रामनिवास बाग, जयपुर
 🅿️ *निःशुल्क पार्किंग:* रामनिवास बाग अंडरपास एवं जेडीए बहुमंजिला पार्किंग (स्टेडियम कट)
 
-सीने पर बिब *#{bib}* अवश्य लगाएं। चिकित्सा व हाइड्रेशन बूथ प्रत्येक 500 मीटर पर उपलब्ध रहेंगे।
+कृपया पंजीकरण संख्या *#{bib}* व डिजिटल ई-पास साथ रखें। चिकित्सा व हाइड्रेशन बूथ प्रत्येक 500 मीटर पर उपलब्ध रहेंगे।
 - कमांड कंट्रोल रूम, राजस्थान पुलिस मुख्यालय`
-  },
-  {
-    id: "CUSTOM",
-    badge: "कस्टम संदेश",
-    title: "विशेष संदेश (Custom Broadcast)",
-    desc: "अपनी आवश्यकतानुसार व्यक्तिगत टेक्स्ट व टैग्स के साथ सीधा संदेश भेजें",
-    icon: "✍️",
-    defaultChannel: "BOTH",
-    defaultAudience: "all",
-    text: `राजस्थान पुलिस मैराथन 2027: प्रिय {name}, आपका बिब नंबर {bib} ({category}) है। राजस्थान पुलिस नारी सुरक्षा संकल्प में आपके उत्साह की सराहना करती है। - राजस्थान पुलिस मुख्यालय`
-  }
-];
+    },
+    {
+      id: "CUSTOM",
+      badge: "कस्टम संदेश",
+      title: "विशेष संदेश (Custom Broadcast)",
+      desc: "अपनी आवश्यकतानुसार व्यक्तिगत टेक्स्ट व टैग्स के साथ सीधा संदेश भेजें",
+      icon: "✍️",
+      defaultChannel: "BOTH",
+      defaultAudience: "all",
+      text: `राजस्थान पुलिस मैराथन 2027: प्रिय {name}, आपकी पंजीकरण संख्या {bib} ({category}) है। राजस्थान पुलिस नारी सुरक्षा संकल्प में आपके उत्साह की सराहना करती है। - राजस्थान पुलिस मुख्यालय`
+    }
+  ];
+}
+
+const CAMPAIGNS = getBroadcastCampaigns(false, "जयपुर");
 
 export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh }) {
   const isDistrictRole = adminUser?.role === 'DISTRICT';
+  const districtName = adminUser?.districtName || adminUser?.districtId || "अलवर";
   const defaultDist = isDistrictRole ? (adminUser.districtId || adminUser.districtName) : "all";
+  const campaigns = getBroadcastCampaigns(isDistrictRole, districtName);
 
   // Configuration States
-  const [selectedCampaignId, setSelectedCampaignId] = useState("EXPO_KIT_REMINDER");
+  const [selectedCampaignId, setSelectedCampaignId] = useState(isDistrictRole ? "CONFIRMATION" : "EXPO_KIT_REMINDER");
   const [channel, setChannel] = useState("BOTH"); // "WHATSAPP", "SMS", "BOTH"
-  const [targetAudience, setTargetAudience] = useState("kit_pending"); // "all", "kit_pending", "kit_collected", "single"
+  const [targetAudience, setTargetAudience] = useState(isDistrictRole ? "all" : "kit_pending"); // "all", "kit_pending", "kit_collected", "single"
   const [targetCategory, setTargetCategory] = useState("all"); // "all", "21k", "10k", "5k", "2k"
   const [targetDistrict, setTargetDistrict] = useState(defaultDist);
   const [singleSearchQuery, setSingleSearchQuery] = useState("");
 
+  const initialCamp = campaigns.find(c => c.id === (isDistrictRole ? "CONFIRMATION" : "EXPO_KIT_REMINDER")) || campaigns[0];
   // Editor States
-  const [title, setTitle] = useState(CAMPAIGNS[2].title);
-  const [message, setMessage] = useState(CAMPAIGNS[2].text);
+  const [title, setTitle] = useState(initialCamp.title);
+  const [message, setMessage] = useState(initialCamp.text);
   const [previewDeviceMode, setPreviewDeviceMode] = useState("whatsapp"); // "whatsapp" or "sms"
 
   // Action States
@@ -201,22 +310,48 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
   const recipientsCount = targetedRunners.length;
 
   // Resolved sample for live phone preview
-  const sampleRunner = targetedRunners[0] || {
-    fullName: "सुनीता चौधरी",
-    bibNumber: "RJ-21K-1009",
-    categoryName: "21 KM Half Marathon",
-    districtName: "जयपुर",
-    tshirtSize: "L (Large)",
-    certificateId: "RPM-2027-CONF-8821"
-  };
+  const sampleRunner = isDistrictRole
+    ? (targetedRunners[0] && targetedRunners[0].categoryName?.includes("5") ? targetedRunners[0] : {
+        fullName: "कविता मीणा (Kavita Meena)",
+        bibNumber: "RJ-05K-3042",
+        categoryName: "5 KM Community Run",
+        districtName: `${districtName} पुलिस`,
+        tshirtSize: "N/A",
+        certificateId: "RJ-POL-2027-3042"
+      })
+    : (targetedRunners[0] || {
+        fullName: "सुनीता चौधरी",
+        bibNumber: "RJ-21K-1009",
+        categoryName: "21 KM Half Marathon",
+        districtName: "जयपुर",
+        tshirtSize: "L (Large)",
+        certificateId: "RPM-2027-CONF-8821"
+      });
 
-  const resolvedPreview = message
+  const hasTshirt = sampleRunner.tshirtSize && 
+    sampleRunner.tshirtSize !== "N/A" && 
+    sampleRunner.tshirtSize !== "none" && 
+    !sampleRunner.tshirtSize.toLowerCase().includes("n/a") &&
+    !isDistrictRole;
+
+  let previewText = message;
+  // If runner does not get a T-shirt (e.g. District runner), remove the T-shirt line completely!
+  if (!hasTshirt) {
+    previewText = previewText
+      .split('\n')
+      .filter(line => !line.includes('{tshirtSize}') && !line.includes('टी-शर्ट') && !line.includes('T-Shirt'))
+      .join('\n');
+  }
+
+  const resolvedPreview = previewText
     .replace(/\{name\}/g, sampleRunner.fullName)
     .replace(/\{bib\}/g, sampleRunner.bibNumber)
-    .replace(/\{category\}/g, sampleRunner.categoryName || "21 KM Half Marathon")
-    .replace(/\{district\}/g, sampleRunner.districtName || "जयपुर")
+    .replace(/\{category\}/g, sampleRunner.categoryName || "5 KM Community Run")
+    .replace(/\{district\}/g, sampleRunner.districtName || districtName)
     .replace(/\{certId\}/g, sampleRunner.certificateId)
-    .replace(/\{tshirtSize\}/g, sampleRunner.tshirtSize || "M");
+    .replace(/\{tshirtSize\}/g, sampleRunner.tshirtSize || "")
+    .replace(/बिब नंबर/g, "पंजीकरण संख्या")
+    .replace(/बिब #/g, "पंजीकरण #");
 
   // Send Broadcast Handler
   const handleDispatch = async () => {
@@ -299,9 +434,11 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
             <span style={{ background: '#f1f5f9', color: '#0f172a', padding: '4px 10px', borderRadius: '6px' }}>
               कुल: {participants.length}
             </span>
-            <span style={{ background: '#fef9c3', color: '#854d0e', padding: '4px 10px', borderRadius: '6px' }}>
-              किट शेष: {participants.filter(p => !p.bibCollected && !p.kit_collected).length}
-            </span>
+            {!isDistrictRole && (
+              <span style={{ background: '#fef9c3', color: '#854d0e', padding: '4px 10px', borderRadius: '6px' }}>
+                किट शेष: {participants.filter(p => !p.bibCollected && !p.kit_collected).length}
+              </span>
+            )}
             <span style={{ background: '#ecfdf5', color: '#065f46', padding: '4px 10px', borderRadius: '6px', border: '1px solid #a7f3d0' }}>
               लक्षित: {recipientsCount}
             </span>
@@ -399,7 +536,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '10px' }}>
-              {CAMPAIGNS.map(camp => {
+              {campaigns.map(camp => {
                 const isSelected = selectedCampaignId === camp.id;
                 return (
                   <div
@@ -557,10 +694,10 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                   onChange={(e) => setTargetAudience(e.target.value)}
                   style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.88rem' }}
                 >
-                  <option value="all">All Runners</option>
-                  <option value="kit_pending">Kit Pending Only</option>
-                  <option value="kit_collected">Kit Collected Only</option>
-                  <option value="single">Single Runner Search</option>
+                  <option value="all">{isDistrictRole ? 'समस्त जिला धावक (All District Runners)' : 'समस्त पंजीकृत धावक (All Runners)'}</option>
+                  {!isDistrictRole && <option value="kit_pending">किट शेष (Kit Pending Only)</option>}
+                  {!isDistrictRole && <option value="kit_collected">किट प्राप्त (Kit Collected Only)</option>}
+                  <option value="single">एकल धावक खोज (Single Runner Search)</option>
                 </select>
               </div>
 
@@ -573,7 +710,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                   onChange={(e) => setTargetCategory(e.target.value)}
                   style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.88rem' }}
                 >
-                  <option value="all">सभी 4 श्रेणियां (All Categories)</option>
+                  <option value="all">सभी श्रेणियां (All Categories)</option>
                   <option value="21k">21 KM Half Marathon</option>
                   <option value="10k">10 KM Speed Run</option>
                   <option value="5k">5 KM Community Run</option>
@@ -586,12 +723,12 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
             {targetAudience === 'single' && (
               <div style={{ marginTop: '14px', background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px dashed var(--border-medium)' }}>
                 <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                  धावक का बिब नंबर अथवा 10-अंकीय मोबाइल नंबर दर्ज करें:
+                  धावक की पंजीकरण संख्या अथवा 10-अंकीय मोबाइल नंबर दर्ज करें:
                 </label>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input
                     type="text"
-                    placeholder="उदा. RJ-21K-1009 या 9829012345"
+                    placeholder={isDistrictRole ? "उदा. RJ-05K-3042 या 9829012345" : "उदा. RJ-21K-1009 या 9829012345"}
                     value={singleSearchQuery}
                     onChange={(e) => setSingleSearchQuery(e.target.value)}
                     style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.88rem' }}
@@ -657,10 +794,10 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {[
                   { tag: "{name}", label: "👤 धावक का नाम" },
-                  { tag: "{bib}", label: "🏷️ बिब नंबर" },
+                  { tag: "{bib}", label: "🔢 पंजीकरण संख्या" },
                   { tag: "{category}", label: "🏃 दौड़ श्रेणी" },
                   { tag: "{district}", label: "📍 जिला / वेन्यू" },
-                  { tag: "{tshirtSize}", label: "👕 टी-शर्ट साइज़" },
+                  ...(!isDistrictRole ? [{ tag: "{tshirtSize}", label: "👕 टी-शर्ट साइज़" }] : []),
                   { tag: "{certId}", label: "🔗 ई-पास लिंक" }
                 ].map(item => (
                   <button

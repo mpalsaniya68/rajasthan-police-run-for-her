@@ -2421,7 +2421,7 @@ export function AdminDashboard({
 
                 <input
                   type="text"
-                  placeholder={isHindi ? "नाम, बिब, मोबाइल या ईमेल खोजें..." : "Search name, bib, mobile or email..."}
+                  placeholder={isHindi ? "नाम, पंजीकरण संख्या, मोबाइल या ईमेल खोजें..." : "Search name, reg no, mobile or email..."}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{
@@ -2727,7 +2727,7 @@ export function AdminDashboard({
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem', color: 'var(--text-body)' }}>
                   <thead style={{ background: '#f8fafc', color: '#475569', textTransform: 'uppercase', fontSize: '0.72rem', position: 'sticky', top: 0, zIndex: 2, borderBottom: '1.5px solid #e2e8f0', fontWeight: 800 }}>
                     <tr>
-                      <th style={{ padding: '10px 12px' }}>{isHindi ? 'बिब #' : 'Bib #'}</th>
+                      <th style={{ padding: '10px 12px' }}>{isHindi ? 'पंजीकरण संख्या' : 'Reg. No.'}</th>
                       <th style={{ padding: '10px 12px' }}>{isHindi ? 'धावक विवरण व संपर्क' : 'Runner Details & Contact'}</th>
                       <th style={{ padding: '10px 12px' }}>{isHindi ? 'कैटेगरी & जिला' : 'Category & District'}</th>
                       <th style={{ padding: '10px 12px' }}>{isHindi ? 'टी-शर्ट' : 'T-Shirt'}</th>
@@ -4054,12 +4054,9 @@ export function AdminDashboard({
               <thead style={{ background: '#f8fafc', color: '#475569', textTransform: 'uppercase', fontSize: '0.72rem', borderBottom: '1.5px solid #e2e8f0', fontWeight: 800 }}>
 
                 <tr>
-
-                  <th style={{ padding: '12px 14px', width: '70px', textAlign: 'center' }}>रैंक</th>
-
-                  <th style={{ padding: '12px 14px' }}>बिब #</th>
-
-                  <th style={{ padding: '12px 14px' }}>धावक का नाम व जिला</th>
+                  <th style={{ padding: '12px 14px', width: '70px', textAlign: 'center' }}>{isHindi ? 'रैंक' : 'Rank'}</th>
+                  <th style={{ padding: '12px 14px' }}>{isHindi ? 'पंजीकरण संख्या' : 'Reg. No.'}</th>
+                  <th style={{ padding: '12px 14px' }}>{isHindi ? 'धावक का नाम व जिला' : 'Runner Name & District'}</th>
 
                   <th style={{ padding: '12px 14px' }}>कैटेगरी व लिंग</th>
 
@@ -4768,7 +4765,7 @@ export function AdminDashboard({
 
               <input
                 type="text"
-                placeholder="नाम, बिब # या मोबाइल द्वारा खोजें..."
+                placeholder={isHindi ? "नाम, पंजीकरण संख्या या मोबाइल द्वारा खोजें..." : "Search by name, reg # or mobile..."}
                 value={certTableSearch}
                 onChange={(e) => setCertTableSearch(e.target.value)}
                 style={{
@@ -4785,7 +4782,7 @@ export function AdminDashboard({
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
                 <thead>
                   <tr style={{ background: 'var(--police-navy-950)', color: '#ffffff', borderBottom: '2px solid var(--police-gold-500)' }}>
-                    <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>बिब व धावक का नाम</th>
+                    <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>{isHindi ? 'पंजीकरण संख्या व धावक का नाम' : 'Reg No & Runner Name'}</th>
                     <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>दौड़ श्रेणी व जिला</th>
                     <th style={{ padding: '12px 14px', textAlign: 'center', fontWeight: 800 }}>गेट प्रवेश (Gate Entry)</th>
                     <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>प्रमाण पत्र क्रमांक</th>
@@ -5365,7 +5362,7 @@ export function AdminDashboard({
               <thead>
                 <tr style={{ background: '#f1f5f9', borderTop: '1px solid #000000', borderBottom: '1px solid #000000' }}>
                   <th style={{ border: '1px solid #000', padding: '6px', width: '35px', textAlign: 'center' }}>क्र.</th>
-                  <th style={{ border: '1px solid #000', padding: '6px', width: '90px' }}>बिब सं.</th>
+                  <th style={{ border: '1px solid #000', padding: '6px', width: '90px' }}>{isHindi ? 'पंजीकरण सं.' : 'Reg. No.'}</th>
                   <th style={{ border: '1px solid #000', padding: '6px' }}>धावक का नाम</th>
                   <th style={{ border: '1px solid #000', padding: '6px', width: '80px' }}>लिंग/आयु</th>
                   <th style={{ border: '1px solid #000', padding: '6px', width: '90px' }}>मोबाइल</th>

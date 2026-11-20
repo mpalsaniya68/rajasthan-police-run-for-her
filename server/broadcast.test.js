@@ -90,6 +90,23 @@ test("Unit Test: resolveMessagePlaceholders replaces tags correctly", () => {
   assert.equal(resolved, "नमस्ते राजेश वर्मा, आपका बिब #RJ-21K-2005 (21 KM Half Marathon) जयपुर में है। टी-शर्ट: XL");
 });
 
+test("Unit Test: resolveMessagePlaceholders omits T-shirt line cleanly when tshirtSize is N/A", () => {
+  const template = "🏛️ राजस्थान पुलिस मैराथन 2027\nप्रिय {name},\n🔢 पंजीकरण संख्या: {bib}\n🏃 श्रेणी: {category}\n📍 स्थान: {district}\n👕 टी-शर्ट साइज़: {tshirtSize}\n📲 ई-पास: {certId}";
+  const districtRunner = {
+    fullName: "कविता मीणा",
+    bibNumber: "RJ-05K-3042",
+    categoryName: "5 KM Community Run",
+    districtName: "अलवर पुलिस",
+    tshirtSize: "N/A",
+    certificateId: "RJ-POL-2027-3042"
+  };
+  const resolved = resolveMessagePlaceholders(template, districtRunner);
+  assert.ok(!resolved.includes("टी-शर्ट"));
+  assert.ok(!resolved.includes("N/A"));
+  assert.ok(resolved.includes("कविता मीणा"));
+  assert.ok(resolved.includes("RJ-05K-3042"));
+});
+
 test("Unit Test: dispatchGatewayWhatsApp and dispatchGatewaySms simulate successfully", async () => {
   const waRes = await dispatchGatewayWhatsApp({ mobile: "9829012345", message: "Test WhatsApp Broadcast" });
   assert.equal(waRes.success, true);
