@@ -107,13 +107,12 @@ export function AdminDashboard({
 
   // Smart Filters
   const [kitFilter, setKitFilter] = useState("all"); // "all" | "collected" | "pending"
-  const [medicalFilter, setMedicalFilter] = useState("all"); // "all" | "alerts_only"
   const [tshirtFilter, setTshirtFilter] = useState("all"); // "all" | "XS" | "S" | "M" | "L" | "XL" | "XXL"
 
   // Reset pagination to first page whenever any filter or search changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [districtFilter, selectedCatFilter, kitFilter, medicalFilter, tshirtFilter, debouncedSearch]);
+  }, [districtFilter, selectedCatFilter, kitFilter, tshirtFilter, debouncedSearch]);
 
   // Printable Checklist Modal State
   const [isPrintChecklistOpen, setIsPrintChecklistOpen] = useState(false);
@@ -761,11 +760,9 @@ export function AdminDashboard({
 
     const matchesKit = kitFilter === "all" || (kitFilter === "collected" ? Boolean(r.kitCollected) : !r.kitCollected);
 
-    const matchesMedical = medicalFilter === "all" || (medicalFilter === "alerts_only" && (r.hasMedicalIssue || (r.medicalAlert && r.medicalAlert !== 'None' && r.medicalAlert !== 'None / Fully Fit')));
-
     const matchesTshirt = tshirtFilter === "all" || (r.tshirt === tshirtFilter || r.tshirtSize === tshirtFilter);
 
-    return matchesSearch && matchesCat && matchesDist && matchesKit && matchesMedical && matchesTshirt;
+    return matchesSearch && matchesCat && matchesDist && matchesKit && matchesTshirt;
 
   });
 
@@ -1580,47 +1577,6 @@ export function AdminDashboard({
                 {isHindi ? 'डिजिटल प्रमाणीकरण डिस्पैच' : 'Digital Verification Dispatch'}
               </div>
             </div>
-
-            {/* Card 5: Medical Flags */}
-            <div style={{
-              background: '#ffffff',
-              border: '1.5px solid #fecaca',
-              borderRadius: '8px',
-              padding: '12px 14px',
-              boxShadow: '0 2px 6px rgba(239,68,68,0.06)'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#b91c1c', textTransform: 'uppercase' }}>
-                  {isHindi ? 'मेडिकल अलर्ट्स' : 'Medical Alerts'}
-                </span>
-                <HeartPulse size={15} color="#dc2626" />
-              </div>
-              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#991b1b', lineHeight: 1.1 }}>
-                {(liveStats?.medicalAlerts || 48)}
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-                <span style={{ fontSize: '0.7rem', color: '#b91c1c' }}>{isHindi ? 'विशेष स्वास्थ्य निगरानी' : 'Special Health Watch'}</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAdminTab("registrations");
-                    setMedicalFilter(medicalFilter === "alerts_only" ? "all" : "alerts_only");
-                  }}
-                  style={{
-                    background: medicalFilter === "alerts_only" ? '#dc2626' : '#fee2e2',
-                    color: medicalFilter === "alerts_only" ? '#ffffff' : '#991b1b',
-                    border: 'none',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.68rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  {medicalFilter === "alerts_only" ? (isHindi ? "हटाएं ✕" : "Clear ✕") : (isHindi ? "फ़िल्टर" : "Filter")}
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -1834,8 +1790,8 @@ export function AdminDashboard({
                   whiteSpace: 'nowrap'
                 }}
               >
-                <HeartPulse size={15} color={adminTab === "district_medical" ? "#dc2626" : "#64748b"} />
-                <span>{isHindi ? '🚑 स्थानीय सुरक्षा व मेडिकल सूची' : '🚑 Local Medical & Safety Roster'}</span>
+                <Shield size={15} color={adminTab === "district_medical" ? "#1e40af" : "#64748b"} />
+                <span>{isHindi ? '🛡️ स्थानीय सुरक्षा व आपातकालीन डेस्क' : '🛡️ Local Safety & Emergency Desk'}</span>
               </button>
 
               <button
@@ -2468,25 +2424,6 @@ export function AdminDashboard({
                 <option value="pending">{isHindi ? '⏳ किट लंबित' : '⏳ Kit Pending'}</option>
               </select>
 
-              {/* Smart Medical Alert Filter */}
-              <select
-                value={medicalFilter}
-                onChange={(e) => setMedicalFilter(e.target.value)}
-                style={{
-                  padding: '7px 10px',
-                  borderRadius: '4px',
-                  background: medicalFilter === "alerts_only" ? '#fef2f2' : '#ffffff',
-                  border: medicalFilter === "alerts_only" ? '1.5px solid #ef4444' : '1px solid var(--border-strong)',
-                  color: medicalFilter === "alerts_only" ? '#991b1b' : 'var(--text-main)',
-                  fontSize: '0.82rem',
-                  fontWeight: medicalFilter === "alerts_only" ? 800 : 400
-                }}
-                title={isHindi ? "स्वास्थ्य एवं मेडिकल अलर्ट अनुसार फ़िल्टर" : "Filter by Medical Alert"}
-              >
-                <option value="all">{isHindi ? 'सभी स्वास्थ्य स्थिति' : 'All Health Status'}</option>
-                <option value="alerts_only">{isHindi ? '⚠️ केवल मेडिकल अलर्ट्स' : '⚠️ Medical Alerts Only'}</option>
-              </select>
-
               {/* Smart T-Shirt Size Filter */}
               <select
                 value={tshirtFilter}
@@ -2637,16 +2574,11 @@ export function AdminDashboard({
                     </button>
                   </div>
 
-                  {/* Runner Name & Medical Alerts */}
+                  {/* Runner Name */}
                   <div style={{ marginTop: '2px' }}>
                     <div style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
                       {formatLocalizedName(row.fullName, isHindi)}
                     </div>
-                    {row.medicalCondition && row.medicalCondition !== 'None' && (
-                      <div style={{ fontSize: '0.72rem', color: '#b45309', background: '#fef3c7', padding: '2px 6px', borderRadius: '4px', marginTop: '4px', display: 'inline-block', fontWeight: 700 }}>
-                        ⚠️ {row.medicalCondition} {row.medicalNotes ? `(${row.medicalNotes})` : ''}
-                      </div>
-                    )}
                   </div>
 
                   {/* Detail Chips Grid */}
@@ -2723,11 +2655,6 @@ export function AdminDashboard({
                             <span style={{ background: '#fee2e2', color: '#991b1b', padding: '1px 5px', borderRadius: '3px', fontWeight: 800, fontSize: '0.67rem' }}>
                               🩸 {row.bloodGroup || 'O+'}
                             </span>
-                            {row.medicalCondition && row.medicalCondition !== 'None' && (
-                              <span style={{ background: '#fef3c7', color: '#92400e', padding: '1px 5px', borderRadius: '3px', fontWeight: 800, fontSize: '0.67rem' }} title={row.medicalNotes || row.medicalCondition}>
-                                ⚠️ {row.medicalCondition}
-                              </span>
-                            )}
                           </div>
                         </td>
                         <td style={{ padding: '10px 12px' }}>
@@ -2955,7 +2882,7 @@ export function AdminDashboard({
                 </h3>
               </div>
               <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: '#64748b' }}>
-                धावक का बिब नंबर या मोबाइल नंबर सर्च करें। <strong>रक्त समूह (Blood Group)</strong> व <strong>चिकित्सा अलर्ट (Medical Alert)</strong> की पुष्टि कर छाती बिब व RFID टैग सुपुर्द करें।
+                {isHindi ? 'धावक का बिब नंबर या मोबाइल नंबर सर्च करें। रक्त समूह (Blood Group) व पहचान की पुष्टि कर छाती बिब व RFID टैग सुपुर्द करें।' : 'Search runner Bib number or mobile number. Verify blood group and identity before handing over Bib & RFID tag.'}
               </p>
             </div>
 
@@ -3388,81 +3315,36 @@ export function AdminDashboard({
 
 
                 <div style={{
-
-                  background: scannedRunner.medicalCondition && scannedRunner.medicalCondition !== 'None' ? '#fffbeb' : '#f0fdf4',
-
-                  border: `1.5px solid ${scannedRunner.medicalCondition && scannedRunner.medicalCondition !== 'None' ? '#fcd34d' : '#86efac'}`,
-
+                  background: '#f0fdf4',
+                  border: '1.5px solid #86efac',
                   padding: '14px',
-
                   borderRadius: '6px'
-
                 }}>
-
                   <div style={{
-
                     fontSize: '0.75rem',
-
-                    color: scannedRunner.medicalCondition && scannedRunner.medicalCondition !== 'None' ? '#b45309' : '#15803d',
-
+                    color: '#15803d',
                     textTransform: 'uppercase',
-
                     fontWeight: 800,
-
                     display: 'flex',
-
                     alignItems: 'center',
-
                     gap: '6px'
-
                   }}>
-
-                    <AlertTriangle size={14} />
-
-                    <span>चिकित्सा स्थिति (Medical Alert)</span>
-
+                    <Phone size={14} />
+                    <span>{isHindi ? 'आपातकालीन संपर्क (Emergency Contact)' : 'Emergency Contact'}</span>
                   </div>
-
                   <div style={{
-
                     fontSize: '0.98rem',
-
                     fontWeight: 800,
-
-                    color: scannedRunner.medicalCondition && scannedRunner.medicalCondition !== 'None' ? '#92400e' : '#15803d',
-
+                    color: '#166534',
                     marginTop: '4px'
-
                   }}>
-
-                    {scannedRunner.medicalCondition && scannedRunner.medicalCondition !== 'None' 
-
-                      ? scannedRunner.medicalCondition 
-
-                      : '🟢 कोई ज्ञात बीमारी नहीं (Fit)'}
-
+                    {scannedRunner.emergencyContact || scannedRunner.emergencyContactPhone || 'सत्यापित'}
                   </div>
-
-                  {scannedRunner.medicalNotes && (
-
-                    <div style={{ fontSize: '0.74rem', color: '#78350f', marginTop: '4px', fontStyle: 'italic' }}>
-
-                      नोट: "{scannedRunner.medicalNotes}"
-
+                  {scannedRunner.emergencyRelation && (
+                    <div style={{ fontSize: '0.74rem', color: '#15803d', marginTop: '4px' }}>
+                      {scannedRunner.emergencyRelation}
                     </div>
-
                   )}
-
-                  {scannedRunner.medicalCondition && scannedRunner.medicalCondition !== 'None' && (
-
-                    <div style={{ fontSize: '0.7rem', color: '#b45309', fontWeight: 700, marginTop: '4px' }}>
-
-                      ⚠️ मेडिकल कलाई बैंड हैंडओवर करें।
-
-                    </div>
-
-                  )}
-
                 </div>
 
               </div>
@@ -3789,26 +3671,16 @@ export function AdminDashboard({
 
 
 
-            <div className="gov-card" style={{ padding: '14px', background: '#fee2e2' }}>
-
-              <div style={{ fontSize: '0.72rem', color: '#991b1b', fontWeight: 700, textTransform: 'uppercase' }}>
-
-                चिकित्सा अलर्ट फ्लैग्ड (Medical Alerts)
-
+            <div className="gov-card" style={{ padding: '14px', background: '#ecfdf5', border: '1px solid #86efac' }}>
+              <div style={{ fontSize: '0.72rem', color: '#166534', fontWeight: 700, textTransform: 'uppercase' }}>
+                {isHindi ? 'आपातकालीन संपर्क सत्यापित' : 'Emergency Contacts on File'}
               </div>
-
-              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#dc2626' }}>
-
-                {liveStats?.medicalAlerts || 48}
-
+              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#15803d' }}>
+                {liveStats?.total || registrations.length}
               </div>
-
-              <div style={{ fontSize: '0.72rem', color: '#991b1b' }}>
-
-                विशेष चिकित्सा निगरानी बैंड
-
+              <div style={{ fontSize: '0.72rem', color: '#166534' }}>
+                {isHindi ? '100% धावकों के सुरक्षा संपर्क' : '100% Runner Safety Verified'}
               </div>
-
             </div>
 
           </div>
@@ -5109,24 +4981,24 @@ export function AdminDashboard({
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
 
-                <HeartPulse size={24} color="#fca5a5" />
+                <Shield size={24} color="#fca5a5" />
 
                 <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>
-                  {isHindi ? `स्थानीय पुलिस सुरक्षा व आपातकालीन मेडिकल डेस्क (${formatLocalizedDistrict(adminUser.districtName, true)})` : `Local Police Safety & Emergency Medical Desk (${formatLocalizedDistrict(adminUser.districtName, false)})`}
+                  {isHindi ? `स्थानीय पुलिस सुरक्षा व आपातकालीन डेस्क (${formatLocalizedDistrict(adminUser.districtName, true)})` : `Local Police Safety & Emergency Desk (${formatLocalizedDistrict(adminUser.districtName, false)})`}
                 </h3>
               </div>
               <p style={{ margin: '6px 0 0 0', fontSize: '0.8rem', color: '#fecaca' }}>
-                {isHindi ? 'जिले में मैराथन रूट पर पुलिस सुरक्षा टीम, एम्बुलेंस व चिकित्सा शिविर हेतु धावकों का ब्लड ग्रुप एवं इमरजेंसी डेटा।' : 'Runner blood group and emergency medical data for police security, ambulances, and first-aid camps along the route.'}
+                {isHindi ? 'जिले में मैराथन रूट पर पुलिस सुरक्षा टीम, एम्बुलेंस व त्वरित सहायता हेतु धावकों का ब्लड ग्रुप एवं इमरजेंसी डेटा।' : 'Runner blood group and emergency contact data for police security, ambulances, and first-aid teams along the route.'}
               </p>
             </div>
 
             <div style={{ background: 'rgba(255, 255, 255, 0.15)', border: '1px solid #fca5a5', padding: '6px 14px', borderRadius: '6px', fontSize: '0.8rem', color: '#ffffff', fontWeight: 700 }}>
-              {isHindi ? `🚑 मेडिकल अलर्ट्स: ${filteredList.filter(r => r.medicalCondition && r.medicalCondition !== 'None' && !r.medicalCondition.includes('Fit')).length}` : `🚑 Medical Alerts: ${filteredList.filter(r => r.medicalCondition && r.medicalCondition !== 'None' && !r.medicalCondition.includes('Fit')).length}`}
+              {isHindi ? `🛡️ कुल पंजीकृत धावक: ${filteredList.length}` : `🛡️ Total Registered Runners: ${filteredList.length}`}
             </div>
           </div>
 
           <div className="admin-scroll-hint">
-            <span>↔️ {isHindi ? 'मेडिकल स्थिति व इमरजेंसी कॉल नंबर देखने के लिए स्वाइप करें' : 'Swipe table to view medical conditions and emergency numbers'}</span>
+            <span>↔️ {isHindi ? 'इमरजेंसी कॉल नंबर व अभिभावक विवरण देखने के लिए स्वाइप करें' : 'Swipe table to view emergency contact numbers and guardian details'}</span>
           </div>
           <div className="admin-table-scroll">
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
@@ -5134,15 +5006,14 @@ export function AdminDashboard({
                 <tr style={{ background: '#450a0a', color: '#ffffff', borderBottom: '2px solid #ef4444' }}>
                   <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>{isHindi ? 'धावक विवरण (Bib & Name)' : 'Runner Details (Bib & Name)'}</th>
                   <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>{isHindi ? 'रक्त समूह' : 'Blood Group'}</th>
-                  <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>{isHindi ? 'घोषित स्वास्थ्य स्थिति' : 'Declared Health Condition'}</th>
+                  <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>{isHindi ? 'अभिभावक / संबंध' : 'Guardian / Relation'}</th>
                   <th style={{ padding: '12px 14px', textAlign: 'left', fontWeight: 800 }}>{isHindi ? 'आपातकालीन संपर्क' : 'Emergency Contact'}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredList.map((row, idx) => {
-                  const hasAlert = row.medicalCondition && row.medicalCondition !== 'None' && !row.medicalCondition.includes('Fit');
                   return (
-                    <tr key={row.id || idx} style={{ borderBottom: '1px solid var(--border-subtle)', background: hasAlert ? '#fffbeb' : (idx % 2 === 0 ? '#ffffff' : '#f8fafc') }}>
+                    <tr key={row.id || idx} style={{ borderBottom: '1px solid var(--border-subtle)', background: idx % 2 === 0 ? '#ffffff' : '#f8fafc' }}>
                       <td style={{ padding: '12px 14px' }}>
                         <div style={{ fontWeight: 800, color: 'var(--police-navy-950)' }}>{formatLocalizedName(row.fullName, isHindi)}</div>
                         <div style={{ fontSize: '0.72rem', color: 'var(--crimson-600)', fontWeight: 700 }}>{row.bibNumber} • {formatLocalizedGender(row.gender, isHindi)}</div>
@@ -5152,45 +5023,20 @@ export function AdminDashboard({
                           🩸 {row.bloodGroup || 'O+'}
                         </span>
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        {hasAlert ? (
-                          <span style={{ color: '#b45309', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <AlertTriangle size={14} color="#d97706" /> {row.medicalCondition}
-                          </span>
-                        ) : (
-                          <span style={{ color: '#059669', fontWeight: 600 }}>{isHindi ? '✓ पूर्णतः स्वस्थ' : '✓ Fully Fit'}</span>
-                        )}
-
-                        {row.medicalNotes && (
-
-                          <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>{row.medicalNotes}</div>
-
-                        )}
-
+                      <td style={{ padding: '12px 14px', fontWeight: 700, color: '#334155' }}>
+                        {row.emergencyRelation || (isHindi ? 'अभिभावक' : 'Guardian')}
                       </td>
-
                       <td style={{ padding: '12px 14px' }}>
-
                         <a 
-
-                          href={`tel:${row.mobile}`}
-
+                          href={`tel:${row.emergencyContact || row.mobile}`}
                           style={{ fontWeight: 800, color: '#1e40af', textDecoration: 'none' }}
-
                         >
-
-                          📞 {row.mobile}
-
+                          📞 {row.emergencyContact || row.mobile}
                         </a>
-
                       </td>
-
                     </tr>
-
                   );
-
                 })}
-
               </tbody>
             </table>
           </div>
@@ -5335,7 +5181,6 @@ export function AdminDashboard({
                     <td style={{ border: '1px solid #ccc', padding: '5px', fontWeight: 800, fontFamily: 'monospace' }}>{r.bibNumber}</td>
                     <td style={{ border: '1px solid #ccc', padding: '5px', fontWeight: 700 }}>
                       {formatLocalizedName(r.fullName, isHindi)}
-                      {r.hasMedicalIssue && <span style={{ color: '#dc2626', fontSize: '0.68rem', marginLeft: '4px' }}>{isHindi ? '[⚠️ मेडिकल]' : '[⚠️ Medical]'}</span>}
                     </td>
                     <td style={{ border: '1px solid #ccc', padding: '5px' }}>{formatLocalizedGender(r.gender, isHindi) || 'F'} / {r.age || '24'}</td>
                     <td style={{ border: '1px solid #ccc', padding: '5px', fontFamily: 'monospace' }}>{r.mobile}</td>
