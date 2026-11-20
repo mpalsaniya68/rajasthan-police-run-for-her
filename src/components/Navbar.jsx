@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
+import { PoliceEmblem } from './Emblems';
 import { Shield, Menu, X, Phone, PackageCheck, LogOut, Globe, Languages } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -131,16 +131,8 @@ export function Navbar({
       }}>
         <div className="container-fluid" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
           
-          {/* Official Emblem + Rajasthan Police Crest + Headings */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => handleNav('home')}>
-            {/* State Emblem of India */}
-            <div className="d-tablet-inline">
-              <StateEmblemOfIndia size={46} />
-            </div>
-
-            {/* Divider */}
-            <div style={{ width: '1px', height: '44px', background: 'var(--border-medium)' }} className="d-tablet-inline"></div>
-
+          {/* Official Rajasthan Police Crest + Headings */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => handleNav('home')}>
             {/* Official Rajasthan Police Emblem with Vijay Stambh */}
             <PoliceEmblem size={52} className="navbar-police-logo" />
 
