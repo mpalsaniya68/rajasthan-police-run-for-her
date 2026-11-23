@@ -280,9 +280,9 @@ export function CertificateHub({ registrations = [] }) {
 
       const measuredNameW = ctx.measureText(runnerName).width;
       const underlineW = Math.max(measuredNameW + 60, 320);
-      // Underline directly touching the base of the name at Y: 354 (only 4px below baseline)
+      // Underline directly touching the base of the name at Y: 350 (0px gap at baseline)
       ctx.fillStyle = "#0a1c3d";
-      ctx.fillRect(675 - underlineW / 2, 354, underlineW, 2.5);
+      ctx.fillRect(675 - underlineW / 2, 350, underlineW, 2.5);
 
       // 4. STATEMENT (Exact 2 lines matching preview)
       ctx.fillStyle = "#334155";
@@ -887,18 +887,34 @@ export function CertificateHub({ registrations = [] }) {
                       This official certificate is proudly awarded to
                     </div>
                     <div style={{
-                      fontSize: 'clamp(2.6rem, 4.4vw, 3.4rem)',
-                      lineHeight: 1.0,
-                      fontWeight: 400,
-                      color: '#0a1c3d',
-                      fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
-                      borderBottom: '2.5px solid #0a1c3d',
+                      position: 'relative',
                       display: 'inline-block',
-                      padding: '0 32px 0px 32px',
-                      marginTop: '0px',
-                      marginBottom: '6px'
+                      margin: '0 auto 6px auto',
+                      textAlign: 'center'
                     }}>
-                      {formatLocalizedName(selectedRunner.fullName, false)}
+                      <div style={{
+                        fontSize: 'clamp(2.6rem, 4.4vw, 3.4rem)',
+                        lineHeight: 1.0,
+                        fontWeight: 400,
+                        color: '#0a1c3d',
+                        fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
+                        display: 'inline-block',
+                        padding: '0 32px',
+                        position: 'relative',
+                        zIndex: 2
+                      }}>
+                        {formatLocalizedName(selectedRunner.fullName, false)}
+                      </div>
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '0.28em',
+                        left: '0',
+                        right: '0',
+                        height: '2.5px',
+                        background: '#0a1c3d',
+                        zIndex: 1,
+                        pointerEvents: 'none'
+                      }} />
                     </div>
                   </div>
 

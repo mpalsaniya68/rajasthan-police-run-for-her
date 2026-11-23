@@ -4789,17 +4789,34 @@ export function AdminDashboard({
                           This official certificate is proudly awarded to
                         </div>
                         <div style={{
-                          fontSize: '2.4rem',
-                          lineHeight: 1.0,
-                          fontWeight: 400,
-                          color: '#0a1c3d',
-                          fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
-                          borderBottom: '2px solid #0a1c3d',
+                          position: 'relative',
                           display: 'inline-block',
-                          padding: '0 24px 0px 24px',
-                          marginBottom: '10px'
+                          margin: '0 auto 10px auto',
+                          textAlign: 'center'
                         }}>
-                          {formatLocalizedName(previewCertRunner.fullName, false)}
+                          <div style={{
+                            fontSize: '2.4rem',
+                            lineHeight: 1.0,
+                            fontWeight: 400,
+                            color: '#0a1c3d',
+                            fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
+                            display: 'inline-block',
+                            padding: '0 24px',
+                            position: 'relative',
+                            zIndex: 2
+                          }}>
+                            {formatLocalizedName(previewCertRunner.fullName, false)}
+                          </div>
+                          <div style={{
+                            position: 'absolute',
+                            bottom: '0.28em',
+                            left: '0',
+                            right: '0',
+                            height: '2px',
+                            background: '#0a1c3d',
+                            zIndex: 1,
+                            pointerEvents: 'none'
+                          }} />
                         </div>
 
                         <p style={{ fontSize: '0.8rem', color: '#334155', maxWidth: '520px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
