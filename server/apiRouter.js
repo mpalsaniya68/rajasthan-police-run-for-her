@@ -2466,8 +2466,9 @@ export async function handleApiRequest(req, res) {
 
       return json({
         success: true,
-        message: `सत्यापन कोड धावक के पंजीकृत मोबाइल (+91 ${runner.masked_mobile || ("XXXXXX" + (runner.mobile || "0000").slice(-4))}) पर भेजा गया।`,
+        message: `OTP भेजा गया (+91 ${runner.masked_mobile || ("XXXXXX" + (runner.mobile || "0000").slice(-4))})`,
         maskedMobile: runner.masked_mobile || ("XXXXXX" + (runner.mobile || "0000").slice(-4)),
+        simulatedOtp: code,
         expiresInSeconds: 600
       });
     }

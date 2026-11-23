@@ -96,6 +96,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
   const [handoverOtpCountdown, setHandoverOtpCountdown] = useState(0);
   const [handoverOtpError, setHandoverOtpError] = useState('');
   const [handoverOtpSuccess, setHandoverOtpSuccess] = useState('');
+  const [simulatedHandoverOtp, setSimulatedHandoverOtp] = useState('');
   // Dynamic Physical Bib Number assigned at Expo Counter (Event Company RFID Bib e.g. 2101)
   const [physicalBibInput, setPhysicalBibInput] = useState('');
 
@@ -117,6 +118,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     setHandoverOtpCountdown(0);
     setHandoverOtpError('');
     setHandoverOtpSuccess('');
+    setSimulatedHandoverOtp('');
     setPhysicalBibInput('');
   };
 
@@ -774,9 +776,12 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       if (res.ok && data.success) {
         setHandoverOtpSent(true);
         setHandoverOtpCountdown(60);
-        setHandoverOtpSuccess(data.message || `सत्यापन कोड धावक के पंजीकृत मोबाइल (+91 ${data.maskedMobile}) पर प्रेषित किया गया।`);
+        if (data.simulatedOtp) {
+          setSimulatedHandoverOtp(String(data.simulatedOtp));
+        }
+        setHandoverOtpSuccess(data.message || `OTP भेजा गया (+91 ${data.maskedMobile || ''})`);
       } else {
-        setHandoverOtpError(data.error || 'OTP प्रेषण में त्रुटि। कृपया पुनः प्रयास करें।');
+        setHandoverOtpError(data.error || 'OTP भेजने में त्रुटि।');
       }
     } catch (e) {
       setIsSendingHandoverOtp(false);
@@ -786,7 +791,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
   const handleVerifyHandoverOtp = async () => {
     if (!scannedRunner || !handoverOtpInput || handoverOtpInput.trim().length < 6) {
-      setHandoverOtpError('कृपया धावक द्वारा बताया गया 6-अंकीय OTP दर्ज करें।');
+      setHandoverOtpError('कृपया 6-अंकीय OTP दर्ज करें।');
       return;
     }
     setIsVerifyingHandoverOtp(true);
@@ -815,10 +820,10 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           mode: 'OTP',
           token: data.verificationToken
         });
-        setHandoverOtpSuccess('✅ OTP सफलतापूर्वक सत्यापित! किट सुपुर्दगी अनलॉक हो गई है।');
+        setHandoverOtpSuccess('✓ OTP सत्यापित! किट हैंडओवर अनलॉक।');
         if (soundEnabled) playSound('success');
       } else {
-        setHandoverOtpError(data.error || 'अमान्य OTP! कृपया सही 6-अंकीय कोड पुनः दर्ज करें।');
+        setHandoverOtpError(data.error || 'गलत OTP! पुनः प्रयास करें।');
         if (soundEnabled) playSound('duplicate');
       }
     } catch (e) {
@@ -1930,10 +1935,10 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                       </div>
                       <div>
                         <div style={{ fontSize: '1rem', fontWeight: 900, color: '#166534' }}>
-                          सत्यापन सफल (Handover Authorized) ✓
+                          सत्यापित (Verified) ✓
                         </div>
                         <div style={{ fontSize: '0.82rem', color: '#15803d', marginTop: '2px' }}>
-                          माध्यम: <strong>📲 पंजीकृत मोबाइल OTP (6-अंकीय कोड)</strong>
+                          माध्यम: <strong>मोबाइल OTP</strong>
                         </div>
                       </div>
                     </div>
@@ -1952,28 +1957,28 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                         cursor: 'pointer'
                       }}
                     >
-                      री-वेरीफाई / बदलें (Re-verify)
+                      Re-verify
                     </button>
                   </div>
                 ) : (
                   /* State: Pending Verification - Mobile OTP Only */
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Lock size={18} color="#0a1c3d" />
-                        <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0a1c3d' }}>
-                          किट सुपुर्दगी पूर्व सुरक्षा सत्यापन (Handover Verification)
+                        <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0a1c3d' }}>
+                          हैंडओवर सत्यापन (Handover Verification)
                         </span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ecfdf5', color: '#065f46', padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 800, border: '1px solid #a7f3d0' }}>
                         <Smartphone size={14} />
-                        <span>केवल पंजीकृत मोबाइल OTP सत्यापन</span>
+                        <span>मोबाइल OTP</span>
                       </div>
                     </div>
 
                     <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
                       <div style={{ fontSize: '0.84rem', color: '#475569', marginBottom: '10px' }}>
-                        धावक के पंजीकृत मोबाइल (<strong>+91 {scannedRunner.mobile ? (scannedRunner.mobile.slice(0, 6) + 'XXXX') : 'XXXXXX3248'}</strong>) पर 6-अंकीय हैंडओवर OTP भेजकर पुष्टि करें:
+                        पंजीकृत मोबाइल (<strong>+91 {scannedRunner.mobile ? (scannedRunner.mobile.slice(0, 6) + 'XXXX') : (scannedRunner.maskedMobile || 'XXXXXX7165')}</strong>) पर OTP भेजें:
                       </div>
 
                       {!handoverOtpSent ? (
@@ -1996,10 +2001,51 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                           }}
                         >
                           <KeyRound size={16} />
-                          <span>{isSendingHandoverOtp ? 'OTP भेजा जा रहा है...' : '📲 हैंडओवर OTP भेजें (Send OTP)'}</span>
+                          <span>{isSendingHandoverOtp ? 'भेजा जा रहा है...' : '📲 OTP भेजें (Send OTP)'}</span>
                         </button>
                       ) : (
                         <div>
+                          {/* Simulated OTP badge for dev/demo/test mode */}
+                          {simulatedHandoverOtp && (
+                            <div style={{
+                              background: '#eff6ff',
+                              border: '1px solid #bfdbfe',
+                              borderRadius: '6px',
+                              padding: '8px 12px',
+                              marginBottom: '12px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              flexWrap: 'wrap',
+                              gap: '8px',
+                              fontSize: '0.82rem'
+                            }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#1e40af' }}>
+                                <KeyRound size={15} />
+                                <span>डेमो कोड: <strong style={{ letterSpacing: '1px' }}>{simulatedHandoverOtp}</strong></span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setHandoverOtpInput(simulatedHandoverOtp);
+                                  if (handoverOtpError) setHandoverOtpError('');
+                                }}
+                                style={{
+                                  background: '#2563eb',
+                                  color: '#ffffff',
+                                  border: 'none',
+                                  borderRadius: '4px',
+                                  padding: '4px 10px',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                स्वतः भरें (Auto-Fill)
+                              </button>
+                            </div>
+                          )}
+
                           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
                             <input
                               type="text"
@@ -2011,7 +2057,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                                 setHandoverOtpInput(val);
                                 if (handoverOtpError) setHandoverOtpError('');
                               }}
-                              placeholder="6-अंकीय OTP"
+                              placeholder="6-अंक OTP"
                               style={{
                                 padding: '10px 14px',
                                 fontSize: '1.1rem',
@@ -2020,7 +2066,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                                 letterSpacing: '3px',
                                 border: '2px solid #0a1c3d',
                                 borderRadius: '6px',
-                                width: '170px',
+                                width: '150px',
                                 textAlign: 'center',
                                 outline: 'none'
                               }}
@@ -2034,18 +2080,18 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                                 background: handoverOtpInput.length === 6 ? '#047857' : '#94a3b8',
                                 color: '#ffffff',
                                 border: 'none',
-                                padding: '11px 22px',
+                                padding: '11px 20px',
                                 borderRadius: '6px',
                                 fontSize: '0.9rem',
                                 fontWeight: 800,
                                 cursor: handoverOtpInput.length === 6 ? 'pointer' : 'not-allowed',
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: '8px'
+                                gap: '6px'
                               }}
                             >
                               <Check size={16} />
-                              <span>{isVerifyingHandoverOtp ? 'जांच जारी...' : '✓ OTP सत्यापित करें (Verify)'}</span>
+                              <span>{isVerifyingHandoverOtp ? 'सत्यापित हो रहा है...' : 'सत्यापित करें (Verify)'}</span>
                             </button>
 
                             <button
@@ -2062,7 +2108,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                                 textDecoration: 'underline'
                               }}
                             >
-                              {handoverOtpCountdown > 0 ? `पुनः OTP भेजें (${handoverOtpCountdown}s)` : 'पुनः OTP भेजें (Resend OTP)'}
+                              {handoverOtpCountdown > 0 ? `Resend (${handoverOtpCountdown}s)` : 'Resend OTP'}
                             </button>
                           </div>
                         </div>
@@ -2098,10 +2144,10 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                     htmlFor="expo-physical-bib-input"
                     style={{ fontSize: '0.9rem', fontWeight: 900, color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: '6px' }}
                   >
-                    🏷️ इवेंट कंपनी का फिजिकल बिब नंबर टैग करें (Assign Physical RFID Bib No.)
+                    🏷️ फिजिकल बिब नंबर दर्ज करें (Assign Bib No.)
                   </label>
                   <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#1d4ed8', background: '#dbeafe', padding: '2px 8px', borderRadius: '4px' }}>
-                    Dynamic Bib Tagging
+                    Bib Tagging
                   </span>
                 </div>
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -2110,7 +2156,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                     type="text"
                     value={physicalBibInput}
                     onChange={(e) => setPhysicalBibInput(e.target.value.toUpperCase())}
-                    placeholder="उदा. 2101, 10045 (बिब का नंबर टाइप या बारकोड स्कैन करें)"
+                    placeholder="उदा. 2101, 10045 (स्कैन या दर्ज करें)"
                     style={{
                       flex: 1,
                       minWidth: '240px',
@@ -2128,12 +2174,12 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                   />
                   {physicalBibInput.trim() && (
                     <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#065f46', background: '#d1fae5', padding: '8px 12px', borderRadius: '6px', border: '1px solid #6ee7b7' }}>
-                      ✓ लिंक होगा: {scannedRunner.bibNumber} ⇄ Bib #{physicalBibInput.trim()}
+                      ✓ लिंक: {scannedRunner.bibNumber} ⇄ Bib #{physicalBibInput.trim()}
                     </span>
                   )}
                 </div>
                 <div style={{ fontSize: '0.74rem', color: '#475569', marginTop: '6px' }}>
-                  एक्सपो काउंटर से धावक को दिए जा रहे फिजिकल RFID बिब का नंबर दर्ज करें — यह सीधे धावक की पंजीकरण आईडी (<strong>{scannedRunner.bibNumber}</strong>) से जुड़ जाएगा।
+                  धावक को दिए जा रहे फिजिकल बिब का नंबर दर्ज करें (पंजीकरण ID: <strong>{scannedRunner.bibNumber}</strong> से लिंक होगा)।
                 </div>
               </div>
             )}
@@ -2149,7 +2195,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               borderTop: '1px solid #e2e8f0'
             }}>
               <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                सुरक्षा जांच: <strong style={{ color: '#0a1c3d' }}>RFID टैग ऑटो-लिंक ({physicalBibInput.trim() ? `RFID-${physicalBibInput.trim().toUpperCase()}` : `RFID-${scannedRunner.bibNumber}`})</strong>
+                सुरक्षा जांच: <strong style={{ color: '#0a1c3d' }}>बिब टैग ({physicalBibInput.trim() ? `Bib #${physicalBibInput.trim().toUpperCase()}` : `Bib #${scannedRunner.bibNumber}`})</strong>
               </div>
 
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
