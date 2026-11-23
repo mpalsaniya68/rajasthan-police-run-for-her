@@ -334,11 +334,12 @@ export function VolunteerRosterManager() {
       {/* 1. Header & KPI Metrics Bar */}
       <div className="gov-card" style={{
         padding: '20px 24px',
-        background: 'linear-gradient(135deg, #0a1c3d 0%, #0f2b61 100%)',
-        color: '#ffffff',
+        background: '#ffffff',
+        color: 'var(--text-main)',
         borderRadius: '10px',
-        border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+        border: '1px solid #e2e8f0',
+        borderTop: '4px solid var(--police-navy-900)',
+        boxShadow: '0 2px 10px rgba(10, 28, 61, 0.05)'
       }}>
         <div style={{
           display: 'flex',
@@ -350,37 +351,35 @@ export function VolunteerRosterManager() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{
-              width: '46px',
-              height: '46px',
+              width: '42px',
+              height: '42px',
               borderRadius: '8px',
-              background: 'rgba(217, 119, 6, 0.2)',
-              border: '1.5px solid #d97706',
+              background: '#eff6ff',
+              border: '1.5px solid #bfdbfe',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <Users size={24} color="#f59e0b" />
+              <Users size={22} color="#1d4ed8" />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>
-                  ड्यूटी रोस्टर एवं वॉलंटियर कमान केंद्र (Volunteer Duty Command)
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
+                  ड्यूटी रोस्टर प्रबंधन
                 </h2>
                 <span style={{
-                  background: '#16a34a',
-                  color: '#ffffff',
+                  background: '#dcfce7',
+                  color: '#15803d',
                   fontSize: '0.7rem',
                   fontWeight: 800,
                   padding: '2px 8px',
                   borderRadius: '12px',
+                  border: '1px solid #86efac',
                   letterSpacing: '0.5px'
                 }}>
                   PHQ AUTHORIZED
                 </span>
               </div>
-              <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#cbd5e1' }}>
-                एक्सपो किट वितरण काउंटरों एवं रेस डे प्रवेश द्वारों पर तैनात पुलिसकर्मियों व वॉलंटियर्स का व्यक्तिगत आईडी/पासवर्ड प्रबंधन
-              </p>
             </div>
           </div>
 
@@ -392,10 +391,10 @@ export function VolunteerRosterManager() {
                 alignItems: 'center',
                 gap: '6px',
                 padding: '8px 14px',
-                background: 'rgba(255,255,255,0.1)',
-                border: '1px solid rgba(255,255,255,0.2)',
+                background: '#ffffff',
+                border: '1px solid #cbd5e1',
                 borderRadius: '6px',
-                color: '#ffffff',
+                color: '#334155',
                 fontSize: '0.82rem',
                 fontWeight: 600,
                 cursor: 'pointer'
@@ -419,11 +418,11 @@ export function VolunteerRosterManager() {
                 fontSize: '0.88rem',
                 fontWeight: 800,
                 cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(22, 163, 74, 0.4)'
+                boxShadow: '0 2px 8px rgba(22, 163, 74, 0.25)'
               }}
             >
               <UserPlus size={16} />
-              <span>➕ नया वॉलंटियर जोड़ें व ड्यूटी अलॉट करें</span>
+              <span>➕ नया वॉलिंटियर जोड़ें</span>
             </button>
           </div>
         </div>
@@ -435,47 +434,48 @@ export function VolunteerRosterManager() {
           gap: '12px'
         }}>
           <div style={{
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.12)',
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderTop: '3px solid #2563eb',
             borderRadius: '8px',
             padding: '12px 16px'
           }}>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>कुल पंजीकृत ड्यूटी स्टाफ</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>{totalCount}</div>
-            <div style={{ fontSize: '0.72rem', color: '#4ade80', marginTop: '2px' }}>🟢 {activeCount} सक्रिय ऑन-ड्यूटी</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>कुल पंजीकृत ड्यूटी स्टाफ</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>{totalCount}</div>
+            <div style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700, marginTop: '2px' }}>🟢 {activeCount} सक्रिय ऑन-ड्यूटी</div>
           </div>
 
           <div style={{
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.12)',
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderTop: '3px solid #0284c7',
             borderRadius: '8px',
             padding: '12px 16px'
           }}>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>📦 एक्सपो किट काउंटर्स स्टाफ</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#38bdf8', marginTop: '2px' }}>{counterCount}</div>
-            <div style={{ fontSize: '0.72rem', color: '#cbd5e1', marginTop: '2px' }}>10 अधिकृत किट वितरण डेस्क</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>📦 एक्सपो किट काउंटर्स स्टाफ</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0284c7', marginTop: '2px' }}>{counterCount}</div>
           </div>
 
           <div style={{
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.12)',
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderTop: '3px solid #d97706',
             borderRadius: '8px',
             padding: '12px 16px'
           }}>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>🚪 रेस डे गेट मार्शल</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f59e0b', marginTop: '2px' }}>{gateCount}</div>
-            <div style={{ fontSize: '0.72rem', color: '#cbd5e1', marginTop: '2px' }}>3 मुख्य स्टेडियम प्रवेश द्वार</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>🚪 रेस डे गेट मार्शल</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#d97706', marginTop: '2px' }}>{gateCount}</div>
           </div>
 
           <div style={{
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.12)',
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderTop: '3px solid #16a34a',
             borderRadius: '8px',
             padding: '12px 16px'
           }}>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>🎁 कुल वितरित किट व सत्यापन</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#4ade80', marginTop: '2px' }}>{totalKitsDistributed}</div>
-            <div style={{ fontSize: '0.72rem', color: '#cbd5e1', marginTop: '2px' }}>स्टाफ द्वारा वेरीफाईड</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>🎁 कुल वितरित किट</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16a34a', marginTop: '2px' }}>{totalKitsDistributed}</div>
           </div>
         </div>
       </div>
