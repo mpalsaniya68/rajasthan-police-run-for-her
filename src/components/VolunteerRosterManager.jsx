@@ -391,16 +391,16 @@ export function VolunteerRosterManager() {
                 alignItems: 'center',
                 gap: '6px',
                 padding: '8px 14px',
-                background: '#ffffff',
+                background: '#f8fafc',
                 border: '1px solid #cbd5e1',
                 borderRadius: '6px',
-                color: '#334155',
+                color: '#1e293b',
                 fontSize: '0.82rem',
                 fontWeight: 600,
                 cursor: 'pointer'
               }}
             >
-              <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
+              <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} color="#1e293b" />
               <span>रिफ्रेश</span>
             </button>
 
@@ -434,48 +434,51 @@ export function VolunteerRosterManager() {
           gap: '12px'
         }}>
           <div style={{
-            background: '#f8fafc',
+            background: 'rgba(248, 250, 252, 0.85)',
             border: '1px solid #e2e8f0',
             borderTop: '3px solid #2563eb',
             borderRadius: '8px',
             padding: '12px 16px'
           }}>
-            <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>कुल पंजीकृत ड्यूटी स्टाफ</div>
+            <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700 }}>कुल पंजीकृत ड्यूटी स्टाफ</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>{totalCount}</div>
-            <div style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700, marginTop: '2px' }}>🟢 {activeCount} सक्रिय ऑन-ड्यूटी</div>
+            <div style={{ fontSize: '0.72rem', color: '#15803d', fontWeight: 600, marginTop: '2px' }}>🟢 {activeCount} सक्रिय ऑन-ड्यूटी</div>
           </div>
 
           <div style={{
-            background: '#f8fafc',
+            background: 'rgba(248, 250, 252, 0.85)',
             border: '1px solid #e2e8f0',
             borderTop: '3px solid #0284c7',
             borderRadius: '8px',
             padding: '12px 16px'
           }}>
-            <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>📦 एक्सपो किट काउंटर्स स्टाफ</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0284c7', marginTop: '2px' }}>{counterCount}</div>
+            <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700 }}>📦 एक्सपो किट काउंटर्स स्टाफ</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0369a1', marginTop: '2px' }}>{counterCount}</div>
+            <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, marginTop: '2px' }}>10 अधिकृत किट वितरण डेस्क</div>
           </div>
 
           <div style={{
-            background: '#f8fafc',
+            background: 'rgba(248, 250, 252, 0.85)',
             border: '1px solid #e2e8f0',
             borderTop: '3px solid #d97706',
             borderRadius: '8px',
             padding: '12px 16px'
           }}>
-            <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>🚪 रेस डे गेट मार्शल</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#d97706', marginTop: '2px' }}>{gateCount}</div>
+            <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700 }}>🚪 रेस डे गेट मार्शल</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#b45309', marginTop: '2px' }}>{gateCount}</div>
+            <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, marginTop: '2px' }}>3 मुख्य स्टेडियम प्रवेश द्वार</div>
           </div>
 
           <div style={{
-            background: '#f8fafc',
+            background: 'rgba(248, 250, 252, 0.85)',
             border: '1px solid #e2e8f0',
             borderTop: '3px solid #16a34a',
             borderRadius: '8px',
             padding: '12px 16px'
           }}>
-            <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>🎁 कुल वितरित किट</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16a34a', marginTop: '2px' }}>{totalKitsDistributed}</div>
+            <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700 }}>🎁 कुल वितरित किट</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#15803d', marginTop: '2px' }}>{totalKitsDistributed}</div>
+            <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, marginTop: '2px' }}>दर्ज वितरण एवं आवंटन</div>
           </div>
         </div>
       </div>
