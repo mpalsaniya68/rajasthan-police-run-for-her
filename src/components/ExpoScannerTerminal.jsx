@@ -641,7 +641,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           setStatusMessage(`⚠️ पूर्व में वितरित! यह किट ${initialFound.collectedBy || 'अन्य काउंटर'} द्वारा ${initialFound.kitCollectedAt || 'पूर्व में'} सौंपी जा चुकी है।`);
         } else {
           setScanStatus('SUCCESS');
-          setStatusMessage('✅ धावक ई-पास व QR तुरंत सत्यापित! कृपया नीचे दिए गए टी-शर्ट साइज की पुष्टि कर किट सुपुर्द करें।');
+          setStatusMessage('धावक सत्यापन पूर्ण! कृपया टी-शर्ट साइज़ की पुष्टि कर किट सुपुर्द करें।');
         }
       }
     }
@@ -722,7 +722,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
             } else {
               if (soundEnabled && scanStatus !== 'SUCCESS') playSound('success');
               setScanStatus('SUCCESS');
-              setStatusMessage('✅ धावक केंद्रीय डेटाबेस से सत्यापित! कृपया नीचे दिए गए टी-शर्ट साइज की पुष्टि कर किट सुपुर्द करें।');
+              setStatusMessage('धावक सत्यापन पूर्ण! कृपया टी-शर्ट साइज़ की पुष्टि कर किट सुपुर्द करें।');
             }
           }
           setIsSearching(false);
@@ -732,7 +732,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         // Anti-Fraud: If central DB confirms runner record DOES NOT exist, immediately invalidate forged QR pass!
         if (soundEnabled) playSound('error');
         setScanStatus('INVALID');
-        setStatusMessage(`🚨 अनधिकृत / फ़र्ज़ी ई-पास! यह बिब ("${targetBibOrQuery}") राजस्थान पुलिस केंद्रीय डेटाबेस में पंजीकृत नहीं है।`);
+        setStatusMessage(`अमान्य ई-पास! बिब ("${targetBibOrQuery}") के लिए कोई वैध पंजीकरण नहीं मिला।`);
         setScannedRunner(null);
         setIsSearching(false);
         return;
@@ -1108,7 +1108,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
     } else {
       if (soundEnabled) playSound('success');
       setScanStatus('SUCCESS');
-      setStatusMessage(`✅ धावक सूची से चयनित (${runner.fullName})! कृपया टी-शर्ट साइज की पुष्टि कर किट हैंडओवर करें।`);
+      setStatusMessage(`धावक विवरण चयनित (${runner.fullName})! कृपया टी-शर्ट साइज़ की पुष्टि कर किट सुपुर्द करें।`);
     }
     const el = document.getElementById('scanned-runner-details-card');
     if (el) {
