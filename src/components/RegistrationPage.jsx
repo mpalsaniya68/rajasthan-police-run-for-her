@@ -713,7 +713,7 @@ export function RegistrationPage({
       return;
     }
 
-    const cleanId = formData.idNumber ? formData.idNumber.replace(/\s+/g, "").toUpperCase() : "N/A";
+    const cleanId = formData.idNumber ? formData.idNumber.replace(/\s+/g, "").toUpperCase() : "";
 
     const cleanEmergency = (formData.emergencyContactPhone || formData.mobile).replace(/\D/g, "");
     if (!/^[6-9]\d{9}$/.test(cleanEmergency)) {
@@ -744,9 +744,9 @@ export function RegistrationPage({
       categoryId: category,
       districtId: selectedDistId,
       tshirtSize: venueType === "jaipur" ? (formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M") : "N/A",
-      idType: formData.idType,
+      idType: cleanId ? formData.idType : "",
       idNumber: cleanId,
-      idLast4: cleanId.slice(-4),
+      idLast4: cleanId ? cleanId.slice(-4) : "",
       cleanId: cleanId,
       cleanEmergency: cleanEmergency,
       otpVerificationToken: otpVerificationToken || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('rpm_otp_token') : '') || undefined,

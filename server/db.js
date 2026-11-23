@@ -295,6 +295,9 @@ export async function initDatabase(force = false) {
       await db.execute("ALTER TABLE participants ADD COLUMN id_hash TEXT DEFAULT '';");
     } catch (e) {}
     try {
+      await db.execute("UPDATE participants SET id_hash = '', id_last4 = '' WHERE id_hash = '3f7a59045ba12772fa78e64f6ac3c836b19157cc92f72bd2283f649054319d90' OR id_last4 = 'N/A';");
+    } catch (e) {}
+    try {
       await db.execute("ALTER TABLE participants ADD COLUMN gate_entered INTEGER DEFAULT 0;");
     } catch (e) {}
     try {

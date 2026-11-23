@@ -106,9 +106,20 @@ export function maskName(fullName) {
  * Ensures duplicate check without storing raw Aadhaar in plaintext.
  */
 export function hashIdNumber(idType, idNumber) {
-  if (!idNumber || typeof idNumber !== "string" || idNumber === "NOT_REQUIRED") return "";
+  if (
+    !idNumber ||
+    typeof idNumber !== "string" ||
+    !idNumber.trim() ||
+    idNumber.toUpperCase() === "NOT_REQUIRED" ||
+    idNumber.toUpperCase() === "N/A" ||
+    idNumber.toUpperCase() === "NA" ||
+    idNumber.toUpperCase() === "NONE" ||
+    idNumber.replace(/[^A-Za-z0-9]/g, "").length < 4
+  ) {
+    return "";
+  }
   const clean = idNumber.replace(/\s+/g, "").toUpperCase();
-  return crypto.createHmac("sha256", APP_SECRET).update(`${idType}:${clean}`).digest("hex");
+  return crypto.createHmac("sha256", APP_SECRET).update(`${idType || "ID"}:${clean}`).digest("hex");
 }
 
 /**

@@ -1057,9 +1057,9 @@ export async function handleApiRequest(req, res) {
 
       // Check if Govt Photo ID (Aadhaar/PAN/Voter) already registered in this category (DPDP Compliance)
       const idHash = hashIdNumber(data.idType, data.idNumber);
-      if (idHash) {
+      if (idHash && idHash.trim() !== "") {
         const existingId = await db.execute({
-          sql: "SELECT id, bib_number FROM participants WHERE id_hash = ? AND category_id = ?",
+          sql: "SELECT id, bib_number FROM participants WHERE id_hash = ? AND category_id = ? AND id_hash != ''",
           args: [idHash, data.categoryId]
         });
         if (existingId.rows.length > 0) {
