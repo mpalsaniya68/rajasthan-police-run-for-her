@@ -466,7 +466,7 @@ export function VolunteerRosterManager() {
           }}>
             <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700 }}>🚪 रेस डे गेट मार्शल</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#b45309', marginTop: '2px' }}>{gateCount}</div>
-            <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, marginTop: '2px' }}>3 मुख्य स्टेडियम प्रवेश द्वार</div>
+            <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, marginTop: '2px' }}>3 अधिकृत प्रवेश द्वार</div>
           </div>
 
           <div style={{
