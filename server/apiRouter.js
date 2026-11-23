@@ -1184,6 +1184,7 @@ export async function handleApiRequest(req, res) {
       const catName = CATEGORY_NAMES[data.categoryId] || data.categoryId.toUpperCase();
       const distName = DISTRICT_NAMES[data.districtId] || data.districtId;
       const isJaipur = isJaipurDistrict(data.districtId, distName);
+      const venueType = isJaipur ? 'jaipur' : 'district';
       const finalTshirtSize = isJaipur ? (data.tshirtSize && data.tshirtSize !== 'N/A' ? data.tshirtSize : 'M') : 'N/A';
 
       const maskedId = maskIdNumber(data.idType, data.idNumber);
@@ -1205,10 +1206,10 @@ export async function handleApiRequest(req, res) {
         sql: `INSERT INTO participants (
           id, bib_number, full_name, gender, dob, mobile, masked_mobile, email, emergency_contact, emergency_relation, blood_group,
           medical_condition, medical_notes,
-          category_id, category_name, district_id, district_name, tshirt_size, id_type, id_last4, id_masked, id_raw, id_hash, certificate_id, qr_token,
+          category_id, category_name, district_id, district_name, venue_type, tshirt_size, id_type, id_last4, id_masked, id_raw, id_hash, certificate_id, qr_token,
           fee_amount, payment_status, order_id, transaction_id, payment_method, paid_at,
           status, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
         args: [
           participantId,
           bibNumber,
@@ -1227,6 +1228,7 @@ export async function handleApiRequest(req, res) {
           catName,
           data.districtId,
           distName,
+          venueType,
           finalTshirtSize,
           data.idType || "Aadhaar",
           data.idNumber ? data.idNumber.slice(-4) : "XXXX",
@@ -2379,7 +2381,7 @@ export async function handleApiRequest(req, res) {
       const findRes = await db.execute({
         sql: `SELECT id, bib_number, physical_bib_number, full_name, gender, dob, mobile, masked_mobile, emergency_contact, emergency_relation,
                      blood_group, medical_condition, medical_notes, category_id, category_name, district_id,
-                     district_name, tshirt_size, kit_collected, kit_collected_at, collected_by, rfid_tag_id,
+                     district_name, venue_type, tshirt_size, kit_collected, kit_collected_at, collected_by, rfid_tag_id,
                      certificate_id, qr_token, status
               FROM participants 
               WHERE bib_number = ? OR bib_number = ? OR physical_bib_number = ? OR physical_bib_number = ? OR mobile = ? OR certificate_id = ? OR certificate_id = ? OR qr_token = ? OR id = ? 
@@ -2412,7 +2414,7 @@ export async function handleApiRequest(req, res) {
           categoryId: r.category_id,
           districtId: r.district_id,
           districtName: r.district_name,
-          venueType: (r.district_id && (r.district_id.includes('jaipur') || r.district_id.includes('jpr'))) ? 'jaipur' : 'district',
+          venueType: r.venue_type || ((r.district_id && (r.district_id.includes('jaipur') || r.district_id.includes('jpr'))) ? 'jaipur' : 'district'),
           tshirtSize: r.tshirt_size || "M",
           kitCollected: Boolean(r.kit_collected),
           kit_collected: Boolean(r.kit_collected),
@@ -2441,7 +2443,7 @@ export async function handleApiRequest(req, res) {
       }
 
       const findRes = await db.execute({
-        sql: "SELECT id, bib_number, full_name, mobile, masked_mobile, kit_collected, category_name, district_id, district_name FROM participants WHERE UPPER(bib_number) = ? OR UPPER(id) = ? LIMIT 1",
+        sql: "SELECT id, bib_number, full_name, mobile, masked_mobile, kit_collected, category_name, district_id, district_name, venue_type FROM participants WHERE UPPER(bib_number) = ? OR UPPER(id) = ? LIMIT 1",
         args: [bibNumber, bibNumber]
       });
 
@@ -2453,8 +2455,15 @@ export async function handleApiRequest(req, res) {
 
       // Anti-Fraud: District Jurisdiction Protection
       const isCounterJaipur = !adminUser.districtId || adminUser.districtId.includes('jaipur') || adminUser.districtId.includes('jpr');
-      const isRunnerJaipur = (runner.district_id && (runner.district_id.includes('jaipur') || runner.district_id.includes('jpr'))) || 
-                             (/^RJ-(02K|05K|10K|21K)-/i.test(runner.bib_number) && !/^RJ-[A-Z]{3,4}-(02K|05K|10K|21K)-/i.test(runner.bib_number));
+      let isRunnerJaipur = false;
+      if (runner.district_id || runner.venue_type) {
+        const distId = (runner.district_id || "").toLowerCase();
+        const vType = (runner.venue_type || "").toLowerCase();
+        const distName = (runner.district_name || "").toLowerCase();
+        isRunnerJaipur = vType === "jaipur" || distId.includes("jaipur") || distId.includes("jpr") || distName.includes("jaipur") || distName.includes("जयपुर");
+      } else {
+        isRunnerJaipur = /^RJ-(02K|05K|10K|21K)-/i.test(runner.bib_number) && !/^RJ-[A-Z]{3,4}-(02K|05K|10K|21K)-/i.test(runner.bib_number);
+      }
       if (isCounterJaipur && !isRunnerJaipur) {
         return error(`किट वितरण अस्वीकृत: यह धावक "${runner.district_name || 'अन्य जिला'}" के लिए पंजीकृत है। यह एक्सपो काउंटर केवल जयपुर फ्लैगशिप मैराथन हेतु अधिकृत है।`, 403);
       }
@@ -2571,8 +2580,15 @@ export async function handleApiRequest(req, res) {
 
       // Anti-Fraud: District Jurisdiction Protection
       const isCounterJaipur = !adminUser.districtId || adminUser.districtId.includes('jaipur') || adminUser.districtId.includes('jpr');
-      const isRunnerJaipur = (runner.district_id && (runner.district_id.includes('jaipur') || runner.district_id.includes('jpr'))) || 
-                             (/^RJ-(02K|05K|10K|21K)-/i.test(runner.bib_number) && !/^RJ-[A-Z]{3,4}-(02K|05K|10K|21K)-/i.test(runner.bib_number));
+      let isRunnerJaipur = false;
+      if (runner.district_id || runner.venue_type) {
+        const distId = (runner.district_id || "").toLowerCase();
+        const vType = (runner.venue_type || "").toLowerCase();
+        const distName = (runner.district_name || "").toLowerCase();
+        isRunnerJaipur = vType === "jaipur" || distId.includes("jaipur") || distId.includes("jpr") || distName.includes("jaipur") || distName.includes("जयपुर");
+      } else {
+        isRunnerJaipur = /^RJ-(02K|05K|10K|21K)-/i.test(runner.bib_number) && !/^RJ-[A-Z]{3,4}-(02K|05K|10K|21K)-/i.test(runner.bib_number);
+      }
       if (isCounterJaipur && !isRunnerJaipur) {
         return error(`किट वितरण अस्वीकृत: यह धावक "${runner.district_name || 'अन्य जिला'}" के लिए पंजीकृत है। यह एक्सपो काउंटर केवल जयपुर फ्लैगशिप मैराथन हेतु अधिकृत है।`, 403);
       }

@@ -22,13 +22,25 @@ export const checkDistrictMismatch = (runner, currentUser) => {
   const districtDisplayName = formatLocalizedDistrict(cleanDist, true) || runner.districtName || 'अन्य जिला';
 
   const bib = String(runner.bibNumber || runner.bib_number || '').toUpperCase();
-  const isRunnerJaipur = (
-    runner.venueType === 'jaipur' ||
-    runner.venue_type === 'jaipur' ||
-    isJaipurDistrict(runner.districtId || runner.district_id, runner.districtName || runner.district_name) ||
-    cleanDist.toLowerCase() === 'jaipur' ||
-    (/^RJ-(02K|05K|10K|21K)-/i.test(bib) && !/^RJ-[A-Z]{3,4}-(02K|05K|10K|21K)-/i.test(bib))
+  const hasAuthoritativeDistrict = Boolean(
+    runner.venueType ||
+    runner.venue_type ||
+    runner.districtId ||
+    runner.district_id ||
+    cleanDist
   );
+
+  let isRunnerJaipur = false;
+  if (hasAuthoritativeDistrict) {
+    isRunnerJaipur = (
+      runner.venueType === 'jaipur' ||
+      runner.venue_type === 'jaipur' ||
+      isJaipurDistrict(runner.districtId || runner.district_id, runner.districtName || runner.district_name) ||
+      cleanDist.toLowerCase() === 'jaipur'
+    );
+  } else {
+    isRunnerJaipur = (/^RJ-(02K|05K|10K|21K)-/i.test(bib) && !/^RJ-[A-Z]{3,4}-(02K|05K|10K|21K)-/i.test(bib));
+  }
 
   if (isCounterJaipur) {
     return {
@@ -672,16 +684,13 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
       initialFound.isDistrictMismatch = isMismatch;
       initialFound.districtDisplayName = districtDisplayName;
       setScannedRunner(initialFound);
-      setIsSearching(false);
 
       if (isMismatch) {
         if (soundEnabled) playSound('duplicate');
         setScanStatus('DISTRICT_MISMATCH');
-        setStatusMessage(`⚠️ अन्य जिले का पंजीकरण! यह धावक "${districtDisplayName}" के लिए पंजीकृत है। यह काउंटर केवल जयपुर फ्लैगशिप मैराथन किट वितरण हेतु है।`);
-        return;
-      }
-
-      if (terminalMode === 'gate') {
+        setStatusMessage(`⚠️ अन्य जिले का पंजीकरण (स्थानीय विवरण)! यह धावक "${districtDisplayName}" के लिए पंजीकृत है। केंद्रीय डेटाबेस से सत्यापन जारी है...`);
+        // Note: Do not early return so the authoritative database lookup can verify and reconcile.
+      } else if (terminalMode === 'gate') {
         if (initialFound.gate_entered) {
           if (soundEnabled) playSound('duplicate');
           setScanStatus('GATE_ALREADY_ENTERED');
@@ -767,7 +776,6 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
             if (soundEnabled) playSound('duplicate');
             setScanStatus('DISTRICT_MISMATCH');
             setStatusMessage(`⚠️ अन्य जिले का पंजीकरण! यह धावक "${districtDisplayName}" के लिए पंजीकृत है। यह काउंटर केवल जयपुर फ्लैगशिप मैराथन किट वितरण हेतु है।`);
-            setIsSearching(false);
             return;
           }
 
@@ -791,7 +799,6 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               setStatusMessage('धावक सत्यापन पूर्ण! कृपया टी-शर्ट साइज़ की पुष्टि कर किट सुपुर्द करें।');
             }
           }
-          setIsSearching(false);
           return;
         }
       } else if (res.status === 404 && parsedQr) {
@@ -800,11 +807,12 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         setScanStatus('INVALID');
         setStatusMessage(`अमान्य ई-पास! बिब ("${targetBibOrQuery}") के लिए कोई वैध पंजीकरण नहीं मिला।`);
         setScannedRunner(null);
-        setIsSearching(false);
         return;
       }
     } catch (apiErr) {
       console.warn('Server background sync note:', apiErr);
+    } finally {
+      setIsSearching(false);
     }
 
     // If neither local cache nor central server found the runner

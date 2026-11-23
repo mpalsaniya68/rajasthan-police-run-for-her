@@ -251,6 +251,28 @@ test("FULL PRODUCTION LIFECYCLE AUDIT: Registration -> E-Pass -> Expo Handover -
   const outOfDistOtpData = await outOfDistOtpRes.json();
   assert.match(outOfDistOtpData.error, /किट वितरण अस्वीकृत/);
 
+  // 11b-3. Anti-Fraud Security: Legacy RJ-05K Bib cannot override explicit non-Jaipur district (e.g. Udaipur)
+  const legacyBibRes = await fetch(`${baseUrl}/expo/handover-otp/send`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${expoToken}`
+    },
+    body: JSON.stringify({ bibNumber: 'RJ-05K-3042' })
+  });
+  assert.equal(legacyBibRes.status, 403);
+  const legacyBibData = await legacyBibRes.json();
+  assert.match(legacyBibData.error, /किट वितरण अस्वीकृत/);
+
+  // 11b-4. Query check: /expo/runner exposes venueType
+  const runnerLookupRes = await fetch(`${baseUrl}/expo/runner?q=RJ-05K-3042`, {
+    headers: { "Authorization": `Bearer ${expoToken}` }
+  });
+  assert.equal(runnerLookupRes.status, 200);
+  const runnerLookupData = await runnerLookupRes.json();
+  assert.equal(runnerLookupData.runner.venueType, 'district');
+  assert.equal(runnerLookupData.runner.districtId, 'udaipur');
+
   // Retrieve handover OTP from database
   const handoverOtpRow = await db.execute({
     sql: "SELECT code FROM otp_codes WHERE mobile = ? LIMIT 1",

@@ -220,6 +220,7 @@ export async function initDatabase(force = false) {
         category_name TEXT NOT NULL,
         district_id TEXT NOT NULL,
         district_name TEXT NOT NULL,
+        venue_type TEXT DEFAULT '',
         tshirt_size TEXT NOT NULL,
         id_type TEXT,
         id_last4 TEXT,
@@ -311,6 +312,19 @@ export async function initDatabase(force = false) {
     } catch (e) {}
     try {
       await db.execute("ALTER TABLE participants ADD COLUMN cert_template_type TEXT DEFAULT 'DISTRICT';");
+    } catch (e) {}
+    try {
+      await db.execute("ALTER TABLE participants ADD COLUMN venue_type TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      await db.execute(`
+        UPDATE participants 
+        SET venue_type = CASE 
+          WHEN lower(district_id) LIKE '%jaipur%' OR lower(district_id) = 'jpr-comm' OR lower(district_id) = 'jaipur_comm' OR (district_name IS NOT NULL AND lower(district_name) LIKE '%jaipur%') THEN 'jaipur'
+          ELSE 'district'
+        END
+        WHERE venue_type IS NULL OR venue_type = '';
+      `);
     } catch (e) {}
 
     // Enforce T-shirt size = 'N/A' for all non-Jaipur districts in database
