@@ -2501,7 +2501,7 @@ export async function handleApiRequest(req, res) {
         verificationMode = "PHYSICAL_GOVT_ID_OVERRIDE";
         verificationDetail = `मूल पहचान पत्र अंतिम-4: ${idLast4}, कारण: ${overrideReason}`;
       } else {
-        return error("किट सुपुर्दगी से पूर्व धावक का मोबाइल OTP अथवा मूल पहचान पत्र सत्यापन अनिवार्य है।", 403);
+        return error("किट सुपुर्दगी से पूर्व धावक का मोबाइल OTP सत्यापन अनिवार्य है।", 403);
       }
 
       // Guard: Ensure event company's physical Bib Number isn't already assigned to another runner
