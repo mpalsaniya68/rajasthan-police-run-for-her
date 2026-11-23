@@ -1929,8 +1929,6 @@ export function AdminDashboard({
                   {isHindi ? 'डेटा एक्सपोर्ट केंद्र' : 'Data Export Center'}
                 </span>
 
-                <span className="badge-gov" style={{ fontSize: '0.68rem', padding: '1px 6px' }}>Excel / UTF-8</span>
-
               </div>
 
               <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
@@ -2196,7 +2194,6 @@ export function AdminDashboard({
               <div className="gov-card" style={{ padding: '14px', background: 'var(--police-navy-50)' }}>
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>{formatLocalizedDistrict(adminUser.districtName, isHindi) || (isHindi ? 'जिला' : 'District')} {isHindi ? 'कुल धावक' : 'Total Runners'}</div>
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>{filteredList.length}</div>
-                <div style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 600 }}>{isHindi ? 'पंजीकृत प्रतिभागी' : 'Registered Participants'}</div>
               </div>
 
               <div className="gov-card" style={{ padding: '14px', background: 'var(--crimson-50)' }}>
@@ -2204,7 +2201,6 @@ export function AdminDashboard({
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--crimson-600)' }}>
                   {filteredList.filter(r => (r.gender || '').toLowerCase() === 'female').length}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{isHindi ? 'नारी शक्ति दौड़ सहभागिता' : 'Women Empowerment Run'}</div>
               </div>
 
               <div className="gov-card" style={{ padding: '14px', background: 'var(--police-gold-50)' }}>
@@ -2212,19 +2208,11 @@ export function AdminDashboard({
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-gold-700)' }}>
                   {filteredList.filter(r => (r.gender || '').toLowerCase() === 'male').length}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{isHindi ? 'स्थानीय नागरिक व बल' : 'Citizens & Police Force'}</div>
               </div>
 
-
-
               <div className="gov-card" style={{ padding: '14px', background: '#ecfdf5' }}>
-
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>ई-सर्टिफिकेट पात्रता</div>
-
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#059669' }}>100% Active</div>
-
-                <div style={{ fontSize: '0.72rem', color: '#047857' }}>डिजिटल सत्यापन उपलब्ध</div>
-
               </div>
 
             </div>
@@ -2234,57 +2222,27 @@ export function AdminDashboard({
             <div className="admin-metrics-grid">
 
               <div className="gov-card" style={{ padding: '14px', background: 'var(--police-navy-50)' }}>
-
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>कुल पंजीयन (Total)</div>
-
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>{liveStats?.total || registrations.length}</div>
-
-                <div style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 600 }}>Active Statewide Entries</div>
-
               </div>
-
-
 
               <div className="gov-card" style={{ padding: '14px', background: 'var(--crimson-50)' }}>
-
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>जयपुर फ्लैगशिप</div>
-
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--crimson-600)' }}>
-
                   {registrations.filter(r => r.venueType === 'jaipur').length}
-
                 </div>
-
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>अल्बर्ट हॉल मुख्य वेन्यू</div>
-
               </div>
-
-
 
               <div className="gov-card" style={{ padding: '14px', background: 'var(--police-gold-50)' }}>
-
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>{RAJASTHAN_POLICE_DISTRICTS.length} जिले (Districts)</div>
-
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-gold-700)' }}>
-
                   {registrations.filter(r => r.venueType !== 'jaipur').length}
-
                 </div>
-
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>जिला स्तरीय दौड़</div>
-
               </div>
 
-
-
               <div className="gov-card" style={{ padding: '14px', background: '#ecfdf5' }}>
-
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>ई-सर्टिफिकेट डिस्पैच</div>
-
                 <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#059669' }}>100% Active</div>
-
-                <div style={{ fontSize: '0.72rem', color: '#047857' }}>WhatsApp / SMS / Email</div>
-
               </div>
 
             </div>
@@ -3610,52 +3568,22 @@ export function AdminDashboard({
           <div className="admin-metrics-grid">
 
             <div className="gov-card" style={{ padding: '14px', background: 'var(--police-navy-50)' }}>
-
               <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
-
                 कुल वितरित किट्स (RFID Allocated)
-
               </div>
-
               <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-950)' }}>
-
                 {liveStats?.kitsDistributed ?? registrations.filter(r => r.bibCollected).length}
-
               </div>
-
-              <div style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700 }}>
-
-                सक्रिय RFID चिप्स एक्टिवेटेड
-
-              </div>
-
             </div>
-
-
 
             <div className="gov-card" style={{ padding: '14px', background: '#fef3c7' }}>
-
               <div style={{ fontSize: '0.72rem', color: '#92400e', fontWeight: 700, textTransform: 'uppercase' }}>
-
                 वितरण हेतु लंबित (Kits Pending)
-
               </div>
-
               <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#b45309' }}>
-
                 {liveStats?.kitsPending ?? registrations.filter(r => !r.bibCollected).length}
-
               </div>
-
-              <div style={{ fontSize: '0.72rem', color: '#78350f' }}>
-
-                एक्सपो काउंटर्स पर उपलब्ध
-
-              </div>
-
             </div>
-
-
 
             <div className="gov-card" style={{ padding: '14px', background: '#ecfdf5', border: '1px solid #86efac' }}>
               <div style={{ fontSize: '0.72rem', color: '#166534', fontWeight: 700, textTransform: 'uppercase' }}>
@@ -3663,9 +3591,6 @@ export function AdminDashboard({
               </div>
               <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#15803d' }}>
                 {liveStats?.total || registrations.length}
-              </div>
-              <div style={{ fontSize: '0.72rem', color: '#166534' }}>
-                {isHindi ? '100% धावकों के सुरक्षा संपर्क' : '100% Runner Safety Verified'}
               </div>
             </div>
 

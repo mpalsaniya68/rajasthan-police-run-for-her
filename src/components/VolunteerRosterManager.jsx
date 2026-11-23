@@ -442,7 +442,6 @@ export function VolunteerRosterManager() {
           }}>
             <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700 }}>कुल पंजीकृत ड्यूटी स्टाफ</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>{totalCount}</div>
-            <div style={{ fontSize: '0.72rem', color: '#15803d', fontWeight: 600, marginTop: '2px' }}>🟢 {activeCount} सक्रिय ऑन-ड्यूटी</div>
           </div>
 
           <div style={{
@@ -454,7 +453,6 @@ export function VolunteerRosterManager() {
           }}>
             <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700 }}>📦 एक्सपो किट काउंटर्स स्टाफ</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0369a1', marginTop: '2px' }}>{counterCount}</div>
-            <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, marginTop: '2px' }}>10 अधिकृत किट वितरण डेस्क</div>
           </div>
 
           <div style={{
@@ -466,7 +464,6 @@ export function VolunteerRosterManager() {
           }}>
             <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700 }}>🚪 रेस डे गेट मार्शल</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#b45309', marginTop: '2px' }}>{gateCount}</div>
-            <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, marginTop: '2px' }}>3 अधिकृत प्रवेश द्वार</div>
           </div>
 
           <div style={{
@@ -478,7 +475,6 @@ export function VolunteerRosterManager() {
           }}>
             <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700 }}>🎁 कुल वितरित किट</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#15803d', marginTop: '2px' }}>{totalKitsDistributed}</div>
-            <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, marginTop: '2px' }}>दर्ज वितरण एवं आवंटन</div>
           </div>
         </div>
       </div>
