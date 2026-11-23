@@ -29,56 +29,11 @@ import {
   drawHorizontalRouteMapOnCanvas
 } from '../utils/jaipurRouteMap';
 import { useLanguage } from '../context/LanguageContext';
-import { formatLocalizedDistrict, formatLocalizedCategory, formatLocalizedName, formatEmergencyContactDisplay } from '../utils/localization';
+import { formatLocalizedDistrict, formatLocalizedCategory, formatLocalizedName, formatEmergencyContactDisplay, formatCleanDistrictName } from '../utils/localization';
+
+export { formatCleanDistrictName };
 
 const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
-
-export function formatCleanDistrictName(p) {
-  if (!p) return "Jaipur";
-  const distId = String(p.districtId || p.district_id || '').toLowerCase().trim();
-  const rawName = String(p.districtName || p.district_name || '').trim();
-  const lowerName = rawName.toLowerCase();
-
-  if (
-    distId === 'jpr-comm' ||
-    distId === 'jaipur_comm' ||
-    distId === 'jpr_comm' ||
-    distId.startsWith('jpr') ||
-    distId.includes('jaipur') ||
-    lowerName.includes('jaipur') ||
-    lowerName.includes('जयपुर')
-  ) {
-    return "Jaipur";
-  }
-
-  if (distId.startsWith('jdh') || lowerName.includes('jodhpur') || lowerName.includes('जोधपुर')) {
-    return "Jodhpur";
-  }
-
-  if (distId.startsWith('kta') || lowerName.includes('kota') || lowerName.includes('कोटा')) {
-    return "Kota";
-  }
-
-  if (distId) {
-    const normDistId = distId.replace(/_/g, '-').toUpperCase();
-    const matched = RAJASTHAN_POLICE_DISTRICTS.find(d => 
-      d.id.toUpperCase() === normDistId ||
-      d.id.toUpperCase().replace(/_/g, '-') === normDistId
-    );
-    if (matched && matched.name) return formatLocalizedDistrict(matched.name, false);
-  }
-
-  const matchedByName = RAJASTHAN_POLICE_DISTRICTS.find(d => 
-    d.name.toLowerCase() === lowerName ||
-    d.id.toLowerCase() === lowerName ||
-    d.id.toLowerCase().replace(/-/g, '_') === lowerName
-  );
-  if (matchedByName && matchedByName.name) {
-    return formatLocalizedDistrict(matchedByName.name, false);
-  }
-
-  return formatLocalizedDistrict(rawName, false) || "Jaipur";
-}
 
 export function RegistrationPage({
   initialCategory = "21k",

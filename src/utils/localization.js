@@ -4,6 +4,8 @@
  * Completely eliminates mixed bracketed text like "मदन पल्सानिया (Madan Palsaniya)" or "जयपुर (Jaipur)".
  */
 
+import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
+
 // District Name Bilingual Map for all 41 Official Police Districts
 export const DISTRICT_BILINGUAL_MAP = {
   ajmer: { hi: "अजमेर", en: "Ajmer" },
@@ -373,4 +375,54 @@ export function formatLocalizedKitStatus(isCollected, isHindi = true) {
   return isCollected
     ? (isHindi ? "✓ किट प्राप्त" : "✓ Kit Collected")
     : (isHindi ? "⏳ किट पेंडिंग" : "⏳ Kit Pending");
+}
+
+/**
+ * Normalizes any participant object or district string to a clean, canonical district name (e.g. "Jodhpur", "Jaipur", "Chittorgarh")
+ */
+export function formatCleanDistrictName(p) {
+  if (!p) return "Jaipur";
+  const distId = String(p.districtId || p.district_id || (typeof p === 'string' ? p : '')).toLowerCase().trim();
+  const rawName = String(p.districtName || p.district_name || (typeof p === 'string' ? p : '')).trim();
+  const lowerName = rawName.toLowerCase();
+
+  if (
+    distId === 'jpr-comm' ||
+    distId === 'jaipur_comm' ||
+    distId === 'jpr_comm' ||
+    distId.startsWith('jpr') ||
+    distId.includes('jaipur') ||
+    lowerName.includes('jaipur') ||
+    lowerName.includes('जयपुर')
+  ) {
+    return "Jaipur";
+  }
+
+  if (distId.startsWith('jdh') || lowerName.includes('jodhpur') || lowerName.includes('जोधपुर')) {
+    return "Jodhpur";
+  }
+
+  if (distId.startsWith('kta') || lowerName.includes('kota') || lowerName.includes('कोटा')) {
+    return "Kota";
+  }
+
+  if (distId) {
+    const normDistId = distId.replace(/_/g, '-').toUpperCase();
+    const matched = RAJASTHAN_POLICE_DISTRICTS.find(d => 
+      d.id.toUpperCase() === normDistId ||
+      d.id.toUpperCase().replace(/_/g, '-') === normDistId
+    );
+    if (matched && matched.name) return formatLocalizedDistrict(matched.name, false);
+  }
+
+  const matchedByName = RAJASTHAN_POLICE_DISTRICTS.find(d => 
+    d.name.toLowerCase() === lowerName ||
+    d.id.toLowerCase() === lowerName ||
+    d.id.toLowerCase().replace(/-/g, '_') === lowerName
+  );
+  if (matchedByName && matchedByName.name) {
+    return formatLocalizedDistrict(matchedByName.name, false);
+  }
+
+  return formatLocalizedDistrict(rawName, false) || "Jaipur";
 }

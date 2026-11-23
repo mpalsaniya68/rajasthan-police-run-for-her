@@ -154,3 +154,15 @@ test("admin participants endpoint safely ignores undefined or null district quer
   assert.ok(data.participants.length > 0, "Should return records even if district=undefined query is passed");
 });
 
+test("admin participants endpoint filters accurately by district name including aliases", async () => {
+  const res = await fetch(`${baseUrl}/admin/participants?district=Jodhpur&limit=50`, {
+    headers: { Authorization: `Bearer ${adminToken}` }
+  });
+  const data = await res.json();
+  assert.equal(data.success, true);
+  data.participants.forEach(p => {
+    const combined = `${p.district_id} ${p.district_name}`.toLowerCase();
+    assert.ok(combined.includes("jodh") || combined.includes("jdh") || combined.includes("जोधपुर"), `Expected Jodhpur record, got: ${combined}`);
+  });
+});
+

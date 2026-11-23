@@ -118,8 +118,99 @@ const DISTRICT_NAMES = {
   "sirohi": "सिरोही पुलिस (Sirohi)",
   "sri_ganganagar": "श्रीगंगानगर पुलिस (Sri Ganganagar)",
   "tonk": "टोंक पुलिस (Tonk)",
-  "udaipur": "उदयपुर पुलिस (Udaipur)"
+  "udaipur": "उदयपुर पुलिस (Udaipur)",
+  "cht": "चित्तौड़गढ़ पुलिस (Chittorgarh)",
+  "bkn": "बीकानेर पुलिस (Bikaner)",
+  "alw": "अलवर पुलिस (Alwar)",
+  "udp": "उदयपुर पुलिस (Udaipur)",
+  "ajm": "अजमेर पुलिस (Ajmer)",
+  "bhl": "भीलवाड़ा पुलिस (Bhilwara)",
+  "ngr": "नागौर पुलिस (Nagaur)",
+  "tnk": "टोंक पुलिस (Tonk)",
+  "bwr": "ब्यावर पुलिस (Beawar)",
+  "did": "डीडवाना-कुचामन पुलिस (Didwana-Kuchaman)",
+  "dsa": "दौसा पुलिस (Dausa)",
+  "jjn": "झुंझुनूं पुलिस (Jhunjhunu)",
+  "skr": "सीकर पुलिस (Sikar)",
+  "kht": "खैरथल-तिजारा पुलिस (Khairthal-Tijara)",
+  "ktp": "कोटपूतली-बहरोड़ पुलिस (Kotputli-Behror)",
+  "chu": "चूरू पुलिस (Churu)",
+  "hnm": "हनुमानगढ़ पुलिस (Hanumangarh)",
+  "sgn": "श्रीगंगानगर पुलिस (Sri Ganganagar)",
+  "btp": "भरतपुर पुलिस (Bharatpur)",
+  "deg": "डीग पुलिस (Deeg)",
+  "dhp": "धौलपुर पुलिस (Dholpur)",
+  "krl": "करौली पुलिस (Karauli)",
+  "swm": "सवाई माधोपुर पुलिस (Sawai Madhopur)",
+  "bnd": "बूंदी पुलिस (Bundi)",
+  "brn": "बारां पुलिस (Baran)",
+  "jhl": "झालावाड़ पुलिस (Jhalawar)",
+  "raj": "राजसमंद पुलिस (Rajsamand)",
+  "bsw": "बांसवाड़ा पुलिस (Banswara)",
+  "dng": "डूंगरपुर पुलिस (Dungarpur)",
+  "prt": "प्रतापगढ़ पुलिस (Pratapgarh)",
+  "slm": "सलूंबर पुलिस (Salumbar)",
+  "pli": "पाली पुलिस (Pali)",
+  "bmr": "बाड़मेर पुलिस (Barmer)",
+  "jsl": "जैसलमेर पुलिस (Jaisalmer)",
+  "jlr": "जालौर पुलिस (Jalore)",
+  "srh": "सिरोही पुलिस (Sirohi)",
+  "blt": "बालोतरा पुलिस (Balotra)",
+  "phl": "फलोदी पुलिस (Phalodi)"
 };
+
+export function getDistrictQueryTokens(dist) {
+  if (!dist) return [];
+  const raw = String(dist).trim();
+  const lower = raw.toLowerCase().replace(/[-_ ]+/g, '');
+  if (!lower || lower === 'all' || lower === 'समस्त' || lower === 'समस्तराजस्थान') return [];
+
+  const tokens = new Set([raw, raw.toLowerCase()]);
+
+  if (lower.includes('jodh') || lower.includes('jdh') || raw.includes('जोधपुर')) {
+    ['jdh_comm', 'jdh-comm', 'jdh', 'jodhpur_comm', 'jodhpur', 'जोधपुर'].forEach(t => tokens.add(t));
+  } else if (lower.includes('jaipur') || lower.includes('jpr') || raw.includes('जयपुर')) {
+    ['jaipur_comm', 'jaipur-comm', 'jpr_comm', 'jpr-comm', 'jpr', 'jaipur', 'जयपुर'].forEach(t => tokens.add(t));
+  } else if (lower.includes('kota') || lower.includes('kta') || raw.includes('कोटा')) {
+    ['kota_city', 'kta_city', 'kta-city', 'kta', 'kota', 'कोटा'].forEach(t => tokens.add(t));
+  } else if (lower.includes('chittor') || lower.includes('cht') || raw.includes('चित्तौड़')) {
+    ['cht', 'chittorgarh', 'चित्तौड़गढ़', 'चित्तौड़'].forEach(t => tokens.add(t));
+  } else if (lower.includes('alwar') || lower.includes('alw') || raw.includes('अलवर')) {
+    ['alw', 'alwar', 'अलवर'].forEach(t => tokens.add(t));
+  } else if (lower.includes('bikan') || lower.includes('bkn') || raw.includes('बीकानेर')) {
+    ['bkn', 'bikaner', 'बीकानेर'].forEach(t => tokens.add(t));
+  } else if (lower.includes('udaipur') || lower.includes('udp') || raw.includes('उदयपुर')) {
+    ['udp', 'udaipur', 'उदयपुर'].forEach(t => tokens.add(t));
+  } else if (lower.includes('ajmer') || lower.includes('ajm') || raw.includes('अजमेर')) {
+    ['ajm', 'ajmer', 'अजमेर'].forEach(t => tokens.add(t));
+  } else {
+    for (const [k, v] of Object.entries(DISTRICT_NAMES)) {
+      const vLower = v.toLowerCase();
+      if (k.toLowerCase().includes(lower) || vLower.includes(lower) || lower.includes(k.toLowerCase())) {
+        tokens.add(k);
+        tokens.add(v);
+        const m = v.match(/\((.*?)\)/);
+        if (m) tokens.add(m[1].toLowerCase());
+      }
+    }
+  }
+
+  return Array.from(tokens).filter(Boolean);
+}
+
+export function buildDistrictWhereFilter(dist, prefix = "AND") {
+  const tokens = getDistrictQueryTokens(dist);
+  if (!tokens || tokens.length === 0) {
+    return { clause: "", args: [] };
+  }
+  const placeholders = tokens.map(() => "(district_id = ? OR district_id LIKE ? OR district_name LIKE ?)").join(" OR ");
+  const args = [];
+  tokens.forEach(t => args.push(t, `%${t}%`, `%${t}%`));
+  return {
+    clause: `${prefix} (${placeholders})`,
+    args
+  };
+}
 
 // ========================================================
 // ⚡ ULTRA-FAST IN-MEMORY L1 CACHE FOR RUNNER & E-PASS SEARCH
@@ -2897,9 +2988,12 @@ export async function handleApiRequest(req, res) {
         whereClause += " AND category_id = ?";
         args.push(category);
       }
-      if (district) {
-        whereClause += " AND (district_id = ? OR district_id LIKE ? OR district_name LIKE ?)";
-        args.push(district, `%${district}%`, `%${district}%`);
+      if (district && district !== "all") {
+        const distFilter = buildDistrictWhereFilter(district, "AND");
+        if (distFilter.clause) {
+          whereClause += ` ${distFilter.clause}`;
+          args.push(...distFilter.args);
+        }
       }
 
       const countSql = `SELECT count(*) as total FROM participants ${whereClause};`;
@@ -2948,9 +3042,12 @@ export async function handleApiRequest(req, res) {
       let whereClause = "";
       const args = [];
 
-      if (district) {
-        whereClause = "WHERE (district_id = ? OR district_id LIKE ? OR district_name LIKE ?)";
-        args.push(district, `%${district}%`, `%${district}%`);
+      if (district && district !== "all") {
+        const distFilter = buildDistrictWhereFilter(district, "WHERE");
+        if (distFilter.clause) {
+          whereClause = distFilter.clause;
+          args.push(...distFilter.args);
+        }
       }
 
       const exportSql = `SELECT * FROM participants ${whereClause} ORDER BY created_at DESC LIMIT 50000;`;
@@ -3012,9 +3109,12 @@ export async function handleApiRequest(req, res) {
       let whereClause = "";
       const args = [];
 
-      if (district) {
-        whereClause = "WHERE (district_id = ? OR district_id LIKE ? OR district_name LIKE ?)";
-        args.push(district, `%${district}%`, `%${district}%`);
+      if (district && district !== "all") {
+        const distFilter = buildDistrictWhereFilter(district, "WHERE");
+        if (distFilter.clause) {
+          whereClause = distFilter.clause;
+          args.push(...distFilter.args);
+        }
       }
 
       const totalRes = await db.execute({ sql: `SELECT count(*) as count FROM participants ${whereClause};`, args });
@@ -3169,9 +3269,12 @@ export async function handleApiRequest(req, res) {
 
       let whereClause = "";
       const args = [];
-      if (district) {
-        whereClause = "WHERE (district_id = ? OR district_id LIKE ? OR district_name LIKE ?)";
-        args.push(district, `%${district}%`, `%${district}%`);
+      if (district && district !== "all") {
+        const distFilter = buildDistrictWhereFilter(district, "WHERE");
+        if (distFilter.clause) {
+          whereClause = distFilter.clause;
+          args.push(...distFilter.args);
+        }
       }
 
       const totalRes = await db.execute({ sql: `SELECT count(*) as count FROM participants ${whereClause};`, args });
@@ -3384,11 +3487,17 @@ export async function handleApiRequest(req, res) {
       let whereClause = "WHERE 1=1";
       const args = [];
       if (adminUser.role === "DISTRICT") {
-        whereClause += " AND (district_id = ? OR district_name LIKE ?)";
-        args.push(adminUser.districtId, `%${adminUser.districtName}%`);
+        const distFilter = buildDistrictWhereFilter(adminUser.districtId || adminUser.districtName, "AND");
+        if (distFilter.clause) {
+          whereClause += ` ${distFilter.clause}`;
+          args.push(...distFilter.args);
+        }
       } else if (targetDistrict && targetDistrict !== "all") {
-        whereClause += " AND (district_id = ? OR district_name LIKE ?)";
-        args.push(targetDistrict, `%${targetDistrict}%`);
+        const distFilter = buildDistrictWhereFilter(targetDistrict, "AND");
+        if (distFilter.clause) {
+          whereClause += ` ${distFilter.clause}`;
+          args.push(...distFilter.args);
+        }
       }
 
       if (targetCategory && targetCategory !== "all") {

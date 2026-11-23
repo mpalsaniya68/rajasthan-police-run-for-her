@@ -24,7 +24,8 @@ import {
   formatLocalizedCategory, 
   formatLocalizedGender, 
   formatLocalizedRelation, 
-  formatLocalizedKitStatus 
+  formatLocalizedKitStatus,
+  formatCleanDistrictName
 } from '../utils/localization';
 
 import { 
@@ -615,68 +616,42 @@ export function AdminDashboard({
 
 
   // Normalized DB participants for master table
-
-  const normalizedDbList = (dbParticipants || []).map(p => ({
-
-    id: p.id,
-
-    bibNumber: p.bib_number,
-
-    fullName: p.full_name,
-
-    gender: p.gender,
-
-    age: p.dob ? (2027 - parseInt(p.dob.slice(0, 4)) || 25) : 25,
-
-    category: p.category_id,
-
-    categoryName: p.category_name,
-
-    venueType: p.district_id === 'jaipur' ? 'jaipur' : 'district',
-
-    districtName: p.district_name,
-
-    runnerType: p.institution ? `Institutional (${p.institution})` : 'Citizen Runner',
-
-    mobile: p.mobile,
-
-    email: p.email || 'police.run@rajasthan.gov.in',
-
-    tshirtSize: p.tshirt_size || 'N/A',
-
-    bloodGroup: p.blood_group || 'O+',
-
-    medicalCondition: p.medical_condition || 'None',
-
-    medicalNotes: p.medical_notes || '',
-
-    bibCollected: !!p.kit_collected,
-
-    rfidTagId: p.rfid_tag_id || null,
-
-    physicalBibNumber: p.physical_bib_number || null,
-
-    finishTime: p.finish_time || 'Pending / In Progress',
-
-    chipTime: p.finish_time ? 'Net: ' + p.finish_time : 'N/A',
-
-    overallRank: 'N/A',
-
-    certificateId: p.certificate_id,
-
-    gateEntered: Number(p.gate_entered) === 1,
-
-    certificateIssued: Number(p.certificate_issued) === 1 || p.status === 'CERT_ISSUED' || p.status === 'FINISHED',
-
-    districtId: p.district_id,
-
-    status: p.status || 'CONFIRMED',
-
-    pledgeTaken: true,
-
-    registeredAt: p.created_at ? String(p.created_at).slice(0, 10) : '2026-10-27'
-
-  }));
+  const normalizedDbList = (dbParticipants || []).map(p => {
+    const cleanDist = formatCleanDistrictName(p);
+    const isJaipur = cleanDist.toLowerCase() === 'jaipur';
+    return {
+      id: p.id,
+      bibNumber: p.bib_number,
+      fullName: p.full_name,
+      gender: p.gender,
+      age: p.dob ? (2027 - parseInt(p.dob.slice(0, 4)) || 25) : 25,
+      category: p.category_id,
+      categoryName: p.category_name,
+      venueType: isJaipur ? 'jaipur' : 'district',
+      districtId: p.district_id,
+      districtName: p.district_name || cleanDist,
+      canonicalDistrict: cleanDist,
+      runnerType: p.institution ? `Institutional (${p.institution})` : 'Citizen Runner',
+      mobile: p.mobile,
+      email: p.email || 'police.run@rajasthan.gov.in',
+      tshirtSize: p.tshirt_size || 'N/A',
+      bloodGroup: p.blood_group || 'O+',
+      medicalCondition: p.medical_condition || 'None',
+      medicalNotes: p.medical_notes || '',
+      bibCollected: !!p.kit_collected,
+      rfidTagId: p.rfid_tag_id || null,
+      physicalBibNumber: p.physical_bib_number || null,
+      finishTime: p.finish_time || 'Pending / In Progress',
+      chipTime: p.finish_time ? 'Net: ' + p.finish_time : 'N/A',
+      overallRank: 'N/A',
+      certificateId: p.certificate_id,
+      gateEntered: Number(p.gate_entered) === 1,
+      certificateIssued: Number(p.certificate_issued) === 1 || p.status === 'CERT_ISSUED' || p.status === 'FINISHED',
+      status: p.status || 'CONFIRMED',
+      pledgeTaken: true,
+      registeredAt: p.created_at ? String(p.created_at).slice(0, 10) : '2026-10-27'
+    };
+  });
 
 
 
@@ -714,50 +689,33 @@ export function AdminDashboard({
   const filteredList = combinedRegistrations.filter(r => {
 
     // If logged in as District SP, strictly enforce district isolation
-
     if (isDistrictRole && adminUser) {
-
-      const targetQuery = (adminUser.districtName || adminUser.districtId || '').toLowerCase();
-
-      const runnerDist = ((r.districtName || '') + ' ' + (r.venueType || '')).toLowerCase();
-
-      const firstWord = (adminUser.districtName || '').toLowerCase().split(' ')[0];
-
-      const matchesOfficerDist = runnerDist.includes(targetQuery) || 
-
-                                (firstWord && runnerDist.includes(firstWord)) ||
-
-                                targetQuery.includes((r.districtName || '').toLowerCase());
-
-      if (!matchesOfficerDist) return false;
-
+      const rDist = (r.canonicalDistrict || formatCleanDistrictName(r)).toLowerCase();
+      const officerDist = formatCleanDistrictName(adminUser.districtName || adminUser.districtId).toLowerCase();
+      if (rDist !== officerDist) return false;
     }
 
-
-
     const q = debouncedSearch.toLowerCase();
-
     const matchesSearch = !q ||
-
                           (r.fullName || '').toLowerCase().includes(q) ||
-
                           (r.bibNumber || '').toLowerCase().includes(q) ||
-
                           (r.mobile || '').includes(q) ||
-
                           (r.email || '').toLowerCase().includes(q) ||
-
                           (r.certificateId || '').toLowerCase().includes(q);
 
     const matchesCat = selectedCatFilter === "all" || r.category === selectedCatFilter;
 
+    const cleanRDist = (r.canonicalDistrict || formatCleanDistrictName(r)).toLowerCase();
+    const cleanFilter = (districtFilter || 'all').toLowerCase();
     const matchesDist = isDistrictRole ? true : (
-      districtFilter === "all" || 
-      (districtFilter === "jaipur" 
-        ? (r.venueType === "jaipur" || (r.districtName || '').toLowerCase().includes("jaipur")) 
-        : ((r.districtName || '').toLowerCase().includes(districtFilter.toLowerCase()) || 
-           (r.districtId || '').toLowerCase() === districtFilter.toLowerCase() ||
-           districtFilter.toLowerCase().includes((r.districtName || '').toLowerCase())))
+      cleanFilter === "all" || 
+      (cleanFilter === "jaipur" 
+        ? (r.venueType === "jaipur" || cleanRDist === "jaipur" || (r.districtName || '').toLowerCase().includes("jaipur")) 
+        : (cleanRDist === cleanFilter ||
+           (r.districtName || '').toLowerCase().includes(cleanFilter) || 
+           (r.districtId || '').toLowerCase() === cleanFilter ||
+           cleanFilter.includes((r.districtName || '').toLowerCase()) ||
+           formatCleanDistrictName(r).toLowerCase() === cleanFilter))
     );
 
     const matchesKit = kitFilter === "all" || (kitFilter === "collected" ? Boolean(r.kitCollected) : !r.kitCollected);
@@ -894,16 +852,13 @@ export function AdminDashboard({
 
 
   // 2. DISTRICT-WISE INDIVIDUAL CSV EXPORT
-
   const handleExportSingleDistrict = () => {
-
-    let districtRecords = registrations.filter(r => 
-
-      (r.districtName && r.districtName.toLowerCase().includes(selectedExportDistrict.toLowerCase())) ||
-
-      (selectedExportDistrict.toLowerCase().includes("jaipur") && r.venueType === "jaipur")
-
-    );
+    const targetDist = selectedExportDistrict || (districtFilter !== 'all' ? districtFilter : 'Jaipur');
+    let districtRecords = registrations.filter(r => {
+      const canonical = r.canonicalDistrict || formatCleanDistrictName(r);
+      return canonical.toLowerCase() === targetDist.toLowerCase() ||
+        (targetDist.toLowerCase().includes("jaipur") && (r.venueType === "jaipur" || canonical.toLowerCase() === 'jaipur'));
+    });
 
 
 
@@ -2034,77 +1989,50 @@ export function AdminDashboard({
                   </div>
 
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-
                     <select
-
-                      value={selectedExportDistrict}
-
-                      onChange={(e) => setSelectedExportDistrict(e.target.value)}
-
-                      style={{
-
-                        flex: 1,
-
-                        minWidth: '200px',
-
-                        padding: '8px 10px',
-
-                        borderRadius: '5px',
-
-                        border: '1.5px solid var(--police-navy-300)',
-
-                        fontSize: '0.82rem',
-
-                        fontWeight: 700,
-
-                        color: 'var(--police-navy-900)',
-
-                        background: '#ffffff'
-
+                      value={districtFilter === 'all' ? selectedExportDistrict : districtFilter}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedExportDistrict(val === 'all' ? (RAJASTHAN_POLICE_DISTRICTS[0]?.name || 'Jaipur') : val);
+                        setDistrictFilter(val);
+                        setCurrentPage(1);
+                        loadLiveDashboardData(val);
                       }}
-
+                      style={{
+                        flex: 1,
+                        minWidth: '200px',
+                        padding: '8px 10px',
+                        borderRadius: '5px',
+                        border: '1.5px solid var(--police-navy-300)',
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        color: 'var(--police-navy-900)',
+                        background: '#ffffff'
+                      }}
                     >
-
+                      <option value="all">
+                        {isHindi ? 'समस्त राजस्थान (सभी 41 जिले)' : 'All Rajasthan (All 41 Districts)'}
+                      </option>
                       {RAJASTHAN_POLICE_DISTRICTS.map(d => (
-
                         <option key={d.id} value={d.name}>
-
                           {formatLocalizedDistrict(d.name, isHindi)}
-
                         </option>
-
                       ))}
-
                     </select>
 
-
-
                     <button
-
                       onClick={handleExportSingleDistrict}
-
                       className="btn-gold"
-
                       style={{
-
                         padding: '8px 14px',
-
                         fontSize: '0.8rem',
-
                         fontWeight: 800,
-
                         whiteSpace: 'nowrap'
-
                       }}
-
                     >
-
                       <Download size={14} />
-
-                      <span>{isHindi ? 'जिले की CSV डाउनलोड करें' : 'Download District CSV'}</span>
-
+                      <span>{districtFilter === 'all' ? (isHindi ? 'जिले की CSV डाउनलोड करें' : 'Download District CSV') : (isHindi ? `${formatLocalizedDistrict(selectedExportDistrict, isHindi)} की CSV डाउनलोड करें` : `Download ${selectedExportDistrict} CSV`)}</span>
                     </button>
-
                   </div>
 
 
@@ -2346,13 +2274,13 @@ export function AdminDashboard({
                   onChange={(e) => {
                     const newDist = e.target.value;
                     setDistrictFilter(newDist);
+                    setSelectedExportDistrict(newDist === 'all' ? (RAJASTHAN_POLICE_DISTRICTS[0]?.name || 'Jaipur') : newDist);
                     setCurrentPage(1);
                     loadLiveDashboardData(newDist);
                   }}
                   style={{ padding: '7px 10px', borderRadius: '4px', background: '#ffffff', border: '1px solid var(--border-strong)', color: 'var(--text-main)', fontSize: '0.82rem', maxWidth: '240px' }}
                 >
-                  <option value="all">{isHindi ? 'समस्त जिले' : 'All Districts'}</option>
-                  <option value="jaipur">{isHindi ? 'जयपुर' : 'Jaipur'}</option>
+                  <option value="all">{isHindi ? 'समस्त जिले (All Districts)' : 'All Districts'}</option>
                   {RAJASTHAN_POLICE_DISTRICTS.map(d => (
                     <option key={d.id} value={d.name}>{formatLocalizedDistrict(d.name, isHindi)}</option>
                   ))}
@@ -2463,8 +2391,8 @@ export function AdminDashboard({
 
               <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                 {isHindi 
-                  ? `कुल ${totalFilteredCount} में से ${totalFilteredCount === 0 ? 0 : startIndex + 1}-${endIndex} धावक प्रदर्शित` 
-                  : `Showing ${totalFilteredCount === 0 ? 0 : startIndex + 1}-${endIndex} of ${totalFilteredCount} runners`}
+                  ? `कुल ${totalFilteredCount} में से ${totalFilteredCount === 0 ? 0 : startIndex + 1}-${endIndex} धावक प्रदर्शित${districtFilter !== 'all' ? ` (${formatLocalizedDistrict(districtFilter, true)})` : ''}` 
+                  : `Showing ${totalFilteredCount === 0 ? 0 : startIndex + 1}-${endIndex} of ${totalFilteredCount} runners${districtFilter !== 'all' ? ` (${formatLocalizedDistrict(districtFilter, false)})` : ''}`}
               </div>
             </div>
           </div>
@@ -2534,7 +2462,7 @@ export function AdminDashboard({
                       <span style={{ color: '#64748b' }}>{isHindi ? 'श्रेणी:' : 'Category:'}</span> <strong style={{ color: '#0f172a' }}>{formatLocalizedCategory(row.categoryName, isHindi)}</strong>
                     </div>
                     <div>
-                      <span style={{ color: '#64748b' }}>{isHindi ? 'जिला:' : 'District:'}</span> <strong style={{ color: '#0f172a' }}>{formatLocalizedDistrict(row.districtName, isHindi)}</strong>
+                      <span style={{ color: '#64748b' }}>{isHindi ? 'जिला:' : 'District:'}</span> <strong style={{ color: '#0f172a' }}>{formatLocalizedDistrict(row.canonicalDistrict || formatCleanDistrictName(row), isHindi)}</strong>
                     </div>
                     <div>
                       <span style={{ color: '#64748b' }}>{isHindi ? 'फोन:' : 'Mobile:'}</span> <a href={`tel:${row.mobile}`} style={{ color: '#1d4ed8', fontWeight: 700, textDecoration: 'none' }}>📞 {row.mobile}</a>
@@ -2606,7 +2534,7 @@ export function AdminDashboard({
                         </td>
                         <td style={{ padding: '10px 12px' }}>
                           <div style={{ color: 'var(--police-navy-800)', fontWeight: 600 }}>{formatLocalizedCategory(row.categoryName, isHindi)}</div>
-                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{formatLocalizedDistrict(row.districtName, isHindi)}</div>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{formatLocalizedDistrict(row.canonicalDistrict || formatCleanDistrictName(row), isHindi)}</div>
                         </td>
                         <td style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-900)' }}>
                           {row.tshirtSize && row.tshirtSize !== 'N/A' ? row.tshirtSize : <span style={{ color: '#94a3b8', fontSize: '0.78rem' }}>N/A</span>}
