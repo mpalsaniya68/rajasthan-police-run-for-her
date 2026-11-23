@@ -49,6 +49,8 @@ export const DISTRICT_BILINGUAL_MAP = {
   jaipur: { hi: "जयपुर", en: "Jaipur" },
   "जयपुर": { hi: "जयपुर", en: "Jaipur" },
   jaipur_comm: { hi: "जयपुर", en: "Jaipur" },
+  "jaipur-comm": { hi: "जयपुर", en: "Jaipur" },
+  jpr_comm: { hi: "जयपुर", en: "Jaipur" },
   "jpr-comm": { hi: "जयपुर", en: "Jaipur" },
   jaisalmer: { hi: "जैसलमेर", en: "Jaisalmer" },
   "जैसलमेर": { hi: "जैसलमेर", en: "Jaisalmer" },
@@ -61,6 +63,8 @@ export const DISTRICT_BILINGUAL_MAP = {
   jodhpur: { hi: "जोधपुर", en: "Jodhpur" },
   "जोधपुर": { hi: "जोधपुर", en: "Jodhpur" },
   jodhpur_comm: { hi: "जोधपुर", en: "Jodhpur" },
+  "jodhpur-comm": { hi: "जोधपुर", en: "Jodhpur" },
+  jdh_comm: { hi: "जोधपुर", en: "Jodhpur" },
   "jdh-comm": { hi: "जोधपुर", en: "Jodhpur" },
   karauli: { hi: "करौली", en: "Karauli" },
   "करौली": { hi: "करौली", en: "Karauli" },
@@ -71,6 +75,8 @@ export const DISTRICT_BILINGUAL_MAP = {
   kota: { hi: "कोटा", en: "Kota" },
   "कोटा": { hi: "कोटा", en: "Kota" },
   kota_city: { hi: "कोटा", en: "Kota" },
+  "kota-city": { hi: "कोटा", en: "Kota" },
+  kta_city: { hi: "कोटा", en: "Kota" },
   "kta-city": { hi: "कोटा", en: "Kota" },
   kotputli: { hi: "कोटपूतली-बहरोड़", en: "Kotputli-Behror" },
   "kotputli-behror": { hi: "कोटपूतली-बहरोड़", en: "Kotputli-Behror" },
@@ -189,23 +195,121 @@ export function formatLocalizedDistrict(district = "", isHindi = true) {
     return isHindi ? "समस्त राजस्थान" : "All Rajasthan";
   }
 
+  const rawLower = raw.toLowerCase();
+  const cleanKey = rawLower.replace(/[-_ ]+/g, "_").replace(/पुलिस|आयुक्तालय|कमिश्नरेट|जिला/g, "").trim();
+
+  // Fast check for known ID / prefix aliases
+  if (cleanKey.startsWith('jdh') || rawLower.includes('jodhpur') || rawLower.includes('जोधपुर')) {
+    return isHindi ? "जोधपुर" : "Jodhpur";
+  }
+  if (cleanKey.startsWith('kta') || rawLower.includes('kota') || rawLower.includes('कोटा')) {
+    return isHindi ? "कोटा" : "Kota";
+  }
+  if (cleanKey.startsWith('jpr') || rawLower.includes('jaipur') || rawLower.includes('जयपुर')) {
+    return isHindi ? "जयपुर" : "Jaipur";
+  }
+
   // Check lookup table with both Hindi and English matches
-  const cleanKey = raw.toLowerCase().replace(/[-_ ]+/g, "_").replace(/पुलिस|आयुक्तालय|जिला/g, "").trim();
   for (const [key, val] of Object.entries(DISTRICT_BILINGUAL_MAP)) {
-    if (raw.includes(val.hi) || raw.toLowerCase().includes(val.en.toLowerCase()) || cleanKey.includes(key) || key.includes(cleanKey)) {
+    const normKey = key.toLowerCase().replace(/[-_ ]+/g, "_");
+    if (
+      cleanKey === normKey ||
+      rawLower === key.toLowerCase() ||
+      raw.includes(val.hi) ||
+      rawLower.includes(val.en.toLowerCase()) ||
+      cleanKey.includes(normKey) ||
+      normKey.includes(cleanKey)
+    ) {
       return isHindi ? val.hi : val.en;
     }
   }
 
   // Bracket extraction fallback
   const extracted = formatLocalizedName(raw, isHindi);
-  if (!isHindi) {
-    return extracted
-      .replace(/पुलिस आयुक्तालय|पुलिस जिला|पुलिस लाइन|पुलिस|कलेक्ट्रेट/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
+  return extracted
+    .replace(/पुलिस आयुक्तालय|पुलिस कमिश्नरेट|पुलिस जिला|पुलिस लाइन|पुलिस|कमिश्नरेट|आयुक्तालय|कलेक्ट्रेट/g, "")
+    .replace(/Police\s*Commissionerate|Commissionerate|Police\s*Lines|Police/gi, "")
+    .replace(/\s+/g, " ")
+    .trim() || (isHindi ? "जयपुर" : "Jaipur");
+}
+
+/**
+ * Formats emergency contact for display, ensuring both Name/Relation AND the 10-digit mobile number are visible.
+ * Handles strings like:
+ * - "harver (Guardian: 9632587410)" -> "harver (📞 +91 9632587410)"
+ * - "9829099999 (Guardian)" -> "Guardian (📞 +91 9829099999)"
+ * - "Sunita Kanwar (94140 11223)" -> "Sunita Kanwar (📞 +91 9414011223)"
+ * - Object with emergencyContactPhone / emergencyContactName / emergencyRelation
+ * - Raw 10-digit phone -> "📞 +91 9632587410"
+ */
+export function formatEmergencyContactDisplay(participant, isHindi = false) {
+  if (!participant) {
+    return isHindi ? "पुलिस हेल्पलाइन 112" : "Police Helpline 112";
   }
-  return extracted;
+
+  let phone = "";
+  let name = "";
+  let relation = "";
+
+  if (typeof participant === "object") {
+    phone = participant.emergencyContactPhone || participant.emergency_contact_phone || "";
+    name = participant.emergencyContactName || participant.emergency_contact_name || "";
+    relation = participant.emergencyRelation || participant.emergency_relation || "";
+  }
+
+  const rawContact = typeof participant === "string" 
+    ? participant 
+    : (participant.emergencyContact || participant.emergency_contact || "");
+
+  // If phone wasn't directly found, extract from rawContact string
+  if (!phone && rawContact) {
+    const numMatch = rawContact.match(/(?:(?:\+?91)[\s-]?)?([6-9]\d{9})/);
+    if (numMatch) {
+      phone = numMatch[1];
+    } else {
+      const digitsOnly = rawContact.replace(/\D/g, "");
+      if (digitsOnly.length >= 10) {
+        phone = digitsOnly.slice(-10);
+      }
+    }
+  }
+
+  // If name wasn't directly found, extract from rawContact string
+  if (!name && rawContact) {
+    const match = rawContact.match(/^(.*?)\s*\((.*?)\)$/);
+    if (match) {
+      const p1 = match[1].trim();
+      const p2 = match[2].trim();
+      if (/\d{5,}/.test(p1)) {
+        if (!phone) phone = p1.replace(/\D/g, "").slice(-10);
+        const relClean = p2.replace(/\d+/g, "").replace(/[:\-\s]+$/, "").trim();
+        if (relClean) relation = relation || relClean;
+      } else {
+        name = p1;
+        const relMatch = p2.match(/^([a-zA-Z\u0900-\u097F\s]+):/);
+        if (relMatch && !relation) {
+          relation = relMatch[1].trim();
+        }
+      }
+    } else if (!/\d{5,}/.test(rawContact)) {
+      name = rawContact.trim();
+    }
+  }
+
+  const cleanPhone = phone ? phone.replace(/\D/g, "").slice(-10) : "";
+  const cleanName = formatLocalizedName(name || relation || "", isHindi);
+
+  if (cleanName && cleanPhone) {
+    return `${cleanName} (📞 +91 ${cleanPhone})`;
+  }
+  if (cleanPhone) {
+    return `📞 +91 ${cleanPhone}`;
+  }
+  if (cleanName) {
+    return cleanName;
+  }
+
+  return isHindi ? "पुलिस हेल्पलाइन 112" : "Police Helpline 112";
 }
 
 /**

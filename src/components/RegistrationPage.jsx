@@ -29,19 +29,21 @@ import {
   drawHorizontalRouteMapOnCanvas
 } from '../utils/jaipurRouteMap';
 import { useLanguage } from '../context/LanguageContext';
-import { formatLocalizedDistrict, formatLocalizedCategory, formatLocalizedName } from '../utils/localization';
+import { formatLocalizedDistrict, formatLocalizedCategory, formatLocalizedName, formatEmergencyContactDisplay } from '../utils/localization';
 
 const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
 
-function formatCleanDistrictName(p) {
+export function formatCleanDistrictName(p) {
   if (!p) return "Jaipur";
-  const distId = String(p.districtId || '').toLowerCase();
-  const rawName = String(p.districtName || '').trim();
+  const distId = String(p.districtId || p.district_id || '').toLowerCase().trim();
+  const rawName = String(p.districtName || p.district_name || '').trim();
   const lowerName = rawName.toLowerCase();
 
   if (
     distId === 'jpr-comm' ||
     distId === 'jaipur_comm' ||
+    distId === 'jpr_comm' ||
+    distId.startsWith('jpr') ||
     distId.includes('jaipur') ||
     lowerName.includes('jaipur') ||
     lowerName.includes('जयपुर')
@@ -49,21 +51,33 @@ function formatCleanDistrictName(p) {
     return "Jaipur";
   }
 
-  if (p.districtId) {
-    const matched = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === p.districtId);
-    if (matched && matched.name) return matched.name;
+  if (distId.startsWith('jdh') || lowerName.includes('jodhpur') || lowerName.includes('जोधपुर')) {
+    return "Jodhpur";
   }
 
-  const cleaned = rawName
-    .replace(/पुलिस\s*कमिश्नरेट/gi, '')
-    .replace(/कमिश्नरेट/gi, '')
-    .replace(/Police\s*Commissionerate/gi, '')
-    .replace(/Commissionerate/gi, '')
-    .replace(/\(Albert Hall Flagship\)/gi, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  if (distId.startsWith('kta') || lowerName.includes('kota') || lowerName.includes('कोटा')) {
+    return "Kota";
+  }
 
-  return cleaned || "Jaipur";
+  if (distId) {
+    const normDistId = distId.replace(/_/g, '-').toUpperCase();
+    const matched = RAJASTHAN_POLICE_DISTRICTS.find(d => 
+      d.id.toUpperCase() === normDistId ||
+      d.id.toUpperCase().replace(/_/g, '-') === normDistId
+    );
+    if (matched && matched.name) return formatLocalizedDistrict(matched.name, false);
+  }
+
+  const matchedByName = RAJASTHAN_POLICE_DISTRICTS.find(d => 
+    d.name.toLowerCase() === lowerName ||
+    d.id.toLowerCase() === lowerName ||
+    d.id.toLowerCase().replace(/-/g, '_') === lowerName
+  );
+  if (matchedByName && matchedByName.name) {
+    return formatLocalizedDistrict(matchedByName.name, false);
+  }
+
+  return formatLocalizedDistrict(rawName, false) || "Jaipur";
 }
 
 export function RegistrationPage({
@@ -816,10 +830,13 @@ export function RegistrationPage({
       category: category,
       categoryName: p.categoryName || currentCatObj.name,
       venueType: venueType,
+      districtId: p.districtId || selectedDistId || formData.districtId,
       districtName: p.districtName || (venueType === "jaipur" ? "Jaipur" : currentDistrictObj.name),
       runnerType: runnerType,
       tshirtSize: venueType === "jaipur" ? (formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M") : "N/A",
       emergencyContact: `${formData.emergencyContactName || 'Family'} (${formData.emergencyRelation || 'Kin'}: ${cleanEmergency})`,
+      emergencyContactName: formData.emergencyContactName,
+      emergencyContactPhone: cleanEmergency,
       registeredAt: new Date().toLocaleString(),
       bibCollected: false,
       isCompleted: false,
@@ -966,10 +983,7 @@ export function RegistrationPage({
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("REGISTRATION NO.", bibCenterX, 198);
-      ctx.fillStyle = "#94a3b8";
-      ctx.font = "bold 11px sans-serif";
-      ctx.fillText("OFFICIAL PASS", bibCenterX, 218);
+      ctx.fillText("REGISTRATION NO.", bibCenterX, 206);
 
       // Dedicated Inner Card for Bib Number (280px wide, centered)
       const badgeX = 55;
@@ -1086,8 +1100,14 @@ export function RegistrationPage({
       ctx.font = "bold 14px sans-serif";
       ctx.fillText("EMERGENCY CONTACT:", detailsX, emergencyY);
       ctx.fillStyle = "#991b1b";
-      ctx.font = "bold 17px sans-serif";
-      ctx.fillText(formatLocalizedName(p.emergencyContact, false) || "Police Helpline 112", detailsX, emergencyY + 28);
+      const emDisplay = formatEmergencyContactDisplay(p, false);
+      let emFontSize = 17;
+      ctx.font = `bold ${emFontSize}px sans-serif`;
+      while (ctx.measureText(emDisplay).width > 480 && emFontSize > 12) {
+        emFontSize -= 1;
+        ctx.font = `bold ${emFontSize}px sans-serif`;
+      }
+      ctx.fillText(emDisplay, detailsX, emergencyY + 28);
 
       // 5. Right Section: Security QR Code
       const qrBoxX = 910;
@@ -1111,6 +1131,7 @@ export function RegistrationPage({
         tshirt: p.tshirtSize || "M",
         bloodGroup: p.bloodGroup || "B+",
         mobile: p.mobile || "",
+        emergency: emDisplay,
         status: "OFFICIAL_POLICE_EPASS_CONFIRMED"
       });
 
@@ -1532,6 +1553,7 @@ export function RegistrationPage({
                       {registeredParticipant.email && (
                         <div><strong>Email:</strong> {registeredParticipant.email}</div>
                       )}
+                      <div><strong>Emergency:</strong> {formatEmergencyContactDisplay(registeredParticipant, false)}</div>
                     </div>
                   </div>
 
