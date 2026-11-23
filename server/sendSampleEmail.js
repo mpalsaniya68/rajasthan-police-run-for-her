@@ -363,15 +363,15 @@ async function sendViaInternalGovSmtp({ recipient, sender, subject, mimeMessage,
 }
 
 /**
- * Universal Confirmation Email Dispatcher with Digital E-Pass Attachment & Inline QR
+ * Universal Confirmation Email Dispatcher with Digital E-Pass Attachment & Clean Professional Design
  */
 export async function sendLiveConfirmationEmail({
   recipient = "rajpolicemarathon@rajpolice.gov.in",
   sender = "rajpolicemarathon@rajpolice.gov.in",
-  runnerName = "विक्रम सिंह राठौड़ (नमूना धावक)",
+  runnerName = "विक्रम सिंह राठौड़",
   bibNumber = "RJ-21K-1008",
   category = "21 KM हाफ मैराथन (Jaipur Flagship)",
-  eventDate = "रविवार, 3 जनवरी 2027 (प्रातः 05:30 AM)",
+  eventDate = "रविवार, 3 जनवरी 2027 (सुबह 05:30 बजे)",
   venue = "",
   expoLocation = "",
   districtName = "जयपुर",
@@ -386,68 +386,216 @@ export async function sendLiveConfirmationEmail({
   let qrDataUrl = "";
   try {
     qrDataUrl = await QRCode.toDataURL(epassUrl, {
-      width: 260,
+      width: 280,
       margin: 1,
-      color: { dark: "#071739", light: "#ffffff" }
+      color: { dark: "#0f172a", light: "#ffffff" }
     });
   } catch (qrErr) {
     console.error("[QR Code Generation Error]:", qrErr.message);
   }
 
-  // Standalone, Offline-Ready Printable HTML E-Pass Document
+  // Subject: Clean, Human, Natural Hindi (No robotic "पंजीकरण पुष्टि")
+  const subject = `पंजीकरण सफल • राजस्थान पुलिस मैराथन 2027 (बिब: ${bibNumber})`;
+
+  // Standalone, Official Printable HTML E-Pass Attachment
   const printableEPassHtml = `<!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
   <meta charset="utf-8">
   <title>Rajasthan Police Marathon 2027 - Official E-Pass (${bibNumber})</title>
   <style>
     @media print {
-      body { background: #fff !important; padding: 0 !important; }
+      body { background: #ffffff !important; padding: 0 !important; }
       .no-print { display: none !important; }
-      .epass-card { box-shadow: none !important; border: 2px solid #071739 !important; }
+      .pass-card { box-shadow: none !important; border: 2px solid #0f172a !important; }
     }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #0b192c; margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
-    .epass-card { background: #ffffff; width: 100%; max-width: 500px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 3px solid #f59e0b; }
-    .header { background: linear-gradient(135deg, #071739 0%, #0a1c3d 100%); color: #ffffff; padding: 22px 20px; text-align: center; border-bottom: 4px solid #f59e0b; }
-    .bib-box { background: #fffbeb; border: 2px dashed #f59e0b; border-radius: 10px; margin: 16px 20px 8px 20px; padding: 12px; text-align: center; }
-    .bib-num { font-size: 30px; font-weight: 900; color: #b45309; letter-spacing: 2px; font-family: monospace; }
-    .details-table { width: 100%; padding: 10px 20px; border-collapse: collapse; font-size: 14px; }
-    .details-table td { padding: 8px 6px; border-bottom: 1px solid #f1f5f9; }
-    .label { color: #64748b; font-weight: 700; width: 42%; }
-    .val { color: #0f172a; font-weight: 800; }
-    .qr-section { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px; text-align: center; }
-    .btn-print { background: #f59e0b; color: #071739; font-weight: 800; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 15px; margin-top: 16px; box-shadow: 0 4px 12px rgba(245,158,11,0.3); }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #0f172a;
+    }
+    .pass-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+      border: 1px solid #e2e8f0;
+    }
+    .pass-header {
+      background: #0a1c3d;
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 3px solid #d97706;
+    }
+    .pass-header h1 {
+      font-size: 19px;
+      margin: 0 0 4px 0;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .pass-header .sub {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+    .bib-section {
+      text-align: center;
+      padding: 18px 20px 14px 20px;
+      background: #fafafa;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+    .bib-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #64748b;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .bib-number {
+      font-size: 34px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #0a1c3d;
+      letter-spacing: 2px;
+      line-height: 1.1;
+    }
+    .category-badge {
+      display: inline-block;
+      margin-top: 8px;
+      background: #e2e8f0;
+      color: #0f172a;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .details-table {
+      width: 100%;
+      padding: 16px 22px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .details-table td {
+      padding: 7px 0;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: top;
+    }
+    .details-table .lbl {
+      color: #64748b;
+      font-weight: 600;
+      width: 40%;
+    }
+    .details-table .val {
+      color: #0f172a;
+      font-weight: 700;
+      text-align: right;
+    }
+    .qr-container {
+      background: #f8fafc;
+      padding: 18px 20px 22px 20px;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+    }
+    .qr-image {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 6px;
+      background: #ffffff;
+      display: inline-block;
+    }
+    .qr-caption {
+      font-size: 12px;
+      font-weight: 700;
+      color: #0a1c3d;
+      margin-top: 8px;
+    }
+    .qr-sub {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    .btn-print {
+      background: #0a1c3d;
+      color: #ffffff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 14px;
+    }
+    .pass-footer {
+      background: #f1f5f9;
+      padding: 10px;
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
+    }
   </style>
 </head>
 <body>
-  <div class="epass-card">
-    <div class="header">
-      <div style="color:#fde68a;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;">★ RAJASTHAN POLICE OFFICIAL DIGITAL E-PASS ★</div>
-      <h2 style="margin:6px 0;font-size:22px;">राजस्थान पुलिस मैराथन 2027</h2>
-      <div style="color:#93c5fd;font-size:13px;font-weight:700;">'रन फॉर हर' • Run for Her (नारी सुरक्षा व सम्मान)</div>
+  <div class="pass-card">
+    <div class="pass-header">
+      <div style="font-size: 11px; color: #fde68a; font-weight: 800; letter-spacing: 1px; margin-bottom: 2px;">
+        राजस्थान पुलिस • RAJASTHAN POLICE
+      </div>
+      <h1>राजस्थान पुलिस मैराथन 2027</h1>
+      <div class="sub">रन फॉर हर • महिला सुरक्षा एवं सम्मान जन-अभियान</div>
     </div>
-    
-    <div class="bib-box">
-      <div style="font-size:11px;font-weight:800;color:#92400e;letter-spacing:1px;text-transform:uppercase;">OFFICIAL BIB / REGISTRATION NUMBER</div>
-      <div class="bib-num">${bibNumber}</div>
-      <div style="font-size:12px;color:#78350f;font-weight:700;">${category}</div>
+
+    <div class="bib-section">
+      <div class="bib-label">पंजीकरण संख्या / बिब नंबर</div>
+      <div class="bib-number">${bibNumber}</div>
+      <div class="category-badge">${category}</div>
     </div>
 
     <table class="details-table">
-      <tr><td class="label">धावक का नाम:</td><td class="val">${safeRunnerName}</td></tr>
-      <tr><td class="label">आयोजन दिनांक:</td><td class="val">${eventDate}</td></tr>
-      <tr><td class="label">दौड़ स्थल:</td><td class="val">${finalVenue}</td></tr>
-      <tr><td class="label">एक्सपो / किट स्थल:</td><td class="val">${finalExpo}</td></tr>
-      <tr><td class="label">सत्यापन स्थिति:</td><td class="val" style="color:#059669;">✓ अधिकृत पंजीकृत ई-पास (CONFIRMED)</td></tr>
+      <tr>
+        <td class="lbl">धावक का नाम:</td>
+        <td class="val">${safeRunnerName}</td>
+      </tr>
+      <tr>
+        <td class="lbl">दौड़ दिनांक:</td>
+        <td class="val">${eventDate}</td>
+      </tr>
+      <tr>
+        <td class="lbl">आयोजन स्थल:</td>
+        <td class="val">${finalVenue}</td>
+      </tr>
+      <tr>
+        <td class="lbl">एक्सपो व किट वितरण:</td>
+        <td class="val">${finalExpo}</td>
+      </tr>
+      <tr>
+        <td class="lbl">सत्यापन स्थिति:</td>
+        <td class="val" style="color: #059669;">✓ पंजीकृत एवं अधिकृत</td>
+      </tr>
     </table>
 
-    <div class="qr-section">
-      ${qrDataUrl ? `<img src="${qrDataUrl}" width="170" height="170" style="border:3px solid #071739;border-radius:10px;padding:4px;background:#ffffff;" alt="Verification QR Code" />` : ''}
-      <div style="font-size:12px;font-weight:700;color:#071739;margin-top:8px;">एक्सपो किट व रेस प्रवेश हेतु स्कैन करें</div>
-      <div style="font-size:11px;color:#64748b;margin-top:2px;">(Scan this QR code at Expo counter for instant verification)</div>
-      <div style="margin-top:14px;" class="no-print">
-        <button class="btn-print" onclick="window.print()">🖨️ ई-पास प्रिंट / PDF सेव करें (Print E-Pass)</button>
+    <div class="qr-container">
+      ${qrDataUrl ? `<div class="qr-image"><img src="${qrDataUrl}" width="160" height="160" alt="E-Pass QR" style="display:block;" /></div>` : ''}
+      <div class="qr-caption">एक्सपो किट व रेस प्रवेश हेतु अधिकृत क्यूआर कोड</div>
+      <div class="qr-sub">प्रवेश के समय यह पास मोबाइल में दिखाएं अथवा प्रिंट साथ रखें</div>
+      <div class="no-print" style="margin-top: 14px;">
+        <button class="btn-print" onclick="window.print()">ई-पास प्रिंट / PDF सेव करें</button>
       </div>
+    </div>
+
+    <div class="pass-footer">
+      कार्यालय महानिदेशक पुलिस, राजस्थान पुलिस मुख्यालय, जयपुर | हेल्पलाइन: 112 / 1090
     </div>
   </div>
 </body>
@@ -461,141 +609,146 @@ export async function sendLiveConfirmationEmail({
     }
   ];
 
-  const subject = `पंजीकरण पुष्टि + डिजिटल ई-पास | राजस्थान पुलिस मैराथन 2027 (बिब: ${bibNumber})`;
-
+  // Professional, Elegant HTML Email (Clean Indian Government Marathon Branding)
   const htmlBody = `<!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rajasthan Police Marathon 2027</title>
 </head>
-<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#f1f5f9;padding:24px 12px;">
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#f4f6f9;padding:24px 12px;">
     <tr>
       <td align="center">
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:620px;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 18px rgba(10,28,61,0.1);border:1px solid #cbd5e1;">
+        <!-- Main Card Container -->
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:580px;background-color:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(15,23,42,0.06);">
           
-          <!-- Header Banner -->
+          <!-- Sleek Official Header -->
           <tr>
-            <td style="background:linear-gradient(135deg, #071739 0%, #0a1c3d 100%);padding:26px 20px;text-align:center;border-bottom:4px solid #f59e0b;">
-              <div style="color:#fde68a;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">
-                ★ राजस्थान पुलिस मुख्यालय, जयपुर ★
+            <td style="background-color:#0a1c3d;padding:24px 24px 20px 24px;text-align:center;border-bottom:3px solid #d97706;">
+              <div style="font-size:12px;color:#fde68a;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">
+                राजस्थान पुलिस • RAJASTHAN POLICE
               </div>
-              <h1 style="color:#ffffff;font-size:22px;font-weight:900;margin:0 0 6px 0;">
+              <h1 style="color:#ffffff;font-size:22px;font-weight:800;margin:0 0 4px 0;letter-spacing:0.3px;">
                 राजस्थान पुलिस मैराथन 2027
               </h1>
-              <div style="color:#93c5fd;font-size:14px;font-weight:700;">
-                'रन फॉर हर' • Run for Her (नारी सुरक्षा व सम्मान)
+              <div style="color:#94a3b8;font-size:13px;font-weight:500;">
+                'रन फॉर हर' • महिला सुरक्षा, सम्मान एवं सशक्तिकरण
               </div>
             </td>
           </tr>
 
-          <!-- Confirmation Hero Alert -->
+          <!-- Warm Personal Greeting -->
           <tr>
-            <td style="padding:24px 28px 10px 28px;">
-              <div style="background-color:#ecfdf5;border-left:4px solid #10b981;border-radius:6px;padding:14px 16px;">
-                <div style="color:#065f46;font-size:16px;font-weight:800;">
-                  ✓ पंजीकरण सफलतापूर्वक स्वीकृत! (Registration Confirmed)
-                </div>
-                <div style="color:#047857;font-size:13px;margin-top:4px;">
-                  आदरणीय <strong>${safeRunnerName}</strong>, राजस्थान पुलिस के राज्यव्यापी जन-अभियान में आपकी सहभागिता दर्ज हो चुकी है।
-                </div>
-              </div>
+            <td style="padding:24px 28px 12px 28px;">
+              <h2 style="font-size:17px;font-weight:800;color:#0f172a;margin:0 0 8px 0;">
+                नमस्ते ${safeRunnerName} जी,
+              </h2>
+              <p style="font-size:14px;color:#334155;line-height:1.6;margin:0;">
+                राजस्थान पुलिस मैराथन 2027 में आपका <strong style="color:#059669;">पंजीकरण सफल रहा है</strong>। महिला सुरक्षा व सम्मान के इस राज्यव्यापी अभियान में सहभागिता के लिए आपका हार्दिक स्वागत है।
+              </p>
             </td>
           </tr>
 
-          <!-- Participant & Race Details Box -->
+          <!-- Runner Pass Ticket Stub -->
           <tr>
-            <td style="padding:12px 28px;">
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">
+            <td style="padding:12px 28px 20px 28px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden;">
+                
+                <!-- Ticket Top: Bib Number -->
                 <tr>
-                  <td style="padding:16px;">
-                    <table role="presentation" width="100%" cellspacing="0" cellpadding="6" border="0">
+                  <td style="padding:18px 20px 14px 20px;text-align:center;background-color:#ffffff;border-bottom:1px dashed #cbd5e1;">
+                    <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+                      पंजीकरण संख्या / बिब नंबर
+                    </div>
+                    <div style="font-size:32px;font-weight:900;font-family:monospace;color:#0a1c3d;letter-spacing:2px;line-height:1.1;">
+                      ${bibNumber}
+                    </div>
+                    <div style="display:inline-block;margin-top:6px;background-color:#f1f5f9;color:#0f172a;padding:3px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid #e2e8f0;">
+                      ${category}
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Ticket Middle: Details Grid -->
+                <tr>
+                  <td style="padding:16px 20px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="4" border="0" style="font-size:13px;">
                       <tr>
-                        <td width="40%" style="color:#64748b;font-size:13px;font-weight:700;">प्रतिभागी का नाम:</td>
-                        <td width="60%" style="color:#0f172a;font-size:14px;font-weight:800;">${safeRunnerName}</td>
+                        <td width="38%" style="color:#64748b;font-weight:600;padding:5px 0;">दौड़ दिनांक:</td>
+                        <td width="62%" style="color:#0f172a;font-weight:700;padding:5px 0;">${eventDate}</td>
                       </tr>
                       <tr>
-                        <td style="color:#64748b;font-size:13px;font-weight:700;">पंजीकरण / बिब संख्या:</td>
-                        <td style="color:#b45309;font-size:16px;font-weight:900;font-family:monospace;">${bibNumber}</td>
+                        <td style="color:#64748b;font-weight:600;padding:5px 0;">रिपोर्टिंग समय:</td>
+                        <td style="color:#0f172a;font-weight:700;padding:5px 0;">सुबह 05:30 बजे</td>
                       </tr>
                       <tr>
-                        <td style="color:#64748b;font-size:13px;font-weight:700;">दौड़ श्रेणी:</td>
-                        <td style="color:#0f172a;font-size:13px;font-weight:800;">${category}</td>
+                        <td style="color:#64748b;font-weight:600;padding:5px 0;">दौड़ स्थल:</td>
+                        <td style="color:#0f172a;font-weight:700;padding:5px 0;">${finalVenue}</td>
                       </tr>
                       <tr>
-                        <td style="color:#64748b;font-size:13px;font-weight:700;">दौड़ दिनांक व समय:</td>
-                        <td style="color:#0f172a;font-size:13px;font-weight:700;">${eventDate}</td>
-                      </tr>
-                      <tr>
-                        <td style="color:#64748b;font-size:13px;font-weight:700;">आयोजन स्थल:</td>
-                        <td style="color:#0f172a;font-size:13px;font-weight:700;">${finalVenue}</td>
+                        <td style="color:#64748b;font-weight:600;padding:5px 0;">सत्यापन स्थिति:</td>
+                        <td style="color:#059669;font-weight:700;padding:5px 0;">✓ पंजीकृत एवं स्वीकृत (Confirmed)</td>
                       </tr>
                     </table>
                   </td>
                 </tr>
+
+                <!-- Ticket Bottom: Inline Scannable QR -->
+                ${qrDataUrl ? `
+                <tr>
+                  <td style="padding:14px 20px 18px 20px;text-align:center;background-color:#ffffff;border-top:1px dashed #cbd5e1;">
+                    <div style="display:inline-block;border:1px solid #cbd5e1;border-radius:8px;padding:6px;background:#ffffff;">
+                      <img src="${qrDataUrl}" width="150" height="150" alt="E-Pass QR" style="display:block;" />
+                    </div>
+                    <div style="font-size:12px;font-weight:700;color:#0a1c3d;margin-top:8px;">
+                      प्रवेश व किट संग्रह हेतु यह क्यूआर कोड दिखाएं
+                    </div>
+                    <div style="font-size:11px;color:#64748b;margin-top:2px;">
+                      (यह पास इस ईमेल के साथ फ़ाइल के रूप में भी संलग्न है)
+                    </div>
+                  </td>
+                </tr>` : ''}
+
               </table>
             </td>
           </tr>
 
-          <!-- Inline Scannable QR E-Pass Card -->
-          ${qrDataUrl ? `
+          <!-- Primary Action Button -->
           <tr>
-            <td style="padding:4px 28px 16px 28px;">
-              <div style="text-align:center;padding:16px;background-color:#ffffff;border:2px dashed #f59e0b;border-radius:10px;box-shadow:0 2px 8px rgba(10,28,61,0.06);">
-                <div style="font-size:12px;font-weight:800;color:#b45309;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">
-                  🎫 डिजिटल ई-पास व सत्यापन क्यूआर कोड (DIGITAL E-PASS)
-                </div>
-                <img src="${qrDataUrl}" width="160" height="160" style="border:2px solid #071739;border-radius:8px;padding:4px;background:#ffffff;display:inline-block;" alt="E-Pass QR Code" />
-                <div style="font-size:11px;color:#64748b;margin-top:6px;">
-                  एक्सपो किट काउंटर एवं रेस प्रवेश द्वार पर यह क्यूआर कोड स्कैन कराएं
-                </div>
-                <div style="font-size:12px;color:#059669;font-weight:800;margin-top:8px;">
-                  📎 इस ईमेल के साथ आपका डिजिटल ई-पास (Rajasthan_Police_EPass_${bibNumber}.html) भी अटैच किया गया है।
-                </div>
-              </div>
-            </td>
-          </tr>` : ''}
-
-          <!-- Call to Action: Download / View Online -->
-          <tr>
-            <td style="padding:10px 28px 24px 28px;text-align:center;">
-              <a href="${epassUrl}" style="display:inline-block;background-color:#0a1c3d;color:#ffffff;text-decoration:none;font-size:15px;font-weight:800;padding:14px 30px;border-radius:8px;box-shadow:0 4px 12px rgba(10,28,61,0.2);border:2px solid #f59e0b;">
-                📲 ऑनलाइन ई-पास पोर्टल पर खोलें (Open Pass) →
+            <td style="padding:0 28px 20px 28px;text-align:center;">
+              <a href="${epassUrl}" style="display:inline-block;background-color:#0a1c3d;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;padding:12px 28px;border-radius:6px;border:1px solid #0a1c3d;">
+                डिजिटल ई-पास ऑनलाइन खोलें →
               </a>
-              <div style="color:#64748b;font-size:12px;margin-top:10px;">
-                (आयोजन स्थल एवं बिब एक्सपो पर प्रवेश हेतु ई-पास का डिजिटल अथवा प्रिंटेड रूप मान्य होगा)
-              </div>
             </td>
           </tr>
 
-          <!-- Expo Bib Kit Instructions -->
+          <!-- Bib & Kit Expo Guidelines Box -->
           <tr>
-            <td style="padding:0 28px 20px 28px;">
-              <div style="background-color:#fffbeb;border:1px solid #fef3c7;border-radius:8px;padding:14px 16px;">
-                <div style="color:#92400e;font-size:13px;font-weight:800;margin-bottom:4px;">
-                  👕 बिब एक्सपो व टी-शर्ट वितरण सूचना:
+            <td style="padding:0 28px 24px 28px;">
+              <div style="background-color:#f8fafc;border:1px solid #e2e8f0;border-left:3px solid #0a1c3d;border-radius:6px;padding:14px 18px;">
+                <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:6px;">
+                  बिब एवं किट वितरण (एक्सपो सूचना):
                 </div>
-                <div style="color:#78350f;font-size:12px;line-height:1.5;">
-                  • <strong>एक्सपो दिनांक:</strong> 1 एवं 2 जनवरी 2027 (प्रातः 10:00 AM से सायं 06:00 PM)<br>
-                  • <strong>स्थल:</strong> ${finalExpo}<br>
-                  • <strong>आवश्यक दस्तावेज:</strong> ई-पास (संलग्न फ़ाइल अथवा मोबाइल में) एवं कोई भी सरकारी फोटो पहचान पत्र।
+                <div style="font-size:12px;color:#334155;line-height:1.6;">
+                  • <strong>दिनांक व समय:</strong> 1 एवं 2 जनवरी 2027 (सुबह 10:00 से शाम 06:00 बजे तक)<br>
+                  • <strong>स्थान:</strong> ${finalExpo}<br>
+                  • <strong>आवश्यक दस्तावेज:</strong> यह ई-पास (मोबाइल में) एवं कोई भी एक सरकारी फोटो पहचान पत्र (आधार कार्ड / वोटर ID / ड्राइविंग लाइसेंस)।
                 </div>
               </div>
             </td>
           </tr>
 
-          <!-- Helpline & Security Footer -->
+          <!-- Clean Official Footer -->
           <tr>
-            <td style="background-color:#071739;padding:18px 24px;text-align:center;color:#94a3b8;font-size:12px;">
-              <div style="color:#fde68a;font-weight:700;margin-bottom:6px;">
+            <td style="background-color:#f1f5f9;padding:18px 24px;text-align:center;border-top:1px solid #e2e8f0;font-size:12px;color:#64748b;line-height:1.6;">
+              <div style="font-weight:700;color:#0f172a;margin-bottom:3px;">
                 "हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के नाम"
               </div>
-              <div>राजस्थान पुलिस हेल्पलाइन: <strong>112 / 1090 (महिला गरिमा हेल्प)</strong></div>
-              <div style="margin-top:8px;font-size:11px;color:#64748b;">
-                यह राजस्थान पुलिस मैराथन पोर्टल से स्वतः जनरेटेड आधिकारिक ईमेल है।<br>
-                कार्यालय महानिदेशक पुलिस, राजस्थान पुलिस मुख्यालय, लाल कोठी, जयपुर - 302015
+              <div>कार्यालय महानिदेशक पुलिस, राजस्थान पुलिस मुख्यालय, जयपुर</div>
+              <div style="margin-top:4px;">
+                आपातकालीन सहायता: <strong>112 / 1090 (महिला गरिमा हेल्प)</strong> | ईमेल: <strong>rajpolicemarathon@rajpolice.gov.in</strong>
               </div>
             </td>
           </tr>
@@ -607,31 +760,31 @@ export async function sendLiveConfirmationEmail({
 </body>
 </html>`;
 
-  const plainText = `राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'
-कार्यालय महानिदेशक पुलिस, राजस्थान, जयपुर
+  // Clean Plain Text Fallback
+  const plainText = `राजस्थान पुलिस मैराथन 2027 'रन फॉर हर'
+कार्यालय महानिदेशक पुलिस, राजस्थान पुलिस मुख्यालय, जयपुर
 
-पंजीकरण पुष्टि (Registration Confirmed)
-----------------------------------------
-आदरणीय ${runnerName},
+नमस्ते ${runnerName} जी,
 
-राजस्थान पुलिस मैराथन 2027 में आपका पंजीकरण सफलतापूर्वक स्वीकार कर लिया गया है।
+राजस्थान पुलिस मैराथन 2027 में आपका पंजीकरण सफल रहा है।
 
 • पंजीकरण / बिब संख्या: ${bibNumber}
-• श्रेणी: ${category}
+• दौड़ श्रेणी: ${category}
 • दिनांक व समय: ${eventDate}
-• स्थल: ${finalVenue}
+• दौड़ स्थल: ${finalVenue}
 
-डिजिटल ई-पास डाउनलोड लिंक:
+डिजिटल ई-पास लिंक:
 ${epassUrl}
 
-(इस ईमेल के साथ आपका डिजिटल ई-पास 'Rajasthan_Police_EPass_${bibNumber}.html' अटैच किया गया है)
+(नोट: आपका डिजिटल ई-पास इस ईमेल के साथ 'Rajasthan_Police_EPass_${bibNumber}.html' फ़ाइल के रूप में संलग्न है)
 
-बिब एक्सपो एवं किट वितरण:
-1 व 2 जनवरी 2027 (प्रातः 10:00 AM से सायं 06:00 PM)
+बिब एवं किट वितरण (एक्सपो):
+तारीख: 1 व 2 जनवरी 2027 (सुबह 10:00 से शाम 06:00 बजे तक)
 स्थान: ${finalExpo}
+आवश्यक दस्तावेज: ई-पास (मोबाइल में) एवं कोई एक सरकारी पहचान पत्र।
 
-हेल्पलाइन: 112 / 1090
-राजस्थान पुलिस मुख्यालय, जयपुर`;
+सहायता हेल्पलाइन: 112 / 1090
+ईमेल: rajpolicemarathon@rajpolice.gov.in`;
 
   // 1. Check Brevo API Key
   const brevoApiKey = (process.env.BREVO_API_KEY || "").trim();
