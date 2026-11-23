@@ -855,6 +855,18 @@ export function RegistrationPage({
 
     try {
       const routeConfig = getJaipurRouteConfig(p);
+      const cleanDistrict = formatCleanDistrictName(p);
+      const distId = String(p.districtId || p.district || '').toLowerCase();
+      const distName = String(p.districtName || '').toLowerCase();
+      const isJaipurRunner = Boolean(
+        (p.venueType === "jaipur") ||
+        distId === "jpr-comm" ||
+        distId === "jaipur_comm" ||
+        distId.includes("jaipur") ||
+        distName.includes("jaipur") ||
+        distName.includes("जयपुर") ||
+        routeConfig
+      );
       let locQrImg = null;
       if (routeConfig) {
         let locQrDataUrl = locationQrUrl;
@@ -1019,20 +1031,14 @@ export function RegistrationPage({
         ctx.fillStyle = "#b91c1c";
         ctx.font = "bold 13px sans-serif";
         ctx.fillText(`Allotted Physical Bib: #${p.physicalBibNumber}`, bibCenterX, 482);
-      } else if (routeConfig) {
+      } else if (isJaipurRunner) {
         ctx.fillStyle = "#64748b";
         ctx.font = "bold 13px sans-serif";
         ctx.fillText("Gate No. 2 • Albert Hall, Jaipur", bibCenterX, 482);
-      } else {
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 13px sans-serif";
-        ctx.fillText("Police Lines / District Venue", bibCenterX, 482);
       }
       ctx.textAlign = "left";
 
       // 4. Middle Section: Runner Details
-      const cleanDistrict = formatCleanDistrictName(p);
-
       const detailsX = 380;
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 14px sans-serif";
@@ -1047,12 +1053,21 @@ export function RegistrationPage({
       ctx.fillStyle = "#0a1c3d";
       ctx.fillText(nameStr, detailsX, 234);
 
-      ctx.fillStyle = "#64748b";
-      ctx.font = "bold 14px sans-serif";
-      ctx.fillText("REPORTING VENUE:", detailsX, 282);
-      ctx.fillStyle = "#0a1c3d";
-      ctx.font = "bold 21px sans-serif";
-      ctx.fillText("📍 " + formatLocalizedDistrict(cleanDistrict, false), detailsX, 314);
+      if (isJaipurRunner) {
+        ctx.fillStyle = "#64748b";
+        ctx.font = "bold 14px sans-serif";
+        ctx.fillText("REPORTING VENUE:", detailsX, 282);
+        ctx.fillStyle = "#0a1c3d";
+        ctx.font = "bold 21px sans-serif";
+        ctx.fillText("📍 Albert Hall, Ram Niwas Garden, Jaipur", detailsX, 314);
+      } else {
+        ctx.fillStyle = "#64748b";
+        ctx.font = "bold 14px sans-serif";
+        ctx.fillText("REGISTERED DISTRICT:", detailsX, 282);
+        ctx.fillStyle = "#0a1c3d";
+        ctx.font = "bold 21px sans-serif";
+        ctx.fillText("📍 " + formatLocalizedDistrict(cleanDistrict, false), detailsX, 314);
+      }
 
       let nextY = 366;
       ctx.fillStyle = "#64748b";
@@ -1126,11 +1141,18 @@ export function RegistrationPage({
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 15px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("For Gate No. 2 Scan", qrBoxX + 125, 435);
-      ctx.fillStyle = "#64748b";
-      ctx.font = "13px sans-serif";
-      ctx.fillText("Security Verification Token", qrBoxX + 125, 460);
-      ctx.fillText("RFID Enabled", qrBoxX + 125, 482);
+      if (isJaipurRunner) {
+        ctx.fillText("For Gate No. 2 Scan", qrBoxX + 125, 435);
+        ctx.fillStyle = "#64748b";
+        ctx.font = "13px sans-serif";
+        ctx.fillText("Security Verification Token", qrBoxX + 125, 460);
+        ctx.fillText("RFID Enabled", qrBoxX + 125, 482);
+      } else {
+        ctx.fillText("Security Entry Scan", qrBoxX + 125, 445);
+        ctx.fillStyle = "#64748b";
+        ctx.font = "13px sans-serif";
+        ctx.fillText("Security Verification Token", qrBoxX + 125, 472);
+      }
       ctx.textAlign = "left";
 
       // 6. Creative Horizontal Jaipur Route Map Panel + Albert Hall Google Maps QR (Only for Jaipur Runners)
@@ -1202,6 +1224,12 @@ export function RegistrationPage({
     const locDist = formatLocalizedDistrict(registeredParticipant.districtName, isHindi);
     const locCat = formatLocalizedCategory(registeredParticipant.categoryName, isHindi);
     const locName = formatLocalizedName(registeredParticipant.fullName, isHindi);
+    const isPassJaipur = Boolean(
+      (registeredParticipant.venueType === "jaipur") ||
+      String(registeredParticipant.districtId || registeredParticipant.district || '').toLowerCase().includes("jaipur") ||
+      String(registeredParticipant.districtName || '').toLowerCase().includes("jaipur") ||
+      String(registeredParticipant.districtName || '').includes("जयपुर")
+    );
 
     const message = isHindi ? (
       `🏛️ *राजस्थान पुलिस मैराथन 2027 'RUN FOR HER'*\n` +
@@ -1211,12 +1239,14 @@ export function RegistrationPage({
       `📋 *प्रवेश विवरण:*\n` +
       `🆔 *पंजीकरण संख्या:* ${registeredParticipant.bibNumber}\n` +
       `🎯 *दौड़ श्रेणी:* ${locCat}\n` +
-      `📍 *स्थान:* ${locDist}\n` +
+      (isPassJaipur ? `📍 *स्थान / वेन्यू:* अल्बर्ट हॉल, जयपुर\n` : `📍 *जिला (District):* ${locDist}\n`) +
       `📅 *तारीख:* 3 जनवरी 2027, प्रातः 05:00 बजे रिपोर्टिंग\n` +
       (registeredParticipant.tshirtSize && registeredParticipant.tshirtSize !== 'N/A' ? `👕 *टी-शर्ट साइज़:* Size ${registeredParticipant.tshirtSize}\n` : '') +
       `🩸 *रक्त समूह:* ${registeredParticipant.bloodGroup || 'B+'}\n` +
       `🆔 *प्रमाण पत्र टोकन:* ${registeredParticipant.certificateId}\n\n` +
-      `⚠️ *महत्वपूर्ण:* एक्सपो केंद्र पर यह ई-पास व पहचान पत्र दिखाकर अपना फिजिकल RFID बिब व किट प्राप्त करें।\n\n` +
+      (isPassJaipur 
+        ? `⚠️ *महत्वपूर्ण:* एक्सपो केंद्र पर यह ई-पास दिखाकर अपना फिजिकल RFID बिब व किट प्राप्त करें।\n\n` 
+        : `⚠️ *महत्वपूर्ण:* अपने जिले में निर्धारित काउंटर पर यह ई-पास दिखाकर अपनी भागीदारी पुष्टि करें।\n\n`) +
       `ई-पास डाउनलोड व सत्यापन पोर्टल:\n${window.location.origin}/#register\n\n` +
       `_राजस्थान पुलिस — सेवार्थ कटिबद्धता_`
     ) : (
@@ -1227,12 +1257,14 @@ export function RegistrationPage({
       `📋 *Entry Details:*\n` +
       `🆔 *Registration ID:* ${registeredParticipant.bibNumber}\n` +
       `🎯 *Race Category:* ${locCat}\n` +
-      `📍 *Venue:* ${locDist}\n` +
+      (isPassJaipur ? `📍 *Venue:* Albert Hall, Jaipur\n` : `📍 *District:* ${locDist}\n`) +
       `📅 *Date:* 3 January 2027, Reporting at 05:00 AM\n` +
       (registeredParticipant.tshirtSize && registeredParticipant.tshirtSize !== 'N/A' ? `👕 *T-Shirt Size:* Size ${registeredParticipant.tshirtSize}\n` : '') +
       `🩸 *Blood Group:* ${registeredParticipant.bloodGroup || 'B+'}\n` +
       `🆔 *Certificate ID:* ${registeredParticipant.certificateId}\n\n` +
-      `⚠️ *Important:* Please present this E-Pass & ID proof at the Expo center to collect your physical RFID Bib and kit.\n\n` +
+      (isPassJaipur 
+        ? `⚠️ *Important:* Please present this E-Pass at the Expo center to collect your physical RFID Bib and kit.\n\n` 
+        : `⚠️ *Important:* Please present this E-Pass at your designated district counter to confirm participation.\n\n`) +
       `E-Pass Download & Verification Portal:\n${window.location.origin}/#register\n\n` +
       `_Rajasthan Police — Committed to Serve_`
     );
@@ -1294,6 +1326,15 @@ export function RegistrationPage({
 
     window.print();
   };
+
+  const isRegisteredJaipur = Boolean(
+    registeredParticipant && (
+      registeredParticipant.venueType === "jaipur" ||
+      String(registeredParticipant.districtId || registeredParticipant.district || '').toLowerCase().includes("jaipur") ||
+      String(registeredParticipant.districtName || '').toLowerCase().includes("jaipur") ||
+      String(registeredParticipant.districtName || '').includes("जयपुर")
+    )
+  );
 
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '80px' }}>
@@ -1476,9 +1517,11 @@ export function RegistrationPage({
                     </div>
 
                     <div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>Reporting Venue</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+                        {isRegisteredJaipur ? 'Reporting Venue' : 'Registered District'}
+                      </div>
                       <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--police-navy-800)' }}>
-                        📍 {formatLocalizedDistrict(formatCleanDistrictName(registeredParticipant), false)}
+                        📍 {isRegisteredJaipur ? 'Albert Hall, Jaipur' : formatLocalizedDistrict(formatCleanDistrictName(registeredParticipant), false)}
                       </div>
                     </div>
 
@@ -1511,7 +1554,7 @@ export function RegistrationPage({
                       )}
                     </div>
                     <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, marginTop: '6px' }}>
-                      For Scan at Gate No. 2
+                      {isRegisteredJaipur ? 'For Scan at Gate No. 2' : 'Security Entry Scan'}
                     </div>
                   </div>
                 </div>

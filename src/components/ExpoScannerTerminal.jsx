@@ -2540,9 +2540,6 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                 <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#0f172a' }}>
                   धावक सूची एवं किट वितरण स्थिति (Runners Roster & Kit Status)
                 </h3>
-                <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: '2px' }}>
-                  समस्त पंजीकृत धावक — किट दी गई (✅) एवं शेष (⏳) का लाइव विवरण
-                </div>
               </div>
             </div>
 
