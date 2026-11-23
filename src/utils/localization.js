@@ -4,7 +4,7 @@
  * Completely eliminates mixed bracketed text like "मदन पल्सानिया (Madan Palsaniya)" or "जयपुर (Jaipur)".
  */
 
-import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
+import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData.js';
 
 // District Name Bilingual Map for all 41 Official Police Districts
 export const DISTRICT_BILINGUAL_MAP = {
@@ -424,5 +424,5 @@ export function formatCleanDistrictName(p) {
     return formatLocalizedDistrict(matchedByName.name, false);
   }
 
-  return formatLocalizedDistrict(rawName, false) || "Jaipur";
+  return formatLocalizedDistrict(rawName || distId, false) || "Jaipur";
 }

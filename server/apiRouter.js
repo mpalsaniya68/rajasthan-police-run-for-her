@@ -186,7 +186,9 @@ export function getDistrictQueryTokens(dist) {
   } else {
     for (const [k, v] of Object.entries(DISTRICT_NAMES)) {
       const vLower = v.toLowerCase();
-      if (k.toLowerCase().includes(lower) || vLower.includes(lower) || lower.includes(k.toLowerCase())) {
+      const kNorm = k.toLowerCase().replace(/[-_ ]+/g, '');
+      const vNorm = vLower.replace(/[-_ ]+/g, '');
+      if (kNorm.includes(lower) || vNorm.includes(lower) || lower.includes(kNorm)) {
         tokens.add(k);
         tokens.add(v);
         const m = v.match(/\((.*?)\)/);

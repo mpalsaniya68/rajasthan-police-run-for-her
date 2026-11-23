@@ -102,8 +102,6 @@ export function AdminDashboard({
 
   const [districtFilter, setDistrictFilter] = useState(() => isDistrictRole ? (adminUser.districtId || adminUser.districtName || "all") : "all");
 
-  const [selectedExportDistrict, setSelectedExportDistrict] = useState(() => isDistrictRole ? (adminUser.districtName || RAJASTHAN_POLICE_DISTRICTS[0]?.name) : (RAJASTHAN_POLICE_DISTRICTS[0]?.name || "Jaipur"));
-
   const [exportNotice, setExportNotice] = useState(null);
 
   // Smart Filters
@@ -705,17 +703,18 @@ export function AdminDashboard({
 
     const matchesCat = selectedCatFilter === "all" || r.category === selectedCatFilter;
 
-    const cleanRDist = (r.canonicalDistrict || formatCleanDistrictName(r)).toLowerCase();
-    const cleanFilter = (districtFilter || 'all').toLowerCase();
+    const rDistName = (r.districtName || '').trim().toLowerCase();
+    const rDistId = (r.districtId || '').trim().toLowerCase();
+    const cleanRDist = (r.canonicalDistrict || formatCleanDistrictName(r) || '').trim().toLowerCase();
+    const cleanFilter = (districtFilter || 'all').trim().toLowerCase();
     const matchesDist = isDistrictRole ? true : (
       cleanFilter === "all" || 
       (cleanFilter === "jaipur" 
-        ? (r.venueType === "jaipur" || cleanRDist === "jaipur" || (r.districtName || '').toLowerCase().includes("jaipur")) 
+        ? (r.venueType === "jaipur" || cleanRDist === "jaipur" || (rDistName && rDistName.includes("jaipur"))) 
         : (cleanRDist === cleanFilter ||
-           (r.districtName || '').toLowerCase().includes(cleanFilter) || 
-           (r.districtId || '').toLowerCase() === cleanFilter ||
-           cleanFilter.includes((r.districtName || '').toLowerCase()) ||
-           formatCleanDistrictName(r).toLowerCase() === cleanFilter))
+           (rDistName && (rDistName.includes(cleanFilter) || cleanFilter.includes(rDistName))) || 
+           (rDistId && rDistId === cleanFilter) ||
+           (formatCleanDistrictName(r) && formatCleanDistrictName(r).toLowerCase() === cleanFilter)))
     );
 
     const matchesKit = kitFilter === "all" || (kitFilter === "collected" ? Boolean(r.kitCollected) : !r.kitCollected);
@@ -853,171 +852,118 @@ export function AdminDashboard({
 
   // 2. DISTRICT-WISE INDIVIDUAL CSV EXPORT
   const handleExportSingleDistrict = () => {
-    const targetDist = selectedExportDistrict || (districtFilter !== 'all' ? districtFilter : 'Jaipur');
-    let districtRecords = registrations.filter(r => {
-      const canonical = r.canonicalDistrict || formatCleanDistrictName(r);
-      return canonical.toLowerCase() === targetDist.toLowerCase() ||
-        (targetDist.toLowerCase().includes("jaipur") && (r.venueType === "jaipur" || canonical.toLowerCase() === 'jaipur'));
-    });
-
-
-
-    // If no test records yet registered in this specific newly chosen district, synthesize a district nodal roster
-
-    if (districtRecords.length === 0) {
-
-      const distInfo = RAJASTHAN_POLICE_DISTRICTS.find(d => d.name === selectedExportDistrict) || { name: selectedExportDistrict, nodalOfficer: "SP " + selectedExportDistrict, flagOffVenue: "District Police Lines" };
-
-      districtRecords = [
-
-        {
-
-          id: `DIST-DEMO-1`,
-
-          bibNumber: `RJ-${distInfo.id || 'DIST'}-001`,
-
-          fullName: `${distInfo.nodalOfficer} (Nodal Lead)`,
-
-          gender: "Male",
-
-          age: 42,
-
-          category: "10k",
-
-          categoryName: "10 KM Speed Run",
-
-          venueType: "district",
-
-          districtName: selectedExportDistrict,
-
-          runnerType: "Police Personnel",
-
-          mobile: "+91 94140 10090",
-
-          email: `sp.${(distInfo.id || 'district').toLowerCase()}@rajasthanpolice.gov.in`,
-
-          tshirtSize: "N/A",
-
-          bibCollected: true,
-
-          finishTime: "00:46:12",
-
-          chipTime: "00:45:50",
-
-          overallRank: "01 / 450",
-
-          certificateId: `RPM-2027-${distInfo.id || 'DIST'}-001`,
-
-          pledgeTaken: true,
-
-          registeredAt: "2026-10-25 09:00 AM"
-
-        },
-
-        {
-
-          id: `DIST-DEMO-2`,
-
-          bibNumber: `RJ-${distInfo.id || 'DIST'}-002`,
-
-          fullName: "सीमा शेखावत (महिला प्रतिनिधि)",
-
-          gender: "Female",
-
-          age: 24,
-
-          category: "5k",
-
-          categoryName: "5 KM Community Run",
-
-          venueType: "district",
-
-          districtName: selectedExportDistrict,
-
-          runnerType: "Citizen Runner",
-
-          mobile: "+91 98290 88990",
-
-          email: "seema.run@example.com",
-
-          tshirtSize: "N/A",
-
-          bibCollected: true,
-
-          finishTime: "00:26:15",
-
-          chipTime: "00:26:00",
-
-          overallRank: "02 / 450",
-
-          certificateId: `RPM-2027-${distInfo.id || 'DIST'}-002`,
-
-          pledgeTaken: true,
-
-          registeredAt: "2026-10-25 10:30 AM"
-
-        },
-
-        {
-
-          id: `DIST-DEMO-3`,
-
-          bibNumber: `RJ-${distInfo.id || 'DIST'}-003`,
-
-          fullName: "कांस्टेबल राहुल कुमार (Nirbhaya Escort)",
-
-          gender: "Male",
-
-          age: 28,
-
-          category: "5k",
-
-          categoryName: "5 KM Community Run",
-
-          venueType: "district",
-
-          districtName: selectedExportDistrict,
-
-          runnerType: "Police Personnel",
-
-          mobile: "+91 94141 22334",
-
-          email: "rahul.police@rajasthan.gov.in",
-
-          tshirtSize: "N/A",
-
-          bibCollected: true,
-
-          finishTime: "00:24:50",
-
-          chipTime: "00:24:35",
-
-          overallRank: "03 / 450",
-
-          certificateId: `RPM-2027-${distInfo.id || 'DIST'}-003`,
-
-          pledgeTaken: true,
-
-          registeredAt: "2026-10-25 11:15 AM"
-
-        }
-
-      ];
-
+    const targetDist = districtFilter || 'all';
+
+    if (targetDist === 'all') {
+      const filename = `Rajasthan_Police_Marathon_Statewide_All_Districts_${Date.now()}.csv`;
+      downloadCSVFile(combinedRegistrations, filename);
+      setExportNotice(isHindi 
+        ? `समस्त जिलों की CSV फाइल (${combinedRegistrations.length} रिकॉर्ड्स) डाउनलोड हुई!` 
+        : `Statewide CSV (${combinedRegistrations.length} records) downloaded successfully!`);
+      setTimeout(() => setExportNotice(null), 4500);
+      return;
     }
 
+    const cleanTarget = targetDist.trim().toLowerCase();
+    let districtRecords = combinedRegistrations.filter(r => {
+      const canonical = (r.canonicalDistrict || formatCleanDistrictName(r) || '').trim().toLowerCase();
+      const rDistName = (r.districtName || '').trim().toLowerCase();
+      const rDistId = (r.districtId || '').trim().toLowerCase();
 
+      if (cleanTarget === 'jaipur') {
+        return r.venueType === 'jaipur' || canonical === 'jaipur' || (rDistName && rDistName.includes('jaipur'));
+      }
 
-    const safeDistName = selectedExportDistrict.replace(/[^a-zA-Z0-9]/g, '_');
+      return canonical === cleanTarget ||
+        (rDistName && (rDistName.includes(cleanTarget) || cleanTarget.includes(rDistName))) ||
+        (rDistId && rDistId === cleanTarget) ||
+        (formatCleanDistrictName(r) && formatCleanDistrictName(r).toLowerCase() === cleanTarget);
+    });
 
+    // If no test records yet registered in this specific newly chosen district, synthesize a district nodal roster
+    if (districtRecords.length === 0) {
+      const distInfo = RAJASTHAN_POLICE_DISTRICTS.find(d => 
+        d.name.toLowerCase() === cleanTarget || 
+        d.id.toLowerCase() === cleanTarget
+      ) || { name: targetDist, nodalOfficer: "SP " + targetDist, flagOffVenue: "District Police Lines" };
+
+      districtRecords = [
+        {
+          id: `DIST-DEMO-1`,
+          bibNumber: `RJ-${distInfo.id || 'DIST'}-001`,
+          fullName: `${distInfo.nodalOfficer} (Nodal Lead)`,
+          gender: "Male",
+          age: 42,
+          category: "10k",
+          categoryName: "10 KM Speed Run",
+          venueType: "district",
+          districtName: targetDist,
+          runnerType: "Police Personnel",
+          mobile: "+91 94140 10090",
+          email: `sp.${(distInfo.id || 'district').toLowerCase()}@rajasthanpolice.gov.in`,
+          tshirtSize: "N/A",
+          bibCollected: true,
+          finishTime: "00:46:12",
+          chipTime: "00:45:50",
+          overallRank: "01 / 450",
+          certificateId: `RPM-2027-${distInfo.id || 'DIST'}-001`,
+          pledgeTaken: true,
+          registeredAt: "2026-10-25 09:00 AM"
+        },
+        {
+          id: `DIST-DEMO-2`,
+          bibNumber: `RJ-${distInfo.id || 'DIST'}-002`,
+          fullName: "सीमा शेखावत (महिला प्रतिनिधि)",
+          gender: "Female",
+          age: 24,
+          category: "5k",
+          categoryName: "5 KM Community Run",
+          venueType: "district",
+          districtName: targetDist,
+          runnerType: "Citizen Runner",
+          mobile: "+91 98290 88990",
+          email: "seema.run@example.com",
+          tshirtSize: "N/A",
+          bibCollected: true,
+          finishTime: "00:26:15",
+          chipTime: "00:26:00",
+          overallRank: "02 / 450",
+          certificateId: `RPM-2027-${distInfo.id || 'DIST'}-002`,
+          pledgeTaken: true,
+          registeredAt: "2026-10-25 10:30 AM"
+        },
+        {
+          id: `DIST-DEMO-3`,
+          bibNumber: `RJ-${distInfo.id || 'DIST'}-003`,
+          fullName: "कांस्टेबल राहुल कुमार (Nirbhaya Escort)",
+          gender: "Male",
+          age: 28,
+          category: "5k",
+          categoryName: "5 KM Community Run",
+          venueType: "district",
+          districtName: targetDist,
+          runnerType: "Police Personnel",
+          mobile: "+91 94141 22334",
+          email: "rahul.police@rajasthan.gov.in",
+          tshirtSize: "N/A",
+          bibCollected: true,
+          finishTime: "00:24:50",
+          chipTime: "00:24:35",
+          overallRank: "03 / 450",
+          certificateId: `RPM-2027-${distInfo.id || 'DIST'}-003`,
+          pledgeTaken: true,
+          registeredAt: "2026-10-25 11:15 AM"
+        }
+      ];
+    }
+
+    const safeDistName = targetDist.replace(/[^a-zA-Z0-9]/g, '_');
     const filename = `Rajasthan_Police_Marathon_${safeDistName}_District_${Date.now()}.csv`;
-
     downloadCSVFile(districtRecords, filename);
-
-    setExportNotice(`जिला "${selectedExportDistrict}" की CSV फाइल (${districtRecords.length} रिकॉर्ड्स) सफलतापूर्वक डाउनलोड हुई!`);
-
+    setExportNotice(isHindi 
+      ? `जिला "${formatLocalizedDistrict(targetDist, true)}" की CSV फाइल (${districtRecords.length} रिकॉर्ड्स) सफलतापूर्वक डाउनलोड हुई!` 
+      : `District "${targetDist}" CSV file (${districtRecords.length} records) downloaded successfully!`);
     setTimeout(() => setExportNotice(null), 4500);
-
   };
 
 
@@ -1990,10 +1936,9 @@ export function AdminDashboard({
 
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <select
-                      value={districtFilter === 'all' ? selectedExportDistrict : districtFilter}
+                      value={districtFilter}
                       onChange={(e) => {
                         const val = e.target.value;
-                        setSelectedExportDistrict(val === 'all' ? (RAJASTHAN_POLICE_DISTRICTS[0]?.name || 'Jaipur') : val);
                         setDistrictFilter(val);
                         setCurrentPage(1);
                         loadLiveDashboardData(val);
@@ -2031,7 +1976,7 @@ export function AdminDashboard({
                       }}
                     >
                       <Download size={14} />
-                      <span>{districtFilter === 'all' ? (isHindi ? 'जिले की CSV डाउनलोड करें' : 'Download District CSV') : (isHindi ? `${formatLocalizedDistrict(selectedExportDistrict, isHindi)} की CSV डाउनलोड करें` : `Download ${selectedExportDistrict} CSV`)}</span>
+                      <span>{districtFilter === 'all' ? (isHindi ? 'समस्त जिलों की CSV डाउनलोड करें' : 'Download All Districts CSV') : (isHindi ? `${formatLocalizedDistrict(districtFilter, isHindi)} की CSV डाउनलोड करें` : `Download ${districtFilter} CSV`)}</span>
                     </button>
                   </div>
 
@@ -2274,7 +2219,6 @@ export function AdminDashboard({
                   onChange={(e) => {
                     const newDist = e.target.value;
                     setDistrictFilter(newDist);
-                    setSelectedExportDistrict(newDist === 'all' ? (RAJASTHAN_POLICE_DISTRICTS[0]?.name || 'Jaipur') : newDist);
                     setCurrentPage(1);
                     loadLiveDashboardData(newDist);
                   }}

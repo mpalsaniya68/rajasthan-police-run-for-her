@@ -166,3 +166,17 @@ test("admin participants endpoint filters accurately by district name including 
   });
 });
 
+test("district alias query tokens normalize hyphenated, spaced, and underscored aliases", async () => {
+  const { getDistrictQueryTokens } = await import("./apiRouter.js");
+  const smTokens = getDistrictQueryTokens("sawai_madhopur");
+  assert.ok(smTokens.includes("sawai_madhopur"));
+  assert.ok(smTokens.some(t => t.toLowerCase().includes("sawai") || t.includes("सवाई")));
+
+  const sgnTokens = getDistrictQueryTokens("Sri Ganganagar");
+  assert.ok(sgnTokens.some(t => t.toLowerCase().includes("sri_ganganagar") || t.toLowerCase().includes("ganganagar") || t.includes("श्रीगंगानगर")));
+
+  const { formatCleanDistrictName } = await import("../src/utils/localization.js");
+  assert.equal(formatCleanDistrictName({ districtId: "alw" }), "Alwar");
+  assert.equal(formatCleanDistrictName({ districtId: "jdh_comm" }), "Jodhpur");
+});
+
