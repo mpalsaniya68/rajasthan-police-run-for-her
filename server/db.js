@@ -163,9 +163,12 @@ export async function initDatabase(force = false) {
             `);
           } catch (e) {}
 
-          // Ensure physical_bib_number column exists for Expo Counter dynamic bib mapping
+          // Ensure physical_bib_number and venue_type columns exist for Expo Counter & Venue mapping
           try {
             await db.execute("ALTER TABLE participants ADD COLUMN physical_bib_number TEXT DEFAULT '';");
+          } catch (e) {}
+          try {
+            await db.execute("ALTER TABLE participants ADD COLUMN venue_type TEXT DEFAULT '';");
           } catch (e) {}
           try {
             await db.execute("CREATE INDEX IF NOT EXISTS idx_participants_physical_bib ON participants(physical_bib_number);");
