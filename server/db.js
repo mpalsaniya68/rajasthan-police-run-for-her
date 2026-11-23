@@ -84,6 +84,13 @@ if (rawDbUrl) {
   dbAuthToken = isCloudEnv ? OFFICIAL_TURSO_TOKEN : undefined;
 }
 
+// Serverless filesystem compatibility safeguard (Vercel / AWS Lambda)
+if ((process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) && dbUrl.startsWith("file:") && !dbUrl.startsWith("file:/tmp") && dbUrl !== ":memory:") {
+  const dbFileName = path.basename(dbUrl.replace(/^file:/, "")) || "rajasthan_police_marathon.db";
+  dbUrl = `file:/tmp/${dbFileName}`;
+  console.log(`[DB] Serverless read-only filesystem detected. Mapped SQLite path to writable /tmp: ${dbUrl}`);
+}
+
 export const isProductionTurso = Boolean(dbUrl && !dbUrl.startsWith("file:") && dbUrl !== ":memory:");
 
 export const db = createClient({

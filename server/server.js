@@ -81,6 +81,11 @@ function serveStaticFile(req, res, pathname) {
  * Main Standalone Production HTTP Server
  */
 async function startServer() {
+  // Check if frontend production bundle is built
+  if (!fs.existsSync(distDir)) {
+    console.warn(`\n⚠️  [DEPLOYMENT NOTICE]: 'dist/' folder was not found at ${distDir}.\n    Please ensure 'npm run build' is executed before 'npm start'.\n`);
+  }
+
   // 1. Initialize Edge / SQLite Database schema & seeds
   await initDatabase();
 

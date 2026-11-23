@@ -5,8 +5,12 @@ let initialized = false;
 
 export default async function handler(req, res) {
   if (!initialized) {
-    await initDatabase().catch(console.error);
-    initialized = true;
+    try {
+      await initDatabase();
+      initialized = true;
+    } catch (err) {
+      console.error("[Vercel DB Init Error]:", err);
+    }
   }
   return handleApiRequest(req, res);
 }
