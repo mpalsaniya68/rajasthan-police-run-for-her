@@ -1,5 +1,6 @@
 import net from "net";
 import tls from "tls";
+import fs from "fs";
 
 /**
  * HTML Character Entity Escaping for injection prevention
@@ -82,7 +83,9 @@ function toBase64MimeBody(content = "") {
  * Brevo REST API Dispatcher (HTTPS / TLS 1.3)
  */
 async function sendViaBrevo({ brevoApiKey, recipient, runnerName, subject, htmlBody, plainText }) {
-  const senderEmail = (process.env.EMAIL_SENDER || "rajpolicemarathon@rajpolice.gov.in").trim();
+  const senderEmail = (process.env.EMAIL_SENDER || "palsaniya2001@gmail.com").trim();
+  const senderName = (process.env.EMAIL_SENDER_NAME || "Rajasthan Police Marathon 2027").trim();
+  const replyTo = (process.env.EMAIL_REPLY_TO || "rajpolicemarathon@rajpolice.gov.in").trim();
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
@@ -91,9 +94,9 @@ async function sendViaBrevo({ brevoApiKey, recipient, runnerName, subject, htmlB
       "content-type": "application/json"
     },
     body: JSON.stringify({
-      sender: { name: "Rajasthan Police Marathon 2027", email: senderEmail },
-      to: [{ email: recipient, name: runnerName }],
-      replyTo: { email: "rajpolicemarathon@rajpolice.gov.in", name: "Rajasthan Police Marathon" },
+      sender: { name: senderName, email: senderEmail },
+      to: [{ email: recipient, name: runnerName || "Participant" }],
+      replyTo: { email: replyTo, name: senderName },
       subject,
       htmlContent: htmlBody,
       textContent: plainText
@@ -570,6 +573,11 @@ ${epassUrl}
 
 // Direct CLI Execution
 if (process.argv[1]?.endsWith("sendSampleEmail.js")) {
+  if (fs.existsSync(".env")) {
+    try {
+      process.loadEnvFile(".env");
+    } catch {}
+  }
   const targetEmail = process.argv[2] || "rajpolicemarathon@rajpolice.gov.in";
   sendLiveConfirmationEmail({ recipient: targetEmail })
     .then((res) => {
