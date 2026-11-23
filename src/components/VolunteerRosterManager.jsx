@@ -1090,7 +1090,7 @@ export function VolunteerRosterManager() {
                   >
                     {RAJASTHAN_POLICE_DISTRICTS.map(d => (
                       <option key={d.id} value={d.id}>
-                        {d.name} ({d.nodalOfficer})
+                        {d.name}
                       </option>
                     ))}
                   </select>

@@ -101,7 +101,7 @@ export function AdminDashboard({
 
   const [districtFilter, setDistrictFilter] = useState(() => isDistrictRole ? (adminUser.districtId || adminUser.districtName || "all") : "all");
 
-  const [selectedExportDistrict, setSelectedExportDistrict] = useState(() => isDistrictRole ? (adminUser.districtName || RAJASTHAN_POLICE_DISTRICTS[0]?.name) : (RAJASTHAN_POLICE_DISTRICTS[0]?.name || "Jaipur (Flagship Host)"));
+  const [selectedExportDistrict, setSelectedExportDistrict] = useState(() => isDistrictRole ? (adminUser.districtName || RAJASTHAN_POLICE_DISTRICTS[0]?.name) : (RAJASTHAN_POLICE_DISTRICTS[0]?.name || "Jaipur"));
 
   const [exportNotice, setExportNotice] = useState(null);
 
@@ -1262,11 +1262,6 @@ export function AdminDashboard({
                     : (isHindi ? '2FA प्रमाणित • राज्य नोडल कमान' : '2FA Verified • State Command')}
                 </span>
               </div>
-              <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>
-                {isDistrictRole 
-                  ? (isHindi ? 'स्थानीय धावक विवरण, आपातकालीन सुरक्षा सूची एवं जिला ई-सर्टिफिकेट प्रबंधन' : 'Local Runner Details, Emergency Safety Roster & District E-Certificates')
-                  : (isHindi ? 'राज्यव्यापी रियल-टाइम लॉजिस्टिक्स, डेटाबेस एवं प्रमाण पत्र नियंत्रण' : 'Statewide Real-time Logistics, Database Engine & Certificate Control')}
-              </div>
             </div>
           </div>
 
@@ -2076,7 +2071,7 @@ export function AdminDashboard({
 
                         <option key={d.id} value={d.name}>
 
-                          📍 {d.name} ({d.zone} Zone)
+                          {formatLocalizedDistrict(d.name, isHindi)}
 
                         </option>
 
@@ -2398,8 +2393,8 @@ export function AdminDashboard({
                   }}
                   style={{ padding: '7px 10px', borderRadius: '4px', background: '#ffffff', border: '1px solid var(--border-strong)', color: 'var(--text-main)', fontSize: '0.82rem', maxWidth: '240px' }}
                 >
-                  <option value="all">{isHindi ? 'सभी स्थान / समस्त जिले' : 'All Locations / All Districts'}</option>
-                  <option value="jaipur">{isHindi ? 'जयपुर फ्लैगशिप (अल्बर्ट हॉल)' : 'Jaipur Flagship (Albert Hall)'}</option>
+                  <option value="all">{isHindi ? 'समस्त जिले' : 'All Districts'}</option>
+                  <option value="jaipur">{isHindi ? 'जयपुर' : 'Jaipur'}</option>
                   {RAJASTHAN_POLICE_DISTRICTS.map(d => (
                     <option key={d.id} value={d.name}>{formatLocalizedDistrict(d.name, isHindi)}</option>
                   ))}
@@ -2872,12 +2867,9 @@ export function AdminDashboard({
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <PackageCheck size={22} color="#2563eb" />
                 <h3 style={{ margin: 0, fontSize: '1.08rem', fontWeight: 800, color: '#0f172a' }}>
-                  एक्सपो किट एवं RFID चिप आवंटन केंद्र (Live Expo Desk)
+                  {isHindi ? 'एक्सपो किट आवंटन केंद्र' : 'Expo Kit Desk'}
                 </h3>
               </div>
-              <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: '#64748b' }}>
-                {isHindi ? 'धावक का पंजीकरण नंबर या मोबाइल नंबर सर्च करें। रक्त समूह (Blood Group) व पहचान की पुष्टि कर किट व RFID टैग सुपुर्द करें।' : 'Search runner registration number or mobile number. Verify blood group and identity before handing over kit & RFID tag.'}
-              </p>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -3711,12 +3703,9 @@ export function AdminDashboard({
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Trophy size={22} color="#f59e0b" />
                 <h3 style={{ margin: 0, fontSize: '1.08rem', fontWeight: 800, color: '#0f172a' }}>
-                  रेस डे परिणाम एवं लीडरबोर्ड (Official Standings)
+                  {isHindi ? 'रेस परिणाम एवं लीडरबोर्ड' : 'Race Results & Leaderboard'}
                 </h3>
               </div>
-              <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: '#64748b' }}>
-                ग्राउंड RFID टाइमिंग मैट्स (स्टार्ट गेंट्री, 5KM, 10KM, 15KM, फिनिश) से प्राप्त मिलीसेकंड सटीक नेट चिप टाइमिंग।
-              </p>
             </div>
 
             <button
@@ -4217,15 +4206,10 @@ export function AdminDashboard({
                 <Award size={26} color="var(--police-gold-400)" />
                 <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#ffffff' }}>
                   {isDistrictRole 
-                    ? (isHindi ? `जिला स्तरीय ई-प्रमाण पत्र एवं डिजिटल डिस्पैच (${formatLocalizedDistrict(adminUser.districtName, true)})` : `District Level E-Certificate & Digital Dispatch (${formatLocalizedDistrict(adminUser.districtName, false)})`) 
-                    : (isHindi ? 'राजस्थान पुलिस राज्यव्यापी ई-प्रमाण पत्र प्रबंधन एवं 1-क्लिक डिस्पैच' : 'Rajasthan Police Statewide E-Certificate Management & 1-Click Dispatch')}
+                    ? (isHindi ? `ई-प्रमाण पत्र प्रबंधन (${formatLocalizedDistrict(adminUser.districtName, true)})` : `E-Certificate Management (${formatLocalizedDistrict(adminUser.districtName, false)})`) 
+                    : (isHindi ? 'ई-प्रमाण पत्र प्रबंधन' : 'E-Certificate Management')}
                 </h3>
               </div>
-              <p style={{ margin: '6px 0 0 0', fontSize: '0.82rem', color: '#cbd5e1' }}>
-                {isDistrictRole
-                  ? (isHindi ? 'जिला पुलिस अधीक्षक (SP) स्तर: गेट उपस्थिति आधारित सहभागिता ई-प्रमाण पत्र जनरेशन, स्वतः SMS/ईमेल डिस्पैच एवं सत्यापन।' : 'District SP Level: Gate attendance-based participation e-certificate generation, auto SMS/email dispatch and verification.')
-                  : (isHindi ? 'पुलिस मुख्यालय (PHQ) स्तर: जयपुर फ्लैगशिप 21K/10K RFID टाइमिंग मैराथन एवं 41 जिलों के जन-जागरूकता प्रमाण पत्र का केंद्रीकृत नियंत्रण।' : 'Police HQ (PHQ) Level: Jaipur Flagship 21K/10K RFID timing marathon & 41 districts mass awareness certificate centralized control.')}
-              </p>
             </div>
 
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -4238,7 +4222,7 @@ export function AdminDashboard({
                 color: '#fde68a',
                 fontWeight: 700
               }}>
-                {isDistrictRole ? (isHindi ? `अधिकार क्षेत्र: ${formatLocalizedDistrict(adminUser.districtName, true)}` : `Jurisdiction: ${formatLocalizedDistrict(adminUser.districtName, false)}`) : (isHindi ? 'अधिकार क्षेत्र: संपूर्ण राजस्थान (PHQ Super-Admin)' : 'Jurisdiction: Entire Rajasthan (PHQ Super-Admin)')}
+                {isDistrictRole ? formatLocalizedDistrict(adminUser.districtName, isHindi) : (isHindi ? 'संपूर्ण राजस्थान' : 'All Rajasthan')}
               </div>
               <button 
                 onClick={loadCertificateStats}
@@ -4269,13 +4253,10 @@ export function AdminDashboard({
             {/* Card 1: Registered */}
             <div className="gov-card" style={{ padding: '16px 20px', background: '#ffffff', borderTop: '4px solid #2563eb' }}>
               <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
-                कुल पंजीकृत धावक
+                {isHindi ? 'कुल पंजीकृत धावक' : 'Total Registered'}
               </div>
               <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#1e3a8a', marginTop: '4px' }}>
                 {certStats.totalRegistered}
-              </div>
-              <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
-                राजस्थान पुलिस डेटाबेस
               </div>
             </div>
 
@@ -4283,43 +4264,34 @@ export function AdminDashboard({
             <div className="gov-card" style={{ padding: '16px 20px', background: '#ffffff', borderTop: '4px solid #16a34a' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
-                  गेट-स्कैन उपस्थित
+                  {isHindi ? 'गेट-स्कैन उपस्थित' : 'Gate Scanned'}
                 </span>
                 <span style={{ background: '#dcfce7', color: '#15803d', fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
-                  {certStats.totalRegistered > 0 ? `${((certStats.gateScanned / certStats.totalRegistered) * 100).toFixed(0)}% उपस्थिति` : '0%'}
+                  {certStats.totalRegistered > 0 ? `${((certStats.gateScanned / certStats.totalRegistered) * 100).toFixed(0)}%` : '0%'}
                 </span>
               </div>
               <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#15803d', marginTop: '4px' }}>
                 {certStats.gateScanned}
-              </div>
-              <div style={{ fontSize: '0.72rem', color: '#166534', marginTop: '2px' }}>
-                वॉलंटियर टर्मिनल द्वारा गेट पर अधिकृत
               </div>
             </div>
 
             {/* Card 3: Issued */}
             <div className="gov-card" style={{ padding: '16px 20px', background: '#ffffff', borderTop: '4px solid #d97706' }}>
               <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
-                जारी प्रमाण पत्र
+                {isHindi ? 'जारी प्रमाण पत्र' : 'Certificates Issued'}
               </div>
               <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#b45309', marginTop: '4px' }}>
                 {certStats.certificatesIssued}
-              </div>
-              <div style={{ fontSize: '0.72rem', color: '#92400e', marginTop: '2px' }}>
-                पोर्टल डाउनलोड व SMS सक्रिय
               </div>
             </div>
 
             {/* Card 4: Pending */}
             <div className="gov-card" style={{ padding: '16px 20px', background: '#ffffff', borderTop: '4px solid #dc2626' }}>
               <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
-                लंबित प्रमाण पत्र
+                {isHindi ? 'लंबित प्रमाण पत्र' : 'Pending Issuance'}
               </div>
               <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#991b1b', marginTop: '4px' }}>
                 {certStats.pendingIssuance}
-              </div>
-              <div style={{ fontSize: '0.72rem', color: '#b91c1c', marginTop: '2px' }}>
-                जनरेशन एवं वेरिफिकेशन प्रतीक्षारत
               </div>
             </div>
           </div>
@@ -4334,15 +4306,15 @@ export function AdminDashboard({
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '18px' }}>
               <Zap size={20} color="#d97706" />
               <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>
-                1-क्लिक प्रमाण पत्र जनरेशन एवं डिलीवरी कंसोल
+                {isHindi ? 'प्रमाण पत्र जनरेशन एवं डिलीवरी' : 'Certificate Generation & Delivery'}
               </h4>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', alignItems: 'start' }}>
-              {/* Left Column: District & Target Selection */}
+              {/* Left Column: District Selection */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '8px' }}>
-                  १. अधिकार क्षेत्र / जिला चयन (Target Jurisdiction)
+                  {isHindi ? 'जिला चयन' : 'Select District'}
                 </label>
                 {isDistrictRole ? (
                   <div style={{
@@ -4354,7 +4326,7 @@ export function AdminDashboard({
                     fontSize: '0.88rem',
                     color: '#1e293b'
                   }}>
-                    🔒 {formatLocalizedDistrict(adminUser.districtName, isHindi) || (isHindi ? 'जिला पुलिस अधीक्षक कमान' : 'District SP Command')} (Auto-Locked)
+                    {formatLocalizedDistrict(adminUser.districtName, isHindi) || (isHindi ? 'जिला पुलिस अधीक्षक' : 'District SP Command')}
                   </div>
                 ) : (
                   <select
@@ -4371,11 +4343,11 @@ export function AdminDashboard({
                       color: '#0f172a'
                     }}
                   >
-                    <option value="all">{isHindi ? '🚩 संपूर्ण राजस्थान (समस्त 41 जिले)' : '🚩 Entire Rajasthan (All 41 Districts)'}</option>
-                    <option value="jaipur_comm">{isHindi ? '⭐ जयपुर (फ्लैगशिप हाफ मैराथन - टाइम्ड)' : '⭐ Jaipur (Flagship Half Marathon - Timed)'}</option>
+                    <option value="all">{isHindi ? 'संपूर्ण राजस्थान' : 'All Rajasthan'}</option>
+                    <option value="jaipur_comm">{isHindi ? 'जयपुर' : 'Jaipur'}</option>
                     {RAJASTHAN_POLICE_DISTRICTS.filter(d => !d.name.toLowerCase().includes('jaipur')).map(d => (
                       <option key={d.id} value={d.id}>
-                        {formatLocalizedDistrict(d.name, isHindi)} {isHindi ? '(जिला जागरूकता दौड़)' : '(District Awareness Run)'}
+                        {formatLocalizedDistrict(d.name, isHindi)}
                       </option>
                     ))}
                   </select>
@@ -4385,7 +4357,7 @@ export function AdminDashboard({
               {/* Right Column: Attendance Criteria */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '8px' }}>
-                  २. पात्रता एवं हाजिरी सत्यापन फ़िल्टर (Attendance Gate Filter)
+                  {isHindi ? 'पात्रता फ़िल्टर' : 'Eligibility Filter'}
                 </label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <label style={{
@@ -4408,7 +4380,7 @@ export function AdminDashboard({
                     />
                     <div>
                       <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#166534' }}>
-                        केवल गेट-स्कैन उपस्थित धावक (Gate-Scanned Only) — अनुशंसित
+                        {isHindi ? 'केवल गेट-स्कैन उपस्थित धावक' : 'Gate-Scanned Runners Only'}
                       </div>
                     </div>
                   </label>
@@ -4433,7 +4405,7 @@ export function AdminDashboard({
                     />
                     <div>
                       <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#92400e' }}>
-                        समस्त पंजीकृत धावक (All Registered Participants) — आपातकालीन
+                        {isHindi ? 'समस्त पंजीकृत धावक' : 'All Registered Runners'}
                       </div>
                     </div>
                   </label>
@@ -4474,7 +4446,7 @@ export function AdminDashboard({
                   gap: '8px'
                 }}
               >
-                <Eye size={16} /> 👁️ सैंपल प्रमाण पत्र प्रिव्यू (Preview Template)
+                <Eye size={16} /> {isHindi ? 'सैंपल प्रमाण पत्र प्रिव्यू' : 'Preview Template'}
               </button>
 
               <button
@@ -4496,7 +4468,7 @@ export function AdminDashboard({
                 }}
               >
                 <Award size={18} color="#fde68a" />
-                {isGeneratingCerts ? "प्रमाण पत्र जारी एवं डिस्पैच हो रहे हैं..." : "🚀 1-Click Generate & Issue Certificates"}
+                {isGeneratingCerts ? (isHindi ? "प्रमाण पत्र जारी हो रहे हैं..." : "Generating...") : (isHindi ? "प्रमाण पत्र जारी करें" : "Generate & Issue Certificates")}
               </button>
             </div>
 
@@ -4559,11 +4531,8 @@ export function AdminDashboard({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
               <div>
                 <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 800, color: '#0f172a' }}>
-                  धावक प्रमाण पत्र स्थिति एवं प्रेषण लेजर
+                  {isHindi ? 'धावक प्रमाण पत्र स्थिति' : 'Runner Certificate Status'}
                 </h4>
-                <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: '2px' }}>
-                  गेट प्रवेश, डिजिटल प्रमाण पत्र ID एवं SMS डिस्पैच स्थिति
-                </div>
               </div>
 
               <input
@@ -4961,12 +4930,9 @@ export function AdminDashboard({
                 <Shield size={24} color="#fca5a5" />
 
                 <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>
-                  {isHindi ? `स्थानीय पुलिस सुरक्षा व आपातकालीन डेस्क (${formatLocalizedDistrict(adminUser.districtName, true)})` : `Local Police Safety & Emergency Desk (${formatLocalizedDistrict(adminUser.districtName, false)})`}
+                  {isHindi ? `सुरक्षा व आपातकालीन डेस्क (${formatLocalizedDistrict(adminUser.districtName, true)})` : `Safety & Emergency Desk (${formatLocalizedDistrict(adminUser.districtName, false)})`}
                 </h3>
               </div>
-              <p style={{ margin: '6px 0 0 0', fontSize: '0.8rem', color: '#fecaca' }}>
-                {isHindi ? 'जिले में मैराथन रूट पर पुलिस सुरक्षा टीम, एम्बुलेंस व त्वरित सहायता हेतु धावकों का ब्लड ग्रुप एवं इमरजेंसी डेटा।' : 'Runner blood group and emergency contact data for police security, ambulances, and first-aid teams along the route.'}
-              </p>
             </div>
 
             <div style={{ background: 'rgba(255, 255, 255, 0.15)', border: '1px solid #fca5a5', padding: '6px 14px', borderRadius: '6px', fontSize: '0.8rem', color: '#ffffff', fontWeight: 700 }}>
@@ -5071,11 +5037,8 @@ export function AdminDashboard({
               <Printer size={20} color="#fde68a" />
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#ffffff', fontWeight: 800 }}>
-                  धावक उपस्थिति एवं किट वितरण चेकलिस्ट (Printable Master A4)
+                  {isHindi ? 'धावक उपस्थिति एवं किट वितरण चेकलिस्ट' : 'Runner Attendance & Kit Checklist'}
                 </h3>
-                <div style={{ fontSize: '0.74rem', color: '#cbd5e1' }}>
-                  वर्तमान फ़िल्टर: {filteredList.length} धावक • ऑन-ग्राउंड ड्यूटी चेकलिस्ट
-                </div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
