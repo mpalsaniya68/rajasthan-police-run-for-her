@@ -2,6 +2,7 @@ import net from "net";
 import tls from "tls";
 import fs from "fs";
 import QRCode from "qrcode";
+import { generateEPassPngBuffer } from "./renderPassPng.js";
 
 /**
  * HTML Character Entity Escaping for injection prevention
@@ -375,7 +376,11 @@ export async function sendLiveConfirmationEmail({
   venue = "",
   expoLocation = "",
   districtName = "जयपुर",
-  epassUrl = "https://police.rajasthan.gov.in/epass/RJ-POL-2027-1F1381"
+  epassUrl = "https://police.rajasthan.gov.in/epass/RJ-POL-2027-1F1381",
+  mobile = "9829012345",
+  bloodGroup = "B+",
+  tshirtSize = "L",
+  emergencyContact = "Family (9829099887)"
 } = {}) {
   const distDetails = resolveDistrictDetails(districtName);
   const finalVenue = venue || distDetails.venue;
@@ -601,13 +606,36 @@ export async function sendLiveConfirmationEmail({
 </body>
 </html>`;
 
-  const attachmentBase64 = Buffer.from(printableEPassHtml, "utf8").toString("base64");
-  const attachments = [
-    {
+  const attachments = [];
+  try {
+    const pngBuffer = await generateEPassPngBuffer({
+      fullName: runnerName,
+      bibNumber,
+      category,
+      eventDate,
+      venue: finalVenue,
+      mobile,
+      email: recipient,
+      emergencyContact,
+      bloodGroup,
+      tshirtSize,
+      epassUrl
+    });
+    if (pngBuffer && Buffer.isBuffer(pngBuffer)) {
+      const cleanBib = String(bibNumber).replace(/[^a-zA-Z0-9_-]/g, "_");
+      attachments.push({
+        name: `RJ-POLICE-MARATHON-EPASS-${cleanBib}.png`,
+        content: pngBuffer.toString("base64")
+      });
+    }
+  } catch (passErr) {
+    console.warn("[E-Pass PNG Generation Warning]:", passErr.message);
+    const attachmentBase64 = Buffer.from(printableEPassHtml, "utf8").toString("base64");
+    attachments.push({
       name: `Rajasthan_Police_EPass_${bibNumber}.html`,
       content: attachmentBase64
-    }
-  ];
+    });
+  }
 
   // Professional, Elegant HTML Email (Clean Indian Government Marathon Branding)
   const htmlBody = `<!DOCTYPE html>
@@ -695,32 +723,27 @@ export async function sendLiveConfirmationEmail({
                   </td>
                 </tr>
 
-                <!-- Ticket Bottom: Inline Scannable QR -->
-                ${qrDataUrl ? `
+                <!-- Ticket Bottom: Official Attachment Notification & Online Access -->
                 <tr>
-                  <td style="padding:14px 20px 18px 20px;text-align:center;background-color:#ffffff;border-top:1px dashed #cbd5e1;">
-                    <div style="display:inline-block;border:1px solid #cbd5e1;border-radius:8px;padding:6px;background:#ffffff;">
-                      <img src="${qrDataUrl}" width="150" height="150" alt="E-Pass QR" style="display:block;" />
+                  <td style="padding:16px 20px 20px 20px;text-align:center;background-color:#ffffff;border-top:1px dashed #cbd5e1;">
+                    <div style="background-color:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:14px 16px;text-align:center;margin-bottom:14px;">
+                      <div style="font-size:14px;font-weight:700;color:#065f46;margin-bottom:4px;">
+                        📎 आपका आधिकारिक डिजिटल ई-पास (PNG फ़ाइल) संलग्न है
+                      </div>
+                      <div style="font-size:12px;color:#047857;line-height:1.5;">
+                        इस ईमेल के साथ नीचे <strong>RJ-POLICE-MARATHON-EPASS-${bibNumber}.png</strong> संलग्न है। आप इसे सीधे डाउनलोड करके अपने फोन या गैलरी में सुरक्षित रख सकते हैं।
+                      </div>
                     </div>
-                    <div style="font-size:12px;font-weight:700;color:#0a1c3d;margin-top:8px;">
-                      प्रवेश व किट संग्रह हेतु यह क्यूआर कोड दिखाएं
+                    <div style="font-size:12px;color:#64748b;margin-bottom:14px;">
+                      (एक्सपो में किट संग्रह व रेस दिवस प्रवेश हेतु ई-पास में दिया गया बारकोड/क्यूआर कोड स्कैन किया जाएगा)
                     </div>
-                    <div style="font-size:11px;color:#64748b;margin-top:2px;">
-                      (यह पास इस ईमेल के साथ फ़ाइल के रूप में भी संलग्न है)
-                    </div>
+                    <a href="${epassUrl}" style="display:inline-block;background-color:#0a1c3d;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;padding:12px 28px;border-radius:6px;border:1px solid #0a1c3d;">
+                      डिजिटल ई-पास ऑनलाइन खोलें एवं डाउनलोड करें →
+                    </a>
                   </td>
-                </tr>` : ''}
+                </tr>
 
               </table>
-            </td>
-          </tr>
-
-          <!-- Primary Action Button -->
-          <tr>
-            <td style="padding:0 28px 20px 28px;text-align:center;">
-              <a href="${epassUrl}" style="display:inline-block;background-color:#0a1c3d;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;padding:12px 28px;border-radius:6px;border:1px solid #0a1c3d;">
-                डिजिटल ई-पास ऑनलाइन खोलें →
-              </a>
             </td>
           </tr>
 

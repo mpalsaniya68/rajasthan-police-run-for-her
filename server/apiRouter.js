@@ -1282,7 +1282,10 @@ export async function handleApiRequest(req, res) {
         bibNumber,
         categoryName: catName,
         certificateId,
-        districtName: distName
+        districtName: distName,
+        bloodGroup: data.bloodGroup,
+        tshirtSize: data.tshirtSize,
+        emergencyContact: data.emergencyContact
       }).catch(err => console.error("[Notification Dispatch Error]:", err));
 
       return json({

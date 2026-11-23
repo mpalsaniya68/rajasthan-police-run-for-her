@@ -126,7 +126,18 @@ export async function dispatchGatewaySms({ mobile, message, templateId = "" }) {
  * Dispatch Official Runner Registration SMS / WhatsApp
  */
 export async function sendRegistrationNotification(participant) {
-  const { fullName, mobile, email, bibNumber, categoryName, certificateId, districtName } = participant;
+  const {
+    fullName,
+    mobile,
+    email,
+    bibNumber,
+    categoryName,
+    certificateId,
+    districtName,
+    bloodGroup,
+    tshirtSize,
+    emergencyContact
+  } = participant;
 
   const smsText = `राजस्थान पुलिस मैराथन 2027 'RUN FOR HER': प्रिय ${fullName}, आपका पंजीकरण सफल रहा! पंजीकरण संख्या: ${bibNumber}, श्रेणी: ${categoryName}। ई-पास: https://police.rajasthan.gov.in/epass/${certificateId} | सहायता: 112/1090`;
 
@@ -146,7 +157,11 @@ export async function sendRegistrationNotification(participant) {
         bibNumber,
         category: categoryName,
         districtName,
-        epassUrl
+        epassUrl,
+        mobile,
+        bloodGroup,
+        tshirtSize,
+        emergencyContact
       });
     } catch (eErr) {
       console.error("[Email Dispatch Error]:", eErr.message);
