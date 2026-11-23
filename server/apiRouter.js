@@ -1275,7 +1275,7 @@ export async function handleApiRequest(req, res) {
       }
 
       // Automated Notification Dispatch (SMS / WhatsApp / Email)
-      sendRegistrationNotification({
+      await sendRegistrationNotification({
         fullName: data.fullName,
         mobile: data.mobile,
         email: data.email,

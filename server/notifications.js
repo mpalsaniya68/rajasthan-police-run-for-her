@@ -139,20 +139,18 @@ export async function sendRegistrationNotification(participant) {
   let emailResult = { simulated: true, sent: false };
   if (email && email.trim()) {
     try {
-      if (email.endsWith("@rajpolice.gov.in") || email.endsWith("@rajasthan.gov.in")) {
-        emailResult = await sendLiveConfirmationEmail({
-          recipient: email.trim(),
-          runnerName: fullName,
-          bibNumber,
-          category: categoryName,
-          districtName
-        });
-      } else {
-        console.log(`[Email Dispatch (Simulated)]: Registration confirmation queued for ${email} (Bib: ${bibNumber})`);
-        emailResult = { simulated: true, sent: true, recipient: email };
-      }
+      const epassUrl = `https://police.rajasthan.gov.in/epass/${certificateId}`;
+      emailResult = await sendLiveConfirmationEmail({
+        recipient: email.trim(),
+        runnerName: fullName,
+        bibNumber,
+        category: categoryName,
+        districtName,
+        epassUrl
+      });
     } catch (eErr) {
       console.error("[Email Dispatch Error]:", eErr.message);
+      emailResult = { success: false, error: eErr.message, simulated: true };
     }
   }
 

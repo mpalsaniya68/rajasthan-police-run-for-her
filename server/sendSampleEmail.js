@@ -1,7 +1,85 @@
 import net from "net";
+import tls from "tls";
 
 /**
- * Brevo REST API Dispatcher
+ * HTML Character Entity Escaping for injection prevention
+ */
+export function escapeHtml(text = "") {
+  return String(text ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/**
+ * Authoritative District Venue & Kit Expo Mapping
+ */
+export const DISTRICT_VENUE_MAP = {
+  jaipur: {
+    venue: "अल्बर्ट हॉल, रामनिवास बाग, जयपुर",
+    venueEn: "Albert Hall Museum, Ram Niwas Garden, Jaipur",
+    expoLocation: "अल्बर्ट हॉल परिसर, रामनिवास बाग, जयपुर",
+    expoLocationEn: "Albert Hall Complex, Ram Niwas Garden, Jaipur"
+  },
+  udaipur: {
+    venue: "फतेह सागर पाल, उदयपुर",
+    venueEn: "Fateh Sagar Paal, Udaipur",
+    expoLocation: "फतेह सागर पाल / पुलिस लाइन ग्राउंड, उदयपुर",
+    expoLocationEn: "Fateh Sagar Paal / Police Lines Ground, Udaipur"
+  },
+  jodhpur: {
+    venue: "उम्मेद स्टेडियम, जोधपुर",
+    venueEn: "Umaid Stadium, Jodhpur",
+    expoLocation: "उम्मेद स्टेडियम / पुलिस लाइन, जोधपुर",
+    expoLocationEn: "Umaid Stadium / Police Lines, Jodhpur"
+  },
+  kota: {
+    venue: "किशोर सागर तालाब प्रोमेनेड, कोटा",
+    venueEn: "Kishore Sagar Talab Promenade, Kota",
+    expoLocation: "किशोर सागर / पुलिस लाइन, कोटा",
+    expoLocationEn: "Kishore Sagar / Police Lines, Kota"
+  }
+};
+
+/**
+ * Resolve District-Specific Venue and Expo Details
+ */
+export function resolveDistrictDetails(districtName = "") {
+  const clean = String(districtName || "").toLowerCase().trim();
+  if (clean.includes("jaipur") || clean.includes("जयपुर") || clean.includes("jpr")) {
+    return DISTRICT_VENUE_MAP.jaipur;
+  }
+  if (clean.includes("udaipur") || clean.includes("उदयपुर") || clean.includes("udr")) {
+    return DISTRICT_VENUE_MAP.udaipur;
+  }
+  if (clean.includes("jodhpur") || clean.includes("जोधपुर") || clean.includes("jdh")) {
+    return DISTRICT_VENUE_MAP.jodhpur;
+  }
+  if (clean.includes("kota") || clean.includes("कोटा") || clean.includes("kta")) {
+    return DISTRICT_VENUE_MAP.kota;
+  }
+  const distDisplay = districtName ? String(districtName).trim() : "जिला मुख्यालय";
+  return {
+    venue: `जिला खेल स्टेडियम / पुलिस लाइन, ${distDisplay}`,
+    venueEn: `District Stadium / Police Lines, ${distDisplay}`,
+    expoLocation: `जिला पुलिस लाइन / आयोजन स्थल, ${distDisplay}`,
+    expoLocationEn: `District Police Lines / Event Venue, ${distDisplay}`
+  };
+}
+
+/**
+ * Normalize line endings to CRLF and encode as 7-bit safe base64 with RFC 2045 line wrapping (76 chars)
+ */
+function toBase64MimeBody(content = "") {
+  const crlfNormalized = String(content || "").replace(/\r?\n/g, "\r\n");
+  const b64 = Buffer.from(crlfNormalized, "utf8").toString("base64");
+  return b64.replace(/(.{76})/g, "$1\r\n").trim();
+}
+
+/**
+ * Brevo REST API Dispatcher (HTTPS / TLS 1.3)
  */
 async function sendViaBrevo({ brevoApiKey, recipient, runnerName, subject, htmlBody, plainText }) {
   const senderEmail = (process.env.EMAIL_SENDER || "rajpolicemarathon@rajpolice.gov.in").trim();
@@ -30,7 +108,7 @@ async function sendViaBrevo({ brevoApiKey, recipient, runnerName, subject, htmlB
 }
 
 /**
- * Resend REST API Dispatcher
+ * Resend REST API Dispatcher (HTTPS / TLS 1.3)
  */
 async function sendViaResend({ resendApiKey, recipient, subject, htmlBody, plainText }) {
   const fromEmail = (process.env.RESEND_FROM || "Rajasthan Police Marathon <onboarding@resend.dev>").trim();
@@ -58,91 +136,210 @@ async function sendViaResend({ resendApiKey, recipient, subject, htmlBody, plain
 }
 
 /**
- * Internal Rajasthan Gov State SMTP Server Dispatcher
+ * Internal Rajasthan Gov State SMTP Server Dispatcher with Enforced STARTTLS / TLS
  */
-async function sendViaInternalGovSmtp({ recipient, sender, subject, htmlBody, plainText }) {
-  const boundary = `----=_Part_${Date.now()}`;
-  const messageId = `<${Date.now()}.rajpol.${Math.random().toString(36).substring(2)}@police.rajasthan.gov.in>`;
-  const rawDate = new Date().toUTCString();
-
-  const mimeMessage = [
-    `From: =?UTF-8?B?${Buffer.from("राजस्थान पुलिस मैराथन 2027").toString("base64")}?= <${sender}>`,
-    `To: <${recipient}>`,
-    `Reply-To: <${sender}>`,
-    `Subject: =?UTF-8?B?${Buffer.from(subject).toString("base64")}?=`,
-    `Date: ${rawDate}`,
-    `Message-ID: ${messageId}`,
-    `MIME-Version: 1.0`,
-    `Content-Type: multipart/alternative; boundary="${boundary}"`,
-    "",
-    `--${boundary}`,
-    `Content-Type: text/plain; charset=UTF-8`,
-    `Content-Transfer-Encoding: 8bit`,
-    "",
-    plainText,
-    "",
-    `--${boundary}`,
-    `Content-Type: text/html; charset=UTF-8`,
-    `Content-Transfer-Encoding: 8bit`,
-    "",
-    htmlBody,
-    "",
-    `--${boundary}--`,
-    ""
-  ].join("\r\n");
+async function sendViaInternalGovSmtp({ recipient, sender, subject, mimeMessage, messageId, htmlBody, plainText }) {
+  const host = (process.env.SMTP_HOST || "ex-cipp.rajasthan.gov.in").trim();
+  const port = parseInt(process.env.SMTP_PORT || "25", 10);
+  const isImplicitTls = port === 465 || process.env.SMTP_SECURE === "true";
 
   return new Promise((resolve, reject) => {
-    console.log(`[SMTP] Connecting to Rajasthan Gov Mail Server ex-cipp.rajasthan.gov.in:25 ...`);
-    const client = net.createConnection({ host: "ex-cipp.rajasthan.gov.in", port: 25, timeout: 15000 }, () => {
-      console.log(`[SMTP] ✓ Connected to ex-cipp.rajasthan.gov.in:25`);
-    });
+    let settled = false;
+    let messageAccepted = false;
 
-    let currentStep = 0;
-
-    function sendCmd(cmd) {
-      client.write(cmd + "\r\n");
+    function safeReject(err) {
+      if (!settled) {
+        settled = true;
+        reject(err instanceof Error ? err : new Error(String(err)));
+      }
     }
 
-    client.on("data", (data) => {
-      const resp = data.toString().trim();
-
-      if (currentStep === 0 && resp.startsWith("220")) {
-        currentStep = 1;
-        sendCmd("HELO police.rajasthan.gov.in");
-      } else if (currentStep === 1 && resp.startsWith("250")) {
-        currentStep = 2;
-        sendCmd(`MAIL FROM:<${sender}>`);
-      } else if (currentStep === 2 && resp.startsWith("250")) {
-        currentStep = 3;
-        sendCmd(`RCPT TO:<${recipient}>`);
-      } else if (currentStep === 3 && resp.startsWith("250")) {
-        currentStep = 4;
-        sendCmd("DATA");
-      } else if (currentStep === 4 && resp.startsWith("354")) {
-        currentStep = 5;
-        client.write(mimeMessage + "\r\n.\r\n");
-      } else if (currentStep === 5 && resp.startsWith("250")) {
-        console.log(`[SMTP] ✓ Delivery confirmed by state mail exchanger: ${resp}`);
-        sendCmd("QUIT");
-        client.end();
-        resolve({ success: true, messageId, response: resp, htmlBody, plainText });
-      } else if (resp.startsWith("221")) {
-        client.end();
-      } else if (!resp.startsWith("250") && !resp.startsWith("220") && !resp.startsWith("354")) {
-        console.error(`[SMTP Error]: ${resp}`);
-        client.end("QUIT\r\n");
-        reject(new Error(`SMTP Rejected: ${resp}`));
+    function safeResolve(val) {
+      if (!settled) {
+        settled = true;
+        resolve(val);
       }
-    });
+    }
 
-    client.on("timeout", () => {
-      client.destroy();
-      reject(new Error("SMTP connection timed out"));
-    });
+    let activeSocket = null;
+    let buffer = "";
+    let state = isImplicitTls ? "SECURE_EHLO" : "CONNECT";
+    let multilineLines = [];
 
-    client.on("error", (err) => {
-      reject(err);
-    });
+    function sendCmd(cmd) {
+      if (activeSocket && !activeSocket.destroyed) {
+        activeSocket.write(cmd + "\r\n");
+      }
+    }
+
+    function onCompleteReply(code, lines, fullReply) {
+      if (state === "CONNECT") {
+        if (code === 220) {
+          state = "INITIAL_EHLO";
+          sendCmd("EHLO police.rajasthan.gov.in");
+        } else {
+          safeReject(new Error(`SMTP connection banner error: ${fullReply}`));
+          sendCmd("QUIT");
+          activeSocket.end();
+        }
+      } else if (state === "INITIAL_EHLO") {
+        if (code === 250) {
+          const supportsStartTls = lines.some((l) => l.toUpperCase().includes("STARTTLS"));
+          if (!supportsStartTls) {
+            safeReject(
+              new Error(
+                "Secure transport unavailable: SMTP server does not advertise STARTTLS. Refusing to transmit participant data over unencrypted transport."
+              )
+            );
+            sendCmd("QUIT");
+            activeSocket.end();
+            return;
+          }
+          state = "STARTTLS";
+          sendCmd("STARTTLS");
+        } else {
+          safeReject(new Error(`EHLO failed before STARTTLS: ${fullReply}`));
+          sendCmd("QUIT");
+          activeSocket.end();
+        }
+      } else if (state === "STARTTLS") {
+        if (code === 220) {
+          state = "UPGRADING_TLS";
+          const plainSocket = activeSocket;
+          plainSocket.removeAllListeners("data");
+          buffer = "";
+          multilineLines = [];
+
+          const tlsSocket = tls.connect(
+            {
+              socket: plainSocket,
+              host: host,
+              servername: host
+            },
+            () => {
+              activeSocket = tlsSocket;
+              attachSocketListeners(tlsSocket);
+              state = "SECURE_EHLO";
+              sendCmd("EHLO police.rajasthan.gov.in");
+            }
+          );
+
+          tlsSocket.on("error", (tlsErr) => {
+            safeReject(new Error(`STARTTLS negotiation failed: ${tlsErr.message}`));
+          });
+        } else {
+          safeReject(new Error(`STARTTLS rejected by SMTP server (${code}): ${fullReply}`));
+          sendCmd("QUIT");
+          activeSocket.end();
+        }
+      } else if (state === "SECURE_EHLO") {
+        if (code === 250) {
+          state = "MAIL_FROM";
+          sendCmd(`MAIL FROM:<${sender}>`);
+        } else {
+          safeReject(new Error(`Secure EHLO failed: ${fullReply}`));
+          sendCmd("QUIT");
+          activeSocket.end();
+        }
+      } else if (state === "MAIL_FROM") {
+        if (code === 250) {
+          state = "RCPT_TO";
+          sendCmd(`RCPT TO:<${recipient}>`);
+        } else {
+          safeReject(new Error(`MAIL FROM rejected (${code}): ${fullReply}`));
+          sendCmd("QUIT");
+          activeSocket.end();
+        }
+      } else if (state === "RCPT_TO") {
+        if (code === 250) {
+          state = "DATA";
+          sendCmd("DATA");
+        } else {
+          safeReject(new Error(`RCPT TO rejected (${code}): ${fullReply}`));
+          sendCmd("QUIT");
+          activeSocket.end();
+        }
+      } else if (state === "DATA") {
+        if (code === 354) {
+          state = "DATA_SENT";
+          activeSocket.write(mimeMessage + "\r\n.\r\n");
+        } else {
+          safeReject(new Error(`DATA command rejected (${code}): ${fullReply}`));
+          sendCmd("QUIT");
+          activeSocket.end();
+        }
+      } else if (state === "DATA_SENT") {
+        if (code === 250) {
+          messageAccepted = true;
+          state = "QUIT";
+          sendCmd("QUIT");
+          safeResolve({ success: true, messageId, response: fullReply, htmlBody, plainText });
+        } else {
+          safeReject(new Error(`Message body rejected (${code}): ${fullReply}`));
+          sendCmd("QUIT");
+          activeSocket.end();
+        }
+      } else if (state === "QUIT") {
+        activeSocket.end();
+      }
+    }
+
+    function attachSocketListeners(sock) {
+      sock.on("data", (chunk) => {
+        buffer += chunk.toString("utf8");
+        while (buffer.includes("\r\n")) {
+          const idx = buffer.indexOf("\r\n");
+          const line = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 2);
+
+          multilineLines.push(line);
+          const matchContinuation = /^(\d{3})-(.*)$/.exec(line);
+          const matchTerminator = /^(\d{3})(?: (.*))?$/.exec(line);
+
+          if (!matchContinuation && matchTerminator) {
+            const statusCode = parseInt(matchTerminator[1], 10);
+            const collectedLines = [...multilineLines];
+            multilineLines = [];
+            onCompleteReply(statusCode, collectedLines, line);
+          }
+        }
+      });
+
+      sock.on("timeout", () => {
+        sock.destroy();
+        safeReject(new Error("SMTP socket connection timed out"));
+      });
+
+      sock.on("error", (err) => {
+        safeReject(err);
+      });
+
+      sock.on("end", () => {
+        if (!messageAccepted) {
+          safeReject(new Error("SMTP server closed connection before message acceptance"));
+        }
+      });
+
+      sock.on("close", () => {
+        if (messageAccepted) {
+          safeResolve({ success: true, messageId, htmlBody, plainText });
+        } else {
+          safeReject(new Error("SMTP socket closed before message was accepted"));
+        }
+      });
+    }
+
+    if (isImplicitTls) {
+      activeSocket = tls.connect({ host, port, servername: host }, () => {
+        attachSocketListeners(activeSocket);
+      });
+      activeSocket.on("error", safeReject);
+    } else {
+      activeSocket = net.createConnection({ host, port, timeout: 15000 }, () => {
+        attachSocketListeners(activeSocket);
+      });
+      activeSocket.on("error", safeReject);
+    }
   });
 }
 
@@ -156,9 +353,16 @@ export async function sendLiveConfirmationEmail({
   bibNumber = "RJ-21K-1008",
   category = "21 KM हाफ मैराथन (Jaipur Flagship)",
   eventDate = "रविवार, 3 जनवरी 2027 (प्रातः 05:30 AM)",
-  venue = "अल्बर्ट हॉल, रामनिवास बाग, जयपुर",
+  venue = "",
+  expoLocation = "",
+  districtName = "जयपुर",
   epassUrl = "https://police.rajasthan.gov.in/epass/RJ-POL-2027-1F1381"
 } = {}) {
+  const distDetails = resolveDistrictDetails(districtName);
+  const finalVenue = venue || distDetails.venue;
+  const finalExpo = expoLocation || distDetails.expoLocation;
+  const safeRunnerName = escapeHtml(runnerName);
+
   const subject = `पंजीकरण पुष्टि | राजस्थान पुलिस मैराथन 2027 (बिब: ${bibNumber})`;
 
   const htmlBody = `<!DOCTYPE html>
@@ -197,7 +401,7 @@ export async function sendLiveConfirmationEmail({
                   ✓ पंजीकरण सफलतापूर्वक स्वीकृत! (Registration Confirmed)
                 </div>
                 <div style="color:#047857;font-size:13px;margin-top:4px;">
-                  आदरणीय <strong>${runnerName}</strong>, राजस्थान पुलिस के राज्यव्यापी जन-अभियान में आपकी सहभागिता दर्ज हो चुकी है।
+                  आदरणीय <strong>${safeRunnerName}</strong>, राजस्थान पुलिस के राज्यव्यापी जन-अभियान में आपकी सहभागिता दर्ज हो चुकी है।
                 </div>
               </div>
             </td>
@@ -212,7 +416,7 @@ export async function sendLiveConfirmationEmail({
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="6" border="0">
                       <tr>
                         <td width="40%" style="color:#64748b;font-size:13px;font-weight:700;">प्रतिभागी का नाम:</td>
-                        <td width="60%" style="color:#0f172a;font-size:14px;font-weight:800;">${runnerName}</td>
+                        <td width="60%" style="color:#0f172a;font-size:14px;font-weight:800;">${safeRunnerName}</td>
                       </tr>
                       <tr>
                         <td style="color:#64748b;font-size:13px;font-weight:700;">पंजीकरण / बिब संख्या:</td>
@@ -228,7 +432,7 @@ export async function sendLiveConfirmationEmail({
                       </tr>
                       <tr>
                         <td style="color:#64748b;font-size:13px;font-weight:700;">आयोजन स्थल:</td>
-                        <td style="color:#0f172a;font-size:13px;font-weight:700;">${venue}</td>
+                        <td style="color:#0f172a;font-size:13px;font-weight:700;">${finalVenue}</td>
                       </tr>
                     </table>
                   </td>
@@ -258,7 +462,7 @@ export async function sendLiveConfirmationEmail({
                 </div>
                 <div style="color:#78350f;font-size:12px;line-height:1.5;">
                   • <strong>एक्सपो दिनांक:</strong> 1 एवं 2 जनवरी 2027 (प्रातः 10:00 AM से सायं 06:00 PM)<br>
-                  • <strong>स्थल:</strong> अल्बर्ट हॉल परिसर, रामनिवास बाग, जयपुर<br>
+                  • <strong>स्थल:</strong> ${finalExpo}<br>
                   • <strong>आवश्यक दस्तावेज:</strong> ई-पास (मोबाइल में) एवं कोई भी सरकारी फोटो पहचान पत्र (आधार/वोटर ID)।
                 </div>
               </div>
@@ -298,14 +502,14 @@ export async function sendLiveConfirmationEmail({
 • पंजीकरण / बिब संख्या: ${bibNumber}
 • श्रेणी: ${category}
 • दिनांक व समय: ${eventDate}
-• स्थल: ${venue}
+• स्थल: ${finalVenue}
 
 डिजिटल ई-पास डाउनलोड लिंक:
 ${epassUrl}
 
 बिब एक्सपो एवं किट वितरण:
 1 व 2 जनवरी 2027 (प्रातः 10:00 AM से सायं 06:00 PM)
-स्थान: अल्बर्ट हॉल परिसर, जयपुर
+स्थान: ${finalExpo}
 
 हेल्पलाइन: 112 / 1090
 राजस्थान पुलिस मुख्यालय, जयपुर`;
@@ -322,9 +526,41 @@ ${epassUrl}
     return await sendViaResend({ resendApiKey, recipient, subject, htmlBody, plainText });
   }
 
-  // 3. If internal Rajasthan Gov domain, dispatch via direct state Intranet SMTP
+  // 3. If internal Rajasthan Gov domain, dispatch via state SMTP relay with enforced TLS
   if (recipient.endsWith("@rajpolice.gov.in") || recipient.endsWith("@rajasthan.gov.in")) {
-    return await sendViaInternalGovSmtp({ recipient, sender, subject, htmlBody, plainText });
+    const boundary = `----=_Part_${Date.now()}`;
+    const messageId = `<${Date.now()}.rajpol.${Math.random().toString(36).substring(2)}@police.rajasthan.gov.in>`;
+    const rawDate = new Date().toUTCString();
+    const base64PlainText = toBase64MimeBody(plainText);
+    const base64HtmlBody = toBase64MimeBody(htmlBody);
+
+    const mimeMessage = [
+      `From: =?UTF-8?B?${Buffer.from("राजस्थान पुलिस मैराथन 2027").toString("base64")}?= <${sender}>`,
+      `To: <${recipient}>`,
+      `Reply-To: <${sender}>`,
+      `Subject: =?UTF-8?B?${Buffer.from(subject).toString("base64")}?=`,
+      `Date: ${rawDate}`,
+      `Message-ID: ${messageId}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: multipart/alternative; boundary="${boundary}"`,
+      "",
+      `--${boundary}`,
+      `Content-Type: text/plain; charset=UTF-8`,
+      `Content-Transfer-Encoding: base64`,
+      "",
+      base64PlainText,
+      "",
+      `--${boundary}`,
+      `Content-Type: text/html; charset=UTF-8`,
+      `Content-Transfer-Encoding: base64`,
+      "",
+      base64HtmlBody,
+      "",
+      `--${boundary}--`,
+      ""
+    ].join("\r\n");
+
+    return await sendViaInternalGovSmtp({ recipient, sender, subject, mimeMessage, messageId, htmlBody, plainText });
   }
 
   // 4. Default Simulated Fallback
