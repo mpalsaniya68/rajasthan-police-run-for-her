@@ -4791,25 +4791,21 @@ export function AdminDashboard({
                         <div style={{
                           position: 'relative',
                           display: 'inline-block',
+                          fontSize: '2.4rem',
+                          lineHeight: 1.0,
+                          fontWeight: 400,
+                          color: '#0a1c3d',
+                          fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
+                          padding: '0 24px',
                           margin: '0 auto 10px auto',
                           textAlign: 'center'
                         }}>
-                          <div style={{
-                            fontSize: '2.4rem',
-                            lineHeight: 1.0,
-                            fontWeight: 400,
-                            color: '#0a1c3d',
-                            fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
-                            display: 'inline-block',
-                            padding: '0 24px',
-                            position: 'relative',
-                            zIndex: 2
-                          }}>
+                          <span style={{ position: 'relative', zIndex: 2 }}>
                             {formatLocalizedName(previewCertRunner.fullName, false)}
-                          </div>
+                          </span>
                           <div style={{
                             position: 'absolute',
-                            bottom: '0.28em',
+                            bottom: '0.22em',
                             left: '0',
                             right: '0',
                             height: '2px',

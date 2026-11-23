@@ -889,25 +889,21 @@ export function CertificateHub({ registrations = [] }) {
                     <div style={{
                       position: 'relative',
                       display: 'inline-block',
+                      fontSize: 'clamp(2.6rem, 4.4vw, 3.4rem)',
+                      lineHeight: 1.0,
+                      fontWeight: 400,
+                      color: '#0a1c3d',
+                      fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
+                      padding: '0 32px',
                       margin: '0 auto 6px auto',
                       textAlign: 'center'
                     }}>
-                      <div style={{
-                        fontSize: 'clamp(2.6rem, 4.4vw, 3.4rem)',
-                        lineHeight: 1.0,
-                        fontWeight: 400,
-                        color: '#0a1c3d',
-                        fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
-                        display: 'inline-block',
-                        padding: '0 32px',
-                        position: 'relative',
-                        zIndex: 2
-                      }}>
+                      <span style={{ position: 'relative', zIndex: 2 }}>
                         {formatLocalizedName(selectedRunner.fullName, false)}
-                      </div>
+                      </span>
                       <div style={{
                         position: 'absolute',
-                        bottom: '0.28em',
+                        bottom: '0.22em',
                         left: '0',
                         right: '0',
                         height: '2.5px',
