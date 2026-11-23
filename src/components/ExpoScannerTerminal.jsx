@@ -2208,7 +2208,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                   >
                     <PackageCheck size={20} />
                     <span>
-                      {isHandingOver ? 'वितरण दर्ज हो रहा है...' : (handoverVerification.verified ? '✓ किट व RFID बिब हैंडओवर करें (Confirm Delivery)' : '🔒 सत्यापन प्रतीक्षित (Verify OTP / ID First)')}
+                      {isHandingOver ? 'वितरण दर्ज हो रहा है...' : (handoverVerification.verified ? '✓ किट व RFID बिब हैंडओवर करें (Confirm Delivery)' : '🔒 सत्यापन प्रतीक्षित (Verify Mobile OTP First)')}
                     </span>
                   </button>
                 )}
