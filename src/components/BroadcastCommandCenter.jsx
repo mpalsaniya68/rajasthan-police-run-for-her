@@ -10,9 +10,9 @@ export function getBroadcastCampaigns(isDistrictRole, districtName = "जयप�
     return [
       {
         id: "CONFIRMATION",
-        badge: "रजिस्ट्रेशन पुष्टि",
-        title: "पंजीकरण एवं ई-पास पुष्टि",
-        desc: "नये पंजीकृत धावकों को ई-पास, पंजीकरण संख्या व स्वागत संदेश प्रेषण",
+        badge: "Registration Confirmed",
+        title: "Registration & E-Pass Confirmation",
+        desc: "Send e-pass, registration number & welcome notice to runners",
         icon: "🎫",
         defaultChannel: "BOTH",
         defaultAudience: "all",
@@ -34,9 +34,9 @@ export function getBroadcastCampaigns(isDistrictRole, districtName = "जयप�
       },
       {
         id: "PROMOTION",
-        badge: "प्रमोशन व जागरूकता",
-        title: "नारी सुरक्षा जन-आंदोलन एवं मैराथन आमंत्रण",
-        desc: "महिला सुरक्षा, सम्मान एवं सशक्तिकरण संकल्प का जिला स्तरीय प्रचार",
+        badge: "Awareness & Invite",
+        title: "Women Safety & Marathon Invite",
+        desc: "Statewide public awareness and invitation notice",
         icon: "📣",
         defaultChannel: "WHATSAPP",
         defaultAudience: "all",
@@ -56,9 +56,9 @@ export function getBroadcastCampaigns(isDistrictRole, districtName = "जयप�
       },
       {
         id: "DISTRICT_EVENT_REMINDER",
-        badge: "दौड़ स्थल सूचना",
-        title: "दौड़ स्थल, समय एवं ई-पास सूचना",
-        desc: "पंजीकृत धावकों को रिपोर्टिंग स्थल, समय एवं डिजिटल ई-पास साथ लाने की सूचना",
+        badge: "Venue & Schedule",
+        title: "Venue, Timing & E-Pass Advisory",
+        desc: "Reporting time, district venue and gate check instructions",
         icon: "📍",
         defaultChannel: "BOTH",
         defaultAudience: "all",
@@ -76,9 +76,9 @@ export function getBroadcastCampaigns(isDistrictRole, districtName = "जयप�
       },
       {
         id: "RACE_REMINDER",
-        badge: "रेस दिवस एडवाइजरी",
-        title: "रेस दिवस समय एवं सुरक्षा/मार्ग एडवाइजरी",
-        desc: "रेस दिवस रिपोर्टिंग, फ्लैग-ऑफ व रूट सुरक्षा सूचना",
+        badge: "Race Day Advisory",
+        title: "Race Day Schedule & Route Advisory",
+        desc: "Race day reporting, flag-off and security notice",
         icon: "⚡",
         defaultChannel: "BOTH",
         defaultAudience: "all",
@@ -96,9 +96,9 @@ export function getBroadcastCampaigns(isDistrictRole, districtName = "जयप�
       },
       {
         id: "CUSTOM",
-        badge: "कस्टम संदेश",
-        title: "विशेष संदेश (Custom Broadcast)",
-        desc: "अपनी आवश्यकतानुसार व्यक्तिगत टेक्स्ट व टैग्स के साथ सीधा संदेश भेजें",
+        badge: "Custom Message",
+        title: "Custom Broadcast Message",
+        desc: "Direct message with custom text and runner tags",
         icon: "✍️",
         defaultChannel: "BOTH",
         defaultAudience: "all",
@@ -111,9 +111,9 @@ export function getBroadcastCampaigns(isDistrictRole, districtName = "जयप�
   return [
     {
       id: "CONFIRMATION",
-      badge: "रजिस्ट्रेशन पुष्टि",
-      title: "पंजीकरण एवं ई-पास पुष्टि",
-      desc: "नये पंजीकृत धावकों को ई-पास, पंजीकरण संख्या व स्वागत संदेश प्रेषण",
+      badge: "Registration Confirmed",
+      title: "Registration & E-Pass Confirmation",
+      desc: "Send e-pass, registration number & welcome notice to runners",
       icon: "🎫",
       defaultChannel: "BOTH",
       defaultAudience: "all",
@@ -136,9 +136,9 @@ export function getBroadcastCampaigns(isDistrictRole, districtName = "जयप�
     },
     {
       id: "PROMOTION",
-      badge: "प्रमोशन व जागरूकता",
-      title: "नारी सुरक्षा जन-आंदोलन एवं मैराथन आमंत्रण",
-      desc: "महिला सुरक्षा, सम्मान एवं सशक्तिकरण संकल्प का राज्यव्यापी प्रचार",
+      badge: "Awareness & Invite",
+      title: "Women Safety Movement & Invite",
+      desc: "Statewide public awareness and invitation notice",
       icon: "📣",
       defaultChannel: "WHATSAPP",
       defaultAudience: "all",
@@ -158,9 +158,9 @@ export function getBroadcastCampaigns(isDistrictRole, districtName = "जयप�
     },
     {
       id: "EXPO_KIT_REMINDER",
-      badge: "एक्सपो किट पिक-अप",
-      title: "एक्सपो किट (टी-शर्ट एवं RFID) संग्रह रिमाइंडर",
-      desc: "विशेषकर उन धावकों को रिमाइंडर जिनकी किट अभी तक पेंडिंग है (जयपुर)",
+      badge: "Expo Kit Pick-up",
+      title: "Expo Kit (T-Shirt & RFID) Reminder",
+      desc: "Reminder for runners whose kit pick-up is pending (Jaipur)",
       icon: "👕",
       defaultChannel: "BOTH",
       defaultAudience: "kit_pending",
@@ -178,9 +178,9 @@ export function getBroadcastCampaigns(isDistrictRole, districtName = "जयप�
     },
     {
       id: "RACE_REMINDER",
-      badge: "रेस दिवस एडवाइजरी",
-      title: "रेस दिवस फ्लैग-ऑफ समय एवं रूट/पार्किंग एडवाइजरी",
-      desc: "रेस से 1-2 दिन पूर्व रिपोर्टिंग, फ्लैग-ऑफ, वेन्यू व पार्किंग सूचना",
+      badge: "Race Day Advisory",
+      title: "Race Day Flag-off & Route Advisory",
+      desc: "Reporting, flag-off, venue and parking instructions",
       icon: "⚡",
       defaultChannel: "BOTH",
       defaultAudience: "all",
@@ -199,9 +199,9 @@ export function getBroadcastCampaigns(isDistrictRole, districtName = "जयप�
     },
     {
       id: "CUSTOM",
-      badge: "कस्टम संदेश",
-      title: "विशेष संदेश (Custom Broadcast)",
-      desc: "अपनी आवश्यकतानुसार व्यक्तिगत टेक्स्ट व टैग्स के साथ सीधा संदेश भेजें",
+      badge: "Custom Message",
+      title: "Custom Broadcast Message",
+      desc: "Direct message with custom text and runner tags",
       icon: "✍️",
       defaultChannel: "BOTH",
       defaultAudience: "all",
@@ -357,16 +357,16 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
   // Send Broadcast Handler
   const handleDispatch = async () => {
     if (!title.trim() || !message.trim()) {
-      alert("कृपया शीर्षक एवं संदेश दोनों भरें।");
+      alert("Please provide both Campaign Title and Message content.");
       return;
     }
 
     if (recipientsCount === 0) {
-      if (!window.confirm("चयनित फ़िल्टर के अनुसार वर्तमान में 0 धावक मेल खाते हैं। क्या आप फिर भी परीक्षण हेतु सर्वर पर प्रसारण दर्ज करना चाहते हैं?")) {
+      if (!window.confirm("Currently 0 runners match the selected filter. Do you still wish to record this test broadcast on the server?")) {
         return;
       }
     } else {
-      const confirmText = `⚠️ प्रसारण की पुष्टि:\n\n• अभियान: ${title}\n• डिलीवरी चैनल: ${channel === 'BOTH' ? 'WhatsApp + SMS': channel}\n• कुल लक्षित धावक: ${recipientsCount} धावक\n\nक्या आप यह संदेश तुरंत प्रेषित करना चाहते हैं?`;
+      const confirmText = `⚠️ Confirm Broadcast:\n\n• Campaign: ${title}\n• Channel: ${channel === 'BOTH' ? 'WhatsApp + SMS': channel}\n• Targeted Runners: ${recipientsCount}\n\nDo you wish to dispatch this broadcast immediately?`;
       if (!window.confirm(confirmText)) return;
     }
 
@@ -388,7 +388,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
       if (res && res.success) {
         setBroadcastResult({
           type: "success",
-          message: res.message || `संदेश सफलतापूर्वक ${res.recipientsCount || recipientsCount} धावकों को प्रेषित किया गया।`,
+          message: res.message || `Broadcast dispatched successfully to ${res.recipientsCount || recipientsCount} runners.`,
           channel: res.channel,
           count: res.recipientsCount || recipientsCount,
           time: new Date().toLocaleTimeString()
@@ -398,13 +398,13 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
       } else {
         setBroadcastResult({
           type: "error",
-          message: res?.error || "प्रसारण भेजने में सर्वर त्रुटि हुई।"
+          message: res?.error || "Server error while sending broadcast."
         });
       }
     } catch (err) {
       setBroadcastResult({
         type: "error",
-        message: "सर्वर से कनेक्ट करने में त्रुटि।"
+        message: "Network error connecting to broadcast service."
       });
     } finally {
       setIsSending(false);
@@ -429,19 +429,19 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <h2 style={{ fontSize: '1.15rem', fontWeight: 900, margin: 0, color: 'var(--police-navy-950)' }}>
-            📢 WhatsApp एवं SMS प्रसारण
+            📢 WhatsApp & SMS Broadcast
           </h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', fontSize: '0.8rem', fontWeight: 700 }}>
             <span style={{ background: '#f1f5f9', color: '#0f172a', padding: '4px 10px', borderRadius: '6px' }}>
-              कुल: {participants.length}
+              Total: {participants.length}
             </span>
             {!isDistrictRole && (
               <span style={{ background: '#fef9c3', color: '#854d0e', padding: '4px 10px', borderRadius: '6px' }}>
-                किट शेष: {participants.filter(p => !p.bibCollected && !p.kit_collected).length}
+                Kit Pending: {participants.filter(p => !p.bibCollected && !p.kit_collected).length}
               </span>
             )}
             <span style={{ background: '#ecfdf5', color: '#065f46', padding: '4px 10px', borderRadius: '6px', border: '1px solid #a7f3d0' }}>
-              लक्षित: {recipientsCount}
+              Targeted: {recipientsCount}
             </span>
           </div>
         </div>
@@ -464,7 +464,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
           }}
         >
           <RefreshCw size={13} className={isLoadingLogs ? "spin" : ""} />
-          <span>रीफ्रेश करें</span>
+          <span>Refresh</span>
         </button>
       </div>
 
@@ -485,7 +485,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
             {broadcastResult.type === 'success' ? <CheckCircle2 size={24} color="#059669" /> : <AlertCircle size={24} color="#dc2626" />}
             <div>
               <div style={{ fontWeight: 800, fontSize: '1rem' }}>
-                {broadcastResult.type === 'success' ? 'प्रसारण सफलतापूर्वक संपन्न!' : 'प्रसारण विफल'}
+                {broadcastResult.type === 'success' ? 'Broadcast Dispatched Successfully!' : 'Broadcast Failed'}
               </div>
               <div style={{ fontSize: '0.88rem' }}>{broadcastResult.message}</div>
             </div>
@@ -531,8 +531,8 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                 fontSize: '0.78rem',
                 fontWeight: 900
               }}>1</span>
-              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
-                संदेश अभियान प्रकार चुनें (Select Message Campaign Type)
+              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
+                Select Campaign
               </h3>
             </div>
 
@@ -610,15 +610,15 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                 fontSize: '0.78rem',
                 fontWeight: 900
               }}>2</span>
-              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
-                डिलीवरी चैनल एवं लक्षित समूह (Channel & Audience Targeting)
+              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
+                Channel & Targeting
               </h3>
             </div>
 
             {/* Delivery Channel Selector */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
-                संदेश माध्यम (Delivery Channel):
+                Delivery Channel:
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
                 <button
@@ -639,7 +639,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                     gap: '6px'
                   }}
                 >
-                  <span>📲 दोनों (WhatsApp + SMS)</span>
+                  <span>📲 Both (WhatsApp + SMS)</span>
                 </button>
                 <button
                   type="button"
@@ -659,7 +659,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                     gap: '6px'
                   }}
                 >
-                  <span>🟢 केवल WhatsApp</span>
+                  <span>🟢 WhatsApp Only</span>
                 </button>
                 <button
                   type="button"
@@ -679,7 +679,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                     gap: '6px'
                   }}
                 >
-                  <span>📱 केवल टेक्स्ट SMS</span>
+                  <span>📱 SMS Only</span>
                 </button>
               </div>
             </div>
@@ -688,30 +688,30 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                  लक्षित प्राप्तकर्ता फ़िल्टर:
+                  Target Audience:
                 </label>
                 <select
                   value={targetAudience}
                   onChange={(e) => setTargetAudience(e.target.value)}
                   style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.88rem' }}
                 >
-                  <option value="all">{isDistrictRole ? 'समस्त जिला धावक (All District Runners)' : 'समस्त पंजीकृत धावक (All Runners)'}</option>
-                  {!isDistrictRole && <option value="kit_pending">किट शेष (Kit Pending Only)</option>}
-                  {!isDistrictRole && <option value="kit_collected">किट प्राप्त (Kit Collected Only)</option>}
-                  <option value="single">एकल धावक खोज (Single Runner Search)</option>
+                  <option value="all">{isDistrictRole ? 'All District Runners' : 'All Registered Runners'}</option>
+                  {!isDistrictRole && <option value="kit_pending">Kit Pending Only</option>}
+                  {!isDistrictRole && <option value="kit_collected">Kit Collected Only</option>}
+                  <option value="single">Single Runner Search</option>
                 </select>
               </div>
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                  दौड़ श्रेणी (Category):
+                  Race Category:
                 </label>
                 <select
                   value={targetCategory}
                   onChange={(e) => setTargetCategory(e.target.value)}
                   style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.88rem' }}
                 >
-                  <option value="all">सभी श्रेणियां (All Categories)</option>
+                  <option value="all">All Categories</option>
                   <option value="21k">21 KM Half Marathon</option>
                   <option value="10k">10 KM Speed Run</option>
                   <option value="5k">5 KM Community Run</option>
@@ -724,18 +724,18 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
             {targetAudience === 'single' && (
               <div style={{ marginTop: '14px', background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px dashed var(--border-medium)' }}>
                 <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                  धावक की पंजीकरण संख्या अथवा 10-अंकीय मोबाइल नंबर दर्ज करें:
+                  Search Runner (Reg No. or 10-digit Mobile):
                 </label>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input
                     type="text"
-                    placeholder={isDistrictRole ? "उदा. RJ-ALW-05K-1001 या 9829012345" : "उदा. RJ-21K-1009 या 9829012345"}
+                    placeholder={isDistrictRole ? "e.g. RJ-ALW-05K-1001 or 9829012345" : "e.g. RJ-21K-1009 or 9829012345"}
                     value={singleSearchQuery}
                     onChange={(e) => setSingleSearchQuery(e.target.value)}
                     style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.88rem' }}
                   />
                   <span style={{ fontSize: '0.82rem', alignSelf: 'center', color: recipientsCount > 0 ? '#15803d' : '#991b1b', fontWeight: 700 }}>
-                    {recipientsCount > 0 ? `✓ ${recipientsCount} धावक मिला` : 'कोई धावक नहीं मिला'}
+                    {recipientsCount > 0 ? `✓ ${recipientsCount} Runner Found` : 'No runner found'}
                   </span>
                 </div>
               </div>
@@ -764,20 +764,20 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                   fontSize: '0.78rem',
                   fontWeight: 900
                 }}>3</span>
-                <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
-                  संदेश सामग्री एवं स्मार्ट टैग्स (Message Composition & Dynamic Tags)
+                <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
+                  Message Composition
                 </h3>
               </div>
 
               <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 600 }}>
-                {message.length} अक्षर
+                {message.length} characters
               </span>
             </div>
 
             {/* Campaign Title Input */}
             <div style={{ marginBottom: '14px' }}>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '5px' }}>
-                अभियान / संदेश शीर्षक (Broadcast Campaign Title):
+                Campaign Title:
               </label>
               <input
                 type="text"
@@ -790,16 +790,16 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
             {/* Dynamic Placeholder Tag Inserter Pills */}
             <div style={{ marginBottom: '12px' }}>
               <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
-                क्लिक करके संदेश में डायनेमिक टैग जोड़ें (Dynamic Runner Tags):
+                Dynamic Runner Tags:
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {[
-                  { tag: "{name}", label: "👤 धावक का नाम" },
-                  { tag: "{bib}", label: "🔢 पंजीकरण संख्या" },
-                  { tag: "{category}", label: "🏃 दौड़ श्रेणी" },
-                  { tag: "{district}", label: "📍 जिला / वेन्यू" },
-                  ...(!isDistrictRole ? [{ tag: "{tshirtSize}", label: "👕 टी-शर्ट साइज़" }] : []),
-                  { tag: "{certId}", label: "🔗 ई-पास लिंक" }
+                  { tag: "{name}", label: "Runner Name" },
+                  { tag: "{bib}", label: "Reg No." },
+                  { tag: "{category}", label: "Category" },
+                  { tag: "{district}", label: "District / Venue" },
+                  ...(!isDistrictRole ? [{ tag: "{tshirtSize}", label: "T-Shirt Size" }] : []),
+                  { tag: "{certId}", label: "E-Pass Link" }
                 ].map(item => (
                   <button
                     key={item.tag}
@@ -815,7 +815,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                       color: 'var(--police-navy-900)',
                       cursor: 'pointer'
                     }}
-                    title={`मैसेज में ${item.tag} जोड़ें`}
+                    title={`Insert ${item.tag}`}
                   >
                     + {item.label}
                   </button>
@@ -845,9 +845,9 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
             {/* Send CTA Bar */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', flexWrap: 'wrap', gap: '12px' }}>
               <div style={{ fontSize: '0.86rem', color: '#475569' }}>
-                🎯 प्राप्तकर्ता: <strong style={{ color: 'var(--police-navy-950)' }}>{recipientsCount} धावक</strong>
+                🎯 Target: <strong style={{ color: 'var(--police-navy-950)' }}>{recipientsCount} Runners</strong>
                 <span style={{ margin: '0 8px', color: '#cbd5e1' }}>|</span>
-                माध्यम: <strong style={{ color: '#047857' }}>{channel === 'BOTH' ? 'WhatsApp + SMS' : channel}</strong>
+                Channel: <strong style={{ color: '#047857' }}>{channel === 'BOTH' ? 'WhatsApp + SMS' : channel}</strong>
               </div>
 
               <button
@@ -871,7 +871,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
                 }}
               >
                 <Send size={16} />
-                <span>{isSending ? 'प्रसारण प्रेषित हो रहा है...' : `अभी ${recipientsCount} धावकों को प्रसारण भेजें ➔`}</span>
+                <span>{isSending ? 'Sending Broadcast...' : `Send Broadcast Now (${recipientsCount}) ➔`}</span>
               </button>
             </div>
           </div>
@@ -1116,7 +1116,7 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
           </div>
 
           <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '10px', textAlign: 'center' }}>
-            ★ धावक के फोन पर संदेश का वास्तविक रीयल-टाइम प्रीव्यू
+            ★ Live real-time preview of message on runner's mobile
           </div>
         </div>
       </div>
@@ -1132,33 +1132,30 @@ export function BroadcastCommandCenter({ adminUser, participants = [], onRefresh
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
-              📜 संदेश प्रसारण इतिहास एवं ऑडिट लॉग्स (Broadcast History & Delivery Log)
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--police-navy-950)' }}>
+              Broadcast History & Audit Logs
             </h3>
-            <p style={{ margin: '3px 0 0 0', fontSize: '0.84rem', color: '#64748b' }}>
-              पुलिस मुख्यालय कमान द्वारा पूर्व में भेजे गए संदेशों का संपूर्ण टाइमस्टैम्प्ड रिकॉर्ड
-            </p>
           </div>
           <span style={{ fontSize: '0.8rem', color: '#059669', fontWeight: 700 }}>
-            ✓ {broadcastLogs.length} प्रसारण रिकॉर्ड सुरक्षित
+            ✓ {broadcastLogs.length} Records Logged
           </span>
         </div>
 
         {broadcastLogs.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '36px', color: '#64748b', background: '#f8fafc', borderRadius: '8px' }}>
             <MessageSquare size={32} color="#94a3b8" style={{ margin: '0 auto 8px auto', display: 'block' }} />
-            <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>अभी तक कोई ब्रॉडकास्ट लॉग उपलब्ध नहीं है।</div>
-            <div style={{ fontSize: '0.8rem', marginTop: '4px' }}>पहला संदेश भेजने पर उसका विवरण यहां स्वतः दर्ज हो जाएगा।</div>
+            <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>No broadcast logs available yet.</div>
+            <div style={{ fontSize: '0.8rem', marginTop: '4px' }}>Sent broadcast records will automatically appear here.</div>
           </div>
         ) : (
           <div className="admin-table-scroll">
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
               <thead>
                 <tr style={{ background: '#f1f5f9', borderBottom: '2px solid #cbd5e1', textAlign: 'left' }}>
-                  <th style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-950)' }}>दिनांक व समय</th>
-                  <th style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-950)' }}>प्रसारक (Actor)</th>
-                  <th style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-950)' }}>अभियान व विवरण</th>
-                  <th style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-950)' }}>आईपी व सुरक्षा</th>
+                  <th style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-950)' }}>Date & Time</th>
+                  <th style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-950)' }}>Sender / Actor</th>
+                  <th style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-950)' }}>Campaign & Details</th>
+                  <th style={{ padding: '10px 12px', fontWeight: 800, color: 'var(--police-navy-950)' }}>IP & Status</th>
                 </tr>
               </thead>
               <tbody>
