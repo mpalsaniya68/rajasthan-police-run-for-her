@@ -2410,7 +2410,9 @@ export async function handleApiRequest(req, res) {
           medicalNotes: r.medical_notes || "",
           categoryName: r.category_name,
           categoryId: r.category_id,
+          districtId: r.district_id,
           districtName: r.district_name,
+          venueType: (r.district_id && (r.district_id.includes('jaipur') || r.district_id.includes('jpr'))) ? 'jaipur' : 'district',
           tshirtSize: r.tshirt_size || "M",
           kitCollected: Boolean(r.kit_collected),
           kit_collected: Boolean(r.kit_collected),
@@ -2439,7 +2441,7 @@ export async function handleApiRequest(req, res) {
       }
 
       const findRes = await db.execute({
-        sql: "SELECT id, bib_number, full_name, mobile, masked_mobile, kit_collected, category_name FROM participants WHERE UPPER(bib_number) = ? OR UPPER(id) = ? LIMIT 1",
+        sql: "SELECT id, bib_number, full_name, mobile, masked_mobile, kit_collected, category_name, district_id, district_name FROM participants WHERE UPPER(bib_number) = ? OR UPPER(id) = ? LIMIT 1",
         args: [bibNumber, bibNumber]
       });
 
@@ -2448,6 +2450,15 @@ export async function handleApiRequest(req, res) {
       }
 
       const runner = findRes.rows[0];
+
+      // Anti-Fraud: District Jurisdiction Protection
+      const isCounterJaipur = !adminUser.districtId || adminUser.districtId.includes('jaipur') || adminUser.districtId.includes('jpr');
+      const isRunnerJaipur = (runner.district_id && (runner.district_id.includes('jaipur') || runner.district_id.includes('jpr'))) || 
+                             (/^RJ-(02K|05K|10K|21K)-/i.test(runner.bib_number) && !/^RJ-[A-Z]{3,4}-(02K|05K|10K|21K)-/i.test(runner.bib_number));
+      if (isCounterJaipur && !isRunnerJaipur) {
+        return error(`किट वितरण अस्वीकृत: यह धावक "${runner.district_name || 'अन्य जिला'}" के लिए पंजीकृत है। यह एक्सपो काउंटर केवल जयपुर फ्लैगशिप मैराथन हेतु अधिकृत है।`, 403);
+      }
+
       if (runner.kit_collected) {
         return error("यह किट पूर्व में ही वितरित की जा चुकी है! पुनः वितरण हेतु OTP प्रेषण वर्जित है।", 409);
       }
@@ -2557,6 +2568,14 @@ export async function handleApiRequest(req, res) {
       }
 
       const runner = findRes.rows[0];
+
+      // Anti-Fraud: District Jurisdiction Protection
+      const isCounterJaipur = !adminUser.districtId || adminUser.districtId.includes('jaipur') || adminUser.districtId.includes('jpr');
+      const isRunnerJaipur = (runner.district_id && (runner.district_id.includes('jaipur') || runner.district_id.includes('jpr'))) || 
+                             (/^RJ-(02K|05K|10K|21K)-/i.test(runner.bib_number) && !/^RJ-[A-Z]{3,4}-(02K|05K|10K|21K)-/i.test(runner.bib_number));
+      if (isCounterJaipur && !isRunnerJaipur) {
+        return error(`किट वितरण अस्वीकृत: यह धावक "${runner.district_name || 'अन्य जिला'}" के लिए पंजीकृत है। यह एक्सपो काउंटर केवल जयपुर फ्लैगशिप मैराथन हेतु अधिकृत है।`, 403);
+      }
 
       // Anti-Fraud: Duplicate Kit Claim Prevention
       if (runner.kit_collected) {

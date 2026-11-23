@@ -233,6 +233,24 @@ test("FULL PRODUCTION LIFECYCLE AUDIT: Registration -> E-Pass -> Expo Handover -
   });
   assert.equal(sendHandoverOtpRes.status, 200);
 
+  // 11b-2. Anti-Fraud Security: Out-of-District Runner Blocked at Jaipur Expo Counter
+  await db.execute({
+    sql: `INSERT INTO participants (id, bib_number, full_name, gender, dob, mobile, masked_mobile, emergency_contact, emergency_relation, blood_group, category_id, category_name, district_id, district_name, tshirt_size, certificate_id, qr_token, created_at)
+          VALUES ('dist-test-1', 'RJ-JDH-05K-1003', 'Manish Singh', 'male', '1995-01-01', '9413407165', '94134XXXXX', '9829012345', 'Parent', 'B+', 'cat-5k', '5 KM Community Run', 'jdh_comm', 'Jodhpur Commissionerate', 'N/A', 'CERT-JDH-1003', 'QR-JDH-1003', ?)`,
+    args: [Date.now().toString()]
+  });
+  const outOfDistOtpRes = await fetch(`${baseUrl}/expo/handover-otp/send`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${expoToken}`
+    },
+    body: JSON.stringify({ bibNumber: 'RJ-JDH-05K-1003' })
+  });
+  assert.equal(outOfDistOtpRes.status, 403);
+  const outOfDistOtpData = await outOfDistOtpRes.json();
+  assert.match(outOfDistOtpData.error, /किट वितरण अस्वीकृत/);
+
   // Retrieve handover OTP from database
   const handoverOtpRow = await db.execute({
     sql: "SELECT code FROM otp_codes WHERE mobile = ? LIMIT 1",

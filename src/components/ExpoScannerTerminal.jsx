@@ -9,6 +9,43 @@ import { apiGetVolunteerScans } from '../services/api';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { PoliceEmblem } from './Emblems';
 import { isJaipurDistrict } from '../data/mockData';
+import { formatCleanDistrictName, formatLocalizedDistrict } from '../utils/localization';
+
+// District Jurisdiction Security Guard:
+// Ensures Jaipur Flagship Expo / Gate counters NEVER leak out-of-district runner details,
+// NEVER accept event company RFID bib assignment, and NEVER allow kit handover for other districts.
+export const checkDistrictMismatch = (runner, currentUser) => {
+  if (!runner) return { isMismatch: false, districtDisplayName: '' };
+
+  const isCounterJaipur = !currentUser?.districtId || isJaipurDistrict(currentUser.districtId, currentUser.districtName);
+  const cleanDist = formatCleanDistrictName(runner);
+  const districtDisplayName = formatLocalizedDistrict(cleanDist, true) || runner.districtName || 'अन्य जिला';
+
+  const bib = String(runner.bibNumber || runner.bib_number || '').toUpperCase();
+  const isRunnerJaipur = (
+    runner.venueType === 'jaipur' ||
+    runner.venue_type === 'jaipur' ||
+    isJaipurDistrict(runner.districtId || runner.district_id, runner.districtName || runner.district_name) ||
+    cleanDist.toLowerCase() === 'jaipur' ||
+    (/^RJ-(02K|05K|10K|21K)-/i.test(bib) && !/^RJ-[A-Z]{3,4}-(02K|05K|10K|21K)-/i.test(bib))
+  );
+
+  if (isCounterJaipur) {
+    return {
+      isMismatch: !isRunnerJaipur,
+      districtDisplayName,
+      counterName: 'जयपुर फ्लैगशिप मैराथन (अल्बर्ट हॉल)'
+    };
+  } else {
+    const counterCleanDist = formatCleanDistrictName({ districtId: currentUser.districtId, districtName: currentUser.districtName });
+    const isMatch = cleanDist.toLowerCase() === counterCleanDist.toLowerCase();
+    return {
+      isMismatch: !isMatch,
+      districtDisplayName,
+      counterName: `${formatLocalizedDistrict(counterCleanDist, true)} जिला केंद्र`
+    };
+  }
+};
 
 // Built-in Web Audio API Synthesizer + Mobile Haptic Feedback (No external MP3 files needed)
 const playSound = (type = 'success') => {
@@ -552,7 +589,9 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         bibNumber: foundInRoster.bibNumber || targetBibOrQuery.toUpperCase(),
         fullName: foundInRoster.fullName,
         categoryName: foundInRoster.categoryName,
-        districtName: foundInRoster.districtName,
+        districtId: foundInRoster.districtId || foundInRoster.district_id,
+        districtName: foundInRoster.districtName || foundInRoster.district_name,
+        venueType: foundInRoster.venueType || foundInRoster.venue_type,
         tshirtSize: foundInRoster.tshirtSize,
         bloodGroup: foundInRoster.bloodGroup || 'B+',
         medicalCondition: 'सामान्य (Fit)',
@@ -573,7 +612,9 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
         bibNumber: bibUpper,
         fullName: parsedQr.name || 'Rajasthan Police Marathon Runner',
         categoryName: parsedQr.category || '21 KM Half Marathon',
-        districtName: parsedQr.district || 'जयपुर',
+        districtId: parsedQr.districtId || parsedQr.distId || parsedQr.district,
+        districtName: parsedQr.district || parsedQr.districtName || 'जयपुर',
+        venueType: parsedQr.venueType || (isJaipurDistrict(parsedQr.districtId || parsedQr.distId, parsedQr.district) ? 'jaipur' : 'district'),
         tshirtSize: (!isJaipurDistrict(parsedQr.districtId, parsedQr.district) || parsedQr.tshirt === 'N/A') ? 'N/A' : (parsedQr.tshirt || 'M').toUpperCase(),
         bloodGroup: parsedQr.bloodGroup || 'B+',
         medicalCondition: parsedQr.medicalAlert || 'सामान्य (Fit)',
@@ -607,7 +648,9 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
             bibNumber: foundLocal.bibNumber || targetBibOrQuery.toUpperCase(),
             fullName: foundLocal.fullName || 'Rajasthan Police Runner',
             categoryName: foundLocal.categoryName || '21 KM Half Marathon',
-            districtName: foundLocal.districtName || 'जयपुर',
+            districtId: foundLocal.districtId || foundLocal.district_id,
+            districtName: foundLocal.districtName || foundLocal.district_name || 'जयपुर',
+            venueType: foundLocal.venueType || foundLocal.venue_type || (isJaipurDistrict(foundLocal.districtId, foundLocal.districtName) ? 'jaipur' : 'district'),
             tshirtSize: (!isJaipurDistrict(foundLocal.districtId, foundLocal.districtName) || foundLocal.tshirtSize === 'N/A') ? 'N/A' : (foundLocal.tshirtSize || 'M').toUpperCase(),
             bloodGroup: foundLocal.bloodGroup || 'B+',
             medicalCondition: foundLocal.medicalCondition || 'सामान्य (Fit)',
@@ -625,8 +668,18 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
     // ⚡️ IMMEDIATELY SHOW RUNNER ON SCREEN WITHOUT WAITING FOR SERVER (< 5ms response time!)
     if (initialFound) {
+      const { isMismatch, districtDisplayName } = checkDistrictMismatch(initialFound, currentUser);
+      initialFound.isDistrictMismatch = isMismatch;
+      initialFound.districtDisplayName = districtDisplayName;
       setScannedRunner(initialFound);
       setIsSearching(false);
+
+      if (isMismatch) {
+        if (soundEnabled) playSound('duplicate');
+        setScanStatus('DISTRICT_MISMATCH');
+        setStatusMessage(`⚠️ अन्य जिले का पंजीकरण! यह धावक "${districtDisplayName}" के लिए पंजीकृत है। यह काउंटर केवल जयपुर फ्लैगशिप मैराथन किट वितरण हेतु है।`);
+        return;
+      }
 
       if (terminalMode === 'gate') {
         if (initialFound.gate_entered) {
@@ -684,28 +737,39 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
             console.warn('Cache reconciliation error:', cacheErr);
           }
 
-          setScannedRunner(prev => {
-            const base = prev || {};
-            return {
-              ...base,
-              id: dbRunner.id || base.id,
-              bibNumber: dbRunner.bibNumber || dbRunner.bib_number || base.bibNumber,
-              fullName: dbRunner.fullName || dbRunner.full_name || base.fullName,
-              categoryName: dbRunner.categoryName || dbRunner.category_name || base.categoryName,
-              districtName: dbRunner.districtName || dbRunner.district_name || base.districtName,
-              tshirtSize: (!isJaipurDistrict(dbRunner.districtId || dbRunner.district_id, dbRunner.districtName || dbRunner.district_name) || dbRunner.tshirtSize === 'N/A' || dbRunner.tshirt_size === 'N/A') ? 'N/A' : (dbRunner.tshirtSize || dbRunner.tshirt_size || base.tshirtSize || 'M').toUpperCase(),
-              bloodGroup: dbRunner.bloodGroup || dbRunner.blood_group || base.bloodGroup,
-              medicalCondition: dbRunner.medicalCondition || dbRunner.medical_condition || base.medicalCondition,
-              mobile: dbRunner.maskedMobile || dbRunner.masked_mobile || base.mobile,
-              kitCollected: isCollectedInDb,
-              kit_collected: isCollectedInDb,
-              kitCollectedAt: dbCollectedAt,
-              kit_collected_at: dbCollectedAt,
-              collectedBy: dbCollectedBy,
-              collected_by: dbCollectedBy,
-              rfidTagId: dbRunner.rfidTagId || dbRunner.rfid_tag_id || base.rfidTagId
-            };
-          });
+          const updatedRunner = {
+            id: dbRunner.id || initialFound?.id,
+            bibNumber: dbRunner.bibNumber || dbRunner.bib_number || initialFound?.bibNumber,
+            fullName: dbRunner.fullName || dbRunner.full_name || initialFound?.fullName,
+            categoryName: dbRunner.categoryName || dbRunner.category_name || initialFound?.categoryName,
+            districtId: dbRunner.districtId || dbRunner.district_id || initialFound?.districtId,
+            districtName: dbRunner.districtName || dbRunner.district_name || initialFound?.districtName,
+            venueType: dbRunner.venueType || dbRunner.venue_type || initialFound?.venueType,
+            tshirtSize: (!isJaipurDistrict(dbRunner.districtId || dbRunner.district_id, dbRunner.districtName || dbRunner.district_name) || dbRunner.tshirtSize === 'N/A' || dbRunner.tshirt_size === 'N/A') ? 'N/A' : (dbRunner.tshirtSize || dbRunner.tshirt_size || initialFound?.tshirtSize || 'M').toUpperCase(),
+            bloodGroup: dbRunner.bloodGroup || dbRunner.blood_group || initialFound?.bloodGroup,
+            medicalCondition: dbRunner.medicalCondition || dbRunner.medical_condition || initialFound?.medicalCondition,
+            mobile: dbRunner.maskedMobile || dbRunner.masked_mobile || initialFound?.mobile,
+            kitCollected: isCollectedInDb,
+            kit_collected: isCollectedInDb,
+            kitCollectedAt: dbCollectedAt,
+            kit_collected_at: dbCollectedAt,
+            collectedBy: dbCollectedBy,
+            collected_by: dbCollectedBy,
+            rfidTagId: dbRunner.rfidTagId || dbRunner.rfid_tag_id || initialFound?.rfidTagId
+          };
+
+          const { isMismatch, districtDisplayName } = checkDistrictMismatch(updatedRunner, currentUser);
+          updatedRunner.isDistrictMismatch = isMismatch;
+          updatedRunner.districtDisplayName = districtDisplayName;
+          setScannedRunner(updatedRunner);
+
+          if (isMismatch) {
+            if (soundEnabled) playSound('duplicate');
+            setScanStatus('DISTRICT_MISMATCH');
+            setStatusMessage(`⚠️ अन्य जिले का पंजीकरण! यह धावक "${districtDisplayName}" के लिए पंजीकृत है। यह काउंटर केवल जयपुर फ्लैगशिप मैराथन किट वितरण हेतु है।`);
+            setIsSearching(false);
+            return;
+          }
 
           if (terminalMode === 'gate') {
             const isGateEntered = Boolean(dbRunner.gate_entered || dbRunner.gateEntered);
@@ -1715,7 +1779,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {scanStatus === 'INVALID' && (
+              {(scanStatus === 'INVALID' || scanStatus === 'DISTRICT_MISMATCH') && (
                 <button
                   type="button"
                   onClick={handleScanNextRunner}
@@ -1734,7 +1798,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                   }}
                 >
                   <RotateCcw size={15} />
-                  <span>📷 पुनः स्कैन करें (Retry Scan)</span>
+                  <span>📷 नया स्कैन करें (Next Scan)</span>
                 </button>
               )}
 
@@ -1751,13 +1815,104 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
 
         {/* 4. EXPO MODE: Runner Verification Card & T-Shirt Handover */}
         {scannedRunner && terminalMode === 'expo' && (
-          <div style={{
-            background: '#ffffff',
-            borderRadius: '10px',
-            border: '2px solid #0a1c3d',
-            padding: '24px',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.08)'
-          }}>
+          scannedRunner.isDistrictMismatch ? (
+            /* Dedicated Warning Card for Out-of-District Runners (Anti-Fraud / Anti-Leak) */
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '10px',
+              border: '2px solid #ef4444',
+              padding: '32px 24px',
+              boxShadow: '0 8px 30px rgba(239, 68, 68, 0.12)',
+              textAlign: 'center'
+            }}>
+              <div style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                background: '#fee2e2',
+                color: '#dc2626',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '16px'
+              }}>
+                <AlertTriangle size={36} />
+              </div>
+
+              <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#991b1b', marginBottom: '8px' }}>
+                ⚠️ किट वितरण प्रतिबंधित — अन्य जिले का पंजीकरण
+              </div>
+
+              <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0a1c3d', marginBottom: '12px' }}>
+                यह धावक <span style={{ color: '#dc2626', background: '#fee2e2', padding: '3px 10px', borderRadius: '4px', border: '1px solid #fca5a5' }}>{scannedRunner.districtDisplayName || scannedRunner.districtName || 'अन्य जिला'}</span> के लिए पंजीकृत है
+              </div>
+
+              <div style={{ fontSize: '0.9rem', color: '#475569', maxWidth: '620px', margin: '0 auto 20px', lineHeight: 1.6 }}>
+                यह एक्सपो काउंटर केवल <strong>जयपुर फ्लैगशिप मैराथन (अल्बर्ट हॉल)</strong> किट वितरण हेतु अधिकृत है। इस धावक को जयपुर किट अथवा इवेंट कंपनी का फिजिकल RFID बिब जारी नहीं किया जा सकता। कृपया धावक को उनके संबंधित ज़िला पुलिस लाइन / नोडल केंद्र पर संपर्क करने का निर्देश दें।
+              </div>
+
+              {/* Minimal identity verification block so volunteer can politely confirm with citizen */}
+              <div style={{
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                padding: '14px 18px',
+                maxWidth: '520px',
+                margin: '0 auto 22px',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                gap: '12px',
+                textAlign: 'left',
+                fontSize: '0.84rem'
+              }}>
+                <div>
+                  <span style={{ color: '#64748b', fontSize: '0.74rem', fontWeight: 700 }}>धावक का नाम:</span>
+                  <div style={{ fontWeight: 800, color: '#0a1c3d' }}>{scannedRunner.fullName}</div>
+                </div>
+                <div>
+                  <span style={{ color: '#64748b', fontSize: '0.74rem', fontWeight: 700 }}>पंजीकरण संख्या (Bib):</span>
+                  <div style={{ fontWeight: 800, color: '#0a1c3d', fontFamily: 'monospace' }}>{scannedRunner.bibNumber}</div>
+                </div>
+                <div>
+                  <span style={{ color: '#64748b', fontSize: '0.74rem', fontWeight: 700 }}>पंजीकृत जिला:</span>
+                  <div style={{ fontWeight: 800, color: '#dc2626' }}>{scannedRunner.districtDisplayName || scannedRunner.districtName}</div>
+                </div>
+                <div>
+                  <span style={{ color: '#64748b', fontSize: '0.74rem', fontWeight: 700 }}>दौड़ श्रेणी:</span>
+                  <div style={{ fontWeight: 800, color: '#0a1c3d' }}>{scannedRunner.categoryName}</div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleScanNextRunner}
+                style={{
+                  background: '#0a1c3d',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '12px 28px',
+                  fontSize: '0.92rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 12px rgba(10,28,61,0.2)'
+                }}
+              >
+                <RotateCcw size={16} />
+                <span>📷 अगला ई-पास / बिब स्कैन करें (Scan Next)</span>
+              </button>
+            </div>
+          ) : (
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '10px',
+              border: '2px solid #0a1c3d',
+              padding: '24px',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.08)'
+            }}>
             {/* T-Shirt Size Giant Visual Banner */}
             <div style={{
               background: isKitAlreadyHandedOver ? '#fef2f2' : '#eff6ff',
@@ -2284,69 +2439,48 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               </div>
             </div>
           </div>
-        )}
+        )
+      )}
 
         {/* 5. GATE ENTRY MODE: Race Day Morning Verification */}
         {scannedRunner && terminalMode === 'gate' && (
-          <div style={{
-            background: '#ffffff',
-            borderRadius: '10px',
-            border: `3px solid ${scanStatus === 'GATE_APPROVED' ? '#16a34a' : '#f59e0b'}`,
-            padding: '32px 24px',
-            textAlign: 'center',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.1)'
-          }}>
+          scannedRunner.isDistrictMismatch ? (
             <div style={{
-              display: 'inline-flex',
-              padding: '6px 16px',
-              borderRadius: '20px',
-              background: scanStatus === 'GATE_APPROVED' ? '#16a34a' : '#d97706',
-              color: '#ffffff',
-              fontSize: '0.95rem',
-              fontWeight: 900,
-              marginBottom: '14px'
-            }}>
-              {scanStatus === 'GATE_APPROVED' ? '✓ GATE ENTRY GRANTED' : '⚠️ PREVIOUSLY ENTERED'}
-            </div>
-
-            <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0a1c3d', margin: '0 0 6px 0' }}>
-              {scannedRunner.fullName}
-            </h1>
-
-            <div style={{
-              fontSize: '1.8rem',
-              fontWeight: 900,
-              fontFamily: 'monospace',
-              color: '#dc2626',
-              marginBottom: '12px'
-            }}>
-              BIB: {scannedRunner.bibNumber}
-            </div>
-
-            <div style={{
-              fontSize: '1.2rem',
-              fontWeight: 800,
-              color: '#1e3a8a',
               background: '#ffffff',
-              display: 'inline-block',
-              padding: '8px 24px',
-              borderRadius: '8px',
-              border: '2px solid #93c5fd',
-              marginBottom: '20px'
+              borderRadius: '10px',
+              border: '3px solid #dc2626',
+              padding: '32px 24px',
+              textAlign: 'center',
+              boxShadow: '0 8px 30px rgba(220,38,38,0.1)'
             }}>
-              👉 अधिकृत कॉरिडोर: <strong>{scannedRunner.categoryName}</strong>
-            </div>
-
-            <div>
+              <div style={{
+                display: 'inline-flex',
+                padding: '6px 16px',
+                borderRadius: '20px',
+                background: '#dc2626',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                fontWeight: 900,
+                marginBottom: '14px'
+              }}>
+                ⛔ GATE ENTRY DENIED
+              </div>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#991b1b', margin: '0 0 10px 0' }}>
+                अन्य जिले का पंजीकरण ({scannedRunner.districtDisplayName || scannedRunner.districtName})
+              </h2>
+              <p style={{ color: '#475569', fontSize: '0.95rem', maxWidth: '540px', margin: '0 auto 20px' }}>
+                यह गेट केवल <strong>जयपुर फ्लैगशिप मैराथन (अल्बर्ट हॉल)</strong> प्रतिभागियों के प्रवेश हेतु अधिकृत है। यह धावक <strong>{scannedRunner.districtDisplayName || scannedRunner.districtName}</strong> के लिए पंजीकृत है।
+              </p>
               <button
+                type="button"
                 onClick={handleScanNextRunner}
                 style={{
                   background: '#0a1c3d',
                   color: '#ffffff',
                   border: 'none',
-                  padding: '12px 32px',
                   borderRadius: '6px',
-                  fontSize: '1rem',
+                  padding: '12px 28px',
+                  fontSize: '0.92rem',
                   fontWeight: 800,
                   cursor: 'pointer',
                   display: 'inline-flex',
@@ -2355,10 +2489,82 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                 }}
               >
                 <Camera size={18} />
-                <span>📷 अगला धावक स्कैन करें (Next Runner) &rarr;</span>
+                <span>📷 अगला धावक स्कैन करें &rarr;</span>
               </button>
             </div>
-          </div>
+          ) : (
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '10px',
+              border: `3px solid ${scanStatus === 'GATE_APPROVED' ? '#16a34a' : '#f59e0b'}`,
+              padding: '32px 24px',
+              textAlign: 'center',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{
+                display: 'inline-flex',
+                padding: '6px 16px',
+                borderRadius: '20px',
+                background: scanStatus === 'GATE_APPROVED' ? '#16a34a' : '#d97706',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                fontWeight: 900,
+                marginBottom: '14px'
+              }}>
+                {scanStatus === 'GATE_APPROVED' ? '✓ GATE ENTRY GRANTED' : '⚠️ PREVIOUSLY ENTERED'}
+              </div>
+
+              <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0a1c3d', margin: '0 0 6px 0' }}>
+                {scannedRunner.fullName}
+              </h1>
+
+              <div style={{
+                fontSize: '1.8rem',
+                fontWeight: 900,
+                fontFamily: 'monospace',
+                color: '#dc2626',
+                marginBottom: '12px'
+              }}>
+                BIB: {scannedRunner.bibNumber}
+              </div>
+
+              <div style={{
+                fontSize: '1.2rem',
+                fontWeight: 800,
+                color: '#1e3a8a',
+                background: '#ffffff',
+                display: 'inline-block',
+                padding: '8px 24px',
+                borderRadius: '8px',
+                border: '2px solid #93c5fd',
+                marginBottom: '20px'
+              }}>
+                👉 अधिकृत कॉरिडोर: <strong>{scannedRunner.categoryName}</strong>
+              </div>
+
+              <div>
+                <button
+                  onClick={handleScanNextRunner}
+                  style={{
+                    background: '#0a1c3d',
+                    color: '#ffffff',
+                    border: 'none',
+                    padding: '12px 32px',
+                    borderRadius: '6px',
+                    fontSize: '1rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <Camera size={18} />
+                  <span>📷 अगला धावक स्कैन करें (Next Runner) &rarr;</span>
+                </button>
+              </div>
+            </div>
+          )
         )}
 
         {/* 6. Idle Empty State Notice */}
