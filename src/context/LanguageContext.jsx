@@ -34,7 +34,7 @@ export const TRANSLATIONS = {
     faqHeading: 'अक्सर पूछे जाने वाले महत्वपूर्ण सवाल',
     prizesHeading: 'इनाम व पुरस्कार',
     certificatesHeading: 'डिजिटल फिनिशर ई-प्रमाण पत्र एवं लेजर सत्यापन',
-    registrationHeading: 'ऑनलाइन धावक पंजीकरण'
+    registrationHeading: 'ऑनलाइन पंजीकरण'
   },
   en: {
     // Utility Top Bar
@@ -69,7 +69,7 @@ export const TRANSLATIONS = {
     faqHeading: 'Frequently Asked Questions (FAQs)',
     prizesHeading: 'Prizes & Rewards',
     certificatesHeading: 'Digital Finisher E-Certificates & Ledger Verification',
-    registrationHeading: 'Online Runner Registration'
+    registrationHeading: 'Online Registration'
   }
 };
 
