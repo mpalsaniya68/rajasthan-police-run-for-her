@@ -233,14 +233,14 @@ export function RegistrationPage({
           }
         })();
 
-        // Also check if Madan Palsaniya (7023233248)
+        // Generic fallback demo runner
         const coreFallbacks = [
           {
             id: "P-2fdfdd3a",
             bibNumber: "RJ-21K-1009",
             certificateId: "RJ-POL-2027-03ABE3",
-            fullName: "Madan Palsaniya",
-            mobile: "7023233248",
+            fullName: "Rajesh Kumar",
+            mobile: "9829012345",
             gender: "Male",
             categoryName: "21 KM Half Marathon",
             districtName: "Jaipur",
@@ -299,8 +299,8 @@ export function RegistrationPage({
           id: "P-2fdfdd3a",
           bibNumber: "RJ-21K-1009",
           certificateId: "RJ-POL-2027-03ABE3",
-          fullName: "Madan Palsaniya",
-          mobile: "7023233248",
+          fullName: "Rajesh Kumar",
+          mobile: "9829012345",
           categoryName: "21 KM Half Marathon",
           districtName: "Jaipur",
           status: "CERT_ISSUED"
@@ -396,11 +396,11 @@ export function RegistrationPage({
           id: d.id || targetPass.passId,
           bibNumber: d.bibNumber || d.bib_number || "RJ-21K-1009",
           certificateId: d.certificateId || d.certificate_id || "RJ-POL-2027-03ABE3",
-          fullName: d.fullName || d.full_name || "Madan Palsaniya",
+          fullName: d.fullName || d.full_name || "Rajesh Kumar",
           gender: d.gender || "male",
           dob: d.dob || "2000-01-01",
-          mobile: d.mobile || "7023233248",
-          email: d.email || "manvi8648@gmail.com",
+          mobile: d.mobile || "9829012345",
+          email: d.email || "runner.demo@rajasthanpolice.gov.in",
           bloodGroup: d.bloodGroup || "B+",
           medicalCondition: "",
           medicalNotes: "",
@@ -408,7 +408,7 @@ export function RegistrationPage({
           categoryName: d.categoryName || targetPass.categoryName,
           districtName: d.districtName || targetPass.districtName,
           tshirtSize: d.tshirtSize || "L",
-          emergencyContact: d.emergencyContact || (isHindi ? "7627002063 (अभिभावक)" : "7627002063 (Guardian)"),
+          emergencyContact: d.emergencyContact || (isHindi ? "9829099999 (अभिभावक)" : "9829099999 (Guardian)"),
           registeredAt: d.registeredAt || "2026-11-11",
           bibCollected: true,
           isCompleted: true
@@ -425,11 +425,11 @@ export function RegistrationPage({
           id: d.id || targetPass.passId,
           bibNumber: d.bibNumber || d.bib_number || "RJ-21K-1009",
           certificateId: d.certificateId || d.certificate_id || "RJ-POL-2027-03ABE3",
-          fullName: d.fullName || d.full_name || "Madan Palsaniya",
+          fullName: d.fullName || d.full_name || "Rajesh Kumar",
           gender: d.gender || "male",
           dob: d.dob || "2000-01-01",
-          mobile: d.mobile || "7023233248",
-          email: d.email || "manvi8648@gmail.com",
+          mobile: d.mobile || "9829012345",
+          email: d.email || "runner.demo@rajasthanpolice.gov.in",
           bloodGroup: d.bloodGroup || "B+",
           medicalCondition: "",
           medicalNotes: "",
@@ -437,7 +437,7 @@ export function RegistrationPage({
           categoryName: d.categoryName || targetPass.categoryName,
           districtName: d.districtName || targetPass.districtName,
           tshirtSize: d.tshirtSize || "L",
-          emergencyContact: d.emergencyContact || (isHindi ? "7627002063 (अभिभावक)" : "7627002063 (Guardian)"),
+          emergencyContact: d.emergencyContact || (isHindi ? "9829099999 (अभिभावक)" : "9829099999 (Guardian)"),
           registeredAt: d.registeredAt || "2026-11-11",
           bibCollected: true,
           isCompleted: true
