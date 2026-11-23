@@ -291,10 +291,10 @@ export function CertificateHub({ registrations = [] }) {
 
       if (isTimedCompetitive) {
         ctx.fillText(`For successfully completing the ${catText} in ${pureDistrictEn} under the leadership`, 675, 416);
-        ctx.fillText("of the Director General of Police (DGP), Rajasthan on the motto \"Every Step for Her Safety.\"", 675, 444);
+        ctx.fillText("of the Director General of Police (DGP), Rajasthan on the motto \"Every Step for Women Safety.\"", 675, 444);
       } else {
         ctx.fillText("For exemplary participation in the Women's Safety, Dignity & Empowerment Movement", 675, 416);
-        ctx.fillText(`and successfully completing the ${catText} in ${pureDistrictEn} under the leadership of the District Police on the motto "Every Step for Her Safety."`, 675, 444);
+        ctx.fillText(`and successfully completing the ${catText} in ${pureDistrictEn} under the leadership of the District Police on the motto "Every Step for Women Safety."`, 675, 444);
       }
 
       // 5. METRICS BOX (Exact 5-column / 3-column card)
@@ -905,9 +905,9 @@ export function CertificateHub({ registrations = [] }) {
                   {/* Statement */}
                   <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-body)', maxWidth: '620px', margin: '0 auto 16px auto', lineHeight: 1.55 }}>
                     {isTimedCompetitive ? (
-                      <>For successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Her Safety."</em></>
+                      <>For successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Women Safety."</em></>
                     ) : (
-                      <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Her Safety."</em></>
+                      <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Women Safety."</em></>
                     )}
                   </p>
 

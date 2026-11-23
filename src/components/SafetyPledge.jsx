@@ -71,7 +71,7 @@ export function SafetyPledge() {
                   : '"I solemnly pledge that I shall always stand for the dignity, safety, and equality of women and girls in public spaces, workplaces, and society. I will actively oppose harassment and collaborate with Rajasthan Police to build a safe Rajasthan."'}
               </p>
               <div style={{ fontSize: '0.8rem', color: 'var(--police-gold-700)', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', fontWeight: 600 }}>
-                Every Step for Her Safety • {isHindi ? 'हर कदम नारी सुरक्षा के लिए' : 'Every Step for Women Safety'}
+                {isHindi ? 'Every Step for Women Safety • हर कदम नारी सुरक्षा के लिए' : 'Every Step for Women Safety'}
               </div>
             </div>
 

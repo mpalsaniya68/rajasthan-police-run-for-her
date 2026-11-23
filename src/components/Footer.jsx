@@ -97,7 +97,7 @@ export function Footer({ onNavigate }) {
             {isHindi ? '© 2027 राजस्थान पुलिस, राजस्थान सरकार। सर्वाधिकार सुरक्षित।' : '© 2027 Rajasthan Police, Government of Rajasthan. All Rights Reserved.'}
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
-            <span>"Every Step for Her Safety"</span>
+            <span>"Every Step for Women Safety"</span>
             <span>•</span>
             <span style={{ color: '#fef08a' }}>{isHindi ? 'हर कदम नारी सुरक्षा के लिए' : 'Every Step for Women Safety'}</span>
           </div>

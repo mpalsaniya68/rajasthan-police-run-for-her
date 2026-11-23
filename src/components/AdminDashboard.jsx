@@ -2114,11 +2114,7 @@ export function AdminDashboard({
 
                   </div>
 
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                    {isHindi 
-                      ? 'चयनित जिले का पूरा विवरण, पंजीकरण संख्या, मोबाइल एवं साइज अलग स्प्रेडशीट में सेव होगा।'
-                      : 'Full details, registration numbers, mobile numbers and sizes of selected district will be exported.'}
-                  </div>
+
 
                 </div>
 
@@ -2184,11 +2180,7 @@ export function AdminDashboard({
 
                   </div>
 
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                    {isHindi 
-                      ? 'एक ही फाइल में सभी जिलों एवं अल्बर्ट हॉल फ्लैगशिप का सम्पूर्ण समेकित रिकॉर्ड।'
-                      : 'Consolidated master records for all districts and Albert Hall flagship.'}
-                  </div>
+
 
                 </div>
 
@@ -4388,11 +4380,6 @@ export function AdminDashboard({
                     ))}
                   </select>
                 )}
-                <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '6px' }}>
-                  {certDistrict === 'jaipur_comm' 
-                    ? 'जयपुर फ्लैगशिप: चिप-टाइमिंग मैट्रिक्स (Gun/Chip Time, Pace, Rank) एवं DGP हस्ताक्षर शामिल होंगे।'
-                    : 'जिला दौड़: बिना टाइमिंग मैट्रिक्स, जिला पुलिस अधीक्षक (SP) हस्ताक्षर व शपथ संदेश शामिल होगा।'}
-                </div>
               </div>
 
               {/* Right Column: Attendance Criteria */}
@@ -4423,9 +4410,6 @@ export function AdminDashboard({
                       <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#166534' }}>
                         केवल गेट-स्कैन उपस्थित धावक (Gate-Scanned Only) — अनुशंसित
                       </div>
-                      <div style={{ fontSize: '0.74rem', color: '#15803d', marginTop: '2px' }}>
-                        प्रवेश द्वार पर वॉलंटियर टर्मिनल द्वारा स्कैन किए गए उपस्थित धावकों को ही जारी किया जाएगा।
-                      </div>
                     </div>
                   </label>
 
@@ -4450,9 +4434,6 @@ export function AdminDashboard({
                     <div>
                       <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#92400e' }}>
                         समस्त पंजीकृत धावक (All Registered Participants) — आपातकालीन
-                      </div>
-                      <div style={{ fontSize: '0.74rem', color: '#b45309', marginTop: '2px' }}>
-                        यदि किसी दूरदराज चेकपॉइंट पर लाइव स्कैनर अनुपलब्ध रहा हो तो सभी पंजीकृत धावकों को जारी करें।
                       </div>
                     </div>
                   </label>
@@ -4854,9 +4835,9 @@ export function AdminDashboard({
 
                         <p style={{ fontSize: '0.8rem', color: '#334155', maxWidth: '520px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
                           {isTimedCompetitive ? (
-                            <>For successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Her Safety."</em></>
+                            <>For successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Women Safety."</em></>
                           ) : (
-                            <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Her Safety."</em></>
+                            <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Women Safety."</em></>
                           )}
                         </p>
 
