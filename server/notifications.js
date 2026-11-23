@@ -7,6 +7,8 @@
  * 4. Automatic Zero-Cost Secure Local Dev Simulation
  */
 
+import { sendLiveConfirmationEmail } from "./sendSampleEmail.js";
+
 const SMS_SENDER_ID = process.env.SMS_SENDER_ID || "RAJPOL";
 
 /**
@@ -124,7 +126,7 @@ export async function dispatchGatewaySms({ mobile, message, templateId = "" }) {
  * Dispatch Official Runner Registration SMS / WhatsApp
  */
 export async function sendRegistrationNotification(participant) {
-  const { fullName, mobile, bibNumber, categoryName, certificateId } = participant;
+  const { fullName, mobile, email, bibNumber, categoryName, certificateId, districtName } = participant;
 
   const smsText = `राजस्थान पुलिस मैराथन 2027 'RUN FOR HER': प्रिय ${fullName}, आपका पंजीकरण सफल रहा! पंजीकरण संख्या: ${bibNumber}, श्रेणी: ${categoryName}। ई-पास: https://police.rajasthan.gov.in/epass/${certificateId} | सहायता: 112/1090`;
 
@@ -134,10 +136,31 @@ export async function sendRegistrationNotification(participant) {
     templateId: process.env.SMS_DLT_REG_TEMPLATE_ID || ""
   });
 
+  let emailResult = { simulated: true, sent: false };
+  if (email && email.trim()) {
+    try {
+      if (email.endsWith("@rajpolice.gov.in") || email.endsWith("@rajasthan.gov.in")) {
+        emailResult = await sendLiveConfirmationEmail({
+          recipient: email.trim(),
+          runnerName: fullName,
+          bibNumber,
+          category: categoryName,
+          districtName
+        });
+      } else {
+        console.log(`[Email Dispatch (Simulated)]: Registration confirmation queued for ${email} (Bib: ${bibNumber})`);
+        emailResult = { simulated: true, sent: true, recipient: email };
+      }
+    } catch (eErr) {
+      console.error("[Email Dispatch Error]:", eErr.message);
+    }
+  }
+
   return {
     success: dispatchResult.success,
     simulated: dispatchResult.simulated,
     smsText,
+    emailResult,
     gatewayResponse: dispatchResult.gatewayResponse
   };
 }

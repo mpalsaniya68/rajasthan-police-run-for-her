@@ -1274,13 +1274,15 @@ export async function handleApiRequest(req, res) {
         console.error("[Payments Ledger Error]:", payErr);
       }
 
-      // Automated Notification Dispatch (SMS / WhatsApp)
+      // Automated Notification Dispatch (SMS / WhatsApp / Email)
       sendRegistrationNotification({
         fullName: data.fullName,
         mobile: data.mobile,
+        email: data.email,
         bibNumber,
         categoryName: catName,
-        certificateId
+        certificateId,
+        districtName: distName
       }).catch(err => console.error("[Notification Dispatch Error]:", err));
 
       return json({
