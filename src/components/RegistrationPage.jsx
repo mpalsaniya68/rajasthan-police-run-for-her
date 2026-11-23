@@ -2186,7 +2186,7 @@ export function RegistrationPage({
                   <Smartphone size={34} color="var(--police-navy-900)" />
                 </div>
                 <h3 style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--police-navy-950)', margin: '0' }}>
-                  {isHindi ? 'पंजीकरण फॉर्म खोलने हेतु मोबाइल सत्यापन' : 'Mobile Verification to Access Registration Form'}
+                  {isHindi ? 'मोबाइल सत्यापन' : 'Mobile Verification'}
                 </h3>
               </div>
 
