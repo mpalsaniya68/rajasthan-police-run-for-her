@@ -2676,10 +2676,10 @@ export function RegistrationPage({
                     />
                   </div>
 
-                  {/* Row 2, Col 2: ईमेल पता (वैकल्पिक) */}
+                  {/* Row 2, Col 2: ईमेल पता */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      {isHindi ? 'ईमेल पता (वैकल्पिक)' : 'Email Address (Optional)'}:
+                      {isHindi ? 'ईमेल पता:' : 'Email Address:'}
                     </label>
                     <input
                       type="email"
