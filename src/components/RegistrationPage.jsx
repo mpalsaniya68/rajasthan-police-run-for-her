@@ -2492,45 +2492,39 @@ export function RegistrationPage({
                     fontWeight: 900
                   }}>1</span>
                   <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                    {isHindi ? 'दौड़ श्रेणी चुनें (आयोजन स्थल: जयपुर)' : 'Select Race Category (Venue: Jaipur)'}
+                    {isHindi ? 'दौड़ श्रेणी एवं आयोजन स्थल चुनें' : 'Select Race Category & Venue'}
                   </h3>
                 </div>
 
-                {/* Official Venue Announcement (Jaipur Exclusive) */}
-                <div style={{
-                  marginBottom: '20px',
-                  background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
-                  border: '1.5px solid #86efac',
-                  borderRadius: '12px',
-                  padding: '14px 18px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '14px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-                }}>
-                  <div style={{
-                    width: '42px',
-                    height: '42px',
-                    borderRadius: '50%',
-                    background: '#15803d',
-                    color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.25rem',
-                    flexShrink: 0,
-                    boxShadow: '0 2px 6px rgba(21,128,61,0.25)'
-                  }}>
-                    📍
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#14532d', marginBottom: '2px' }}>
-                      {isHindi ? 'आधिकारिक आयोजन स्थल: अल्बर्ट हॉल, रामनिवास बाग, जयपुर' : 'Official Marathon Venue: Albert Hall, Ram Niwas Garden, Jaipur'}
-                    </div>
-                    <div style={{ fontSize: '0.82rem', color: '#166534', fontWeight: 600 }}>
-                      {isHindi
-                        ? '★ राजस्थान पुलिस राज्यस्तरीय मैराथन 2027 केवल जयपुर में आयोजित की जा रही है। समस्त श्रेणियां व टी-शर्ट किट जयपुर वेन्यू पर उपलब्ध हैं।'
-                        : '★ The Rajasthan Police State Marathon 2027 is exclusively organized at Jaipur. All categories and runner kits are available at the Jaipur venue.'}
+                {/* Venue Selection */}
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
+                    {isHindi ? 'आप कहाँ दौड़ना चाहते हैं?:' : 'Where would you like to run?:'}
+                  </label>
+                  <div style={{ maxWidth: '300px' }}>
+                    <div
+                      style={{
+                        padding: '14px',
+                        borderRadius: '10px',
+                        border: '2px solid var(--police-gold-500)',
+                        background: 'var(--police-navy-50)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="venueType"
+                        checked={true}
+                        readOnly
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <div>
+                        <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
+                          {isHindi ? 'जयपुर' : 'Jaipur'}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
