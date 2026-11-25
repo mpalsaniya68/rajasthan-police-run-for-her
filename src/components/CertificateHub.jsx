@@ -249,7 +249,7 @@ export function CertificateHub({ registrations = [] }) {
 
       ctx.fillStyle = "#b45309";
       ctx.font = "bold 15px sans-serif";
-      ctx.fillText("WOMEN'S SAFETY, DIGNITY & EMPOWERMENT MOVEMENT", 675, 236);
+      ctx.fillText("WOMEN'S SAFETY, DIGNITY & EMPOWERMENT", 675, 236);
 
       ctx.fillStyle = "#64748b";
       ctx.font = "italic 16.5px sans-serif";
@@ -290,11 +290,11 @@ export function CertificateHub({ registrations = [] }) {
       const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
 
       if (isTimedCompetitive) {
-        ctx.fillText(`For successfully completing the ${catText} in ${pureDistrictEn} under the leadership`, 675, 416);
-        ctx.fillText("of the Director General of Police (DGP), Rajasthan on the motto \"Every Step for Women Safety.\"", 675, 444);
+        ctx.fillText(`For successfully completing the ${catText} in ${pureDistrictEn}`, 675, 416);
+        ctx.fillText("on the motto \"Every Step for Women Safety.\"", 675, 444);
       } else {
-        ctx.fillText("For exemplary participation in the Women's Safety, Dignity & Empowerment Movement", 675, 416);
-        ctx.fillText(`and successfully completing the ${catText} in ${pureDistrictEn} under the leadership of the District Police on the motto "Every Step for Women Safety."`, 675, 444);
+        ctx.fillText("For exemplary participation in Women's Safety, Dignity & Empowerment", 675, 416);
+        ctx.fillText(`and successfully completing the ${catText} in ${pureDistrictEn} on the motto "Every Step for Women Safety."`, 675, 444);
       }
 
       // 5. METRICS BOX (Exact 5-column / 3-column card)
@@ -877,7 +877,7 @@ export function CertificateHub({ registrations = [] }) {
                       textTransform: 'uppercase',
                       marginTop: '2px'
                     }}>
-                      Women's Safety, Dignity & Empowerment Movement
+                      Women's Safety, Dignity & Empowerment
                     </div>
                   </div>
 
@@ -917,9 +917,9 @@ export function CertificateHub({ registrations = [] }) {
                   {/* Statement */}
                   <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-body)', maxWidth: '620px', margin: '0 auto 16px auto', lineHeight: 1.55 }}>
                     {isTimedCompetitive ? (
-                      <>For successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Women Safety."</em></>
+                      <>For successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> on the motto <em>"Every Step for Women Safety."</em></>
                     ) : (
-                      <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Women Safety."</em></>
+                      <>For exemplary participation in <strong>Women's Safety, Dignity & Empowerment</strong> and successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> on the motto <em>"Every Step for Women Safety."</em></>
                     )}
                   </p>
 

@@ -4498,7 +4498,7 @@ export function AdminDashboard({
                           CERTIFICATE OF ACCOMPLISHMENT
                         </div>
                         <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase', marginBottom: '14px' }}>
-                          Women's Safety, Dignity & Empowerment Movement
+                          Women's Safety, Dignity & Empowerment
                         </div>
 
                         <div style={{ fontSize: '0.78rem', color: '#64748b', fontStyle: 'italic', marginBottom: '4px' }}>
@@ -4533,9 +4533,9 @@ export function AdminDashboard({
 
                         <p style={{ fontSize: '0.8rem', color: '#334155', maxWidth: '520px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
                           {isTimedCompetitive ? (
-                            <>For successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the <strong>Director General of Police (DGP), Rajasthan</strong> on the motto <em>"Every Step for Women Safety."</em></>
+                            <>For successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> on the motto <em>"Every Step for Women Safety."</em></>
                           ) : (
-                            <>For exemplary participation in the <strong>Women's Safety, Dignity & Empowerment Movement</strong> and successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> under the leadership of the District Police on the motto <em>"Every Step for Women Safety."</em></>
+                            <>For exemplary participation in <strong>Women's Safety, Dignity & Empowerment</strong> and successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> on the motto <em>"Every Step for Women Safety."</em></>
                           )}
                         </p>
 
