@@ -25,13 +25,7 @@ body {
   box-shadow: none !important;
 }
 
-/* Unicode-range scoped Hindi font rule so local Kruti Dev never garbles ASCII English text */
-@font-face {
-  font-family: 'KrutiDevHindi';
-  src: local('Kruti Dev 010'), local('KrutiDev'), local('Kokila'), local('Aparajita');
-  unicode-range: U+0900-097F, U+1CD0-1CFF, U+200C-200D, U+25CC, U+A8E0-A8FF;
-  font-display: swap;
-}
+
 
 /* Authentic Adine Kirnberg Calligraphy Script Font for Certificates */
 @font-face {
@@ -106,10 +100,10 @@ body {
   --shadow-lg: 0 14px 30px -4px rgba(15, 23, 42, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
   --shadow-modal: 0 25px 60px -10px rgba(10, 28, 61, 0.3);
 
-  /* Hindi: Kruti Dev / Traditional Official Devanagari (Noto Serif Devanagari, Tiro Devanagari Hindi); English: Inter / Arial */
-  --font-heading: 'KrutiDevHindi', 'Noto Serif Devanagari', 'Tiro Devanagari Hindi', 'Inter', Arial, Helvetica, sans-serif;
-  --font-body: 'KrutiDevHindi', 'Noto Serif Devanagari', 'Tiro Devanagari Hindi', 'Inter', Arial, Helvetica, sans-serif;
-  --font-serif: 'KrutiDevHindi', 'Noto Serif Devanagari', 'Tiro Devanagari Hindi', 'Inter', Arial, Helvetica, sans-serif;
+  /* Poppins Font for both Hindi (Devanagari) and English (Latin) */
+  --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   --radius-sm: 6px;
   --radius-md: 10px;

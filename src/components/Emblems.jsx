@@ -62,7 +62,7 @@ export function StateEmblemOfIndia({ size = 48, className = "" }) {
       <path d="M 28,78 Q 50,86 72,78 L 74,90 Q 50,96 26,90 Z" fill="url(#ashokaGold)" />
 
       {/* Devanagari Script: सत्यमेव जयते */}
-      <text x="50" y="108" textAnchor="middle" fill="#78350F" fontSize="8" fontWeight="900" fontFamily="'Inter', 'Noto Sans Devanagari', sans-serif">
+      <text x="50" y="108" textAnchor="middle" fill="#78350F" fontSize="8" fontWeight="900" fontFamily="'Poppins', sans-serif">
         सत्यमेव जयते
       </text>
     </svg>

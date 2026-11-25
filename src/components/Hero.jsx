@@ -105,7 +105,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           <div style={{ textAlign: 'center', maxWidth: '880px', margin: '0 auto' }}>
             {/* Top Event Super-Title */}
             <div style={{
-              fontFamily: "'Inter', Arial, sans-serif",
+              fontFamily: "'Poppins', sans-serif",
               fontSize: 'clamp(0.78rem, 1.6vw, 1rem)',
               fontWeight: 800,
               color: '#fde68a',
@@ -122,7 +122,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
               translate="no"
               className="notranslate"
               style={{
-                fontFamily: "'Inter', Arial, sans-serif",
+                fontFamily: "'Poppins', sans-serif",
                 fontSize: 'clamp(2.6rem, 6.8vw, 5rem)',
                 fontWeight: 900,
                 lineHeight: 1.04,
@@ -200,7 +200,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
                 justifyContent: 'center',
                 gap: '7px',
                 color: '#fde68a',
-                fontFamily: "'Inter', Arial, sans-serif",
+                fontFamily: "'Poppins', sans-serif",
                 fontWeight: 800,
                 fontSize: '0.8rem',
                 letterSpacing: '0.18em',
@@ -408,7 +408,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
         }
 
         .hero-countdown-val {
-          font-family: 'Inter', Arial, sans-serif;
+          font-family: 'Poppins', sans-serif;
           font-variant-numeric: tabular-nums;
           font-size: clamp(1.95rem, 4vw, 2.9rem);
           font-weight: 900;
@@ -418,7 +418,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
         }
 
         .hero-countdown-lbl {
-          font-family: 'Inter', Arial, sans-serif;
+          font-family: 'Poppins', sans-serif;
           font-size: 0.73rem;
           color: #fde68a;
           font-weight: 800;
@@ -428,7 +428,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
         }
 
         .hero-countdown-sep {
-          font-family: 'Inter', Arial, sans-serif;
+          font-family: 'Poppins', sans-serif;
           font-size: 1.8rem;
           font-weight: 900;
           color: rgba(253, 230, 138, 0.85);
