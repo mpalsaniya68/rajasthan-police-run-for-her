@@ -104,6 +104,90 @@ console.log(`[DB] Engine: ${isProductionTurso ? "Cloud Edge DB" : (dbUrl === ":m
 let isDbInitialized = false;
 
 /**
+ * Migration: Auto-normalize legacy district-scoped bib numbers
+ * (e.g., RJ-CHT-05K-1002 -> RJ-05K-1002) atomically with collision preflight,
+ * set venue_type to 'jaipur', and update associated timing scans.
+ */
+export async function runBibNormalizationMigration() {
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS schema_migrations (
+      id TEXT PRIMARY KEY,
+      applied_at TEXT NOT NULL
+    );
+  `);
+
+  const check = await db.execute({
+    sql: "SELECT count(*) as count FROM schema_migrations WHERE id = 'bib_normalization_jaipur';",
+    args: []
+  });
+  if (Number(check.rows[0]?.count) > 0) {
+    return; // Migration already recorded and completed
+  }
+
+  // Preflight legacy bib rows
+  const legacyBibsRes = await db.execute("SELECT id, bib_number, category_id FROM participants WHERE bib_number LIKE 'RJ-%-%-%';");
+  if (legacyBibsRes.rows.length === 0) {
+    await db.execute({
+      sql: "INSERT INTO schema_migrations (id, applied_at) VALUES ('bib_normalization_jaipur', ?);",
+      args: [new Date().toISOString()]
+    });
+    return;
+  }
+
+  // Fetch all existing bib numbers to avoid collisions with UNIQUE constraint
+  const allBibsRes = await db.execute("SELECT id, bib_number FROM participants;");
+  const takenBibs = new Set(allBibsRes.rows.map(r => String(r.bib_number).toUpperCase()));
+
+  const batchStatements = [];
+
+  for (const row of legacyBibsRes.rows) {
+    const rawBib = String(row.bib_number);
+    const cleanBib = rawBib.replace(/^RJ-[A-Z]{3,4}-/i, 'RJ-');
+
+    takenBibs.delete(rawBib.toUpperCase());
+
+    let resolvedBib = cleanBib;
+    if (takenBibs.has(resolvedBib.toUpperCase())) {
+      const match = cleanBib.match(/^RJ-([0-9]{2}K)-([0-9]{4})$/i);
+      const catCode = match ? match[1].toUpperCase() : (row.category_id ? String(row.category_id).toUpperCase() : "GEN");
+      let num = match ? parseInt(match[2], 10) : 1000;
+      do {
+        num += 1;
+        resolvedBib = `RJ-${catCode}-${String(num).padStart(4, "0")}`;
+      } while (takenBibs.has(resolvedBib.toUpperCase()));
+    }
+
+    takenBibs.add(resolvedBib.toUpperCase());
+
+    // Update participant row atomically setting venue_type to jaipur in the same statement
+    batchStatements.push({
+      sql: "UPDATE participants SET bib_number = ?, district_id = 'jaipur_comm', district_name = 'Jaipur', venue_type = 'jaipur' WHERE id = ?;",
+      args: [resolvedBib, row.id]
+    });
+
+    // Update matching timing_scans recorded under the legacy bib
+    batchStatements.push({
+      sql: "UPDATE timing_scans SET bib_number = ? WHERE bib_number = ?;",
+      args: [resolvedBib, rawBib]
+    });
+  }
+
+  // Record migration completion atomically in same batch
+  batchStatements.push({
+    sql: "INSERT INTO schema_migrations (id, applied_at) VALUES ('bib_normalization_jaipur', ?);",
+    args: [new Date().toISOString()]
+  });
+
+  try {
+    await db.batch(batchStatements, "write");
+    console.log(`[DB Migration] Atomically normalized ${legacyBibsRes.rows.length} legacy participant bib(s) and associated timing scans.`);
+  } catch (err) {
+    console.error("[DB Migration Error] Atomic bib normalization batch failed:", err);
+    throw err;
+  }
+}
+
+/**
  * Initialize Database Schema with Indexes for high concurrency (400,000+ records)
  */
 export async function initDatabase(force = false) {
@@ -185,6 +269,9 @@ export async function initDatabase(force = false) {
             `);
             await db.execute("UPDATE admin_users SET plain_passcode = '' WHERE COALESCE(plain_passcode, '') <> '';");
           } catch (e) {}
+
+          // Run pending bib normalization migration before warm-start return
+          await runBibNormalizationMigration();
 
           isDbInitialized = true;
           console.log("[DB] Warm-start ready. Schema and core accounts verified.");
@@ -342,17 +429,8 @@ export async function initDatabase(force = false) {
       `);
     } catch (e) {}
 
-    // Auto-normalize legacy district bib numbers (e.g., RJ-CHT-05K-1002 -> RJ-05K-1002)
-    try {
-      const legacyBibs = await db.execute("SELECT id, bib_number FROM participants WHERE bib_number LIKE 'RJ-%-%-%';");
-      for (const row of legacyBibs.rows) {
-        const cleanBib = String(row.bib_number).replace(/^RJ-[A-Z]{3,4}-/i, 'RJ-');
-        await db.execute({
-          sql: "UPDATE participants SET bib_number = ?, district_id = 'jaipur_comm', district_name = 'Jaipur' WHERE id = ?;",
-          args: [cleanBib, row.id]
-        });
-      }
-    } catch (e) {}
+    // Run pending bib normalization migration
+    await runBibNormalizationMigration();
 
     // Payments Table for Government Revenue & Treasury Audit Trail
     await db.execute(`

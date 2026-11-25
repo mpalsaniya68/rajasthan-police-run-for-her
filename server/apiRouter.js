@@ -1382,9 +1382,10 @@ export async function handleApiRequest(req, res) {
       const r = resRunner.rows[0];
 
       // Fetch checkpoint timing scans
+      const cleanBib = String(r.bib_number || "").replace(/^RJ-[A-Z]{3,4}-/i, "RJ-");
       const scansRes = await db.execute({
-        sql: "SELECT * FROM timing_scans WHERE bib_number = ? ORDER BY km ASC",
-        args: [r.bib_number]
+        sql: "SELECT * FROM timing_scans WHERE bib_number = ? OR bib_number = ? ORDER BY km ASC",
+        args: [r.bib_number, cleanBib]
       });
 
       return json({

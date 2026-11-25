@@ -422,44 +422,32 @@ export function AdminDashboard({
   // RFID Kit Allotment Counter Search Handler
 
   const handleSearchKitRunner = (query) => {
-
     const q = (query !== undefined ? query : kitQuery).trim().toLowerCase();
-
     if (!q) {
-
       setScannedRunner(null);
-
       return;
-
     }
+    const qFormatted = formatBibNumber(q).toLowerCase();
 
-
+    const matchesRunner = (rawBib, mobile, name, qr) => {
+      const bRaw = (rawBib || "").toLowerCase();
+      const bFmt = formatBibNumber(rawBib || "").toLowerCase();
+      return (
+        (bRaw && (bRaw.includes(q) || bRaw.includes(qFormatted))) ||
+        (bFmt && (bFmt.includes(q) || bFmt.includes(qFormatted))) ||
+        (mobile && mobile.includes(q)) ||
+        (name && name.toLowerCase().includes(q)) ||
+        (qr && qr.toLowerCase().includes(q))
+      );
+    };
 
     const foundDb = (dbParticipants || []).find(r => 
-
-      (r.bib_number && r.bib_number.toLowerCase().includes(q)) ||
-
-      (r.mobile && r.mobile.includes(q)) ||
-
-      (r.full_name && r.full_name.toLowerCase().includes(q)) ||
-
-      (r.qr_token && r.qr_token.toLowerCase().includes(q))
-
+      matchesRunner(r.bib_number, r.mobile, r.full_name, r.qr_token)
     );
-
-
 
     const foundLocal = (registrations || []).find(r => 
-
-      (r.bibNumber && r.bibNumber.toLowerCase().includes(q)) ||
-
-      (r.mobile && r.mobile.includes(q)) ||
-
-      (r.fullName && r.fullName.toLowerCase().includes(q))
-
+      matchesRunner(r.bibNumber, r.mobile, r.fullName, null)
     );
-
-
 
     const found = foundDb || foundLocal;
 

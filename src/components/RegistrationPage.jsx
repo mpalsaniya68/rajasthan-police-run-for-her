@@ -924,7 +924,7 @@ export function RegistrationPage({
       ctx.stroke();
 
       // Dynamic Auto-Scaling for Bib Number (Strictly bounded to 235px max to prevent overflow)
-      const bibText = String(p.bibNumber || "RJ-21K-1001").trim();
+      const bibText = formatBibNumber(p.bibNumber) || "RJ-21K-1001";
       let bibFontSize = 34; // Proportional and elegant font size
       ctx.font = `900 ${bibFontSize}px sans-serif`;
       while (ctx.measureText(bibText).width > 235 && bibFontSize > 18) {
@@ -1124,7 +1124,7 @@ export function RegistrationPage({
       ctx.textAlign = "left";
 
       // 8. Download directly as PNG file into user's device Downloads folder
-      const safeBib = (p.bibNumber || "RUNNER").replace(/[^a-zA-Z0-9_-]/g, "_");
+      const safeBib = (formatBibNumber(p.bibNumber) || "RUNNER").replace(/[^a-zA-Z0-9_-]/g, "_");
       const fileName = `RJ-POLICE-MARATHON-EPASS-${safeBib}.png`;
 
       const triggerDownload = (href, revokeAfter = false) => {
