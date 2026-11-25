@@ -175,7 +175,7 @@ export function CertificateHub({ registrations = [] }) {
       const isTimedCategory = cat.includes("21") || cat.includes("10") || bib.includes("21K") || bib.includes("10K");
       const isTimedCompetitive = isTimedCategory;
 
-      const pureDistrictEn = formatLocalizedDistrict(selectedRunner.districtName || selectedRunner.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
+      const pureDistrictEn = formatLocalizedDistrict(selectedRunner.districtName || selectedRunner.district_name, false) || "Jaipur";
 
       const runnerGunTime = selectedRunner.finishTime || selectedRunner.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
       const runnerChipTime = selectedRunner.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
@@ -656,8 +656,8 @@ export function CertificateHub({ registrations = [] }) {
   const isTimedCategory = cat.includes("21") || cat.includes("10") || bib.includes("21K") || bib.includes("10K");
   const isTimedCompetitive = isTimedCategory;
 
-  const pureDistrictEn = formatLocalizedDistrict(selectedRunner?.districtName || selectedRunner?.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
-  const pureDistrictHi = formatLocalizedDistrict(selectedRunner?.districtName || selectedRunner?.district_name, true) || (isJaipur ? "जयपुर" : "जिला पुलिस");
+  const pureDistrictEn = formatLocalizedDistrict(selectedRunner?.districtName || selectedRunner?.district_name, false) || "Jaipur";
+  const pureDistrictHi = formatLocalizedDistrict(selectedRunner?.districtName || selectedRunner?.district_name, true) || "जयपुर";
   const pureDistrict = pureDistrictEn;
 
   const runnerGunTime = selectedRunner?.finishTime || selectedRunner?.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");

@@ -205,9 +205,17 @@ export async function sendCertificateNotification(runner) {
     emailBody = `प्रिय ${fullName},\n\nहार्दिक बधाई! राजस्थान पुलिस हाफ मैराथन 2027 'रन फॉर हर' में आपने ${categoryName} दौड़ समय ${finishTime} में सफलतापूर्वक पूर्ण की है।\n\nपुलिस महानिदेशक (DGP) राजस्थान द्वारा जारी आपका डिजिटल प्रमाण पत्र पोर्टल पर जारी कर दिया गया है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\nराजस्थान पुलिस परिवार आपकी खेल भावना और नारी सुरक्षा संकल्प को सलाम करता है।\n\nकार्यालय महानिदेशक पुलिस, राजस्थान, जयपुर।`;
   } else {
     // Community Run / General Participation
-    smsText = `राजस्थान पुलिस 'रन फॉर हर': प्रिय ${fullName}, जयपुर में नारी सुरक्षा व सम्मान दौड़ में आपकी सहभागिता का डिजिटल प्रमाण पत्र जारी हो चुका है। डाउनलोड: https://police.rajasthan.gov.in/cert/${certificateId} — राजस्थान पुलिस`;
+    const rawDistrict = (runner.eventDistrict || runner.districtName || runner.district_name || runner.district || "").trim();
+    const isJaipur = /jaipur/i.test(rawDistrict) || rawDistrict.includes("जयपुर") || /jpr/i.test(runner.districtId || runner.district_id || "");
+    const hasDistrict = rawDistrict && rawDistrict !== "राजस्थान पुलिस";
+    const eventDistrict = isJaipur ? "जयपुर" : (hasDistrict ? rawDistrict : "");
+
+    const smsLocation = eventDistrict ? `${eventDistrict} में ` : "";
+    const emailLocation = eventDistrict ? `${eventDistrict} से ` : "";
+
+    smsText = `राजस्थान पुलिस 'रन फॉर हर': प्रिय ${fullName}, ${smsLocation}नारी सुरक्षा व सम्मान दौड़ में आपकी सहभागिता का डिजिटल प्रमाण पत्र जारी हो चुका है। डाउनलोड: https://police.rajasthan.gov.in/cert/${certificateId} — राजस्थान पुलिस`;
     emailSubject = `डिजिटल सहभागिता प्रमाण पत्र | रन फॉर हर - राजस्थान पुलिस`;
-    emailBody = `प्रिय ${fullName},\n\n'रन फॉर हर' - महिला सुरक्षा, सम्मान एवं सशक्तिकरण के राज्यव्यापी जन-जागरूकता अभियान में जयपुर से सक्रिय सहभागिता के लिए राजस्थान पुलिस आपका हार्दिक आभार व्यक्त करती है।\n\nपुलिस महानिदेशक (DGP) राजस्थान द्वारा जारी डिजिटल सहभागिता प्रमाण पत्र पोर्टल पर उपलब्ध है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\n"हर कदम उसकी सुरक्षा के लिए"\nकार्यालय महानिदेशक पुलिस, राजस्थान, जयपुर।`;
+    emailBody = `प्रिय ${fullName},\n\n'रन फॉर हर' - महिला सुरक्षा, सम्मान एवं सशक्तिकरण के राज्यव्यापी जन-जागरूकता अभियान में ${emailLocation}सक्रिय सहभागिता के लिए राजस्थान पुलिस आपका हार्दिक आभार व्यक्त करती है।\n\nपुलिस महानिदेशक (DGP) राजस्थान द्वारा जारी डिजिटल सहभागिता प्रमाण पत्र पोर्टल पर उपलब्ध है।\nसर्टिफिकेट क्रमांक: ${certificateId}\nडाउनलोड लिंक: https://police.rajasthan.gov.in/cert/${certificateId}\n\n"हर कदम उसकी सुरक्षा के लिए"\nकार्यालय महानिदेशक पुलिस, राजस्थान, जयपुर।`;
   }
 
   const dispatchResult = await dispatchGatewaySms({

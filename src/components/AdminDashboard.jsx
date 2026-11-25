@@ -4437,9 +4437,7 @@ export function AdminDashboard({
                   const isTimedCategory = cat.includes("21") || cat.includes("10") || bib.includes("21K") || bib.includes("10K");
                   const isTimedCompetitive = isTimedCategory;
 
-                  const pureDistrictEn = formatLocalizedDistrict(previewCertRunner?.districtName || previewCertRunner?.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
-                  const pureDistrictHi = formatLocalizedDistrict(previewCertRunner?.districtName || previewCertRunner?.district_name, true) || (isJaipur ? "जयपुर" : "जिला पुलिस");
-                  const pureDistrict = pureDistrictEn;
+                  const pureDistrictEn = formatLocalizedDistrict(previewCertRunner?.districtName || previewCertRunner?.district_name, false) || "Jaipur";
 
                   const runnerGunTime = previewCertRunner?.finishTime || previewCertRunner?.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
                   const runnerChipTime = previewCertRunner?.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
