@@ -4516,11 +4516,7 @@ export function AdminDashboard({
                         </div>
 
                         <p style={{ fontSize: '0.8rem', color: '#334155', maxWidth: '520px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
-                          {isTimedCompetitive ? (
-                            <>For successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em></>
-                          ) : (
-                            <>For exemplary participation in <strong>Women's Safety, Dignity & Empowerment</strong> and successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em></>
-                          )}
+                          On successful completion of the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || (isTimedCompetitive ? '21 KM Half Marathon' : '5 KM Community Run')}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em>
                         </p>
 
                         {/* Badges / Metrics - Semi-transparent background so the watermark crest is continuous and visible */}

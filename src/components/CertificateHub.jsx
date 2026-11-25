@@ -288,13 +288,8 @@ export function CertificateHub({ registrations = [] }) {
       ctx.font = "18px Georgia, serif";
       const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
 
-      if (isTimedCompetitive) {
-        ctx.fillText(`For successfully completing the ${catText} in Jaipur`, 675, 416);
-        ctx.fillText("on the motto \"Every Step for Women Safety.\"", 675, 444);
-      } else {
-        ctx.fillText("For exemplary participation in Women's Safety, Dignity & Empowerment", 675, 416);
-        ctx.fillText(`and successfully completing the ${catText} in Jaipur on the motto "Every Step for Women Safety."`, 675, 444);
-      }
+      ctx.fillText(`On successful completion of the ${catText} in Jaipur`, 675, 416);
+      ctx.fillText("on the motto \"Every Step for Women Safety.\"", 675, 444);
 
       // 5. METRICS BOX (Exact 5-column / 3-column card)
       const drawRRect = (x, y, w, h, r) => {
@@ -900,11 +895,7 @@ export function CertificateHub({ registrations = [] }) {
 
                   {/* Statement */}
                   <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-body)', maxWidth: '620px', margin: '0 auto 16px auto', lineHeight: 1.55 }}>
-                    {isTimedCompetitive ? (
-                      <>For successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em></>
-                    ) : (
-                      <>For exemplary participation in <strong>Women's Safety, Dignity & Empowerment</strong> and successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em></>
-                    )}
+                    On successful completion of the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? '21 KM Half Marathon' : '5 KM Community Run')}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em>
                   </p>
 
                   {/* Metrics Matrix: Dual Mode (Timed Grid vs District Awareness Badges) */}

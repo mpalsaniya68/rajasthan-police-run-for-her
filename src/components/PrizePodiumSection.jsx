@@ -64,7 +64,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span>{isHindi ? 'प्रथम पुरस्कार' : '1st Prize'}</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
-                    To Be Announced
+                    ₹51,000
                   </span>
                 </div>
 
@@ -82,7 +82,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span>{isHindi ? 'द्वितीय पुरस्कार' : '2nd Prize'}</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
-                    To Be Announced
+                    ₹31,000
                   </span>
                 </div>
 
@@ -100,7 +100,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span>{isHindi ? 'तृतीय पुरस्कार' : '3rd Prize'}</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
-                    To Be Announced
+                    ₹21,000
                   </span>
                 </div>
               </div>
@@ -141,7 +141,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span>{isHindi ? 'प्रथम पुरस्कार' : '1st Prize'}</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
-                    To Be Announced
+                    ₹21,000
                   </span>
                 </div>
 
@@ -159,7 +159,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span>{isHindi ? 'द्वितीय पुरस्कार' : '2nd Prize'}</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
-                    To Be Announced
+                    ₹11,000
                   </span>
                 </div>
 
@@ -177,7 +177,7 @@ export function PrizePodiumSection({ onOpenRegister }) {
                     <span>{isHindi ? 'तृतीय पुरस्कार' : '3rd Prize'}</span>
                   </div>
                   <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0f172a' }}>
-                    To Be Announced
+                    ₹5,100
                   </span>
                 </div>
               </div>
