@@ -649,7 +649,7 @@ export function RegistrationPage({
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.email && formData.email.trim() && !emailRegex.test(formData.email.trim())) {
+    if (formData.email && formData.email.trim() && (formData.email.trim().length > 254 || !emailRegex.test(formData.email.trim()))) {
       alert(isHindi ? "कृपया वैध ईमेल पता दर्ज करें (उदा. runner@example.com)।" : "Please enter a valid email address (e.g. runner@example.com).");
       return;
     }
@@ -2683,6 +2683,7 @@ export function RegistrationPage({
                     </label>
                     <input
                       type="email"
+                      maxLength={254}
                       placeholder={isHindi ? "उदा. runner@example.com" : "e.g. runner@example.com"}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
