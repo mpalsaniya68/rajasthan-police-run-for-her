@@ -4,7 +4,7 @@ import {
 
   Shield, Download, Search, CheckCircle2, Shirt, Send, LogOut, 
 
-  FileSpreadsheet, MapPin, Database, AlertTriangle, 
+  MapPin, Database, AlertTriangle, 
 
   Zap, RefreshCw, ArrowLeft,
 
@@ -828,7 +828,7 @@ export function AdminDashboard({
   // 1. OVERALL MASTER CSV EXPORT
   const handleExportOverallMaster = () => {
     window.open('/api/admin/export', '_blank');
-    setExportNotice(isHindi ? `सम्पूर्ण मैराथन मास्टर डेटाबेस एक्सपोर्ट प्रारंभ हुआ!` : `Master Marathon Database export started!`);
+    setExportNotice(isHindi ? `मास्टर डेटा CSV एक्सपोर्ट प्रारंभ हुआ!` : `Master Data CSV export started!`);
     setTimeout(() => setExportNotice(null), 4500);
   };
 
@@ -837,8 +837,8 @@ export function AdminDashboard({
     const filename = `Rajasthan_Police_Marathon_Runners_${Date.now()}.csv`;
     downloadCSVFile(filteredList, filename);
     setExportNotice(isHindi 
-      ? `धावक सूची CSV फाइल (${filteredList.length} रिकॉर्ड्स) सफलतापूर्वक डाउनलोड हुई!` 
-      : `Runners list CSV (${filteredList.length} records) downloaded successfully!`);
+      ? `फ़िल्टर डेटा CSV (${filteredList.length} रिकॉर्ड्स) सफलतापूर्वक डाउनलोड हुई!` 
+      : `Filtered Data CSV (${filteredList.length} records) downloaded successfully!`);
     setTimeout(() => setExportNotice(null), 4500);
   };
 
@@ -1762,127 +1762,55 @@ export function AdminDashboard({
 
             <>
 
-              {/* DEDICATED CSV EXPORT CENTER (User Requirement) */}
-
-              <div className="gov-card" style={{
-
-                padding: '16px 20px',
-
-                marginBottom: '20px',
-
-                background: 'linear-gradient(135deg, #ffffff 0%, var(--police-navy-50) 100%)',
-
-                border: '2px solid var(--police-navy-200)',
-
-                borderRadius: '8px'
-
+              {/* PRIMARY CSV EXPORT ACTIONS */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                gap: '12px',
+                marginBottom: '20px'
               }}>
-
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
-
-              <div className="admin-filters-actions">
-              {/* Mobile View Toggle Switcher */}
-              <div style={{ display: 'inline-flex', borderRadius: '5px', overflow: 'hidden', border: '1.5px solid #cbd5e1' }}>
+                {/* Primary Master Database Export */}
                 <button
-                  type="button"
-                  onClick={() => setViewMode('table')}
+                  onClick={handleExportOverallMaster}
                   style={{
-                    padding: '5px 10px',
-                    fontSize: '0.74rem',
+                    background: 'var(--police-navy-900)',
+                    color: '#ffffff',
+                    border: '1.5px solid var(--police-gold-500)',
+                    padding: '11px 18px',
+                    borderRadius: '6px',
+                    fontSize: '0.86rem',
                     fontWeight: 800,
-                    border: 'none',
-                    background: viewMode === 'table' ? '#0f172a' : '#ffffff',
-                    color: viewMode === 'table' ? '#ffffff' : '#64748b',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    cursor: 'pointer',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
+                >
+                  <Download size={16} color="var(--police-gold-400)" />
+                  <span>{isHindi ? '📥 मास्टर डेटा CSV' : '📥 Master Data CSV'}</span>
+                </button>
+
+                {/* Download Current Filtered Runners */}
+                <button
+                  onClick={handleExportFilteredRunners}
+                  className="btn-gold"
+                  style={{
+                    padding: '11px 18px',
+                    fontSize: '0.86rem',
+                    fontWeight: 800,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
                     cursor: 'pointer'
                   }}
-                  title="डेस्कटॉप टेबल दृश्य"
                 >
-                  📊 टेबल
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode('cards')}
-                  style={{
-                    padding: '5px 10px',
-                    fontSize: '0.74rem',
-                    fontWeight: 800,
-                    border: 'none',
-                    borderLeft: '1px solid #cbd5e1',
-                    background: viewMode === 'cards' ? '#0f172a' : '#ffffff',
-                    color: viewMode === 'cards' ? '#ffffff' : '#64748b',
-                    cursor: 'pointer'
-                  }}
-                  title="मोबाइल कार्ड दृश्य"
-                >
-                  📱 कार्ड्स
+                  <Download size={16} />
+                  <span>{isHindi ? `📋 फ़िल्टर डेटा CSV (${filteredList.length})` : `📋 Filtered Data CSV (${filteredList.length})`}</span>
                 </button>
               </div>
-
-                <FileSpreadsheet size={20} color="var(--police-navy-900)" />
-
-                <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-                  {isHindi ? 'डेटा एक्सपोर्ट केंद्र' : 'Data Export Center'}
-                </span>
-
-              </div>
-
-              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                {isHindi 
-                  ? `डेटाबेस में कुल ${liveStats?.total || registrations.length} धावक पंजीकृत हैं`
-                  : `Total ${liveStats?.total || registrations.length} runners registered in database`}
-              </span>
-
-            </div>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '12px'
-            }}>
-              {/* Primary Master Database Export */}
-              <button
-                onClick={handleExportOverallMaster}
-                style={{
-                  background: 'var(--police-navy-900)',
-                  color: '#ffffff',
-                  border: '1.5px solid var(--police-gold-500)',
-                  padding: '11px 18px',
-                  borderRadius: '6px',
-                  fontSize: '0.86rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  cursor: 'pointer',
-                  boxShadow: 'var(--shadow-sm)'
-                }}
-              >
-                <Download size={16} color="var(--police-gold-400)" />
-                <span>{isHindi ? '📥 सम्पूर्ण मैराथन मास्टर डेटाबेस CSV डाउनलोड करें' : '📥 Download Master Marathon Database CSV'}</span>
-              </button>
-
-              {/* Download Current Filtered Runners */}
-              <button
-                onClick={handleExportFilteredRunners}
-                className="btn-gold"
-                style={{
-                  padding: '11px 18px',
-                  fontSize: '0.86rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  cursor: 'pointer'
-                }}
-              >
-                <Download size={16} />
-                <span>{isHindi ? `📋 वर्तमान फ़िल्टर धावक CSV (${filteredList.length}) डाउनलोड करें` : `📋 Download Current Filtered Runners CSV (${filteredList.length})`}</span>
-              </button>
-            </div>
-
-          </div>
 
 
 
@@ -2029,6 +1957,43 @@ export function AdminDashboard({
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              {/* Mobile / Desktop View Toggle Switcher */}
+              <div style={{ display: 'inline-flex', borderRadius: '4px', overflow: 'hidden', border: '1.5px solid #cbd5e1' }}>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('table')}
+                  style={{
+                    padding: '5px 10px',
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    border: 'none',
+                    background: viewMode === 'table' ? '#0f172a' : '#ffffff',
+                    color: viewMode === 'table' ? '#ffffff' : '#64748b',
+                    cursor: 'pointer'
+                  }}
+                  title="डेस्कटॉप टेबल दृश्य"
+                >
+                  📊 टेबल
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('cards')}
+                  style={{
+                    padding: '5px 10px',
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    border: 'none',
+                    borderLeft: '1px solid #cbd5e1',
+                    background: viewMode === 'cards' ? '#0f172a' : '#ffffff',
+                    color: viewMode === 'cards' ? '#ffffff' : '#64748b',
+                    cursor: 'pointer'
+                  }}
+                  title="मोबाइल कार्ड दृश्य"
+                >
+                  📱 कार्ड्स
+                </button>
+              </div>
+
               <button
                 type="button"
                 onClick={() => {
