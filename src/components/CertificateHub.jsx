@@ -59,8 +59,10 @@ export function CertificateHub({ registrations = [] }) {
 
   const openNotIssuedPopup = () => {
     setCertNoticePopup({
-      title: "प्रमाण पत्र अभी जारी नहीं हुआ है",
-      message: "दौड़ समापन, गेट उपस्थिति सत्यापन एवं पुलिस अधिकृत समिति द्वारा जारी किए जाने के उपरांत ही प्रमाण पत्र डाउनलोड हेतु उपलब्ध होगा। जारी होते ही आपके पंजीकृत मोबाइल पर SMS/ईमेल द्वारा सूचना प्रेषित की जाएगी।"
+      title: isHindi ? "⏳ प्रमाण पत्र रेस डे (24 जनवरी 2027) के बाद उपलब्ध होगा" : "⏳ Certificate available after Race Day (24 Jan 2027)",
+      message: isHindi
+        ? "आपका पंजीकरण पूर्णतः सुरक्षित है! 24 जनवरी 2027 को दौड़ संपन्न होने, RFID टाइमिंग व उपस्थिति सत्यापन के उपरांत आपका अधिकृत डिजिटल प्रमाण पत्र यहाँ स्वतः डाउनलोड हेतु उपलब्ध हो जाएगा।"
+        : "Your registration is completely safe! Official digital certificate will be automatically available for download here after race completion, RFID timing, and committee verification on 24 January 2027."
     });
   };
 
@@ -1103,7 +1105,7 @@ export function CertificateHub({ registrations = [] }) {
               width: '100%',
               padding: '26px 24px',
               boxShadow: '0 24px 50px rgba(10, 28, 61, 0.3)',
-              border: '2px solid #f59e0b',
+              border: '2px solid var(--police-navy-300)',
               textAlign: 'center'
             }}
           >
@@ -1111,8 +1113,8 @@ export function CertificateHub({ registrations = [] }) {
               width: '54px',
               height: '54px',
               borderRadius: '50%',
-              background: '#fffbeb',
-              border: '1.5px solid #f59e0b',
+              background: 'var(--police-navy-50)',
+              border: '1.5px solid var(--police-navy-300)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1121,7 +1123,7 @@ export function CertificateHub({ registrations = [] }) {
             }}>
               ⏳
             </div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#92400e', margin: '0 0 10px 0' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--police-navy-950)', margin: '0 0 10px 0' }}>
               {certNoticePopup.title}
             </h3>
             <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6, margin: '0 0 20px 0' }}>
@@ -1141,7 +1143,7 @@ export function CertificateHub({ registrations = [] }) {
                 cursor: 'pointer'
               }}
             >
-              ठीक है
+              {isHindi ? 'समझ गया (OK)' : 'Understood (OK)'}
             </button>
           </div>
         </div>

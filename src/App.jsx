@@ -30,7 +30,6 @@ import { PrizePodiumSection } from './components/PrizePodiumSection';
 import { RegistrationPage } from './components/RegistrationPage';
 
 import { FAQSection } from './components/FAQSection';
-import { MobileQuickSosBar } from './components/MobileQuickSosBar';
 import { useLanguage } from './context/LanguageContext';
 
 class ErrorBoundary extends React.Component {
@@ -644,9 +643,6 @@ export default function App() {
       {/* Footer with Helpline Matrix & Quick Page Navigation */}
 
       <Footer onNavigate={navigateToPage} />
-
-      {/* Rajasthan Police 24x7 Women Safety & Emergency Mobile Quick Dial Bar */}
-      <MobileQuickSosBar />
 
     </div>
 

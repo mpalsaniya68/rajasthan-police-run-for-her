@@ -15,7 +15,8 @@ import {
   Unlock,
   KeyRound,
   Lock,
-  Smartphone
+  Smartphone,
+  MapPin
 } from 'lucide-react';
 import { RACE_CATEGORIES, RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 import { PoliceEmblem, StateEmblemOfIndia } from './Emblems';
@@ -656,9 +657,13 @@ export function RegistrationPage({
 
     const cleanId = formData.idNumber ? formData.idNumber.replace(/\s+/g, "").toUpperCase() : "";
 
-    const cleanEmergency = (formData.emergencyContactPhone || formData.mobile).replace(/\D/g, "");
+    const cleanEmergency = (formData.emergencyContactPhone || "").replace(/\D/g, "");
     if (!/^[6-9]\d{9}$/.test(cleanEmergency)) {
       alert(isHindi ? "कृपया वैध 10-अंकीय आपातकालीन मोबाइल नंबर दर्ज करें।" : "Please enter a valid 10-digit emergency mobile number.");
+      return;
+    }
+    if (cleanEmergency === cleanMobile) {
+      alert(isHindi ? "आपातकालीन नंबर आपके स्वयं के मोबाइल नंबर से भिन्न होना चाहिए। कृपया परिजन या मित्र का नंबर दें।" : "Emergency contact number must be different from your own mobile number. Please provide a family member or friend's number.");
       return;
     }
 
@@ -2488,41 +2493,26 @@ export function RegistrationPage({
                     fontWeight: 900
                   }}>1</span>
                   <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                    {isHindi ? 'दौड़ श्रेणी एवं आयोजन स्थल चुनें' : 'Select Race Category & Venue'}
+                    {isHindi ? 'दौड़ श्रेणी चुनें' : 'Select Race Category'}
                   </h3>
                 </div>
 
-                {/* Venue Selection */}
-                <div style={{ marginBottom: '18px' }}>
-                  <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
-                    {isHindi ? 'आप कहाँ दौड़ना चाहते हैं?:' : 'Where would you like to run?:'}
-                  </label>
-                  <div style={{ maxWidth: '300px' }}>
-                    <div
-                      style={{
-                        padding: '14px',
-                        borderRadius: '10px',
-                        border: '2px solid var(--police-gold-500)',
-                        background: 'var(--police-navy-50)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px'
-                      }}
-                    >
-                      <input
-                        type="radio"
-                        name="venueType"
-                        checked={true}
-                        readOnly
-                        style={{ cursor: 'pointer' }}
-                      />
-                      <div>
-                        <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          {isHindi ? 'जयपुर' : 'Jaipur'}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                {/* Official Venue Badge */}
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'var(--police-navy-50)',
+                  border: '1.5px solid var(--police-navy-200)',
+                  padding: '7px 16px',
+                  borderRadius: '24px',
+                  marginBottom: '18px',
+                  fontSize: '0.86rem',
+                  fontWeight: 700,
+                  color: 'var(--police-navy-900)'
+                }}>
+                  <MapPin size={16} color="var(--crimson-600)" />
+                  <span>{isHindi ? 'आयोजन स्थल:' : 'Venue:'} <strong>{isHindi ? 'अल्बर्ट हॉल, जयपुर' : 'Albert Hall, Jaipur'}</strong> • 24 जनवरी 2027</span>
                 </div>
 
                 {/* Race Category Cards Grid */}
@@ -2779,11 +2769,23 @@ export function RegistrationPage({
                       type="tel"
                       required
                       maxLength={10}
+                      autoComplete="tel"
                       placeholder={isHindi ? "उदा. 9829099887" : "e.g. 9829099887"}
                       value={formData.emergencyContactPhone}
                       onChange={(e) => setFormData({ ...formData, emergencyContactPhone: e.target.value.replace(/\D/g, '') })}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        border: (formData.emergencyContactPhone && formData.emergencyContactPhone === formData.mobile) ? '1.5px solid #ef4444' : '1px solid var(--border-medium)',
+                        fontSize: '0.92rem'
+                      }}
                     />
+                    {formData.emergencyContactPhone && formData.emergencyContactPhone === formData.mobile && (
+                      <div style={{ color: '#dc2626', fontSize: '0.78rem', marginTop: '4px', fontWeight: 700 }}>
+                        {isHindi ? '⚠️ कृपया किसी परिजन, अभिभावक या मित्र का नंबर दें (स्वयं का नहीं)।' : '⚠️ Please provide a number of a family member or friend (not your own).'}
+                      </div>
+                    )}
                   </div>
 
                   {/* Row 4, Col 2: राजस्थान पुलिस सेवारत कर्मी */}

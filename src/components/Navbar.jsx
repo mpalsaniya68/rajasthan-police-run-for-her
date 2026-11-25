@@ -27,7 +27,7 @@ export function Navbar({
     ? t('adminLogin')
     : isExpoRole
       ? (adminUser?.role === 'GATE_MARSHAL' ? (isHindi ? '🚪 गेट स्कैनर' : '🚪 Gate Scanner') : (isHindi ? '📦 एक्सपो स्टेशन' : '📦 Expo Station'))
-      : (isHindi ? '🛡️ एडमिन कमान' : '🛡️ Admin Command');
+      : (isHindi ? '🛡️ डैशबोर्ड' : '🛡️ Dashboard');
 
   const navAdminBg = !isAdminAuthenticated
     ? '#1e3a8a'
@@ -308,7 +308,7 @@ export function Navbar({
                 boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
                 transition: 'background 0.2s ease'
               }}
-              title={isAdminAuthenticated ? `लॉगिन: ${adminUser?.fullName || 'अधिकृत अधिकारी'}` : "अधिकृत पुलिस प्रशासनिक कमान एवं एक्सपो लॉगिन"}
+              title={isAdminAuthenticated ? `लॉगिन: ${adminUser?.fullName || 'अधिकृत अधिकारी'}` : "अधिकृत प्रशासनिक एवं एक्सपो लॉगिन"}
             >
               {isExpoRole ? (
                 <PackageCheck size={14} color="#fde68a" />
