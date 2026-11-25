@@ -147,7 +147,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 textAlign: 'center',
-                padding: '9px 26px',
+                padding: '11px 26px 9px 26px',
                 borderRadius: '999px',
                 boxShadow: '0 8px 24px rgba(136, 19, 55, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
                 maxWidth: '94%',
@@ -158,11 +158,12 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
                   fontWeight: 800,
                   color: '#ffffff',
                   letterSpacing: '0.02em',
-                  lineHeight: 1.3,
+                  lineHeight: 1,
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   textAlign: 'center',
+                  transform: 'translateY(1px)',
                   textShadow: '0 1px 4px rgba(0, 0, 0, 0.35)'
                 }}>
                   {t('slogan')}
@@ -319,19 +320,24 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
           color: #ffffff;
           border: 1.5px solid rgba(255, 255, 255, 0.45);
-          padding: 12px 28px;
+          padding: 13px 28px 11px 28px;
           border-radius: 999px;
           font-size: 0.98rem;
           font-weight: 800;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          line-height: 1.3;
+          line-height: 1;
           text-align: center;
           gap: 8px;
           cursor: pointer;
           box-shadow: 0 10px 26px rgba(225, 29, 72, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.25);
           transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .hero-btn-primary span {
+          display: inline-block;
+          transform: translateY(1.5px);
         }
 
         .hero-btn-primary:hover {
@@ -345,19 +351,24 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           -webkit-backdrop-filter: blur(12px);
           color: #ffffff;
           border: 1.5px solid rgba(255, 255, 255, 0.62);
-          padding: 12px 26px;
+          padding: 13px 26px 11px 26px;
           border-radius: 999px;
           font-size: 0.95rem;
           font-weight: 800;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          line-height: 1.3;
+          line-height: 1;
           text-align: center;
           gap: 8px;
           cursor: pointer;
           box-shadow: 0 8px 22px rgba(5, 17, 38, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.22);
           transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .hero-btn-glass span {
+          display: inline-block;
+          transform: translateY(1.5px);
         }
 
         .hero-btn-glass:hover {
