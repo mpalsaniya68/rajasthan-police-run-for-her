@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Lock, ArrowLeft, KeyRound, UserCheck, AlertTriangle, 
-  Eye, EyeOff, Building2, ChevronRight, PackageCheck, Shield
+  Eye, EyeOff, Building2, ChevronRight, PackageCheck, Shield, LogIn
 } from 'lucide-react';
 import { apiAdminLogin, apiExpoLogin, apiAdminVerifyOtp, apiAdminResendOtp } from '../services/api';
 
@@ -245,7 +245,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: '#64748b' }}>
             <span style={{ cursor: 'pointer', color: 'var(--police-navy-800)', fontWeight: 600 }} onClick={() => onNavigate('home')}>मुख्य पृष्ठ</span>
             <span>/</span>
-            <span style={{ color: '#0f172a', fontWeight: 700 }}>प्रशासनिक कमान लॉगिन</span>
+            <span style={{ color: '#0f172a', fontWeight: 700 }}>प्रशासनिक लॉगिन</span>
           </div>
 
           <button
@@ -321,15 +321,15 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                 <Shield size={24} color="#0b3a75" />
               )}
             </div>
-            <h1 style={{ fontSize: '1.18rem', fontWeight: 800, margin: '0 0 4px', color: '#0f172a' }}>
-              {step === 'otp' ? 'OTP सत्यापन' : (accessType === 'expo' ? 'एक्सपो किट व गेट स्कैनर लॉगिन' : 'प्रशासनिक कमान लॉगिन')}
+            <h1 style={{ fontSize: '1.22rem', fontWeight: 800, margin: '0 0 4px', color: '#0f172a' }}>
+              {step === 'otp' ? 'OTP सत्यापन' : (accessType === 'expo' ? 'एक्सपो किट व गेट स्कैनर लॉगिन' : 'प्रशासनिक लॉगिन')}
             </h1>
-            <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b' }}>
+            <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748b' }}>
               {step === 'otp'
                 ? 'अधिकृत मोबाइल पर प्रेषित 6-अंकीय OTP दर्ज करें'
                 : (accessType === 'expo' 
                     ? 'टी-शर्ट, चेस्ट बिब आवंटन व गेट एंट्री अधिकृत स्टेशन' 
-                    : 'राजस्थान पुलिस मुख्यालय एवं जिला कमान डेस्क')}
+                    : 'राजस्थान पुलिस मुख्यालय')}
             </p>
           </div>
 
@@ -481,9 +481,8 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                       <span>सत्यापन जारी...</span>
                     ) : (
                       <>
-                        <Lock size={15} color="#ffffff" />
-                        <span>सत्यापित कर लॉगिन करें (Verify & Login)</span>
-                        <ChevronRight size={15} />
+                        <LogIn size={18} color="#ffffff" />
+                        <span>OTP सत्यापित करें</span>
                       </>
                     )}
                   </button>
@@ -531,9 +530,9 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
               /* SCREEN 1: ID & PASSWORD LOGIN */
               <div>
                 {/* 2-Tier Access Level Selection Tabs */}
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-                    लॉगिन स्तर का चयन करें (Select Command Level):
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
+                    लॉगिन प्रकार (Login Type):
                   </label>
                   <div style={{
                     display: 'grid',
@@ -550,22 +549,22 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                       style={{
                         padding: '10px 8px',
                         borderRadius: '6px',
-                        border: accessType === 'phq' ? '1px solid #cbd5e1' : 'none',
-                        fontSize: '0.82rem',
+                        border: accessType === 'phq' ? '1px solid #cbd5e1' : '1px solid transparent',
+                        fontSize: '0.84rem',
                         fontWeight: 700,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '6px',
                         cursor: 'pointer',
-                        transition: 'all 0.2s',
+                        transition: 'all 0.15s ease',
                         background: accessType === 'phq' ? '#ffffff' : 'transparent',
-                        color: accessType === 'phq' ? '#0a1c3d' : '#64748b',
+                        color: accessType === 'phq' ? '#0b3a75' : '#64748b',
                         boxShadow: accessType === 'phq' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none'
                       }}
                     >
-                      <Building2 size={15} color={accessType === 'phq' ? '#0a1c3d' : '#64748b'} />
-                      <span>PHQ कमान</span>
+                      <Building2 size={16} color={accessType === 'phq' ? '#0b3a75' : '#64748b'} />
+                      <span>PHQ एडमिन</span>
                     </button>
 
                     <button
@@ -574,22 +573,22 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                       style={{
                         padding: '10px 8px',
                         borderRadius: '6px',
-                        border: accessType === 'expo' ? '1px solid #047857' : 'none',
-                        fontSize: '0.82rem',
-                        fontWeight: 800,
+                        border: accessType === 'expo' ? '1px solid #cbd5e1' : '1px solid transparent',
+                        fontSize: '0.84rem',
+                        fontWeight: 700,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '6px',
                         cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        background: accessType === 'expo' ? '#047857' : 'transparent',
-                        color: accessType === 'expo' ? '#ffffff' : '#047857',
-                        boxShadow: accessType === 'expo' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                        transition: 'all 0.15s ease',
+                        background: accessType === 'expo' ? '#ffffff' : 'transparent',
+                        color: accessType === 'expo' ? '#047857' : '#64748b',
+                        boxShadow: accessType === 'expo' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none'
                       }}
                     >
-                      <PackageCheck size={15} color={accessType === 'expo' ? '#ffffff' : '#047857'} />
-                      <span>📦 एक्सपो डेस्क</span>
+                      <PackageCheck size={16} color={accessType === 'expo' ? '#047857' : '#64748b'} />
+                      <span>एक्सपो काउंटर</span>
                     </button>
                   </div>
                 </div>
@@ -647,8 +646,8 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                   ) : (
                     /* High Command Mode: Officer ID */
                     <div style={{ marginBottom: '16px' }}>
-                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
-                        अधिकारी आईडी / उपयोगकर्ता नाम (Officer ID):
+                      <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
+                        उपयोगकर्ता नाम / अधिकारी आईडी (Username):
                       </label>
                       <div style={{ position: 'relative' }}>
                         <input
@@ -656,7 +655,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                           value={username}
                           onChange={(e) => setUsername(e.target.value)}
                           required
-                          placeholder="उदा. phq_admin अथवा sp_kta_city"
+                          placeholder="उदा. phq_admin"
                           style={{
                             width: '100%',
                             padding: '10px 12px 10px 38px',
@@ -679,8 +678,8 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
 
                   {/* Password */}
                   <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
-                      {accessType === 'expo' ? 'वॉलंटियर पासवर्ड / सुरक्षा पिन (Password / PIN):' : 'सुरक्षा पासवर्ड (Security Password):'}
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
+                      {accessType === 'expo' ? 'वॉलंटियर पासवर्ड (Password):' : 'पासवर्ड (Password):'}
                     </label>
                     <div style={{ position: 'relative' }}>
                       <input
@@ -688,7 +687,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        placeholder={accessType === 'expo' ? "PHQ द्वारा जारी पासवर्ड दर्ज करें (उदा. Vol#2027)" : "गोपनीय पासवर्ड दर्ज करें"}
+                        placeholder={accessType === 'expo' ? "वॉलंटियर पासवर्ड दर्ज करें" : "पासवर्ड दर्ज करें"}
                         style={{
                           width: '100%',
                           padding: '10px 40px 10px 38px',
@@ -737,7 +736,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                       color: '#ffffff',
                       border: 'none',
                       borderRadius: '6px',
-                      fontSize: '0.94rem',
+                      fontSize: '0.96rem',
                       fontWeight: 800,
                       display: 'flex',
                       alignItems: 'center',
@@ -756,12 +755,11 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     }}
                   >
                     {isLoading ? (
-                      <span>सत्यापन जारी...</span>
+                      <span>कृपया प्रतीक्षा करें...</span>
                     ) : (
                       <>
-                        {accessType === 'expo' ? <PackageCheck size={18} color="#ffffff" /> : <Lock size={15} color="#ffffff" />}
-                        <span>{accessType === 'expo' ? '📦 एक्सपो स्टेशन आगे बढ़ें (Next: OTP)' : 'कमान पोर्टल आगे बढ़ें (Next: OTP)'}</span>
-                        <ChevronRight size={15} />
+                        <LogIn size={18} color="#ffffff" />
+                        <span>लॉगिन करें</span>
                       </>
                     )}
                   </button>
