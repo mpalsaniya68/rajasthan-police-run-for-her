@@ -172,9 +172,8 @@ export function CertificateHub({ registrations = [] }) {
       const distName = String(selectedRunner.districtName || selectedRunner.district_name || "").toLowerCase();
       const cat = String(selectedRunner.category || selectedRunner.categoryId || selectedRunner.category_id || selectedRunner.categoryName || selectedRunner.category_name || "").toLowerCase();
 
-      const isJaipur = distId.includes("jaipur") || distId === "jpr-comm" || distId === "jaipur_comm" || distName.includes("जयपुर") || distName.includes("jaipur");
       const isTimedCategory = cat.includes("21") || cat.includes("10") || bib.includes("21K") || bib.includes("10K");
-      const isTimedCompetitive = isJaipur || isTimedCategory;
+      const isTimedCompetitive = isTimedCategory;
 
       const pureDistrictEn = formatLocalizedDistrict(selectedRunner.districtName || selectedRunner.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
 
@@ -201,7 +200,7 @@ export function CertificateHub({ registrations = [] }) {
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 13.5px sans-serif";
-      ctx.fillText(isTimedCompetitive ? "Rajasthan Police Headquarters • Jaipur" : `District Police • ${pureDistrictEn}`, 145, 122);
+      ctx.fillText("Rajasthan Police Headquarters • Jaipur", 145, 122);
 
       // Top Right: RUN FOR HER 2027 Badge
       const badgeCX = 1255;
@@ -290,11 +289,11 @@ export function CertificateHub({ registrations = [] }) {
       const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
 
       if (isTimedCompetitive) {
-        ctx.fillText(`For successfully completing the ${catText} in ${pureDistrictEn}`, 675, 416);
+        ctx.fillText(`For successfully completing the ${catText} in Jaipur`, 675, 416);
         ctx.fillText("on the motto \"Every Step for Women Safety.\"", 675, 444);
       } else {
         ctx.fillText("For exemplary participation in Women's Safety, Dignity & Empowerment", 675, 416);
-        ctx.fillText(`and successfully completing the ${catText} in ${pureDistrictEn} on the motto "Every Step for Women Safety."`, 675, 444);
+        ctx.fillText(`and successfully completing the ${catText} in Jaipur on the motto "Every Step for Women Safety."`, 675, 444);
       }
 
       // 5. METRICS BOX (Exact 5-column / 3-column card)
@@ -359,7 +358,7 @@ export function CertificateHub({ registrations = [] }) {
         const colW = boxW / 3;
         const cols = [
           { label: "REGISTRATION NO.", val: selectedRunner.bibNumber || "RJ-05K-3001", color: "#dc2626", font: "bold 24px monospace" },
-          { label: "POLICE DISTRICT", val: pureDistrictEn, color: "#0a1c3d", font: "bold 22px sans-serif" },
+          { label: "CATEGORY", val: catText, color: "#0a1c3d", font: "bold 20px sans-serif" },
           { label: "HONORARY DESIGNATION", val: "Women Safety Ambassador", color: "#047857", font: "bold 19px sans-serif" }
         ];
 
@@ -387,30 +386,18 @@ export function CertificateHub({ registrations = [] }) {
       }
 
       // 6. BOTTOM FOOTER (Exact match to Preview)
-      // Left: IPS / SP Signature
+      // Left: DGP Signature (All Rajasthan Police Marathon Certificates)
       const sigX = 190;
       ctx.textAlign = "center";
-      if (isTimedCompetitive) {
-        ctx.font = "italic bold 25px serif";
-        ctx.fillStyle = "#0a1c3d";
-        ctx.fillText("Rajeev Sharma, IPS", sigX, 726);
-        ctx.fillRect(sigX - 90, 736, 180, 2);
-        ctx.font = "bold 13.5px sans-serif";
-        ctx.fillText("DIRECTOR GENERAL OF POLICE", sigX, 756);
-        ctx.fillStyle = "#64748b";
-        ctx.font = "12px sans-serif";
-        ctx.fillText("Rajasthan Police Headquarters, Jaipur", sigX, 774);
-      } else {
-        ctx.font = "italic bold 25px serif";
-        ctx.fillStyle = "#0a1c3d";
-        ctx.fillText("Superintendent of Police", sigX, 726);
-        ctx.fillRect(sigX - 90, 736, 180, 2);
-        ctx.font = "bold 13.5px sans-serif";
-        ctx.fillText("SUPERINTENDENT OF POLICE (SP / DCP)", sigX, 756);
-        ctx.fillStyle = "#64748b";
-        ctx.font = "12px sans-serif";
-        ctx.fillText(`${pureDistrictEn}, Rajasthan`, sigX, 774);
-      }
+      ctx.font = "italic bold 25px serif";
+      ctx.fillStyle = "#0a1c3d";
+      ctx.fillText("Rajeev Sharma, IPS", sigX, 726);
+      ctx.fillRect(sigX - 90, 736, 180, 2);
+      ctx.font = "bold 13.5px sans-serif";
+      ctx.fillText("DIRECTOR GENERAL OF POLICE", sigX, 756);
+      ctx.fillStyle = "#64748b";
+      ctx.font = "12px sans-serif";
+      ctx.fillText("Rajasthan Police Headquarters, Jaipur", sigX, 774);
 
       // Center: Rajasthan Police Logo Emblem (Exact as in preview)
       if (logoImg.complete && logoImg.naturalWidth > 0) {
@@ -666,9 +653,8 @@ export function CertificateHub({ registrations = [] }) {
   const distName = String(selectedRunner?.districtName || selectedRunner?.district_name || "").toLowerCase();
   const cat = String(selectedRunner?.category || selectedRunner?.categoryId || selectedRunner?.category_id || selectedRunner?.categoryName || selectedRunner?.category_name || "").toLowerCase();
 
-  const isJaipur = distId.includes("jaipur") || distId === "jpr-comm" || distId === "jaipur_comm" || distName.includes("जयपुर") || distName.includes("jaipur");
   const isTimedCategory = cat.includes("21") || cat.includes("10") || bib.includes("21K") || bib.includes("10K");
-  const isTimedCompetitive = isJaipur || isTimedCategory;
+  const isTimedCompetitive = isTimedCategory;
 
   const pureDistrictEn = formatLocalizedDistrict(selectedRunner?.districtName || selectedRunner?.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
   const pureDistrictHi = formatLocalizedDistrict(selectedRunner?.districtName || selectedRunner?.district_name, true) || (isJaipur ? "जयपुर" : "जिला पुलिस");
@@ -841,10 +827,8 @@ export function CertificateHub({ registrations = [] }) {
                         <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0a1c3d', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
                           RAJASTHAN POLICE
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: isTimedCompetitive ? 'var(--text-muted)' : 'var(--police-gold-700)', fontWeight: 700 }}>
-                          {isTimedCompetitive 
-                            ? 'Rajasthan Police Headquarters • Jaipur' 
-                            : `District Police • ${pureDistrictEn}`}
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+                          Rajasthan Police Headquarters • Jaipur
                         </div>
                       </div>
                     </div>
@@ -917,9 +901,9 @@ export function CertificateHub({ registrations = [] }) {
                   {/* Statement */}
                   <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-body)', maxWidth: '620px', margin: '0 auto 16px auto', lineHeight: 1.55 }}>
                     {isTimedCompetitive ? (
-                      <>For successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> on the motto <em>"Every Step for Women Safety."</em></>
+                      <>For successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em></>
                     ) : (
-                      <>For exemplary participation in <strong>Women's Safety, Dignity & Empowerment</strong> and successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> on the motto <em>"Every Step for Women Safety."</em></>
+                      <>For exemplary participation in <strong>Women's Safety, Dignity & Empowerment</strong> and successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em></>
                     )}
                   </p>
 
@@ -978,8 +962,8 @@ export function CertificateHub({ registrations = [] }) {
                         <div style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--crimson-600)', fontFamily: 'monospace' }}>{selectedRunner.bibNumber}</div>
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>POLICE DISTRICT</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0a1c3d' }}>{pureDistrictEn}</div>
+                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>CATEGORY</div>
+                        <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0a1c3d' }}>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</div>
                       </div>
                       <div>
                         <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>HONORARY DESIGNATION</div>
@@ -1008,14 +992,14 @@ export function CertificateHub({ registrations = [] }) {
                       fontWeight: 700,
                       marginBottom: '4px'
                     }}>
-                      {isTimedCompetitive ? 'Rajeev Sharma, IPS' : 'Superintendent of Police'}
+                      Rajeev Sharma, IPS
                     </div>
                     <div style={{ height: '2px', background: '#0a1c3d', width: '150px', margin: '0 auto 4px auto' }}></div>
                     <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0a1c3d', letterSpacing: '0.02em' }}>
-                      {isTimedCompetitive ? 'DIRECTOR GENERAL OF POLICE' : 'SUPERINTENDENT OF POLICE (SP / DCP)'}
+                      DIRECTOR GENERAL OF POLICE
                     </div>
                     <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
-                      {isTimedCompetitive ? 'Rajasthan Police Headquarters, Jaipur' : `${pureDistrictEn}, Rajasthan`}
+                      Rajasthan Police Headquarters, Jaipur
                     </div>
                   </div>
 

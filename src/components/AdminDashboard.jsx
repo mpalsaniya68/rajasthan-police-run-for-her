@@ -4434,9 +4434,8 @@ export function AdminDashboard({
                   const distName = String(previewCertRunner?.districtName || previewCertRunner?.district_name || "").toLowerCase();
                   const cat = String(previewCertRunner?.category || previewCertRunner?.categoryId || previewCertRunner?.category_id || previewCertRunner?.categoryName || previewCertRunner?.category_name || "").toLowerCase();
 
-                  const isJaipur = distId.includes("jaipur") || distId === "jpr-comm" || distId === "jaipur_comm" || distName.includes("जयपुर") || distName.includes("jaipur");
                   const isTimedCategory = cat.includes("21") || cat.includes("10") || bib.includes("21K") || bib.includes("10K");
-                  const isTimedCompetitive = isJaipur || isTimedCategory;
+                  const isTimedCompetitive = isTimedCategory;
 
                   const pureDistrictEn = formatLocalizedDistrict(previewCertRunner?.districtName || previewCertRunner?.district_name, false) || (isJaipur ? "Jaipur" : "District Police");
                   const pureDistrictHi = formatLocalizedDistrict(previewCertRunner?.districtName || previewCertRunner?.district_name, true) || (isJaipur ? "जयपुर" : "जिला पुलिस");
@@ -4484,9 +4483,7 @@ export function AdminDashboard({
                                 RAJASTHAN POLICE
                               </div>
                               <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700 }}>
-                                {isTimedCompetitive
-                                  ? 'Rajasthan Police Headquarters • Jaipur'
-                                  : `District Police • ${pureDistrictEn}`}
+                                Rajasthan Police Headquarters • Jaipur
                               </div>
                             </div>
                           </div>
@@ -4533,9 +4530,9 @@ export function AdminDashboard({
 
                         <p style={{ fontSize: '0.8rem', color: '#334155', maxWidth: '520px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
                           {isTimedCompetitive ? (
-                            <>For successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn}</strong> on the motto <em>"Every Step for Women Safety."</em></>
+                            <>For successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em></>
                           ) : (
-                            <>For exemplary participation in <strong>Women's Safety, Dignity & Empowerment</strong> and successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>{pureDistrictEn}</strong> on the motto <em>"Every Step for Women Safety."</em></>
+                            <>For exemplary participation in <strong>Women's Safety, Dignity & Empowerment</strong> and successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em></>
                           )}
                         </p>
 
@@ -4573,7 +4570,7 @@ export function AdminDashboard({
                             position: 'relative'
                           }}>
                             <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626', fontFamily: 'monospace' }}>{previewCertRunner.bibNumber}</div></div>
-                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>POLICE DISTRICT</div><div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0a1c3d' }}>{pureDistrictEn}</div></div>
+                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>CATEGORY</div><div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0a1c3d' }}>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</div></div>
                             <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>HONORARY DESIGNATION</div><div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#047857' }}>Women Safety Ambassador</div></div>
                           </div>
                         )}
@@ -4582,14 +4579,14 @@ export function AdminDashboard({
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid #cbd5e1', paddingTop: '12px' }}>
                           <div style={{ textAlign: 'center', minWidth: '140px' }}>
                             <div style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: '1.05rem', color: '#0a1c3d', fontWeight: 700 }}>
-                              {isTimedCompetitive ? 'Rajeev Sharma, IPS' : 'Superintendent of Police'}
+                              Rajeev Sharma, IPS
                             </div>
                             <div style={{ height: '1.5px', background: '#0a1c3d', width: '120px', margin: '2px auto' }}></div>
                             <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0a1c3d' }}>
-                              {isTimedCompetitive ? 'DIRECTOR GENERAL OF POLICE' : 'SUPERINTENDENT OF POLICE (SP / DCP)'}
+                              DIRECTOR GENERAL OF POLICE
                             </div>
                             <div style={{ fontSize: '0.58rem', color: '#64748b' }}>
-                              {isTimedCompetitive ? 'Rajasthan Police Headquarters, Jaipur' : `${pureDistrictEn}, Rajasthan`}
+                              Rajasthan Police Headquarters, Jaipur
                             </div>
                           </div>
 
