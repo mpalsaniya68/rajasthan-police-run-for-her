@@ -2512,7 +2512,7 @@ export function RegistrationPage({
                   color: 'var(--police-navy-900)'
                 }}>
                   <MapPin size={16} color="var(--crimson-600)" />
-                  <span>{isHindi ? 'आयोजन स्थल:' : 'Venue:'} <strong>{isHindi ? 'अल्बर्ट हॉल, जयपुर' : 'Albert Hall, Jaipur'}</strong> • 24 जनवरी 2027</span>
+                  <span>{isHindi ? 'आयोजन स्थल:' : 'Venue:'} <strong>{isHindi ? 'अल्बर्ट हॉल, जयपुर' : 'Albert Hall, Jaipur'}</strong> • {isHindi ? '24 जनवरी 2027' : '24 January 2027'}</span>
                 </div>
 
                 {/* Race Category Cards Grid */}
