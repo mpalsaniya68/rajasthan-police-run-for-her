@@ -2653,9 +2653,6 @@ export function RegistrationPage({
                         background: '#f8fafc'
                       }}
                     />
-                    <div style={{ fontSize: '0.74rem', color: '#15803d', marginTop: '4px', fontWeight: 600 }}>
-                      ✓ {isHindi ? 'सत्यापित (1 मोबाइल से अधिकतम 5 पंजीकरण अनुमत)' : 'Verified (Max 5 registrations per mobile)'}
-                    </div>
                   </div>
 
                   {/* Row 2, Col 1: जन्म तिथि */}
