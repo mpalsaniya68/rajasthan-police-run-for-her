@@ -29,7 +29,7 @@ import {
   drawHorizontalRouteMapOnCanvas
 } from '../utils/jaipurRouteMap';
 import { useLanguage } from '../context/LanguageContext';
-import { formatLocalizedDistrict, formatLocalizedCategory, formatLocalizedName, formatEmergencyContactDisplay, formatCleanDistrictName } from '../utils/localization';
+import { formatLocalizedDistrict, formatLocalizedCategory, formatLocalizedName, formatEmergencyContactDisplay, formatCleanDistrictName, formatBibNumber } from '../utils/localization';
 
 export { formatCleanDistrictName };
 
@@ -1402,7 +1402,7 @@ export function RegistrationPage({
                       Registration No.
                     </div>
                     <div style={{ fontSize: 'clamp(2rem, 4.5vw, 2.75rem)', fontWeight: 900, color: 'var(--police-navy-950)', letterSpacing: '1.5px', margin: '6px 0' }}>
-                      {registeredParticipant.bibNumber}
+                      {formatBibNumber(registeredParticipant.bibNumber)}
                     </div>
                     <div style={{
                       display: 'inline-block',

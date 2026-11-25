@@ -721,8 +721,9 @@ export async function handleApiRequest(req, res) {
         sql = "SELECT id, bib_number, full_name, mobile, masked_mobile, category_id, category_name, district_id, district_name, status, certificate_id, kit_collected, email, dob, gender, blood_group, tshirt_size, emergency_contact, emergency_relation, id_type, id_masked, id_last4, created_at, finish_time FROM participants WHERE mobile IN (?, ?, ?, ?) OR bib_number = ? OR certificate_id = ? LIMIT 5";
         args = [cleanDigits, `+91${cleanDigits}`, `91${cleanDigits}`, `0${cleanDigits}`, qUpper, qUpper];
       } else {
-        sql = "SELECT id, bib_number, full_name, mobile, masked_mobile, category_id, category_name, district_id, district_name, status, certificate_id, kit_collected, email, dob, gender, blood_group, tshirt_size, emergency_contact, emergency_relation, id_type, id_masked, id_last4, created_at, finish_time FROM participants WHERE bib_number = ? OR certificate_id = ? OR mobile = ? OR id = ? LIMIT 5";
-        args = [qUpper, qUpper, q, q];
+        const cleanBibQ = qUpper.replace(/^RJ-[A-Z]{3,4}-/i, 'RJ-');
+        sql = "SELECT id, bib_number, full_name, mobile, masked_mobile, category_id, category_name, district_id, district_name, status, certificate_id, kit_collected, email, dob, gender, blood_group, tshirt_size, emergency_contact, emergency_relation, id_type, id_masked, id_last4, created_at, finish_time FROM participants WHERE bib_number = ? OR bib_number = ? OR certificate_id = ? OR mobile = ? OR id = ? LIMIT 5";
+        args = [qUpper, cleanBibQ, qUpper, q, q];
       }
 
       let resRunner = { rows: [] };
@@ -1389,7 +1390,7 @@ export async function handleApiRequest(req, res) {
       return json({
         success: true,
         runner: {
-          bibNumber: r.bib_number,
+          bibNumber: String(r.bib_number || "").replace(/^RJ-[A-Z]{3,4}-/i, "RJ-"),
           fullName: r.full_name,
           gender: r.gender,
           mobile: r.masked_mobile, // PII protected
@@ -1473,9 +1474,11 @@ export async function handleApiRequest(req, res) {
         return error("Certificate ID is required", 400);
       }
 
+      const rawCertId = certId.trim();
+      const cleanCertId = rawCertId.replace(/^RJ-[A-Z]{3,4}-/i, "RJ-");
       const resCert = await db.execute({
-        sql: "SELECT id, full_name, bib_number, gender, category_id, category_name, district_id, district_name, masked_mobile, finish_time, certificate_id, overall_rank, gender_rank, status, certificate_issued, certificate_issued_at, gate_entered, created_at FROM participants WHERE certificate_id = ? OR bib_number = ? OR mobile = ? OR id = ? LIMIT 1",
-        args: [certId.trim(), certId.trim(), certId.trim(), certId.trim()]
+        sql: "SELECT id, full_name, bib_number, gender, category_id, category_name, district_id, district_name, masked_mobile, finish_time, certificate_id, overall_rank, gender_rank, status, certificate_issued, certificate_issued_at, gate_entered, created_at FROM participants WHERE certificate_id = ? OR certificate_id = ? OR bib_number = ? OR bib_number = ? OR mobile = ? OR id = ? LIMIT 1",
+        args: [rawCertId, cleanCertId, rawCertId, cleanCertId, rawCertId, rawCertId]
       });
 
       if (resCert.rows.length === 0) {
@@ -1504,7 +1507,7 @@ export async function handleApiRequest(req, res) {
         certificate: {
           id: r.id,
           fullName: r.full_name,
-          bibNumber: r.bib_number,
+          bibNumber: String(r.bib_number || "").replace(/^RJ-[A-Z]{3,4}-/i, "RJ-"),
           gender: r.gender,
           category: r.category_id || "5k",
           categoryName: r.category_name,
@@ -2413,7 +2416,7 @@ export async function handleApiRequest(req, res) {
         success: true,
         runner: {
           id: r.id,
-          bibNumber: r.bib_number,
+          bibNumber: String(r.bib_number || "").replace(/^RJ-[A-Z]{3,4}-/i, "RJ-"),
           physicalBibNumber: r.physical_bib_number || null,
           fullName: r.full_name,
           gender: r.gender,
@@ -2896,7 +2899,7 @@ export async function handleApiRequest(req, res) {
         kitScans = queryRes.rows.map(r => ({
           id: r.id,
           type: "KIT_HANDOVER",
-          bibNumber: r.bib_number,
+          bibNumber: String(r.bib_number || "").replace(/^RJ-[A-Z]{3,4}-/i, "RJ-"),
           physicalBibNumber: r.physical_bib_number || null,
           fullName: r.full_name,
           gender: r.gender,
@@ -2964,7 +2967,7 @@ export async function handleApiRequest(req, res) {
         });
         roster = rosterRes.rows.map(r => ({
           id: r.id,
-          bibNumber: r.bib_number,
+          bibNumber: String(r.bib_number || "").replace(/^RJ-[A-Z]{3,4}-/i, "RJ-"),
           physicalBibNumber: r.physical_bib_number || null,
           fullName: r.full_name,
           gender: r.gender,

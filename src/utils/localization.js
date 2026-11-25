@@ -426,3 +426,13 @@ export function formatCleanDistrictName(p) {
 
   return formatLocalizedDistrict(rawName || distId, false) || "Jaipur";
 }
+
+/**
+ * Normalizes any legacy district-scoped registration/bib number (e.g. "RJ-CHT-05K-1002")
+ * to the standard Jaipur Rajasthan Police marathon format ("RJ-05K-1002").
+ */
+export function formatBibNumber(bib = "") {
+  if (!bib) return "";
+  return String(bib).trim().replace(/^RJ-[A-Z]{3,4}-/i, "RJ-");
+}
+

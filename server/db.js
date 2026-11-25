@@ -342,6 +342,18 @@ export async function initDatabase(force = false) {
       `);
     } catch (e) {}
 
+    // Auto-normalize legacy district bib numbers (e.g., RJ-CHT-05K-1002 -> RJ-05K-1002)
+    try {
+      const legacyBibs = await db.execute("SELECT id, bib_number FROM participants WHERE bib_number LIKE 'RJ-%-%-%';");
+      for (const row of legacyBibs.rows) {
+        const cleanBib = String(row.bib_number).replace(/^RJ-[A-Z]{3,4}-/i, 'RJ-');
+        await db.execute({
+          sql: "UPDATE participants SET bib_number = ?, district_id = 'jaipur_comm', district_name = 'Jaipur' WHERE id = ?;",
+          args: [cleanBib, row.id]
+        });
+      }
+    } catch (e) {}
+
     // Payments Table for Government Revenue & Treasury Audit Trail
     await db.execute(`
       CREATE TABLE IF NOT EXISTS payments (

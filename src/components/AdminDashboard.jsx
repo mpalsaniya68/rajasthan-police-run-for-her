@@ -25,7 +25,8 @@ import {
   formatLocalizedGender, 
   formatLocalizedRelation, 
   formatLocalizedKitStatus,
-  formatCleanDistrictName
+  formatCleanDistrictName,
+  formatBibNumber
 } from '../utils/localization';
 
 import { 
@@ -4408,7 +4409,7 @@ export function AdminDashboard({
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                   <div style={{ fontWeight: 800, fontSize: '1rem', color: '#0a1c3d' }}>
-                    {isHindi ? 'प्रमाण पत्र प्रिव्यू • ' : 'Certificate Preview • '}{formatLocalizedName(previewCertRunner.fullName, isHindi)} ({previewCertRunner.bibNumber})
+                    {isHindi ? 'प्रमाण पत्र प्रिव्यू • ' : 'Certificate Preview • '}{formatLocalizedName(previewCertRunner.fullName, isHindi)} ({formatBibNumber(previewCertRunner.bibNumber)})
                   </div>
                   <button
                     onClick={() => setPreviewCertRunner(null)}
@@ -4548,7 +4549,7 @@ export function AdminDashboard({
                             marginBottom: '18px',
                             position: 'relative'
                           }}>
-                            <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#dc2626' }}>{previewCertRunner.bibNumber}</div></div>
+                            <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#dc2626' }}>{formatBibNumber(previewCertRunner.bibNumber)}</div></div>
                             <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>GUN TIME</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerGunTime}</div></div>
                             <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>CHIP TIME</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerChipTime}</div></div>
                             <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>AVG PACE</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerAvgPace}</div></div>
@@ -4567,7 +4568,7 @@ export function AdminDashboard({
                             marginBottom: '18px',
                             position: 'relative'
                           }}>
-                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626', fontFamily: 'monospace' }}>{previewCertRunner.bibNumber}</div></div>
+                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626', fontFamily: 'monospace' }}>{formatBibNumber(previewCertRunner.bibNumber)}</div></div>
                             <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>CATEGORY</div><div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0a1c3d' }}>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</div></div>
                             <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>HONORARY DESIGNATION</div><div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#047857' }}>Women Safety Ambassador</div></div>
                           </div>

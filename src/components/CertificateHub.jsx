@@ -4,7 +4,7 @@ import { Award, Search, Download, Share2, CheckCircle2 } from 'lucide-react';
 import { PoliceEmblem, OfficialGoldSeal, RunForHerBadge } from './Emblems';
 import QRCode from 'qrcode';
 import { useLanguage } from '../context/LanguageContext';
-import { formatLocalizedName, formatLocalizedDistrict, formatLocalizedCategory } from '../utils/localization';
+import { formatLocalizedName, formatLocalizedDistrict, formatLocalizedCategory, formatBibNumber } from '../utils/localization';
 
 export function CertificateHub({ registrations = [] }) {
   const { t, isHindi } = useLanguage();
@@ -326,7 +326,7 @@ export function CertificateHub({ registrations = [] }) {
       if (isTimedCompetitive) {
         const colW = boxW / 5;
         const cols = [
-          { label: "REGISTRATION NO.", val: selectedRunner.bibNumber || "RJ-21K-1001", color: "#dc2626", font: "bold 20px monospace" },
+          { label: "REGISTRATION NO.", val: formatBibNumber(selectedRunner.bibNumber) || "RJ-21K-1001", color: "#dc2626", font: "bold 20px monospace" },
           { label: "GUN TIME", val: runnerGunTime, color: "#0a1c3d", font: "bold 20px monospace" },
           { label: "CHIP TIME", val: runnerChipTime, color: "#0a1c3d", font: "bold 20px monospace" },
           { label: "AVG PACE", val: runnerAvgPace, color: "#0a1c3d", font: "bold 20px sans-serif" },
@@ -357,7 +357,7 @@ export function CertificateHub({ registrations = [] }) {
       } else {
         const colW = boxW / 3;
         const cols = [
-          { label: "REGISTRATION NO.", val: selectedRunner.bibNumber || "RJ-05K-3001", color: "#dc2626", font: "bold 24px monospace" },
+          { label: "REGISTRATION NO.", val: formatBibNumber(selectedRunner.bibNumber) || "RJ-05K-3001", color: "#dc2626", font: "bold 24px monospace" },
           { label: "CATEGORY", val: catText, color: "#0a1c3d", font: "bold 20px sans-serif" },
           { label: "HONORARY DESIGNATION", val: "Women Safety Ambassador", color: "#047857", font: "bold 19px sans-serif" }
         ];
@@ -425,7 +425,7 @@ export function CertificateHub({ registrations = [] }) {
       canvas.toBlob((blob) => {
         if (!blob) return;
         const link = document.createElement("a");
-        const cleanBib = (selectedRunner.bibNumber || "FINISHER").replace(/[^a-zA-Z0-9_-]/g, "_");
+        const cleanBib = (formatBibNumber(selectedRunner.bibNumber) || "FINISHER").replace(/[^a-zA-Z0-9_-]/g, "_");
         link.download = `Rajasthan_Police_Certificate_${cleanBib}.png`;
         link.href = URL.createObjectURL(blob);
         document.body.appendChild(link);
@@ -924,7 +924,7 @@ export function CertificateHub({ registrations = [] }) {
                     }}>
                       <div>
                         <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>REGISTRATION NO.</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--crimson-600)' }}>{selectedRunner.bibNumber}</div>
+                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--crimson-600)' }}>{formatBibNumber(selectedRunner.bibNumber)}</div>
                       </div>
                       <div>
                         <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>GUN TIME</div>
@@ -959,7 +959,7 @@ export function CertificateHub({ registrations = [] }) {
                     }}>
                       <div>
                         <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>REGISTRATION NO.</div>
-                        <div style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--crimson-600)', fontFamily: 'monospace' }}>{selectedRunner.bibNumber}</div>
+                        <div style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--crimson-600)', fontFamily: 'monospace' }}>{formatBibNumber(selectedRunner.bibNumber)}</div>
                       </div>
                       <div>
                         <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>CATEGORY</div>
