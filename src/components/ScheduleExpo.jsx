@@ -46,7 +46,7 @@ export function ScheduleExpo() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '22px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '14px' }}>
               <Clock size={24} color="var(--police-navy-900)" />
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--police-navy-950)', margin: 0 }}>
-                {isHindi ? 'रेस दिवस कार्यक्रम — 24 जनवरी 2027 (जयपुर फ्लैगशिप)' : 'Race Day Program — 24 January 2027 (Jaipur Flagship)'}
+                {isHindi ? 'रेस दिवस कार्यक्रम — 24 जनवरी 2027 (अल्बर्ट हॉल, जयपुर)' : 'Race Day Program — 24 January 2027 (Albert Hall, Jaipur)'}
               </h3>
             </div>
 

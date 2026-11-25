@@ -29,7 +29,7 @@ export const TRANSLATIONS = {
 
     // Section Headings (Pure Clean Hindi without Parenthesized English)
     pledgeHeading: 'नारी सुरक्षा सामूहिक शपथ',
-    routeHeading: 'जयपुर फ्लैगशिप रेस रूट',
+    routeHeading: 'मैराथन रेस रूट (अल्बर्ट हॉल, जयपुर)',
     scheduleHeading: 'कार्यक्रम समय-सारणी, बिब एक्सपो एवं रेस नियम',
     faqHeading: 'अक्सर पूछे जाने वाले महत्वपूर्ण सवाल',
     prizesHeading: 'इनाम व पुरस्कार',
@@ -64,7 +64,7 @@ export const TRANSLATIONS = {
 
     // Section Headings (English view)
     pledgeHeading: "Women's Safety Pledge",
-    routeHeading: 'Jaipur Flagship Race Route Map',
+    routeHeading: 'Marathon Race Route Map (Albert Hall, Jaipur)',
     scheduleHeading: 'Event Schedule, Bib Expo & Race Rules',
     faqHeading: 'Frequently Asked Questions (FAQs)',
     prizesHeading: 'Prizes & Rewards',

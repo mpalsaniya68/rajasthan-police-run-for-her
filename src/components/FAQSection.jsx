@@ -9,11 +9,11 @@ export function FAQSection({ onNavigate }) {
   const faqsHi = [
     {
       q: "राजस्थान पुलिस मैराथन 2027 में भाग लेने की क्या प्रक्रिया व सुविधाएं हैं?",
-      a: "राजस्थान पुलिस मैराथन 2027 ('Run for Her' अभियान) में राज्य का कोई भी नागरिक, महिला, युवा एवं धावक पोर्टल पर ऑनलाइन पंजीकरण करके सीधे भाग ले सकता है। पंजीकृत प्रतिभागियों को ड्राई-फिट टी-शर्ट (जयपुर फ्लैगशिप), RFID टाइमिंग चिप बिब, फिनिशर मेडल, DGP हस्ताक्षरित डिजिटल ई-सर्टिफिकेट, हाइड्रेशन एवं पोस्ट-रन रिफ्रेशमेंट्स प्रदान किए जाएंगे।"
+      a: "राजस्थान पुलिस मैराथन 2027 ('Run for Her' अभियान) में राज्य का कोई भी नागरिक, महिला, युवा एवं धावक पोर्टल पर ऑनलाइन पंजीकरण करके सीधे भाग ले सकता है। पंजीकृत प्रतिभागियों को ड्राई-फिट टी-शर्ट, RFID टाइमिंग चिप बिब, फिनिशर मेडल, DGP हस्ताक्षरित डिजिटल ई-सर्टिफिकेट, हाइड्रेशन एवं पोस्ट-रन रिफ्रेशमेंट्स प्रदान किए जाएंगे।"
     },
     {
       q: "रनिंग किट, टी-शर्ट और RFID बिब कब और कहाँ से प्राप्त होंगे?",
-      a: "सभी पंजीकृत धावकों को 22 और 23 जनवरी 2027 (प्रातः 10:00 बजे से सायं 07:00 बजे तक) बिब एक्सपो के दौरान किट वितरित की जाएगी। जयपुर में यह वितरण अल्बर्ट हॉल / रामनिवास बाग प्रांगण में होगा, तथा जिला मुख्यालयों पर संबंधित जिला पुलिस लाइन में होगा। किट प्राप्त करने हेतु अपना डिजिटल ई-पास (E-Pass) और वैध फोटो पहचान पत्र (आधार कार्ड / पैन / वोटर ID) साथ लाएं।"
+      a: "सभी पंजीकृत धावकों को 22 और 23 जनवरी 2027 (प्रातः 10:00 बजे से सायं 07:00 बजे तक) बिब एक्सपो (अल्बर्ट हॉल, रामनिवास बाग प्रांगण, जयपुर) के दौरान किट वितरित की जाएगी। किट प्राप्त करने हेतु अपना डिजिटल ई-पास (E-Pass) और वैध फोटो पहचान पत्र (आधार कार्ड / पैन / वोटर ID) साथ लाएं।"
     },
     {
       q: "क्या फिनिशर मेडल और डिजिटल ई-सर्टिफिकेट सभी को मिलेगा?",
@@ -44,11 +44,11 @@ export function FAQSection({ onNavigate }) {
   const faqsEn = [
     {
       q: "What is the procedure to participate in Rajasthan Police Marathon 2027 and what perks are included?",
-      a: "Any citizen, woman, youth, and runner can participate directly by registering online on this portal for the 'Run for Her' statewide movement. Registered runners receive a dry-fit running t-shirt (Jaipur flagship), RFID timing chip bib, official finisher medal, DGP-signed digital e-certificate, hydration on course, and post-run refreshments."
+      a: "Any citizen, woman, youth, and runner can participate directly by registering online on this portal for the 'Run for Her' marathon. Registered runners receive a dry-fit running t-shirt, RFID timing chip bib, official finisher medal, DGP-signed digital e-certificate, hydration on course, and post-run refreshments."
     },
     {
       q: "When and where will the running kit, T-shirt, and RFID bib be distributed?",
-      a: "Kits will be distributed during the 2-day Bib Expo on 22nd & 23rd January 2027 (10:00 AM to 07:00 PM). In Jaipur, expo is hosted at Albert Hall / Ram Niwas Garden, and in districts at the respective District Police Line. Please bring your digital E-Pass and a valid government photo ID (Aadhaar / Voter ID / College ID)."
+      a: "Kits will be distributed during the 2-day Bib Expo on 22nd & 23rd January 2027 (10:00 AM to 07:00 PM) at Albert Hall / Ram Niwas Garden, Jaipur. Please bring your digital E-Pass and a valid government photo ID (Aadhaar / Voter ID / College ID)."
     },
     {
       q: "Will all finishers receive medals and digital E-Certificates?",

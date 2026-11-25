@@ -825,16 +825,21 @@ export function AdminDashboard({
 
 
 
-  // 1. OVERALL STATEWIDE SINGLE MASTER CSV EXPORT
-
+  // 1. OVERALL MASTER CSV EXPORT
   const handleExportOverallMaster = () => {
-
     window.open('/api/admin/export', '_blank');
-
-    setExportNotice(`सम्पूर्ण राज्य (All 41 Districts) का सुरक्षित मास्टर डेटाबेस एक्सपोर्ट प्रारंभ हुआ!`);
-
+    setExportNotice(isHindi ? `सम्पूर्ण मैराथन मास्टर डेटाबेस एक्सपोर्ट प्रारंभ हुआ!` : `Master Marathon Database export started!`);
     setTimeout(() => setExportNotice(null), 4500);
+  };
 
+  // 2. CURRENT FILTERED RUNNERS CSV EXPORT
+  const handleExportFilteredRunners = () => {
+    const filename = `Rajasthan_Police_Marathon_Runners_${Date.now()}.csv`;
+    downloadCSVFile(filteredList, filename);
+    setExportNotice(isHindi 
+      ? `धावक सूची CSV फाइल (${filteredList.length} रिकॉर्ड्स) सफलतापूर्वक डाउनलोड हुई!` 
+      : `Runners list CSV (${filteredList.length} records) downloaded successfully!`);
+    setTimeout(() => setExportNotice(null), 4500);
   };
 
 
@@ -1823,225 +1828,59 @@ export function AdminDashboard({
 
               <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
                 {isHindi 
-                  ? `डेटाबेस में कुल ${liveStats?.total || registrations.length} राज्यव्यापी धावक पंजीकृत हैं`
-                  : `Total ${liveStats?.total || registrations.length} statewide runners registered in database`}
+                  ? `डेटाबेस में कुल ${liveStats?.total || registrations.length} धावक पंजीकृत हैं`
+                  : `Total ${liveStats?.total || registrations.length} runners registered in database`}
               </span>
 
             </div>
 
-            {isDistrictRole ? (
-
-              <div style={{
-                background: '#ffffff',
-                padding: '16px 20px',
-                borderRadius: '6px',
-                border: '1.5px solid var(--police-navy-300)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '14px'
-              }}>
-
-                <div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', fontWeight: 800, color: 'var(--police-navy-900)' }}>
-
-                    <MapPin size={18} color="var(--crimson-600)" />
-
-                    <span>📍 {isHindi ? `${formatLocalizedDistrict(adminUser.districtName, true) || 'जिला'} धावक स्प्रेडशीट` : `${formatLocalizedDistrict(adminUser.districtName, false) || 'District'} Runner Spreadsheet`}</span>
-
-                  </div>
-
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                    {isHindi 
-                      ? `आपके जिले के सभी ${filteredList.length} पंजीकृत धावकों का संपूर्ण विवरण एक्सेल (UTF-8) में डाउनलोड करें।`
-                      : `Download full details of all ${filteredList.length} registered runners in your district in Excel (UTF-8).`}
-                  </div>
-
-                </div>
-
-                <button
-
-                  onClick={() => {
-
-                    const safeDistName = (adminUser.districtName || 'district').replace(/[^a-zA-Z0-9]/g, '_');
-
-                    const filename = `Rajasthan_Police_Marathon_${safeDistName}_Runners_${Date.now()}.csv`;
-
-                    downloadCSVFile(filteredList, filename);
-
-                    setExportNotice(`जिला "${adminUser.districtName}" की CSV फाइल (${filteredList.length} रिकॉर्ड्स) सफलतापूर्वक डाउनलोड हुई!`);
-
-                    setTimeout(() => setExportNotice(null), 4500);
-
-                  }}
-
-                  className="btn-gold"
-
-                  style={{
-
-                    padding: '10px 20px',
-
-                    fontSize: '0.86rem',
-
-                    fontWeight: 800,
-
-                    display: 'flex',
-
-                    alignItems: 'center',
-
-                    gap: '8px',
-
-                    cursor: 'pointer'
-
-                  }}
-
-                >
-
-                  <Download size={16} />
-
-                  <span>{isHindi ? `${formatLocalizedDistrict(adminUser.districtName, true) || 'जिले'} की धावक सूची डाउनलोड करें` : `Download ${formatLocalizedDistrict(adminUser.districtName, false) || 'District'} Runner CSV`}</span>
-
-                </button>
-
-              </div>
-
-            ) : (
-
-              <div className="admin-csv-grid">
-
-                {/* SYSTEM 1: District-wise Individual Export */}
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 800, color: 'var(--police-navy-800)' }}>
-
-                    <MapPin size={15} color="var(--crimson-600)" />
-
-                    <span>{isHindi ? '1. ज़िलावार अलग-अलग CSV डाउनलोड:' : '1. District-wise CSV Download:'}</span>
-
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    <select
-                      value={districtFilter}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setDistrictFilter(val);
-                        setCurrentPage(1);
-                        loadLiveDashboardData(val);
-                      }}
-                      style={{
-                        flex: 1,
-                        minWidth: '200px',
-                        padding: '8px 10px',
-                        borderRadius: '5px',
-                        border: '1.5px solid var(--police-navy-300)',
-                        fontSize: '0.82rem',
-                        fontWeight: 700,
-                        color: 'var(--police-navy-900)',
-                        background: '#ffffff'
-                      }}
-                    >
-                      <option value="all">
-                        {isHindi ? 'समस्त राजस्थान (सभी 41 जिले)' : 'All Rajasthan (All 41 Districts)'}
-                      </option>
-                      {RAJASTHAN_POLICE_DISTRICTS.map(d => (
-                        <option key={d.id} value={d.name}>
-                          {formatLocalizedDistrict(d.name, isHindi)}
-                        </option>
-                      ))}
-                    </select>
-
-                    <button
-                      onClick={handleExportSingleDistrict}
-                      className="btn-gold"
-                      style={{
-                        padding: '8px 14px',
-                        fontSize: '0.8rem',
-                        fontWeight: 800,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      <Download size={14} />
-                      <span>{districtFilter === 'all' ? (isHindi ? 'समस्त जिलों की CSV डाउनलोड करें' : 'Download All Districts CSV') : (isHindi ? `${formatLocalizedDistrict(districtFilter, isHindi)} की CSV डाउनलोड करें` : `Download ${districtFilter} CSV`)}</span>
-                    </button>
-                  </div>
-
-
-
-                </div>
-
-
-
-                {/* SYSTEM 2: Statewide Master All-in-One Export */}
-
-                <div className="admin-csv-master-col">
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 800, color: 'var(--police-navy-800)' }}>
-
-                    <Database size={15} color="var(--police-gold-700)" />
-
-                    <span>{isHindi ? '2. सम्पूर्ण राज्य मास्टर डेटा:' : '2. Consolidated Statewide Master Data:'}</span>
-
-                  </div>
-
-                  <div>
-
-                    <button
-
-                      onClick={handleExportOverallMaster}
-
-                      style={{
-
-                        width: '100%',
-
-                        background: 'var(--police-navy-900)',
-
-                        color: '#ffffff',
-
-                        border: '1.5px solid var(--police-gold-500)',
-
-                        padding: '9px 16px',
-
-                        borderRadius: '5px',
-
-                        fontSize: '0.84rem',
-
-                        fontWeight: 800,
-
-                        display: 'flex',
-
-                        alignItems: 'center',
-
-                        justifyContent: 'center',
-
-                        gap: '8px',
-
-                        cursor: 'pointer',
-
-                        boxShadow: 'var(--shadow-sm)'
-
-                      }}
-
-                    >
-
-                      <Download size={15} color="var(--police-gold-400)" />
-
-                      <span>{isHindi ? '🌐 सम्पूर्ण राजस्थान (All 41 Districts Master CSV)' : '🌐 Download Statewide Master CSV (All 41 Districts)'}</span>
-
-                    </button>
-
-                  </div>
-
-
-
-                </div>
-
-              </div>
-
-            )}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '12px'
+            }}>
+              {/* Primary Master Database Export */}
+              <button
+                onClick={handleExportOverallMaster}
+                style={{
+                  background: 'var(--police-navy-900)',
+                  color: '#ffffff',
+                  border: '1.5px solid var(--police-gold-500)',
+                  padding: '11px 18px',
+                  borderRadius: '6px',
+                  fontSize: '0.86rem',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
+              >
+                <Download size={16} color="var(--police-gold-400)" />
+                <span>{isHindi ? '📥 सम्पूर्ण मैराथन मास्टर डेटाबेस CSV डाउनलोड करें' : '📥 Download Master Marathon Database CSV'}</span>
+              </button>
+
+              {/* Download Current Filtered Runners */}
+              <button
+                onClick={handleExportFilteredRunners}
+                className="btn-gold"
+                style={{
+                  padding: '11px 18px',
+                  fontSize: '0.86rem',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  cursor: 'pointer'
+                }}
+              >
+                <Download size={16} />
+                <span>{isHindi ? `📋 वर्तमान फ़िल्टर धावक CSV (${filteredList.length}) डाउनलोड करें` : `📋 Download Current Filtered Runners CSV (${filteredList.length})`}</span>
+              </button>
+            </div>
 
           </div>
 
@@ -2264,8 +2103,8 @@ export function AdminDashboard({
 
               <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                 {isHindi 
-                  ? `कुल ${totalFilteredCount} में से ${totalFilteredCount === 0 ? 0 : startIndex + 1}-${endIndex} धावक प्रदर्शित${districtFilter !== 'all' ? ` (${formatLocalizedDistrict(districtFilter, true)})` : ''}` 
-                  : `Showing ${totalFilteredCount === 0 ? 0 : startIndex + 1}-${endIndex} of ${totalFilteredCount} runners${districtFilter !== 'all' ? ` (${formatLocalizedDistrict(districtFilter, false)})` : ''}`}
+                  ? `कुल ${totalFilteredCount} में से ${totalFilteredCount === 0 ? 0 : startIndex + 1}-${endIndex} धावक प्रदर्शित` 
+                  : `Showing ${totalFilteredCount === 0 ? 0 : startIndex + 1}-${endIndex} of ${totalFilteredCount} runners`}
               </div>
             </div>
           </div>
@@ -3019,7 +2858,7 @@ export function AdminDashboard({
 
                   <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-950)', marginTop: '4px' }}>
 
-                    {scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A' ? `साइज़: ${scannedRunner.tshirtSize}` : 'N/A (केवल जयपुर फ्लैगशिप)'}
+                    {scannedRunner.tshirtSize && scannedRunner.tshirtSize !== 'N/A' ? `साइज़: ${scannedRunner.tshirtSize}` : 'N/A'}
 
                   </div>
 
@@ -3948,7 +3787,7 @@ export function AdminDashboard({
                 color: '#fde68a',
                 fontWeight: 700
               }}>
-                {isDistrictRole ? formatLocalizedDistrict(adminUser.districtName, isHindi) : (isHindi ? 'संपूर्ण राजस्थान' : 'All Rajasthan')}
+                {isHindi ? 'राजस्थान पुलिस मैराथन 2027' : 'Rajasthan Police Marathon 2027'}
               </div>
               <button 
                 onClick={loadCertificateStats}

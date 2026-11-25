@@ -11,52 +11,13 @@ import { PoliceEmblem } from './Emblems';
 import { isJaipurDistrict } from '../data/mockData';
 import { formatCleanDistrictName, formatLocalizedDistrict } from '../utils/localization';
 
-// District Jurisdiction Security Guard:
-// Ensures Jaipur Flagship Expo / Gate counters NEVER leak out-of-district runner details,
-// NEVER accept event company RFID bib assignment, and NEVER allow kit handover for other districts.
+// Single-Window Marathon Security Guard: All verified runners valid at Albert Hall, Jaipur
 export const checkDistrictMismatch = (runner, currentUser) => {
-  if (!runner) return { isMismatch: false, districtDisplayName: '' };
-
-  const isCounterJaipur = !currentUser?.districtId || isJaipurDistrict(currentUser.districtId, currentUser.districtName);
-  const cleanDist = formatCleanDistrictName(runner);
-  const districtDisplayName = formatLocalizedDistrict(cleanDist, true) || runner.districtName || 'अन्य जिला';
-
-  const bib = String(runner.bibNumber || runner.bib_number || '').toUpperCase();
-  const hasAuthoritativeDistrict = Boolean(
-    runner.venueType ||
-    runner.venue_type ||
-    runner.districtId ||
-    runner.district_id ||
-    cleanDist
-  );
-
-  let isRunnerJaipur = false;
-  if (hasAuthoritativeDistrict) {
-    isRunnerJaipur = (
-      runner.venueType === 'jaipur' ||
-      runner.venue_type === 'jaipur' ||
-      isJaipurDistrict(runner.districtId || runner.district_id, runner.districtName || runner.district_name) ||
-      cleanDist.toLowerCase() === 'jaipur'
-    );
-  } else {
-    isRunnerJaipur = (/^RJ-(02K|05K|10K|21K)-/i.test(bib) && !/^RJ-[A-Z]{3,4}-(02K|05K|10K|21K)-/i.test(bib));
-  }
-
-  if (isCounterJaipur) {
-    return {
-      isMismatch: !isRunnerJaipur,
-      districtDisplayName,
-      counterName: 'जयपुर फ्लैगशिप मैराथन (अल्बर्ट हॉल)'
-    };
-  } else {
-    const counterCleanDist = formatCleanDistrictName({ districtId: currentUser.districtId, districtName: currentUser.districtName });
-    const isMatch = cleanDist.toLowerCase() === counterCleanDist.toLowerCase();
-    return {
-      isMismatch: !isMatch,
-      districtDisplayName,
-      counterName: `${formatLocalizedDistrict(counterCleanDist, true)} जिला केंद्र`
-    };
-  }
+  return {
+    isMismatch: false,
+    districtDisplayName: '',
+    counterName: 'राजस्थान पुलिस मैराथन (अल्बर्ट हॉल, जयपुर)'
+  };
 };
 
 // Built-in Web Audio API Synthesizer + Mobile Haptic Feedback (No external MP3 files needed)
@@ -775,7 +736,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
           if (isMismatch) {
             if (soundEnabled) playSound('duplicate');
             setScanStatus('DISTRICT_MISMATCH');
-            setStatusMessage(`⚠️ अन्य जिले का पंजीकरण! यह धावक "${districtDisplayName}" के लिए पंजीकृत है। यह काउंटर केवल जयपुर फ्लैगशिप मैराथन किट वितरण हेतु है।`);
+            setStatusMessage('⚠️ धावक पंजीकरण विवरण की जाँच करें।');
             return;
           }
 
@@ -1856,7 +1817,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               </div>
 
               <div style={{ fontSize: '0.9rem', color: '#475569', maxWidth: '620px', margin: '0 auto 20px', lineHeight: 1.6 }}>
-                यह एक्सपो काउंटर केवल <strong>जयपुर फ्लैगशिप मैराथन (अल्बर्ट हॉल)</strong> किट वितरण हेतु अधिकृत है। इस धावक को जयपुर किट अथवा इवेंट कंपनी का फिजिकल RFID बिब जारी नहीं किया जा सकता। कृपया धावक को उनके संबंधित ज़िला पुलिस लाइन / नोडल केंद्र पर संपर्क करने का निर्देश दें।
+                यह एक्सपो काउंटर <strong>राजस्थान पुलिस मैराथन (अल्बर्ट हॉल, जयपुर)</strong> किट वितरण हेतु अधिकृत है।
               </div>
 
               {/* Minimal identity verification block so volunteer can politely confirm with citizen */}
@@ -1965,7 +1926,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                       })`
                     ) : (
                       <span style={{ color: '#475569' }}>
-                        N/A (केवल जयपुर फ्लैगशिप आयोजन हेतु • जिला सहभागिता किट)
+                        N/A
                       </span>
                     )}
                   </div>
@@ -2477,7 +2438,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
                 अन्य जिले का पंजीकरण ({scannedRunner.districtDisplayName || scannedRunner.districtName})
               </h2>
               <p style={{ color: '#475569', fontSize: '0.95rem', maxWidth: '540px', margin: '0 auto 20px' }}>
-                यह गेट केवल <strong>जयपुर फ्लैगशिप मैराथन (अल्बर्ट हॉल)</strong> प्रतिभागियों के प्रवेश हेतु अधिकृत है। यह धावक <strong>{scannedRunner.districtDisplayName || scannedRunner.districtName}</strong> के लिए पंजीकृत है।
+                यह गेट <strong>राजस्थान पुलिस मैराथन (अल्बर्ट हॉल, जयपुर)</strong> प्रतिभागियों के प्रवेश हेतु अधिकृत है।
               </p>
               <button
                 type="button"

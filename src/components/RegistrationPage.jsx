@@ -1187,14 +1187,12 @@ export function RegistrationPage({
       `📋 *प्रवेश विवरण:*\n` +
       `🆔 *पंजीकरण संख्या:* ${registeredParticipant.bibNumber}\n` +
       `🎯 *दौड़ श्रेणी:* ${locCat}\n` +
-      (isPassJaipur ? `📍 *स्थान / वेन्यू:* अल्बर्ट हॉल, जयपुर\n` : `📍 *जिला (District):* ${locDist}\n`) +
+      `📍 *स्थान / वेन्यू:* अल्बर्ट हॉल, रामनिवास बाग, जयपुर\n` +
       `📅 *तारीख:* 24 जनवरी 2027, प्रातः 05:00 बजे रिपोर्टिंग\n` +
       (registeredParticipant.tshirtSize && registeredParticipant.tshirtSize !== 'N/A' ? `👕 *टी-शर्ट साइज़:* Size ${registeredParticipant.tshirtSize}\n` : '') +
       `🩸 *रक्त समूह:* ${registeredParticipant.bloodGroup || 'B+'}\n` +
       `🆔 *प्रमाण पत्र टोकन:* ${registeredParticipant.certificateId}\n\n` +
-      (isPassJaipur 
-        ? `⚠️ *महत्वपूर्ण:* एक्सपो केंद्र पर यह ई-पास दिखाकर अपना फिजिकल RFID बिब व किट प्राप्त करें।\n\n` 
-        : `⚠️ *महत्वपूर्ण:* अपने जिले में निर्धारित काउंटर पर यह ई-पास दिखाकर अपनी भागीदारी पुष्टि करें।\n\n`) +
+      `⚠️ *महत्वपूर्ण:* बिब एक्सपो (अल्बर्ट हॉल, जयपुर) पर यह ई-पास दिखाकर अपना फिजिकल RFID बिब व किट प्राप्त करें।\n\n` +
       `ई-पास डाउनलोड व सत्यापन पोर्टल:\n${window.location.origin}/#register\n\n` +
       `_राजस्थान पुलिस — सेवार्थ कटिबद्धता_`
     ) : (
@@ -1205,14 +1203,12 @@ export function RegistrationPage({
       `📋 *Entry Details:*\n` +
       `🆔 *Registration ID:* ${registeredParticipant.bibNumber}\n` +
       `🎯 *Race Category:* ${locCat}\n` +
-      (isPassJaipur ? `📍 *Venue:* Albert Hall, Jaipur\n` : `📍 *District:* ${locDist}\n`) +
+      `📍 *Venue:* Albert Hall, Ram Niwas Garden, Jaipur\n` +
       `📅 *Date:* 24 January 2027, Reporting at 05:00 AM\n` +
       (registeredParticipant.tshirtSize && registeredParticipant.tshirtSize !== 'N/A' ? `👕 *T-Shirt Size:* Size ${registeredParticipant.tshirtSize}\n` : '') +
       `🩸 *Blood Group:* ${registeredParticipant.bloodGroup || 'B+'}\n` +
       `🆔 *Certificate ID:* ${registeredParticipant.certificateId}\n\n` +
-      (isPassJaipur 
-        ? `⚠️ *Important:* Please present this E-Pass at the Expo center to collect your physical RFID Bib and kit.\n\n` 
-        : `⚠️ *Important:* Please present this E-Pass at your designated district counter to confirm participation.\n\n`) +
+      `⚠️ *Important:* Please present this E-Pass at the Bib Expo (Albert Hall, Jaipur) to collect your physical RFID Bib and kit.\n\n` +
       `E-Pass Download & Verification Portal:\n${window.location.origin}/#register\n\n` +
       `_Rajasthan Police — Committed to Serve_`
     );

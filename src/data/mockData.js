@@ -17,7 +17,7 @@ export const RACE_CATEGORIES = [
       { rank: "3rd", amount: "₹21,000", trophy: "🥉", label: "तृतीय" }
     ],
     totalPrize: "₹1,03,000",
-    prizeNote: "नकद पुरस्कार केवल जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल) ओपन पोडियम हेतु लागू है।",
+    prizeNote: "नकद पुरस्कार अल्बर्ट हॉल, जयपुर ओपन पोडियम विजेताओं हेतु लागू है।",
     perks: [
       "RFID Timing Chip Bib",
       "फिनिशर मेडल 🥇",
@@ -44,7 +44,7 @@ export const RACE_CATEGORIES = [
       { rank: "3rd", amount: "₹5,100", trophy: "🥉", label: "तृतीय" }
     ],
     totalPrize: "₹37,100",
-    prizeNote: "नकद पुरस्कार केवल जयपुर मुख्य फ्लैगशिप (अल्बर्ट हॉल) ओपन पोडियम हेतु लागू है।",
+    prizeNote: "नकद पुरस्कार अल्बर्ट हॉल, जयपुर ओपन पोडियम विजेताओं हेतु लागू है।",
     perks: [
       "RFID Timing Chip Bib",
       "फिनिशर मेडल 🥇",
@@ -64,7 +64,7 @@ export const RACE_CATEGORIES = [
     flagOff: "06:45 AM",
     cutOffTime: "1 घंटा (सुबह 07:45 AM)",
     reporting: "05:30 AM",
-    description: "The flagship mass awareness run happening simultaneously in Jaipur and all 41 Rajasthan Police Districts.",
+    description: "The mass awareness community run happening at Albert Hall, Ram Niwas Garden, Jaipur.",
     perks: [
       "फिनिशर मेडल 🥇",
       "ड्राई-फिट रनिंग टी-शर्ट 👕",
