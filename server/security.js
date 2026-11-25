@@ -15,7 +15,10 @@ export const registrationSchema = z.object({
   gender: z.string().transform(v => v.toLowerCase()).pipe(z.enum(["female", "male", "other"])),
   dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "अमान्य जन्म तिथि प्रारूप (YYYY-MM-DD)"),
   mobile: z.string().regex(/^[6-9]\d{9}$/, "वैध 10-अंकीय भारतीय मोबाइल नंबर दर्ज करें (6, 7, 8 या 9 से शुरू होना आवश्यक है)"),
-  email: z.string().email("वैध ईमेल पता दर्ज करें (उदा. runner@example.com)").trim(),
+  email: z.string().trim().optional().default("").refine(
+    v => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+    { message: "वैध ईमेल पता दर्ज करें (उदा. runner@example.com)" }
+  ),
   emergencyContact: z.string().regex(/^[6-9]\d{9}$/, "वैध 10-अंकीय आपातकालीन मोबाइल नंबर दर्ज करें"),
   emergencyRelation: z.string().min(2).max(50).trim(),
   bloodGroup: z.string().min(1).max(5),

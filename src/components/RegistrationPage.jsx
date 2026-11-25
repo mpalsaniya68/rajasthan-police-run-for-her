@@ -649,8 +649,8 @@ export function RegistrationPage({
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email || !emailRegex.test(formData.email.trim())) {
-      alert(isHindi ? "कृपया वैध ईमेल पता दर्ज करें (सर्टिफिकेट एवं ई-पास सीधे इसी ईमेल पर प्रेषित होंगे)।" : "Please enter a valid email address (Certificate & E-Pass will be sent to this email).");
+    if (formData.email && formData.email.trim() && !emailRegex.test(formData.email.trim())) {
+      alert(isHindi ? "कृपया वैध ईमेल पता दर्ज करें (उदा. runner@example.com)।" : "Please enter a valid email address (e.g. runner@example.com).");
       return;
     }
 
@@ -2653,6 +2653,9 @@ export function RegistrationPage({
                         background: '#f8fafc'
                       }}
                     />
+                    <div style={{ fontSize: '0.74rem', color: '#15803d', marginTop: '4px', fontWeight: 600 }}>
+                      ✓ {isHindi ? 'सत्यापित (1 मोबाइल से अधिकतम 5 पंजीकरण अनुमत)' : 'Verified (Max 5 registrations per mobile)'}
+                    </div>
                   </div>
 
                   {/* Row 2, Col 1: जन्म तिथि */}
@@ -2676,19 +2679,22 @@ export function RegistrationPage({
                     />
                   </div>
 
-                  {/* Row 2, Col 2: ईमेल पता */}
+                  {/* Row 2, Col 2: ईमेल पता (वैकल्पिक) */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                      {isHindi ? 'ईमेल पता' : 'Email Address'} <span style={{ color: '#ef4444' }}>*</span>:
+                      {isHindi ? 'ईमेल पता (वैकल्पिक)' : 'Email Address (Optional)'}:
                     </label>
                     <input
                       type="email"
-                      required
                       placeholder={isHindi ? "उदा. runner@example.com" : "e.g. runner@example.com"}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
                     />
+                    <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: '5px', display: 'flex', alignItems: 'center', gap: '4px', lineHeight: 1.3 }}>
+                      <span>ℹ️</span>
+                      <span>{isHindi ? 'नोट: ई-प्रमाण पत्र (Certificate) एवं रेस सूचना इसी ईमेल पर भेजी जाएगी।' : 'Note: E-Certificate and race updates will be sent to this email.'}</span>
+                    </div>
                   </div>
 
                   {/* Row 2, Col 3: टी-शर्ट साइज़ */}

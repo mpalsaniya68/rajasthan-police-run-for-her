@@ -1144,14 +1144,24 @@ export async function handleApiRequest(req, res) {
         return error("मोबाइल सत्यापन अनिवार्य है। कृपया पहले 6-अंकीय OTP सत्यापित करें।", 403);
       }
 
-      // Check if mobile already registered in this category
-      const existing = await db.execute({
-        sql: "SELECT id, bib_number FROM participants WHERE mobile = ? AND category_id = ?",
-        args: [data.mobile, data.categoryId]
+      // Check mobile registration limit: Max 5 registrations per mobile number
+      const mobileCountRes = await db.execute({
+        sql: "SELECT COUNT(*) as count FROM participants WHERE mobile = ?",
+        args: [data.mobile]
+      });
+      const currentMobileRegs = Number(mobileCountRes.rows[0]?.count || 0);
+      if (currentMobileRegs >= 5) {
+        return error("इस मोबाइल नंबर से अधिकतम 5 पंजीकरण की सीमा पूर्ण हो चुकी है (अधिकतम 5 अनुमत)।", 409);
+      }
+
+      // Check if the same person (full_name) is already registered with this mobile number in this category
+      const existingSameRunner = await db.execute({
+        sql: "SELECT id, bib_number FROM participants WHERE mobile = ? AND category_id = ? AND LOWER(TRIM(full_name)) = LOWER(TRIM(?))",
+        args: [data.mobile, data.categoryId, data.fullName]
       });
 
-      if (existing.rows.length > 0) {
-        return error(`यह मोबाइल नंबर पहले से ${CATEGORY_NAMES[data.categoryId]} में पंजीकृत है (Bib: ${existing.rows[0].bib_number})`, 409);
+      if (existingSameRunner.rows.length > 0) {
+        return error(`धावक '${data.fullName}' पहले से ${CATEGORY_NAMES[data.categoryId] || 'इस श्रेणी'} में पंजीकृत हैं (Bib: ${existingSameRunner.rows[0].bib_number})`, 409);
       }
 
       // Check if Govt Photo ID (Aadhaar/PAN/Voter) already registered in this category (DPDP Compliance)

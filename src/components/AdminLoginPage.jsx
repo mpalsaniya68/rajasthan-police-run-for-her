@@ -25,7 +25,6 @@ export const EXPO_COUNTERS = [
 export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
   const [accessType, setAccessType] = useState('phq'); // 'phq' | 'expo'
   const [operatorName, setOperatorName] = useState('');
-  const [selectedCounterId, setSelectedCounterId] = useState('auto');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -83,11 +82,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
       setErrorMessage('');
 
       try {
-        const counterObj = EXPO_COUNTERS.find(c => c.id === selectedCounterId);
-        const targetCounterId = selectedCounterId === "auto" ? "" : selectedCounterId;
-        const targetCounterName = selectedCounterId === "auto" ? "" : (counterObj?.name || "");
-
-        const res = await apiExpoLogin(operatorName.trim(), targetCounterId, targetCounterName, password.trim());
+        const res = await apiExpoLogin(operatorName.trim(), "", "", password.trim());
         setIsLoading(false);
 
         if (res && res.success && res.requireOtp) {
@@ -598,36 +593,6 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                     </button>
                   </div>
                 </div>
-
-                {/* If Expo Mode: Counter / Gate Selector */}
-                {accessType === 'expo' && (
-                  <div style={{ marginBottom: '18px', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: '8px', padding: '12px' }}>
-                    <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 800, color: '#166534', marginBottom: '6px' }}>
-                      काउंटर / गेट स्टेशन चुनें (Select Station):
-                    </label>
-                    <select
-                      value={selectedCounterId}
-                      onChange={(e) => setSelectedCounterId(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '9px 12px',
-                        background: '#ffffff',
-                        border: '1.5px solid #16a34a',
-                        borderRadius: '6px',
-                        color: '#0f172a',
-                        fontSize: '0.86rem',
-                        fontWeight: 700,
-                        outline: 'none'
-                      }}
-                    >
-                      {EXPO_COUNTERS.map(c => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
 
                 {/* Error Message Alert */}
                 {errorMessage && (
