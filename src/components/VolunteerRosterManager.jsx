@@ -13,10 +13,8 @@ import {
   apiUpdateVolunteer, 
   apiDeleteVolunteer 
 } from '../services/api';
-import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 
 const DESIGNATION_PRESETS = [
-  "जिला नोडल अधिकारी (SP / Addl. SP / Nodal Officer)",
   "कांस्टेबल (Constable)",
   "हेड कांस्टेबल (Head Constable)",
   "सहायक उप निरीक्षक (ASI)",
@@ -49,8 +47,6 @@ export function VolunteerRosterManager() {
     mobile: "",
     stationType: "counter",
     counterId: "counter_01",
-    districtId: "ALW",
-    districtName: "अलवर पुलिस (Alwar)",
     username: "",
     password: ""
   });
@@ -111,8 +107,6 @@ export function VolunteerRosterManager() {
     let defaultCounter = "counter_01";
     if (type === "gate") {
       defaultCounter = EXPO_COUNTERS.find(c => c.id.startsWith("gate_"))?.id || "gate_01";
-    } else if (type === "district") {
-      defaultCounter = "";
     } else {
       defaultCounter = EXPO_COUNTERS.find(c => c.id.startsWith("counter_"))?.id || "counter_01";
     }
@@ -120,8 +114,7 @@ export function VolunteerRosterManager() {
     setNewVol(prev => ({
       ...prev,
       stationType: type,
-      counterId: defaultCounter,
-      designation: type === "district" ? DESIGNATION_PRESETS[0] : (prev.designation === DESIGNATION_PRESETS[0] ? DESIGNATION_PRESETS[1] : prev.designation)
+      counterId: defaultCounter
     }));
   };
 
@@ -139,11 +132,9 @@ export function VolunteerRosterManager() {
       return;
     }
 
-    const isDistrict = newVol.stationType === "district";
-    const distObj = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === newVol.districtId) || RAJASTHAN_POLICE_DISTRICTS[0];
     const counterObj = EXPO_COUNTERS.find(c => c.id === newVol.counterId) || EXPO_COUNTERS[0];
     const finalDesignation = newVol.designation === "अन्य (Custom)" 
-      ? (newVol.customDesignation.trim() || (isDistrict ? "जिला नोडल अधिकारी" : "वॉलंटियर")) 
+      ? (newVol.customDesignation.trim() || "वॉलंटियर") 
       : newVol.designation;
 
     setIsSubmitting(true);
@@ -152,13 +143,13 @@ export function VolunteerRosterManager() {
         fullName: newVol.fullName.trim(),
         designation: finalDesignation,
         mobile: newVol.mobile.trim(),
-        username: newVol.username.trim() || (isDistrict ? `sp_${distObj.id.toLowerCase().replace(/-/g, '_')}` : `vol_${Date.now().toString(36)}`),
+        username: newVol.username.trim() || `vol_${Date.now().toString(36)}`,
         password: newVol.password.trim(),
         stationType: newVol.stationType,
-        counterId: isDistrict ? "" : newVol.counterId,
-        counterName: isDistrict ? `${distObj.name} कमान डेस्क` : counterObj.name,
-        districtId: isDistrict ? distObj.id.toLowerCase().replace(/-/g, '_') : 'jaipur_comm',
-        districtName: isDistrict ? distObj.name : 'जयपुर पुलिस आयुक्तालय'
+        counterId: newVol.counterId,
+        counterName: counterObj.name,
+        districtId: 'jaipur_comm',
+        districtName: 'जयपुर पुलिस आयुक्तालय'
       };
 
       const res = await apiCreateVolunteer(payload);
@@ -166,10 +157,9 @@ export function VolunteerRosterManager() {
 
       if (res && res.success) {
         setIsAddModalOpen(false);
-        const roleLabel = isDistrict ? `जिला कमान (${distObj.name})` : counterObj.name;
         setStatusMessage({
           type: "success",
-          text: `✅ ${newVol.fullName} सफलतापूर्वक पंजीकृत! भूमिका: ${roleLabel} (लॉगिन आईडी: ${payload.username})। पासवर्ड व मोबाइल सुरक्षित रूप से साझा करें।`
+          text: `✅ ${newVol.fullName} सफलतापूर्वक पंजीकृत! भूमिका: ${counterObj.name} (लॉगिन आईडी: ${payload.username})। पासवर्ड व मोबाइल सुरक्षित रूप से साझा करें।`
         });
         
         // Reset form
@@ -180,8 +170,6 @@ export function VolunteerRosterManager() {
           mobile: "",
           stationType: "counter",
           counterId: "counter_01",
-          districtId: "ALW",
-          districtName: "अलवर पुलिस (Alwar)",
           username: "",
           password: ""
         });
@@ -546,7 +534,6 @@ export function VolunteerRosterManager() {
             { id: 'all', label: `सभी (${volunteers.length})` },
             { id: 'counter', label: `📦 एक्सपो काउंटर (${volunteers.filter(v => v.role === 'EXPO_VOLUNTEER').length})` },
             { id: 'gate', label: `🚪 गेट मार्शल (${volunteers.filter(v => v.role === 'GATE_MARSHAL').length})` },
-            { id: 'district', label: `🏛️ जिला नोडल अधिकारी (${volunteers.filter(v => v.role === 'DISTRICT').length})` },
             { id: 'active', label: `🟢 सक्रिय (${volunteers.filter(v => v.status === 'ACTIVE').length})` }
           ].map(f => (
             <button
@@ -983,14 +970,14 @@ export function VolunteerRosterManager() {
                 <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
                   ड्यूटी तैनाती का प्रकार चुनें:
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
                   <div
                     onClick={() => handleStationTypeChange("counter")}
                     style={{
                       border: `2px solid ${newVol.stationType === 'counter' ? '#16a34a' : '#e2e8f0'}`,
                       background: newVol.stationType === 'counter' ? '#f0fdf4' : '#ffffff',
                       borderRadius: '8px',
-                      padding: '10px 10px',
+                      padding: '12px 14px',
                       cursor: 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
@@ -1014,7 +1001,7 @@ export function VolunteerRosterManager() {
                       border: `2px solid ${newVol.stationType === 'gate' ? '#d97706' : '#e2e8f0'}`,
                       background: newVol.stationType === 'gate' ? '#fffbeb' : '#ffffff',
                       borderRadius: '8px',
-                      padding: '10px 10px',
+                      padding: '12px 14px',
                       cursor: 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
@@ -1031,75 +1018,15 @@ export function VolunteerRosterManager() {
                       पास व सुरक्षा जांच
                     </div>
                   </div>
-
-                  <div
-                    onClick={() => handleStationTypeChange("district")}
-                    style={{
-                      border: `2px solid ${newVol.stationType === 'district' ? '#b91c1c' : '#e2e8f0'}`,
-                      background: newVol.stationType === 'district' ? '#fef2f2' : '#ffffff',
-                      borderRadius: '8px',
-                      padding: '10px 10px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '4px'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ fontSize: '1.2rem' }}>🏛️</span>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#991b1b' }}>
-                        जिला SP कमान
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
-                      जिला नोडल डेस्क
-                    </div>
-                  </div>
                 </div>
               </div>
 
-              {/* 4. Select Station or District */}
-              {newVol.stationType === 'district' ? (
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#991b1b', marginBottom: '6px' }}>
-                    जिला पुलिस कार्यालय का चयन करें (Select Police District) *:
-                  </label>
-                  <select
-                    value={newVol.districtId}
-                    onChange={(e) => {
-                      const selId = e.target.value;
-                      const dObj = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selId);
-                      setNewVol(prev => ({
-                        ...prev,
-                        districtId: selId,
-                        districtName: dObj ? dObj.name : prev.districtName,
-                        username: `sp_${selId.toLowerCase().replace(/-/g, '_')}`
-                      }));
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      border: '1.5px solid #dc2626',
-                      borderRadius: '6px',
-                      fontSize: '0.88rem',
-                      fontWeight: 700,
-                      color: '#0f172a',
-                      background: '#fef2f2'
-                    }}
-                  >
-                    {RAJASTHAN_POLICE_DISTRICTS.map(d => (
-                      <option key={d.id} value={d.id}>
-                        {d.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
-                    विशिष्ट काउंटर / गेट स्टेशन का आवंटन:
-                  </label>
-                  <select
+              {/* 4. Select Station */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>
+                  विशिष्ट काउंटर / गेट स्टेशन का आवंटन:
+                </label>
+                <select
                     value={newVol.counterId}
                     onChange={(e) => setNewVol(prev => ({ ...prev, counterId: e.target.value }))}
                     style={{
@@ -1122,7 +1049,6 @@ export function VolunteerRosterManager() {
                       ))}
                   </select>
                 </div>
-              )}
 
               {/* 5. Individual Credentials Box */}
               <div style={{

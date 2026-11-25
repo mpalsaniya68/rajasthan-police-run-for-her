@@ -33,8 +33,6 @@ import { formatLocalizedDistrict, formatLocalizedCategory, formatLocalizedName, 
 
 export { formatCleanDistrictName };
 
-const OTHER_DISTRICTS = RAJASTHAN_POLICE_DISTRICTS.filter(d => d.id !== 'JPR-COMM' && !d.flagship);
-
 export function RegistrationPage({
   initialCategory = "21k",
   initialDistrict = "JPR-COMM",
@@ -45,33 +43,9 @@ export function RegistrationPage({
 }) {
   const { t, isHindi } = useLanguage();
   const [pendingPayload, setPendingPayload] = useState(null);
-  const [venueType, setVenueType] = useState(() => (initialDistrict && initialDistrict !== "JPR-COMM" && initialDistrict !== "jaipur_comm") ? "district" : "jaipur");
-
-  const handleSelectVenueType = (type) => {
-    setVenueType(type);
-    if (type === "district") {
-      // Districts only have 10K, 5K, 2K (No 21K in districts)
-      if (category === "21k") {
-        setCategory("10k");
-      }
-      setFormData(prev => ({ ...prev, tshirtSize: "N/A" }));
-      if (!selectedDistrict || selectedDistrict === "JPR-COMM" || selectedDistrict === "jaipur_comm") {
-        setSelectedDistrict(OTHER_DISTRICTS[0]?.id || "JDH-COMM");
-      }
-    } else {
-      setFormData(prev => ({ ...prev, tshirtSize: prev.tshirtSize === "N/A" ? "M" : prev.tshirtSize }));
-    }
-  };
-
-  const availableCategories = venueType === "district"
-    ? RACE_CATEGORIES.filter(c => c.id === "10k" || c.id === "5k" || c.id === "2k")
-    : RACE_CATEGORIES;
-  const [selectedDistrict, setSelectedDistrict] = useState(() => {
-    if (initialDistrict && initialDistrict !== "JPR-COMM" && initialDistrict !== "jaipur_comm") {
-      return initialDistrict;
-    }
-    return OTHER_DISTRICTS[0]?.id || "JDH-COMM";
-  });
+  const venueType = "jaipur";
+  const selectedDistrict = "JPR-COMM";
+  const availableCategories = RACE_CATEGORIES;
   const [category, setCategory] = useState(initialCategory);
   const [isPolicePersonnel, setIsPolicePersonnel] = useState(false);
   const [nonPoliceCategory, setNonPoliceCategory] = useState("General Citizen");
@@ -457,9 +431,7 @@ export function RegistrationPage({
   }, [isSuccess, registeredParticipant]);
 
   const currentCatObj = RACE_CATEGORIES.find(c => c.id === category) || RACE_CATEGORIES[0];
-  const currentDistrictObj = venueType === "jaipur"
-    ? (RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === "JPR-COMM") || RAJASTHAN_POLICE_DISTRICTS[0])
-    : (OTHER_DISTRICTS.find(d => d.id === selectedDistrict) || OTHER_DISTRICTS[0] || RAJASTHAN_POLICE_DISTRICTS[0]);
+  const currentDistrictObj = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === "JPR-COMM") || RAJASTHAN_POLICE_DISTRICTS[0];
 
   const getMaskedId = (type, val) => {
     if (!val) return "XXXX-XXXX";
@@ -694,7 +666,7 @@ export function RegistrationPage({
     setIsSubmitting(true);
 
     const calculatedDob = formData.dob || `${2027 - (parseInt(formData.age) || 25)}-01-01`;
-    const selectedDistId = venueType === "jaipur" ? "jaipur_comm" : (selectedDistrict || OTHER_DISTRICTS[0]?.id || "jdh_comm").toLowerCase().replace(/-/g, '_');
+    const selectedDistId = "jaipur_comm";
 
     const payload = {
       fullName: formData.fullName.trim().replace(/\s+/g, ' '),
@@ -712,7 +684,7 @@ export function RegistrationPage({
       previousParticipationDetails: formData.hasPreviousParticipation ? (formData.previousParticipationDetails?.trim() || "") : "",
       categoryId: category,
       districtId: selectedDistId,
-      tshirtSize: venueType === "jaipur" ? (formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M") : "N/A",
+      tshirtSize: formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M",
       idType: cleanId ? formData.idType : "",
       idNumber: cleanId,
       idLast4: cleanId ? cleanId.slice(-4) : "",
@@ -784,11 +756,11 @@ export function RegistrationPage({
       medicalNotes: p.medicalNotes,
       category: category,
       categoryName: p.categoryName || currentCatObj.name,
-      venueType: venueType,
-      districtId: p.districtId || selectedDistId || formData.districtId,
-      districtName: p.districtName || (venueType === "jaipur" ? "Jaipur" : currentDistrictObj.name),
+      venueType: "jaipur",
+      districtId: "jaipur_comm",
+      districtName: "Jaipur",
       runnerType: runnerType,
-      tshirtSize: venueType === "jaipur" ? (formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M") : "N/A",
+      tshirtSize: formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M",
       emergencyContact: `${formData.emergencyContactName || 'Family'} (${formData.emergencyRelation || 'Kin'}: ${cleanEmergency})`,
       emergencyContactName: formData.emergencyContactName,
       emergencyContactPhone: cleanEmergency,
@@ -2520,92 +2492,47 @@ export function RegistrationPage({
                     fontWeight: 900
                   }}>1</span>
                   <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                    {isHindi ? 'दौड़ श्रेणी एवं आयोजन स्थल चुनें' : 'Select Race Category & Venue'}
+                    {isHindi ? 'दौड़ श्रेणी चुनें (आयोजन स्थल: जयपुर)' : 'Select Race Category (Venue: Jaipur)'}
                   </h3>
                 </div>
 
-                {/* Venue Toggle */}
-                <div style={{ marginBottom: '18px' }}>
-                  <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '8px' }}>
-                    {isHindi ? 'आप कहाँ दौड़ना चाहते हैं?:' : 'Where would you like to run?:'}
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
-                    <div
-                      onClick={() => handleSelectVenueType("jaipur")}
-                      style={{
-                        padding: '14px',
-                        borderRadius: '10px',
-                        border: venueType === "jaipur" ? '2px solid var(--police-gold-500)' : '1px solid var(--border-subtle)',
-                        background: venueType === "jaipur" ? 'var(--police-navy-50)' : '#ffffff',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        transition: 'all 0.2s'
-                      }}
-                    >
-                      <input
-                        type="radio"
-                        name="venueType"
-                        checked={venueType === "jaipur"}
-                        onChange={() => handleSelectVenueType("jaipur")}
-                        style={{ cursor: 'pointer' }}
-                      />
-                      <div>
-                        <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          {isHindi ? 'जयपुर' : 'Jaipur'}
-                        </div>
-                      </div>
+                {/* Official Venue Announcement (Jaipur Exclusive) */}
+                <div style={{
+                  marginBottom: '20px',
+                  background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+                  border: '1.5px solid #86efac',
+                  borderRadius: '12px',
+                  padding: '14px 18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+                }}>
+                  <div style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '50%',
+                    background: '#15803d',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.25rem',
+                    flexShrink: 0,
+                    boxShadow: '0 2px 6px rgba(21,128,61,0.25)'
+                  }}>
+                    📍
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#14532d', marginBottom: '2px' }}>
+                      {isHindi ? 'आधिकारिक आयोजन स्थल: अल्बर्ट हॉल, रामनिवास बाग, जयपुर' : 'Official Marathon Venue: Albert Hall, Ram Niwas Garden, Jaipur'}
                     </div>
-
-                    <div
-                      onClick={() => handleSelectVenueType("district")}
-                      style={{
-                        padding: '14px',
-                        borderRadius: '10px',
-                        border: venueType === "district" ? '2px solid var(--police-gold-500)' : '1px solid var(--border-subtle)',
-                        background: venueType === "district" ? 'var(--police-navy-50)' : '#ffffff',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        transition: 'all 0.2s'
-                      }}
-                    >
-                      <input
-                        type="radio"
-                        name="venueType"
-                        checked={venueType === "district"}
-                        onChange={() => handleSelectVenueType("district")}
-                        style={{ cursor: 'pointer' }}
-                      />
-                      <div>
-                        <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', fontSize: '0.94rem' }}>
-                          {isHindi ? 'अन्य जिले' : 'Other Districts'}
-                        </div>
-                      </div>
+                    <div style={{ fontSize: '0.82rem', color: '#166534', fontWeight: 600 }}>
+                      {isHindi
+                        ? '★ राजस्थान पुलिस राज्यस्तरीय मैराथन 2027 केवल जयपुर में आयोजित की जा रही है। समस्त श्रेणियां व टी-शर्ट किट जयपुर वेन्यू पर उपलब्ध हैं।'
+                        : '★ The Rajasthan Police State Marathon 2027 is exclusively organized at Jaipur. All categories and runner kits are available at the Jaipur venue.'}
                     </div>
                   </div>
-
-                  {venueType === "district" && (
-                    <div style={{ marginTop: '12px', background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-                      <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
-                        {isHindi ? 'अपना जिला चुनें:' : 'Select Your District:'}
-                      </label>
-                      <select
-                        value={selectedDistrict}
-                        onChange={(e) => setSelectedDistrict(e.target.value)}
-                        className="form-control"
-                        style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.92rem' }}
-                      >
-                        {OTHER_DISTRICTS.map(d => (
-                          <option key={d.id} value={d.id}>
-                            {formatLocalizedDistrict(d.name, isHindi)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
                 </div>
 
                 {/* Race Category Cards Grid */}

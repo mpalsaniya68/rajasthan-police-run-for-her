@@ -16,7 +16,6 @@ export function Navbar({
   const [fontSize, setFontSize] = useState("normal"); // "normal", "large", "xlarge"
 
   const isExpoRole = adminUser?.role === 'EXPO_VOLUNTEER' || adminUser?.role === 'GATE_MARSHAL';
-  const isDistrictRole = adminUser?.role === 'DISTRICT';
 
   const navAdminTarget = !isAdminAuthenticated 
     ? 'admin-login' 
@@ -28,17 +27,13 @@ export function Navbar({
     ? t('adminLogin')
     : isExpoRole
       ? (adminUser?.role === 'GATE_MARSHAL' ? (isHindi ? '🚪 गेट स्कैनर' : '🚪 Gate Scanner') : (isHindi ? '📦 एक्सपो स्टेशन' : '📦 Expo Station'))
-      : isDistrictRole
-        ? `🛡️ ${adminUser?.districtName?.split(' ')[0] || (isHindi ? 'जिला SP' : 'Dist SP')} ${isHindi ? 'कमान' : 'Command'}`
-        : (isHindi ? '🛡️ PHQ कमान' : '🛡️ PHQ Command');
+      : (isHindi ? '🛡️ एडमिन कमान' : '🛡️ Admin Command');
 
   const navAdminBg = !isAdminAuthenticated
     ? '#1e3a8a'
     : isExpoRole
       ? '#047857'
-      : isDistrictRole
-        ? '#1e40af'
-        : '#15803d';
+      : '#15803d';
 
   const handleNav = (pageId) => {
     setMobileMenuOpen(false);

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Lock, ArrowLeft, KeyRound, UserCheck, AlertTriangle, 
-  Eye, EyeOff, Building2, MapPin, ChevronRight, PackageCheck, Shield
+  Eye, EyeOff, Building2, ChevronRight, PackageCheck, Shield
 } from 'lucide-react';
-import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 import { apiAdminLogin, apiExpoLogin, apiAdminVerifyOtp, apiAdminResendOtp } from '../services/api';
 
 export const EXPO_COUNTERS = [
@@ -24,8 +23,7 @@ export const EXPO_COUNTERS = [
 ];
 
 export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
-  const [accessType, setAccessType] = useState('phq'); // 'phq' | 'district' | 'expo'
-  const [selectedDistrictId, setSelectedDistrictId] = useState('KTA-CITY');
+  const [accessType, setAccessType] = useState('phq'); // 'phq' | 'expo'
   const [operatorName, setOperatorName] = useState('');
   const [selectedCounterId, setSelectedCounterId] = useState('auto');
   const [username, setUsername] = useState('');
@@ -62,26 +60,8 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
   const handleAccessTypeChange = (type) => {
     setAccessType(type);
     setErrorMessage('');
-    if (type === 'phq') {
-      setUsername('');
-    } else if (type === 'district') {
-      const dist = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === selectedDistrictId) || RAJASTHAN_POLICE_DISTRICTS[0];
-      const cleanId = (dist.id || 'dist').toLowerCase().replace(/-/g, '_');
-      setUsername(`sp_${cleanId}`);
-    }
+    setUsername('');
     setPassword('');
-  };
-
-  // Change district in SP mode
-  const handleDistrictChange = (distId) => {
-    setSelectedDistrictId(distId);
-    setErrorMessage('');
-    const dist = RAJASTHAN_POLICE_DISTRICTS.find(d => d.id === distId);
-    if (dist) {
-      const cleanId = dist.id.toLowerCase().replace(/-/g, '_');
-      setUsername(`sp_${cleanId}`);
-      setPassword('');
-    }
   };
 
   // Submit Login (Step 1: ID & Password)
@@ -138,7 +118,7 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
       return;
     }
 
-    // 2. High Command (PHQ / District) Login
+    // 2. High Command (PHQ) Login
     if (!username.trim() || !password.trim()) {
       setErrorMessage('कृपया अधिकृत यूजर आईडी एवं पासवर्ड दोनों दर्ज करें।');
       return;
@@ -555,15 +535,15 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
             ) : (
               /* SCREEN 1: ID & PASSWORD LOGIN */
               <div>
-                {/* 3-Tier Access Level Selection Tabs */}
+                {/* 2-Tier Access Level Selection Tabs */}
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
                     लॉगिन स्तर का चयन करें (Select Command Level):
                   </label>
                   <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '4px',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '6px',
                     background: '#f1f5f9',
                     padding: '4px',
                     borderRadius: '8px',
@@ -573,15 +553,15 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                       type="button"
                       onClick={() => handleAccessTypeChange('phq')}
                       style={{
-                        padding: '9px 4px',
+                        padding: '10px 8px',
                         borderRadius: '6px',
                         border: accessType === 'phq' ? '1px solid #cbd5e1' : 'none',
-                        fontSize: '0.78rem',
+                        fontSize: '0.82rem',
                         fontWeight: 700,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '4px',
+                        gap: '6px',
                         cursor: 'pointer',
                         transition: 'all 0.2s',
                         background: accessType === 'phq' ? '#ffffff' : 'transparent',
@@ -589,47 +569,23 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                         boxShadow: accessType === 'phq' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none'
                       }}
                     >
-                      <Building2 size={13} color={accessType === 'phq' ? '#0a1c3d' : '#64748b'} />
+                      <Building2 size={15} color={accessType === 'phq' ? '#0a1c3d' : '#64748b'} />
                       <span>PHQ कमान</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleAccessTypeChange('district')}
-                      style={{
-                        padding: '9px 4px',
-                        borderRadius: '6px',
-                        border: accessType === 'district' ? '1px solid #cbd5e1' : 'none',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '4px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        background: accessType === 'district' ? '#ffffff' : 'transparent',
-                        color: accessType === 'district' ? '#b91c1c' : '#64748b',
-                        boxShadow: accessType === 'district' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none'
-                      }}
-                    >
-                      <MapPin size={13} color={accessType === 'district' ? '#b91c1c' : '#64748b'} />
-                      <span>जिला SP</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleAccessTypeChange('expo')}
                       style={{
-                        padding: '9px 4px',
+                        padding: '10px 8px',
                         borderRadius: '6px',
                         border: accessType === 'expo' ? '1px solid #047857' : 'none',
-                        fontSize: '0.78rem',
+                        fontSize: '0.82rem',
                         fontWeight: 800,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '4px',
+                        gap: '6px',
                         cursor: 'pointer',
                         transition: 'all 0.2s',
                         background: accessType === 'expo' ? '#047857' : 'transparent',
@@ -637,41 +593,11 @@ export function AdminLoginPage({ onNavigate, onLoginSuccess }) {
                         boxShadow: accessType === 'expo' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
                       }}
                     >
-                      <PackageCheck size={13} color={accessType === 'expo' ? '#ffffff' : '#047857'} />
+                      <PackageCheck size={15} color={accessType === 'expo' ? '#ffffff' : '#047857'} />
                       <span>📦 एक्सपो डेस्क</span>
                     </button>
                   </div>
                 </div>
-
-                {/* If District SP Mode: District Selector */}
-                {accessType === 'district' && (
-                  <div style={{ marginBottom: '18px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '12px' }}>
-                    <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#991b1b', marginBottom: '6px' }}>
-                      जिला पुलिस कार्यालय चुनें (Select Police District):
-                    </label>
-                    <select
-                      value={selectedDistrictId}
-                      onChange={(e) => handleDistrictChange(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '9px 12px',
-                        background: '#ffffff',
-                        border: '1.5px solid #dc2626',
-                        borderRadius: '6px',
-                        color: '#0f172a',
-                        fontSize: '0.86rem',
-                        fontWeight: 600,
-                        outline: 'none'
-                      }}
-                    >
-                      {RAJASTHAN_POLICE_DISTRICTS.map(d => (
-                        <option key={d.id} value={d.id}>
-                          {d.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
 
                 {/* If Expo Mode: Counter / Gate Selector */}
                 {accessType === 'expo' && (

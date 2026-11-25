@@ -85,10 +85,10 @@ export function AdminDashboard({
 
 
 
-  const isDistrictRole = adminUser?.role === 'DISTRICT';
+  const isDistrictRole = false;
   const { language, isHindi } = useLanguage();
 
-  const [adminTab, setAdminTab] = useState("registrations"); // "registrations" | "kit_counter" | "leaderboard" | "district_certificates" | "district_medical"
+  const [adminTab, setAdminTab] = useState("registrations"); // "registrations" | "kit_counter" | "leaderboard" | "certificates" | "broadcast"
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -100,7 +100,7 @@ export function AdminDashboard({
 
   const [selectedCatFilter, setSelectedCatFilter] = useState("all");
 
-  const [districtFilter, setDistrictFilter] = useState(() => isDistrictRole ? (adminUser.districtId || adminUser.districtName || "all") : "all");
+  const [districtFilter, setDistrictFilter] = useState("all");
 
   const [exportNotice, setExportNotice] = useState(null);
 
@@ -1393,7 +1393,7 @@ export function AdminDashboard({
                 {(liveStats?.total || registrations.length).toLocaleString()}
               </div>
               <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '4px' }}>
-                {isDistrictRole ? (isHindi ? `${formatLocalizedDistrict(adminUser.districtName, true) || 'जिला'} आवंटित सूची` : `${formatLocalizedDistrict(adminUser.districtName, false) || 'District'} Allotted List`) : (isHindi ? `जयपुर: ${registrations.filter(r => r.venueType === 'jaipur').length.toLocaleString()} • अन्य जिले: ${registrations.filter(r => r.venueType !== 'jaipur').length.toLocaleString()}` : `Jaipur: ${registrations.filter(r => r.venueType === 'jaipur').length.toLocaleString()} • Other Districts: ${registrations.filter(r => r.venueType !== 'jaipur').length.toLocaleString()}`)}
+                {isHindi ? '📍 आयोजन स्थल: अल्बर्ट हॉल, रामनिवास बाग, जयपुर' : '📍 Venue: Albert Hall, Ram Niwas Garden, Jaipur'}
               </div>
             </div>
 
@@ -1498,7 +1498,7 @@ export function AdminDashboard({
             }}
           >
             <Database size={15} color={adminTab === "registrations" ? "#2563eb" : "#64748b"} />
-            <span>{isDistrictRole ? (isHindi ? `📋 ${formatLocalizedDistrict(adminUser.districtName, true) || 'जिला'} धावक सूची एवं CSV` : `📋 ${formatLocalizedDistrict(adminUser.districtName, false) || 'District'} Runner Directory & CSV`) : (isHindi ? '📋 राज्यव्यापी धावक सूची एवं CSV' : '📋 Statewide Runner Directory & CSV')}</span>
+            <span>{isHindi ? '📋 मैराथन धावक सूची एवं CSV' : '📋 Marathon Runner Directory & CSV'}</span>
           </button>
 
           {/* Show RFID Kit, Leaderboard & Live Radar ONLY for PHQ Level */}
@@ -2059,68 +2059,43 @@ export function AdminDashboard({
 
 
           {/* Top Metric Cards */}
-
-          {isDistrictRole ? (
-
-            <div className="admin-metrics-grid">
-
-              <div className="gov-card" style={{ padding: '14px', background: 'var(--police-navy-50)' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>{formatLocalizedDistrict(adminUser.districtName, isHindi) || (isHindi ? 'जिला' : 'District')} {isHindi ? 'कुल धावक' : 'Total Runners'}</div>
-                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>{filteredList.length}</div>
+          <div className="admin-metrics-grid">
+            <div className="gov-card" style={{ padding: '14px', background: 'var(--police-navy-50)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                {isHindi ? 'कुल पंजीयन (जयपुर मैराथन)' : 'Total Registrations (Jaipur)'}
               </div>
-
-              <div className="gov-card" style={{ padding: '14px', background: 'var(--crimson-50)' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>{isHindi ? 'महिला प्रतिभागी' : 'Women Participants'}</div>
-                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--crimson-600)' }}>
-                  {filteredList.filter(r => (r.gender || '').toLowerCase() === 'female').length}
-                </div>
+              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>
+                {(liveStats?.total || registrations.length).toLocaleString()}
               </div>
-
-              <div className="gov-card" style={{ padding: '14px', background: 'var(--police-gold-50)' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>{isHindi ? 'पुरुष प्रतिभागी' : 'Men Participants'}</div>
-                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-gold-700)' }}>
-                  {filteredList.filter(r => (r.gender || '').toLowerCase() === 'male').length}
-                </div>
-              </div>
-
-              <div className="gov-card" style={{ padding: '14px', background: '#ecfdf5' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>ई-सर्टिफिकेट पात्रता</div>
-                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#059669' }}>100% Active</div>
-              </div>
-
             </div>
 
-          ) : (
-
-            <div className="admin-metrics-grid">
-
-              <div className="gov-card" style={{ padding: '14px', background: 'var(--police-navy-50)' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>कुल पंजीयन (Total)</div>
-                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-navy-900)' }}>{liveStats?.total || registrations.length}</div>
+            <div className="gov-card" style={{ padding: '14px', background: 'var(--crimson-50)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                {isHindi ? 'महिला प्रतिभागी' : 'Women Participants'}
               </div>
-
-              <div className="gov-card" style={{ padding: '14px', background: 'var(--crimson-50)' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>जयपुर फ्लैगशिप</div>
-                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--crimson-600)' }}>
-                  {registrations.filter(r => r.venueType === 'jaipur').length}
-                </div>
+              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--crimson-600)' }}>
+                {registrations.filter(r => (r.gender || '').toLowerCase() === 'female').length.toLocaleString()}
               </div>
-
-              <div className="gov-card" style={{ padding: '14px', background: 'var(--police-gold-50)' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>{RAJASTHAN_POLICE_DISTRICTS.length} जिले (Districts)</div>
-                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-gold-700)' }}>
-                  {registrations.filter(r => r.venueType !== 'jaipur').length}
-                </div>
-              </div>
-
-              <div className="gov-card" style={{ padding: '14px', background: '#ecfdf5' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>ई-सर्टिफिकेट डिस्पैच</div>
-                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#059669' }}>100% Active</div>
-              </div>
-
             </div>
 
-          )}
+            <div className="gov-card" style={{ padding: '14px', background: 'var(--police-gold-50)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                {isHindi ? 'पुरुष प्रतिभागी' : 'Men Participants'}
+              </div>
+              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--police-gold-700)' }}>
+                {registrations.filter(r => (r.gender || '').toLowerCase() === 'male').length.toLocaleString()}
+              </div>
+            </div>
+
+            <div className="gov-card" style={{ padding: '14px', background: '#ecfdf5' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                {isHindi ? 'किट वितरण स्थिति' : 'Kit Distribution'}
+              </div>
+              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#059669' }}>
+                {registrations.filter(r => r.bibCollected).length.toLocaleString()} / {registrations.length.toLocaleString()}
+              </div>
+            </div>
+          </div>
 
 
 
@@ -2195,41 +2170,6 @@ export function AdminDashboard({
                 <option value="5k">{isHindi ? '5 किमी कम्युनिटी रन' : '5 KM Community Run'}</option>
                 <option value="2k">{isHindi ? '2 किमी फैमिली वॉक' : '2 KM Family Walk'}</option>
               </select>
-
-              {/* District Filter: Locked badge if District SP, Select if PHQ */}
-              {isDistrictRole ? (
-                <div style={{
-                  padding: '7px 12px',
-                  background: 'rgba(220, 38, 38, 0.08)',
-                  border: '1.5px solid #dc2626',
-                  color: '#991b1b',
-                  borderRadius: '4px',
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}>
-                  <MapPin size={13} color="#dc2626" />
-                  <span>📍 {formatLocalizedDistrict(adminUser.districtName, isHindi) || (isHindi ? 'जिला कमान' : 'District Command')} {isHindi ? '(अधिकार क्षेत्र)' : '(Jurisdiction)'}</span>
-                </div>
-              ) : (
-                <select
-                  value={districtFilter}
-                  onChange={(e) => {
-                    const newDist = e.target.value;
-                    setDistrictFilter(newDist);
-                    setCurrentPage(1);
-                    loadLiveDashboardData(newDist);
-                  }}
-                  style={{ padding: '7px 10px', borderRadius: '4px', background: '#ffffff', border: '1px solid var(--border-strong)', color: 'var(--text-main)', fontSize: '0.82rem', maxWidth: '240px' }}
-                >
-                  <option value="all">{isHindi ? 'समस्त जिले (All Districts)' : 'All Districts'}</option>
-                  {RAJASTHAN_POLICE_DISTRICTS.map(d => (
-                    <option key={d.id} value={d.name}>{formatLocalizedDistrict(d.name, isHindi)}</option>
-                  ))}
-                </select>
-              )}
 
               {/* Smart Kit Status Filter */}
               <select
@@ -4108,47 +4048,26 @@ export function AdminDashboard({
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', alignItems: 'start' }}>
-              {/* Left Column: District Selection */}
+              {/* Left Column: Event Venue */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '8px' }}>
-                  {isHindi ? 'जिला चयन' : 'Select District'}
+                  {isHindi ? 'आयोजन स्थल (Venue)' : 'Marathon Venue'}
                 </label>
-                {isDistrictRole ? (
-                  <div style={{
-                    padding: '10px 14px',
-                    background: '#f1f5f9',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '6px',
-                    fontWeight: 700,
-                    fontSize: '0.88rem',
-                    color: '#1e293b'
-                  }}>
-                    {formatLocalizedDistrict(adminUser.districtName, isHindi) || (isHindi ? 'जिला पुलिस अधीक्षक' : 'District SP Command')}
-                  </div>
-                ) : (
-                  <select
-                    value={certDistrict}
-                    onChange={(e) => setCertDistrict(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      borderRadius: '6px',
-                      border: '1.5px solid #94a3b8',
-                      fontSize: '0.85rem',
-                      fontWeight: 600,
-                      background: '#ffffff',
-                      color: '#0f172a'
-                    }}
-                  >
-                    <option value="all">{isHindi ? 'संपूर्ण राजस्थान' : 'All Rajasthan'}</option>
-                    <option value="jaipur_comm">{isHindi ? 'जयपुर' : 'Jaipur'}</option>
-                    {RAJASTHAN_POLICE_DISTRICTS.filter(d => !d.name.toLowerCase().includes('jaipur')).map(d => (
-                      <option key={d.id} value={d.id}>
-                        {formatLocalizedDistrict(d.name, isHindi)}
-                      </option>
-                    ))}
-                  </select>
-                )}
+                <div style={{
+                  padding: '10px 14px',
+                  background: '#f0fdf4',
+                  border: '1.5px solid #86efac',
+                  borderRadius: '6px',
+                  fontWeight: 700,
+                  fontSize: '0.88rem',
+                  color: '#166534',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <MapPin size={16} color="#166534" />
+                  <span>{isHindi ? 'अल्बर्ट हॉल, रामनिवास बाग, जयपुर' : 'Albert Hall, Ram Niwas Garden, Jaipur'}</span>
+                </div>
               </div>
 
               {/* Right Column: Attendance Criteria */}
