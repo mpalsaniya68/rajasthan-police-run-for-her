@@ -390,7 +390,7 @@ export default function App() {
                 </div>
 
                 <span className="badge-gold">
-                  {isHindi ? 'फ्लैग-ऑफ: 3 जनवरी 2027, सुबह 06:00 बजे' : 'Flag-Off: 3 January 2027, 06:00 AM'}
+                  {isHindi ? 'फ्लैग-ऑफ: 24 जनवरी 2027, सुबह 06:00 बजे' : 'Flag-Off: 24 January 2027, 06:00 AM'}
                 </span>
 
               </div>

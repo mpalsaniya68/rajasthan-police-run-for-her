@@ -372,7 +372,7 @@ export async function sendLiveConfirmationEmail({
   runnerName = "विक्रम सिंह राठौड़",
   bibNumber = "RJ-21K-1008",
   category = "21 KM हाफ मैराथन (Jaipur Flagship)",
-  eventDate = "रविवार, 3 जनवरी 2027 (सुबह 05:30 बजे)",
+  eventDate = "रविवार, 24 जनवरी 2027 (सुबह 05:30 बजे)",
   venue = "",
   expoLocation = "",
   districtName = "जयपुर",
@@ -755,7 +755,7 @@ export async function sendLiveConfirmationEmail({
                   बिब एवं किट वितरण (एक्सपो सूचना):
                 </div>
                 <div style="font-size:12px;color:#334155;line-height:1.6;">
-                  • <strong>दिनांक व समय:</strong> 1 एवं 2 जनवरी 2027 (सुबह 10:00 से शाम 06:00 बजे तक)<br>
+                  • <strong>दिनांक व समय:</strong> 22 एवं 23 जनवरी 2027 (सुबह 10:00 से शाम 06:00 बजे तक)<br>
                   • <strong>स्थान:</strong> ${finalExpo}<br>
                   • <strong>आवश्यक दस्तावेज:</strong> यह ई-पास (मोबाइल में) एवं कोई भी एक सरकारी फोटो पहचान पत्र (आधार कार्ड / वोटर ID / ड्राइविंग लाइसेंस)।
                 </div>
@@ -802,7 +802,7 @@ ${epassUrl}
 (नोट: आपका डिजिटल ई-पास इस ईमेल के साथ 'Rajasthan_Police_EPass_${bibNumber}.html' फ़ाइल के रूप में संलग्न है)
 
 बिब एवं किट वितरण (एक्सपो):
-तारीख: 1 व 2 जनवरी 2027 (सुबह 10:00 से शाम 06:00 बजे तक)
+तारीख: 22 व 23 जनवरी 2027 (सुबह 10:00 से शाम 06:00 बजे तक)
 स्थान: ${finalExpo}
 आवश्यक दस्तावेज: ई-पास (मोबाइल में) एवं कोई एक सरकारी पहचान पत्र।
 

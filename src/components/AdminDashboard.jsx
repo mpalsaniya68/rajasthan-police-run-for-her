@@ -4905,7 +4905,7 @@ export function AdminDashboard({
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', marginTop: '8px', color: '#333333' }}>
                 <span><strong>{isHindi ? 'स्थान/यूनिट:' : 'Location/Unit:'}</strong> {isDistrictRole ? formatLocalizedDistrict(adminUser.districtName, isHindi) : (districtFilter === 'all' ? (isHindi ? 'समस्त राजस्थान' : 'All Rajasthan') : formatLocalizedDistrict(districtFilter, isHindi))}</span>
                 <span><strong>{isHindi ? 'कुल धावक:' : 'Total Runners:'}</strong> {filteredList.length}</span>
-                <span><strong>{isHindi ? 'इवेंट तिथि:' : 'Event Date:'}</strong> {isHindi ? '3 जनवरी 2027' : '3 January 2027'}</span>
+                <span><strong>{isHindi ? 'इवेंट तिथि:' : 'Event Date:'}</strong> {isHindi ? '24 जनवरी 2027' : '24 January 2027'}</span>
               </div>
             </div>
 

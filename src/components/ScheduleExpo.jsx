@@ -46,7 +46,7 @@ export function ScheduleExpo() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '22px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '14px' }}>
               <Clock size={24} color="var(--police-navy-900)" />
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--police-navy-950)', margin: 0 }}>
-                {isHindi ? 'रेस दिवस कार्यक्रम — 3 जनवरी 2027 (जयपुर फ्लैगशिप)' : 'Race Day Program — 3 January 2027 (Jaipur Flagship)'}
+                {isHindi ? 'रेस दिवस कार्यक्रम — 24 जनवरी 2027 (जयपुर फ्लैगशिप)' : 'Race Day Program — 24 January 2027 (Jaipur Flagship)'}
               </h3>
             </div>
 
@@ -116,7 +116,7 @@ export function ScheduleExpo() {
                 {isHindi ? 'पुलिस मेमोरियल ग्राउंड / एसएमएस इंडोर कॉम्प्लेक्स' : 'Police Memorial Ground / SMS Indoor Complex'}
               </div>
               <div style={{ fontSize: '0.96rem', color: '#334155', lineHeight: 1.5, marginBottom: '6px' }}>
-                {isHindi ? 'जेएलएन मार्ग, जयपुर (1-2 जनवरी 2027, सुबह 10:00 से सायं 07:00 बजे तक)' : 'JLN Marg, Jaipur (1-2 Jan 2027, 10:00 AM to 07:00 PM)'}
+                {isHindi ? 'जेएलएन मार्ग, जयपुर (22-23 जनवरी 2027, सुबह 10:00 से सायं 07:00 बजे तक)' : 'JLN Marg, Jaipur (22-23 Jan 2027, 10:00 AM to 07:00 PM)'}
               </div>
               <div style={{ fontSize: '0.88rem', color: '#64748b', fontWeight: 600 }}>
                 {isHindi ? '* जिलों में संबंधित जिला पुलिस अधीक्षक (SP) कार्यालय प्रांगण में एक्सपो आयोजित होगा।' : '* In other districts, expo will be hosted at the respective District SP Headquarters.'}
@@ -162,11 +162,11 @@ export function ScheduleExpo() {
               <div style={{ fontSize: '0.92rem', color: '#78350f', lineHeight: 1.55 }}>
                 {isHindi ? (
                   <>
-                    <strong style={{ fontWeight: 800 }}>अनिवार्य नियम:</strong> किट प्राप्त करने हेतु डिजिटल ई-पास एवं एक मान्य सरकारी फोटो पहचान पत्र (आधार / वोटर आईडी / कॉलेज आईडी) साथ लाएं। <em>दौड़ वाले दिन सुबह 3 जनवरी को कोई बिब वितरण नहीं होगा।</em>
+                    <strong style={{ fontWeight: 800 }}>अनिवार्य नियम:</strong> किट प्राप्त करने हेतु डिजिटल ई-पास एवं एक मान्य सरकारी फोटो पहचान पत्र (आधार / वोटर आईडी / कॉलेज आईडी) साथ लाएं। <em>दौड़ वाले दिन सुबह 24 जनवरी को कोई बिब वितरण नहीं होगा।</em>
                   </>
                 ) : (
                   <>
-                    <strong style={{ fontWeight: 800 }}>Mandatory Rule:</strong> Bring your digital E-Pass and a valid government photo ID (Aadhaar / Voter ID / College ID) to collect your kit. <em>No bib collection will be permitted on race morning (3 Jan).</em>
+                    <strong style={{ fontWeight: 800 }}>Mandatory Rule:</strong> Bring your digital E-Pass and a valid government photo ID (Aadhaar / Voter ID / College ID) to collect your kit. <em>No bib collection will be permitted on race morning (24 Jan).</em>
                   </>
                 )}
               </div>

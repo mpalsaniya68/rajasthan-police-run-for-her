@@ -25,7 +25,7 @@ export async function generateEPassPngBuffer({
   fullName = "विक्रम सिंह राठौड़",
   bibNumber = "RJ-21K-1008",
   category = "21 KM Half Marathon",
-  eventDate = "3 Jan 2027, 05:00 AM",
+  eventDate = "24 Jan 2027, 05:00 AM",
   venue = "Albert Hall, Ram Niwas Garden, Jaipur",
   mobile = "9829012345",
   email = "runner@example.com",

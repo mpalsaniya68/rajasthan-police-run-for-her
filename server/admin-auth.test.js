@@ -212,7 +212,7 @@ test("admin audit logs and broadcast endpoints work with valid authorization", a
     },
     body: JSON.stringify({
       title: "रेस किट संग्रहण सूचना",
-      message: "सभी धावक 1 व 2 जनवरी को अल्बर्ट हॉल से अपनी किट प्राप्त करें।",
+      message: "सभी धावक 22 व 23 जनवरी को अल्बर्ट हॉल से अपनी किट प्राप्त करें।",
       targetCategory: "all",
       channel: "SMS"
     })

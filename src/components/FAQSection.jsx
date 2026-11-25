@@ -13,14 +13,14 @@ export function FAQSection({ onNavigate }) {
     },
     {
       q: "रनिंग किट, टी-शर्ट और RFID बिब कब और कहाँ से प्राप्त होंगे?",
-      a: "सभी पंजीकृत धावकों को 1 और 2 जनवरी 2027 (प्रातः 10:00 बजे से सायं 07:00 बजे तक) बिब एक्सपो के दौरान किट वितरित की जाएगी। जयपुर में यह वितरण अल्बर्ट हॉल / रामनिवास बाग प्रांगण में होगा, तथा जिला मुख्यालयों पर संबंधित जिला पुलिस लाइन में होगा। किट प्राप्त करने हेतु अपना डिजिटल ई-पास (E-Pass) और वैध फोटो पहचान पत्र (आधार कार्ड / पैन / वोटर ID) साथ लाएं।"
+      a: "सभी पंजीकृत धावकों को 22 और 23 जनवरी 2027 (प्रातः 10:00 बजे से सायं 07:00 बजे तक) बिब एक्सपो के दौरान किट वितरित की जाएगी। जयपुर में यह वितरण अल्बर्ट हॉल / रामनिवास बाग प्रांगण में होगा, तथा जिला मुख्यालयों पर संबंधित जिला पुलिस लाइन में होगा। किट प्राप्त करने हेतु अपना डिजिटल ई-पास (E-Pass) और वैध फोटो पहचान पत्र (आधार कार्ड / पैन / वोटर ID) साथ लाएं।"
     },
     {
       q: "क्या फिनिशर मेडल और डिजिटल ई-सर्टिफिकेट सभी को मिलेगा?",
       a: "हाँ, निर्धारित कट-ऑफ समय में अपनी दौड़ पूर्ण करने वाले प्रत्येक प्रतिभागी को राजस्थान पुलिस का फिनिशर मेडल प्रदान किया जाएगा। इसके अतिरिक्त, पुलिस महानिदेशक (DGP) द्वारा हस्ताक्षरित ई-प्रमाण पत्र दौड़ समाप्त होने के 2 घंटे के भीतर आपके पंजीकृत मोबाइल (WhatsApp/SMS) और ईमेल पर स्वतः प्रेषित कर दिया जाएगा।"
     },
     {
-      q: "3 जनवरी 2027 को दौड़ का रिपोर्टिंग समय और फ्लैग-ऑफ का समय क्या है?",
+      q: "24 जनवरी 2027 को दौड़ का रिपोर्टिंग समय और फ्लैग-ऑफ का समय क्या है?",
       a: "• 21 KM हाफ मैराथन: प्रातः 05:00 AM रिपोर्टिंग | 06:00 AM फ्लैग-ऑफ\n• 10 KM स्पीड रन: प्रातः 05:15 AM रिपोर्टिंग | 06:15 AM फ्लैग-ऑफ\n• 5 KM कम्युनिटी रन: प्रातः 05:30 AM रिपोर्टिंग | 06:45 AM फ्लैग-ऑफ\n• 2 KM फैमिली वॉक: प्रातः 06:00 AM रिपोर्टिंग | 07:15 AM फ्लैग-ऑफ\nकृपया दौड़ से कम से कम 45 मिनट पूर्व अपने निर्धारित गेट पर पहुँचें।"
     },
     {
@@ -48,14 +48,14 @@ export function FAQSection({ onNavigate }) {
     },
     {
       q: "When and where will the running kit, T-shirt, and RFID bib be distributed?",
-      a: "Kits will be distributed during the 2-day Bib Expo on 1st & 2nd January 2027 (10:00 AM to 07:00 PM). In Jaipur, expo is hosted at Albert Hall / Ram Niwas Garden, and in districts at the respective District Police Line. Please bring your digital E-Pass and a valid government photo ID (Aadhaar / Voter ID / College ID)."
+      a: "Kits will be distributed during the 2-day Bib Expo on 22nd & 23rd January 2027 (10:00 AM to 07:00 PM). In Jaipur, expo is hosted at Albert Hall / Ram Niwas Garden, and in districts at the respective District Police Line. Please bring your digital E-Pass and a valid government photo ID (Aadhaar / Voter ID / College ID)."
     },
     {
       q: "Will all finishers receive medals and digital E-Certificates?",
       a: "Yes! Every participant who completes their run within the official cut-off time will be awarded an official Rajasthan Police Finisher Medal. A verified digital e-certificate signed by the Director General of Police (DGP) will also be sent to your registered WhatsApp/SMS and email within 2 hours of race completion."
     },
     {
-      q: "What are the reporting and flag-off timings on race day (3 January 2027)?",
+      q: "What are the reporting and flag-off timings on race day (24 January 2027)?",
       a: "• 21 KM Half Marathon: 05:00 AM Reporting | 06:00 AM Flag-Off\n• 10 KM Speed Run: 05:15 AM Reporting | 06:15 AM Flag-Off\n• 5 KM Community Run: 05:30 AM Reporting | 06:45 AM Flag-Off\n• 2 KM Family Walk: 06:00 AM Reporting | 07:15 AM Flag-Off\nPlease arrive at your designated entry gate at least 45 minutes prior to flag-off."
     },
     {

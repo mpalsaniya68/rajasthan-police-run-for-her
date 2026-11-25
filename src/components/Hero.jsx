@@ -32,8 +32,8 @@ const HERO_SLIDES = [
 
 export function Hero({ onOpenRegister, onOpenFindPass }) {
   const { t, isHindi } = useLanguage();
-  // Live Countdown logic strictly targeted to 3 January 2027, 06:00:00 AM IST
-  const TARGET_DATE = new Date(2027, 0, 3, 6, 0, 0);
+  // Live Countdown logic strictly targeted to 24 January 2027, 06:00:00 AM IST
+  const TARGET_DATE = new Date(2027, 0, 24, 6, 0, 0);
 
   const calculateTimeLeft = () => {
     const diff = TARGET_DATE.getTime() - Date.now();

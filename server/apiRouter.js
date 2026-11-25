@@ -1486,7 +1486,7 @@ export async function handleApiRequest(req, res) {
 
       const formattedIssueDate = r.certificate_issued_at 
         ? new Date(r.certificate_issued_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })
-        : "03 January 2027";
+        : "24 January 2027";
 
       return json({
         success: true,

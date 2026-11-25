@@ -995,7 +995,7 @@ export function RegistrationPage({
       // Reporting & Venue Info
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 14px sans-serif";
-      ctx.fillText("Reporting: 3 Jan 2027, 05:00 AM", bibCenterX, 452);
+      ctx.fillText("Reporting: 24 Jan 2027, 05:00 AM", bibCenterX, 452);
       if (p.physicalBibNumber) {
         ctx.fillStyle = "#b91c1c";
         ctx.font = "bold 13px sans-serif";
@@ -1216,7 +1216,7 @@ export function RegistrationPage({
       `🆔 *पंजीकरण संख्या:* ${registeredParticipant.bibNumber}\n` +
       `🎯 *दौड़ श्रेणी:* ${locCat}\n` +
       (isPassJaipur ? `📍 *स्थान / वेन्यू:* अल्बर्ट हॉल, जयपुर\n` : `📍 *जिला (District):* ${locDist}\n`) +
-      `📅 *तारीख:* 3 जनवरी 2027, प्रातः 05:00 बजे रिपोर्टिंग\n` +
+      `📅 *तारीख:* 24 जनवरी 2027, प्रातः 05:00 बजे रिपोर्टिंग\n` +
       (registeredParticipant.tshirtSize && registeredParticipant.tshirtSize !== 'N/A' ? `👕 *टी-शर्ट साइज़:* Size ${registeredParticipant.tshirtSize}\n` : '') +
       `🩸 *रक्त समूह:* ${registeredParticipant.bloodGroup || 'B+'}\n` +
       `🆔 *प्रमाण पत्र टोकन:* ${registeredParticipant.certificateId}\n\n` +
@@ -1234,7 +1234,7 @@ export function RegistrationPage({
       `🆔 *Registration ID:* ${registeredParticipant.bibNumber}\n` +
       `🎯 *Race Category:* ${locCat}\n` +
       (isPassJaipur ? `📍 *Venue:* Albert Hall, Jaipur\n` : `📍 *District:* ${locDist}\n`) +
-      `📅 *Date:* 3 January 2027, Reporting at 05:00 AM\n` +
+      `📅 *Date:* 24 January 2027, Reporting at 05:00 AM\n` +
       (registeredParticipant.tshirtSize && registeredParticipant.tshirtSize !== 'N/A' ? `👕 *T-Shirt Size:* Size ${registeredParticipant.tshirtSize}\n` : '') +
       `🩸 *Blood Group:* ${registeredParticipant.bloodGroup || 'B+'}\n` +
       `🆔 *Certificate ID:* ${registeredParticipant.certificateId}\n\n` +
@@ -1264,7 +1264,7 @@ export function RegistrationPage({
       `🆔 पंजीकरण संख्या: ${registeredParticipant.bibNumber}\n` +
       `🎯 श्रेणी: ${locCat}\n` +
       `📍 स्थान: ${locDist}\n` +
-      `📅 तिथि: 3 जनवरी 2027, प्रातः 06:00 बजे\n\n` +
+      `📅 तिथि: 24 जनवरी 2027, प्रातः 06:00 बजे\n\n` +
       `हर कदम नारी सुरक्षा और सम्मान के लिए! आप भी आज ही रजिस्टर करें:\n${window.location.origin}/#register`
     ) : (
       `🏃‍♀️ I have registered for Rajasthan Police Marathon 2027 'RUN FOR HER'!\n\n` +
@@ -1272,7 +1272,7 @@ export function RegistrationPage({
       `🆔 Registration ID: ${registeredParticipant.bibNumber}\n` +
       `🎯 Category: ${locCat}\n` +
       `📍 Venue: ${locDist}\n` +
-      `📅 Date: 3 January 2027, 06:00 AM\n\n` +
+      `📅 Date: 24 January 2027, 06:00 AM\n\n` +
       `Every step for women's safety and empowerment! Register today:\n${window.location.origin}/#register`
     );
     const text = encodeURIComponent(shareText);
@@ -1550,7 +1550,7 @@ export function RegistrationPage({
                   color: 'var(--text-muted)'
                 }}>
                   <div>
-                    <strong>Reporting Time:</strong> 3 Jan 2027, 05:00 AM
+                    <strong>Reporting Time:</strong> 24 Jan 2027, 05:00 AM
                   </div>
                   <div style={{ color: 'var(--police-gold-700)', fontWeight: 800 }}>
                     ★ Committed to Serve • Rajasthan Police ★
@@ -2141,8 +2141,8 @@ export function RegistrationPage({
                 <div style={{ fontWeight: 800, color: 'var(--police-navy-900)', marginBottom: '4px' }}>
                   {isHindi ? 'ℹ️ महत्वपूर्ण सूचना:' : 'ℹ️ Important Advisory:'}
                 </div>
-                {isHindi ? '• यह ई-पास 1 व 2 जनवरी 2027 को बिब व रनिंग किट प्राप्त करने हेतु अनिवार्य है।' : '• This E-Pass is mandatory for collecting Bib and running kit on 1 & 2 January 2027.'}<br />
-                {isHindi ? '• 3 जनवरी 2027 को दौड़ स्थल (अल्बर्ट हॉल / जिला केंद्र) पर प्रवेश इसी ई-पास के डिजिटल अथवा प्रिंटेड रूप में दिखाने पर दिया जाएगा।' : '• Entry to the race venue (Albert Hall / District Centers) on 3 January 2027 requires presenting this E-Pass digitally or printed.'}
+                {isHindi ? '• यह ई-पास 22 व 23 जनवरी 2027 को बिब व रनिंग किट प्राप्त करने हेतु अनिवार्य है।' : '• This E-Pass is mandatory for collecting Bib and running kit on 22 & 23 January 2027.'}<br />
+                {isHindi ? '• 24 जनवरी 2027 को दौड़ स्थल (अल्बर्ट हॉल / जिला केंद्र) पर प्रवेश इसी ई-पास के डिजिटल अथवा प्रिंटेड रूप में दिखाने पर दिया जाएगा।' : '• Entry to the race venue (Albert Hall / District Centers) on 24 January 2027 requires presenting this E-Pass digitally or printed.'}
               </div>
             </div>
           </div>
