@@ -176,7 +176,7 @@ export function CertificateHub({ registrations = [] }) {
 
       const eventLogoImg = new Image();
       eventLogoImg.crossOrigin = "anonymous";
-      eventLogoImg.src = "/images/run_for_her_official_logo.png";
+      eventLogoImg.src = "/images/run_for_her_official_logo.jpg";
 
       await Promise.all([
         new Promise(r => {
@@ -848,7 +848,7 @@ export function CertificateHub({ registrations = [] }) {
 
                     <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center' }}>
                       <img 
-                        src="/images/run_for_her_official_logo.png" 
+                        src="/images/run_for_her_official_logo.jpg" 
                         alt="Run For Her Official Event Logo"
                         style={{ height: '56px', width: 'auto', objectFit: 'contain' }}
                       />
