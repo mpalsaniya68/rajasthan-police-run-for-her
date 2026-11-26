@@ -35,7 +35,12 @@ export function CertificateHub({ registrations = [] }) {
           setIsSearching(false);
           if (res && res.success && res.certificate) {
             setSelectedRunner(res.certificate);
-            setSearchFeedback({ type: 'success', message: `✅ डिजिटल QR कोड द्वारा प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
+            setSearchFeedback({
+              type: 'success',
+              message: isHindi
+                ? `प्रमाण पत्र सत्यापित (${res.certificate.certificateId})`
+                : `Certificate Verified (${res.certificate.certificateId})`
+            });
           }
         }).catch(() => setIsSearching(false));
       }
@@ -87,7 +92,12 @@ export function CertificateHub({ registrations = [] }) {
       if (!checkRunnerIssued(foundLocal)) {
         openNotIssuedPopup();
       } else {
-        setSearchFeedback({ type: 'success', message: isHindi ? `धावक रिकॉर्ड प्राप्त हुआ: ${foundLocal.fullName} (पंजीकरण सं: ${foundLocal.bibNumber})` : `Runner record found: ${foundLocal.fullName} (Reg No: ${foundLocal.bibNumber})` });
+        setSearchFeedback({
+          type: 'success',
+          message: isHindi
+            ? `प्रमाण पत्र उपलब्ध (${foundLocal.certificateId || foundLocal.bibNumber})`
+            : `Certificate Available (${foundLocal.certificateId || foundLocal.bibNumber})`
+        });
       }
       return;
     }
@@ -102,7 +112,12 @@ export function CertificateHub({ registrations = [] }) {
         if (!checkRunnerIssued(res.certificate)) {
           openNotIssuedPopup();
         } else {
-          setSearchFeedback({ type: 'success', message: `✅ राजस्थान पुलिस डेटाबेस से प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
+          setSearchFeedback({
+            type: 'success',
+            message: isHindi
+              ? `प्रमाण पत्र सत्यापित (${res.certificate.certificateId})`
+              : `Certificate Verified (${res.certificate.certificateId})`
+          });
         }
       } else if (res && (res.status === 404 || (res.error && res.error.includes("रिकॉर्ड में नहीं मिला")))) {
         setSearchFeedback({
