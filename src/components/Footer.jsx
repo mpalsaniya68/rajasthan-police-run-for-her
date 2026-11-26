@@ -71,8 +71,9 @@ export function Footer({ onNavigate }) {
                 <MapPin size={15} color="#fde047" style={{ marginTop: '2px', flexShrink: 0 }} />
                 <span>{isHindi ? 'पुलिस मुख्यालय, लाल कोठी, टोंक रोड, जयपुर, राजस्थान - 302015' : 'Police Headquarters, Lal Kothi, Tonk Road, Jaipur, Rajasthan - 302015'}</span>
               </div>
-              <div style={{ marginTop: '10px', fontSize: '0.75rem', color: '#94a3b8' }}>
-                {isHindi ? 'जिला स्तरीय दौड़ संबंधित जिला पुलिस अधीक्षक (SP) के निर्देशन में संचालित।' : 'District-level runs conducted under respective District SP direction.'}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', marginTop: '8px', fontSize: '0.78rem', color: '#cbd5e1' }}>
+                <span style={{ color: '#fde047', fontSize: '0.85rem' }}>📍</span>
+                <span>{isHindi ? 'दौड़ स्थल: अल्बर्ट हॉल, रामनिवास बाग, जयपुर' : 'Race Venue: Albert Hall, Ram Niwas Bagh, Jaipur'}</span>
               </div>
             </div>
           </div>

@@ -1027,21 +1027,12 @@ export function RegistrationPage({
       ctx.fillStyle = "#0a1c3d";
       ctx.fillText(nameStr, detailsX, 234);
 
-      if (isJaipurRunner) {
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 14px sans-serif";
-        ctx.fillText("REPORTING VENUE:", detailsX, 282);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.font = "bold 21px sans-serif";
-        ctx.fillText("📍 Albert Hall, Ram Niwas Garden, Jaipur", detailsX, 314);
-      } else {
-        ctx.fillStyle = "#64748b";
-        ctx.font = "bold 14px sans-serif";
-        ctx.fillText("REGISTERED DISTRICT:", detailsX, 282);
-        ctx.fillStyle = "#0a1c3d";
-        ctx.font = "bold 21px sans-serif";
-        ctx.fillText("📍 " + formatLocalizedDistrict(cleanDistrict, false), detailsX, 314);
-      }
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("REPORTING VENUE:", detailsX, 282);
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "bold 21px sans-serif";
+      ctx.fillText("📍 Albert Hall, Ram Niwas Garden, Jaipur", detailsX, 314);
 
       let nextY = 366;
       ctx.fillStyle = "#64748b";
@@ -1500,10 +1491,10 @@ export function RegistrationPage({
 
                     <div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>
-                        {isRegisteredJaipur ? 'Reporting Venue' : 'Registered District'}
+                        Reporting Venue
                       </div>
                       <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--police-navy-800)' }}>
-                        📍 {isRegisteredJaipur ? 'Albert Hall, Jaipur' : formatLocalizedDistrict(formatCleanDistrictName(registeredParticipant), false)}
+                        📍 Albert Hall, Jaipur
                       </div>
                     </div>
 
@@ -2148,7 +2139,7 @@ export function RegistrationPage({
                   {isHindi ? 'ℹ️ महत्वपूर्ण सूचना:' : 'ℹ️ Important Advisory:'}
                 </div>
                 {isHindi ? '• यह ई-पास 22 व 23 जनवरी 2027 को बिब व रनिंग किट प्राप्त करने हेतु अनिवार्य है।' : '• This E-Pass is mandatory for collecting Bib and running kit on 22 & 23 January 2027.'}<br />
-                {isHindi ? '• 24 जनवरी 2027 को दौड़ स्थल (अल्बर्ट हॉल / जिला केंद्र) पर प्रवेश इसी ई-पास के डिजिटल अथवा प्रिंटेड रूप में दिखाने पर दिया जाएगा।' : '• Entry to the race venue (Albert Hall / District Centers) on 24 January 2027 requires presenting this E-Pass digitally or printed.'}
+                {isHindi ? '• 24 जनवरी 2027 को दौड़ स्थल (अल्बर्ट हॉल, जयपुर) पर प्रवेश इसी ई-पास के डिजिटल अथवा प्रिंटेड रूप में दिखाने पर दिया जाएगा।' : '• Entry to the race venue (Albert Hall, Jaipur) on 24 January 2027 requires presenting this E-Pass digitally or printed.'}
               </div>
             </div>
           </div>

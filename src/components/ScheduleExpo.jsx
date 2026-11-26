@@ -115,11 +115,8 @@ export function ScheduleExpo() {
               <div style={{ fontSize: '1.12rem', fontWeight: 800, color: 'var(--police-navy-950)', marginBottom: '4px' }}>
                 {isHindi ? 'पुलिस मेमोरियल ग्राउंड / एसएमएस इंडोर कॉम्प्लेक्स' : 'Police Memorial Ground / SMS Indoor Complex'}
               </div>
-              <div style={{ fontSize: '0.96rem', color: '#334155', lineHeight: 1.5, marginBottom: '6px' }}>
+              <div style={{ fontSize: '0.96rem', color: '#334155', lineHeight: 1.5 }}>
                 {isHindi ? 'जेएलएन मार्ग, जयपुर (22-23 जनवरी 2027, सुबह 10:00 से सायं 07:00 बजे तक)' : 'JLN Marg, Jaipur (22-23 Jan 2027, 10:00 AM to 07:00 PM)'}
-              </div>
-              <div style={{ fontSize: '0.88rem', color: '#64748b', fontWeight: 600 }}>
-                {isHindi ? '* जिलों में संबंधित जिला पुलिस अधीक्षक (SP) कार्यालय प्रांगण में एक्सपो आयोजित होगा।' : '* In other districts, expo will be hosted at the respective District SP Headquarters.'}
               </div>
             </div>
 

@@ -307,7 +307,7 @@ export function CertificateHub({ registrations = [] }) {
       const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
 
       ctx.fillText("For demonstrating exceptional determination, endurance and commitment by successfully completing", 675, 396);
-      ctx.fillText(`the ${catText} in ${pureDistrictEn || "Jaipur"}, supporting the cause of Women's Safety.`, 675, 424);
+      ctx.fillText(`the ${catText} in Jaipur, supporting the cause of Women's Safety.`, 675, 424);
 
       ctx.font = "italic 600 16px Georgia, serif";
       ctx.fillStyle = "#0a1c3d";
@@ -888,7 +888,7 @@ export function CertificateHub({ registrations = [] }) {
 
                   {/* Statement */}
                   <p style={{ textAlign: 'center', fontSize: '0.86rem', color: 'var(--text-body)', maxWidth: '640px', margin: '0 auto 16px auto', lineHeight: 1.55 }}>
-                    For demonstrating exceptional determination, endurance and commitment by successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn || 'Jaipur'}</strong>, supporting the cause of Women's Safety.
+                    For demonstrating exceptional determination, endurance and commitment by successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>Jaipur</strong>, supporting the cause of Women's Safety.
                     <br />
                     <em style={{ fontWeight: 600, color: 'var(--police-navy-900)', display: 'inline-block', marginTop: '4px' }}>"Running Together for a Safer Tomorrow."</em>
                   </p>
