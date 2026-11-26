@@ -262,7 +262,7 @@ export function CertificateHub({ registrations = [] }) {
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 34px Georgia, serif";
       ctx.textAlign = "center";
-      ctx.fillText("CERTIFICATE OF ACCOMPLISHMENT", 675, 206);
+      ctx.fillText("CERTIFICATE OF ACHIEVEMENT", 675, 206);
 
       ctx.fillStyle = "#b45309";
       ctx.font = "bold 15px sans-serif";
@@ -270,7 +270,7 @@ export function CertificateHub({ registrations = [] }) {
 
       ctx.fillStyle = "#64748b";
       ctx.font = "italic 16.5px sans-serif";
-      ctx.fillText("This official certificate is proudly awarded to", 675, 280);
+      ctx.fillText("This certificate is hereby awarded to", 675, 280);
 
       // 3. RUNNER NAME in 'Adine Kirnberg' Calligraphy Font (Directly touching underline)
       try {
@@ -301,13 +301,17 @@ export function CertificateHub({ registrations = [] }) {
       ctx.fillStyle = "#0a1c3d";
       ctx.fillRect(675 - underlineW / 2, 350, underlineW, 2.5);
 
-      // 4. STATEMENT (Exact 2 lines matching preview)
+      // 4. STATEMENT (Exact lines matching requested content)
       ctx.fillStyle = "#334155";
-      ctx.font = "18px Georgia, serif";
+      ctx.font = "16px Georgia, serif";
       const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
 
-      ctx.fillText(`On successful completion of the ${catText} in Jaipur`, 675, 416);
-      ctx.fillText("on the motto \"Every Step for Women Safety.\"", 675, 444);
+      ctx.fillText("For demonstrating exceptional determination, endurance and commitment by successfully completing", 675, 396);
+      ctx.fillText(`the ${catText} in ${pureDistrictEn || "Jaipur"}, supporting the cause of Women's Safety.`, 675, 424);
+
+      ctx.font = "italic 600 16px Georgia, serif";
+      ctx.fillStyle = "#0a1c3d";
+      ctx.fillText("\"Running Together for a Safer Tomorrow.\"", 675, 456);
 
       // 5. METRICS BOX (Exact 5-column / 3-column card)
       const drawRRect = (x, y, w, h, r) => {
@@ -835,7 +839,7 @@ export function CertificateHub({ registrations = [] }) {
                       letterSpacing: '0.04em',
                       textTransform: 'uppercase'
                     }}>
-                      Certificate of Accomplishment
+                      Certificate of Achievement
                     </div>
                     <div style={{
                       fontSize: '0.8rem',
@@ -852,7 +856,7 @@ export function CertificateHub({ registrations = [] }) {
                   {/* Presented To */}
                   <div style={{ textAlign: 'center', marginBottom: '14px' }}>
                     <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '2px' }}>
-                      This official certificate is proudly awarded to
+                      This certificate is hereby awarded to
                     </div>
                     <div style={{
                       position: 'relative',
@@ -883,8 +887,10 @@ export function CertificateHub({ registrations = [] }) {
                   </div>
 
                   {/* Statement */}
-                  <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-body)', maxWidth: '620px', margin: '0 auto 16px auto', lineHeight: 1.55 }}>
-                    On successful completion of the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em>
+                  <p style={{ textAlign: 'center', fontSize: '0.86rem', color: 'var(--text-body)', maxWidth: '640px', margin: '0 auto 16px auto', lineHeight: 1.55 }}>
+                    For demonstrating exceptional determination, endurance and commitment by successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>{pureDistrictEn || 'Jaipur'}</strong>, supporting the cause of Women's Safety.
+                    <br />
+                    <em style={{ fontWeight: 600, color: 'var(--police-navy-900)', display: 'inline-block', marginTop: '4px' }}>"Running Together for a Safer Tomorrow."</em>
                   </p>
 
                   {/* Metrics Matrix: Unified 5-Column Official Timing Grid for all participants */}

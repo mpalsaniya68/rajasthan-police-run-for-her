@@ -4279,14 +4279,14 @@ export function AdminDashboard({
 
                         {/* Title & Presented To */}
                         <div style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#0a1c3d' }}>
-                          CERTIFICATE OF ACCOMPLISHMENT
+                          CERTIFICATE OF ACHIEVEMENT
                         </div>
                         <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase', marginBottom: '14px' }}>
                           Women's Safety, Dignity & Empowerment
                         </div>
 
                         <div style={{ fontSize: '0.78rem', color: '#64748b', fontStyle: 'italic', marginBottom: '4px' }}>
-                          This official certificate is proudly awarded to
+                          This certificate is hereby awarded to
                         </div>
                         <div style={{
                           position: 'relative',
@@ -4315,8 +4315,10 @@ export function AdminDashboard({
                           }} />
                         </div>
 
-                        <p style={{ fontSize: '0.8rem', color: '#334155', maxWidth: '520px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
-                          On successful completion of the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em>
+                        <p style={{ fontSize: '0.78rem', color: '#334155', maxWidth: '530px', margin: '0 auto 14px auto', lineHeight: 1.5 }}>
+                          For demonstrating exceptional determination, endurance and commitment by successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>Jaipur</strong>, supporting the cause of Women's Safety.
+                          <br />
+                          <em style={{ fontWeight: 600, color: '#0a1c3d', display: 'inline-block', marginTop: '3px' }}>"Running Together for a Safer Tomorrow."</em>
                         </p>
 
                         {/* Badges / Metrics - Unified 5-Column Official Timing Grid for all participants */}
