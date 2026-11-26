@@ -69,6 +69,25 @@ export function StateEmblemOfIndia({ size = 48, className = "" }) {
   );
 }
 
+// Official "Run for Her" Marathon Event Logo
+export function RunForHerOfficialLogo({ size = 48, className = "", style = {} }) {
+  return (
+    <img
+      src="/images/run_for_her_official_logo.jpg"
+      alt="Run for Her Rajasthan Police Marathon Official Logo"
+      className={className}
+      style={{
+        height: typeof size === 'number' ? `${size}px` : size,
+        width: 'auto',
+        objectFit: 'contain',
+        display: 'inline-block',
+        borderRadius: '6px',
+        ...style
+      }}
+    />
+  );
+}
+
 // "Run for Her" Vibrant Logo Badge
 export function RunForHerBadge({ size = 48, className = "" }) {
   return (

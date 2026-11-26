@@ -35,11 +35,18 @@ export function Footer({ onNavigate }) {
                 <div translate="no" className="notranslate" style={{ color: '#ff7597', fontWeight: 800, fontSize: '0.8rem' }}>RUN FOR HER 2027</div>
               </div>
             </div>
-            <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '12px' }}>
               {isHindi 
                 ? 'राजस्थान पुलिस द्वारा महिला सुरक्षा, सम्मान, समानता एवं सशक्तीकरण को समर्पित राज्यव्यापी जनसहभागिता अभियान।'
                 : 'A statewide public participation movement dedicated to women safety, dignity, and empowerment by Rajasthan Police.'}
             </p>
+            <div style={{ background: '#ffffff', padding: '6px 12px', borderRadius: '8px', display: 'inline-block', maxWidth: '190px' }}>
+              <img 
+                src="/images/run_for_her_official_logo.jpg" 
+                alt="Rajasthan Police Marathon Official Logo" 
+                style={{ width: '100%', height: 'auto', display: 'block' }} 
+              />
+            </div>
           </div>
 
           <div>

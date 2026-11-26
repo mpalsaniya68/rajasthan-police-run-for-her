@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PoliceEmblem } from './Emblems';
+import { PoliceEmblem, RunForHerOfficialLogo } from './Emblems';
 import { Shield, Menu, X, Phone, PackageCheck, LogOut, Globe, Languages } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -165,8 +165,13 @@ export function Navbar({
             </div>
           </div>
 
-          {/* Right Header: Language Switch & Mobile Toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Right Header: Official Event Logo, Language Switch & Mobile Toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            {/* Official Run For Her Marathon Logo Badge (Visible on Tablet & Desktop) */}
+            <div className="d-tablet-inline" style={{ display: 'none', alignItems: 'center' }}>
+              <RunForHerOfficialLogo size={46} style={{ filter: 'drop-shadow(0 2px 5px rgba(10,28,61,0.12))' }} />
+            </div>
+
             {/* Quick Mobile/Tablet Language Pill */}
             <button
               onClick={toggleLanguage}

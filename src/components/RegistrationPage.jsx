@@ -867,17 +867,45 @@ export function RegistrationPage({
       ctx.fillStyle = "#d4af37";
       ctx.fillRect(20, 137, 1160, 4);
 
-      // Load Official Police Emblem
+      // Load Official Police Emblem & Official Event Logo
       const logoImg = new Image();
       logoImg.crossOrigin = "anonymous";
       logoImg.src = "/rajasthan-police-logo.png";
-      await new Promise((resolve) => {
-        logoImg.onload = resolve;
-        logoImg.onerror = resolve;
-      });
+
+      const eventLogoImg = new Image();
+      eventLogoImg.crossOrigin = "anonymous";
+      eventLogoImg.src = "/images/run_for_her_official_logo.jpg";
+
+      await Promise.all([
+        new Promise((resolve) => {
+          logoImg.onload = resolve;
+          logoImg.onerror = resolve;
+        }),
+        new Promise((resolve) => {
+          eventLogoImg.onload = resolve;
+          eventLogoImg.onerror = resolve;
+        })
+      ]);
 
       if (logoImg.complete && logoImg.naturalWidth > 0) {
         ctx.drawImage(logoImg, 42, 34, 92, 92);
+      }
+
+      // Draw Official Run For Her Event Logo on top-right of header band
+      if (eventLogoImg.complete && eventLogoImg.naturalWidth > 0) {
+        const evW = 176;
+        const evH = 88;
+        const evX = 980;
+        const evY = 36;
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        if (typeof ctx.roundRect === "function") {
+          ctx.roundRect(evX, evY, evW, evH, 8);
+        } else {
+          ctx.rect(evX, evY, evW, evH);
+        }
+        ctx.fill();
+        ctx.drawImage(eventLogoImg, evX + 4, evY + 4, evW - 8, evH - 8);
       }
 
       // Header Texts
@@ -1389,7 +1417,12 @@ export function RegistrationPage({
                       </div>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
+                  <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <img
+                      src="/images/run_for_her_official_logo.jpg"
+                      alt="Run for Her Marathon Official Logo"
+                      style={{ height: '48px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
+                    />
                     <StateEmblemOfIndia size={40} />
                   </div>
                 </div>

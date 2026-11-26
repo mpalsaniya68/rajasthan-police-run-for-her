@@ -169,14 +169,25 @@ export function CertificateHub({ registrations = [] }) {
       drawCorner(22, 898);
       drawCorner(1328, 898);
 
-      // Load Official Police Logo
+      // Load Official Police Logo & Official Event Logo
       const logoImg = new Image();
       logoImg.crossOrigin = "anonymous";
       logoImg.src = "/rajasthan-police-logo.png";
-      await new Promise(r => {
-        logoImg.onload = r;
-        logoImg.onerror = r;
-      });
+
+      const eventLogoImg = new Image();
+      eventLogoImg.crossOrigin = "anonymous";
+      eventLogoImg.src = "/images/run_for_her_official_logo.jpg";
+
+      await Promise.all([
+        new Promise(r => {
+          logoImg.onload = r;
+          logoImg.onerror = r;
+        }),
+        new Promise(r => {
+          eventLogoImg.onload = r;
+          eventLogoImg.onerror = r;
+        })
+      ]);
 
       // Background Watermark (Crest) - Crisp and continuously visible behind text
       if (logoImg.complete && logoImg.naturalWidth > 0) {
@@ -221,39 +232,27 @@ export function CertificateHub({ registrations = [] }) {
       ctx.font = "bold 13.5px sans-serif";
       ctx.fillText("Rajasthan Police Headquarters • Jaipur", 145, 122);
 
-      // Top Right: RUN FOR HER 2027 Badge
-      const badgeCX = 1255;
-      const badgeCY = 76;
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(badgeCX, badgeCY, 24, 0, 2 * Math.PI);
-      ctx.fillStyle = "#e11d48";
-      ctx.fill();
-
-      // White runner silhouette icon
-      ctx.fillStyle = "#ffffff";
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 2.2;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.arc(badgeCX + 2, badgeCY - 11, 3.5, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(badgeCX + 2, badgeCY - 6);
-      ctx.lineTo(badgeCX - 1, badgeCY + 4);
-      ctx.lineTo(badgeCX + 6, badgeCY + 13);
-      ctx.moveTo(badgeCX - 1, badgeCY + 4);
-      ctx.lineTo(badgeCX - 7, badgeCY + 13);
-      ctx.moveTo(badgeCX - 5, badgeCY - 2);
-      ctx.lineTo(badgeCX + 1, badgeCY - 3);
-      ctx.lineTo(badgeCX + 8, badgeCY + 1);
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.fillStyle = "#dc2626";
-      ctx.font = "bold 12.5px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("RUN FOR HER 2027", badgeCX, 122);
+      // Top Right: Official RUN FOR HER Marathon Event Logo
+      if (eventLogoImg.complete && eventLogoImg.naturalWidth > 0) {
+        const evW = 164;
+        const evH = 82;
+        const evX = 1300 - evW;
+        const evY = 48;
+        ctx.drawImage(eventLogoImg, evX, evY, evW, evH);
+      } else {
+        const badgeCX = 1255;
+        const badgeCY = 76;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(badgeCX, badgeCY, 24, 0, 2 * Math.PI);
+        ctx.fillStyle = "#e11d48";
+        ctx.fill();
+        ctx.restore();
+        ctx.fillStyle = "#dc2626";
+        ctx.font = "bold 12.5px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("RUN FOR HER 2027", badgeCX, 122);
+      }
 
       // Full Width Golden Line below Header
       ctx.fillStyle = "#d4af37";
@@ -847,11 +846,12 @@ export function CertificateHub({ registrations = [] }) {
                       </div>
                     </div>
 
-                    <div style={{ textAlign: 'right' }}>
-                      <RunForHerBadge size={48} />
-                      <div translate="no" className="notranslate" style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--crimson-600)', marginTop: '2px' }}>
-                        RUN FOR HER 2027
-                      </div>
+                    <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center' }}>
+                      <img 
+                        src="/images/run_for_her_official_logo.jpg" 
+                        alt="Run For Her Official Event Logo"
+                        style={{ height: '56px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
+                      />
                     </div>
                   </div>
 
