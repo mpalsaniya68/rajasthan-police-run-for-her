@@ -100,11 +100,11 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
       <div className="hero-radial-scrim" aria-hidden="true" />
 
       {/* 2. Hero Content Wrapper */}
-      <div style={{ position: 'relative', zIndex: 2 }}>
+      <div style={{ position: 'relative' }}>
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '880px', margin: '0 auto' }}>
-            {/* Official Event Insignia Emblem (Original with White Badge) */}
-            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '8px 20px', background: '#ffffff', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)', marginBottom: '16px' }}>
+            {/* Official Event Insignia Emblem (Seamlessly Blended with Sunrise Dawn Ground) */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
               <img
                 src="/images/run_for_her_official_logo.jpg"
                 alt="Rajasthan Police Marathon - Run For Her Official Logo"
@@ -112,7 +112,9 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
                   height: 'clamp(68px, 11vw, 102px)',
                   width: 'auto',
                   objectFit: 'contain',
-                  display: 'block'
+                  display: 'block',
+                  mixBlendMode: 'multiply',
+                  filter: 'contrast(1.04)'
                 }}
               />
             </div>
@@ -302,15 +304,16 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           transform: scale(1.06);
         }
 
-        /* Soft Center Radial Scrim: preserves bright edges/landmarks while giving center text crisp contrast */
+        /* Soft Center Radial Scrim: blends logo seamlessly into morning sunrise while giving center text crisp contrast */
         .hero-radial-scrim {
           position: absolute;
           inset: 0;
           z-index: 1;
           pointer-events: none;
           background:
-            radial-gradient(ellipse 68% 76% at 50% 48%, rgba(5, 17, 38, 0.52) 0%, rgba(5, 17, 38, 0.24) 58%, rgba(5, 17, 38, 0.08) 100%),
-            linear-gradient(180deg, rgba(5, 17, 38, 0.22) 0%, rgba(5, 17, 38, 0.08) 50%, rgba(5, 17, 38, 0.28) 100%);
+            radial-gradient(ellipse 720px 220px at 50% 105px, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.90) 35%, rgba(255, 255, 255, 0.35) 65%, rgba(255, 255, 255, 0) 100%),
+            radial-gradient(ellipse 70% 65% at 50% 60%, rgba(5, 17, 38, 0.65) 0%, rgba(5, 17, 38, 0.32) 55%, rgba(5, 17, 38, 0.1) 100%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(5, 17, 38, 0.12) 20%, rgba(5, 17, 38, 0.52) 58%, rgba(5, 17, 38, 0.92) 100%);
         }
 
         .hero-slogan-wrap {
