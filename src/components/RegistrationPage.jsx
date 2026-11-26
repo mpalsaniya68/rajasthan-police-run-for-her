@@ -846,26 +846,29 @@ export function RegistrationPage({
       canvas.height = canvasHeight;
       const ctx = canvas.getContext("2d");
 
+      // Helper for rounded rectangle across all canvas contexts
+      const drawRRect = (x, y, w, h, r) => {
+        if (typeof ctx.roundRect === "function") {
+          ctx.roundRect(x, y, w, h, r);
+        } else {
+          ctx.rect(x, y, w, h);
+        }
+      };
+
       // 1. Background fill
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-      // Security outer frame
+      // Clean rounded card border (matching Image 2)
       ctx.strokeStyle = "#0a1c3d";
-      ctx.lineWidth = 10;
-      ctx.strokeRect(5, 5, canvasWidth - 10, canvasHeight - 10);
-
-      ctx.strokeStyle = "#d4af37";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(16, 16, canvasWidth - 32, canvasHeight - 32);
-
-      // 2. Header Band (Deep Police Navy)
-      ctx.fillStyle = "#0a1c3d";
-      ctx.fillRect(20, 20, 1160, 120);
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      drawRRect(14, 14, canvasWidth - 28, canvasHeight - 28, 16);
+      ctx.stroke();
 
       // Header Golden Line
       ctx.fillStyle = "#d4af37";
-      ctx.fillRect(20, 137, 1160, 4);
+      ctx.fillRect(36, 140, canvasWidth - 72, 2.5);
 
       // Load Official Police Emblem & Official Event Logo
       const logoImg = new Image();
@@ -891,40 +894,23 @@ export function RegistrationPage({
         ctx.drawImage(logoImg, 42, 34, 92, 92);
       }
 
-      // Draw Official Run For Her Event Logo on top-right of header band
+      // Draw Official Run For Her Event Logo on top-right of header (Clean White background)
       if (eventLogoImg.complete && eventLogoImg.naturalWidth > 0) {
-        const evW = 176;
-        const evH = 88;
-        const evX = 980;
-        const evY = 36;
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        if (typeof ctx.roundRect === "function") {
-          ctx.roundRect(evX, evY, evW, evH, 8);
-        } else {
-          ctx.rect(evX, evY, evW, evH);
-        }
-        ctx.fill();
-        ctx.drawImage(eventLogoImg, evX + 4, evY + 4, evW - 8, evH - 8);
+        const evW = 180;
+        const evH = 90;
+        const evX = canvasWidth - evW - 45;
+        const evY = 35;
+        ctx.drawImage(eventLogoImg, evX, evY, evW, evH);
       }
 
-      // Header Texts
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 32px sans-serif";
-      ctx.fillText("RAJASTHAN POLICE MARATHON 2027", 154, 68);
+      // Header Texts (Blue Title, Crimson Subtitle on White Background)
+      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "900 30px sans-serif";
+      ctx.fillText("RAJASTHAN POLICE MARATHON 2027", 154, 70);
 
-      ctx.fillStyle = "#fef08a";
-      ctx.font = "bold 20px sans-serif";
-      ctx.fillText("★ RUN FOR HER • DIGITAL ENTRY PASS ★", 154, 102);
-
-      // Helper for rounded rectangle across all canvas contexts
-      const drawRRect = (x, y, w, h, r) => {
-        if (typeof ctx.roundRect === "function") {
-          ctx.roundRect(x, y, w, h, r);
-        } else {
-          ctx.rect(x, y, w, h);
-        }
-      };
+      ctx.fillStyle = "#e11d48";
+      ctx.font = "bold 19px sans-serif";
+      ctx.fillText("★ RUN FOR HER • DIGITAL ENTRY PASS ★", 154, 104);
 
       // 3. Left Section: Bib Box (Width: 310, Center: 195)
       const bibBoxX = 40;
@@ -967,8 +953,8 @@ export function RegistrationPage({
       ctx.fillStyle = "#0a1c3d";
       ctx.fillText(bibText, bibCenterX, 282);
 
-      // Category Pill (Crimson, Auto-Scaled)
-      ctx.fillStyle = "#b91c1c";
+      // Category Pill (Navy with Gold text matching Image 2)
+      ctx.fillStyle = "#0a1c3d";
       ctx.beginPath();
       drawRRect(badgeX, 318, badgeW, 44, 8);
       ctx.fill();
@@ -980,7 +966,7 @@ export function RegistrationPage({
         catFontSize -= 1;
         ctx.font = `bold ${catFontSize}px sans-serif`;
       }
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "#fde68a";
       ctx.fillText(catText, bibCenterX, 346);
 
       // Blood Group & T-shirt in Bib box
@@ -1132,19 +1118,24 @@ export function RegistrationPage({
         drawHorizontalRouteMapOnCanvas(ctx, routeConfig, locQrImg, 40, 566, 1120, 342, drawRRect);
       }
 
-      // 7. Official Bottom Footer
+      // 7. Official Bottom Footer (Clean White style matching Image 2)
       const footerY = routeConfig ? 925 : 570;
+      ctx.fillStyle = "#f8fafc";
+      ctx.strokeStyle = "#e2e8f0";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      drawRRect(36, footerY, 1128, 62, 10);
+      ctx.fill();
+      ctx.stroke();
+
       ctx.fillStyle = "#0a1c3d";
-      ctx.fillRect(20, footerY, 1160, 70);
-
-      ctx.fillStyle = "#fef08a";
-      ctx.font = "bold 17px sans-serif";
+      ctx.font = "bold 15px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("★ Committed to Serve • Rajasthan Police ★", 600, footerY + 32);
+      ctx.fillText("★ Committed to Serve • Rajasthan Police ★", 600, footerY + 26);
 
-      ctx.fillStyle = "#e2e8f0";
+      ctx.fillStyle = "#64748b";
       ctx.font = "13px sans-serif";
-      ctx.fillText("24×7 Women Helpline: 1090 | Emergency: 112 | Portal: police.rajasthan.gov.in", 600, footerY + 55);
+      ctx.fillText("24×7 Women Helpline: 1090  |  Emergency: 112  |  Portal: police.rajasthan.gov.in", 600, footerY + 48);
       ctx.textAlign = "left";
 
       // 8. Download directly as PNG file into user's device Downloads folder

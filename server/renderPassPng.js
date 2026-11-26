@@ -94,9 +94,9 @@ export async function generateEPassPngBuffer({
     background: #ffffff;
   }
   .header {
-    background: #0a1c3d;
+    background: #ffffff;
     height: 120px;
-    border-bottom: 4px solid #d4af37;
+    border-bottom: 2.5px solid #d4af37;
     padding: 0 40px;
     display: flex;
     align-items: center;
@@ -108,14 +108,14 @@ export async function generateEPassPngBuffer({
     object-fit: contain;
   }
   .header-text h1 {
-    color: #ffffff;
+    color: #0a1c3d;
     font-size: 32px;
     margin: 0 0 6px 0;
     font-weight: 900;
     letter-spacing: 0.5px;
   }
   .header-text .sub {
-    color: #fef08a;
+    color: #e11d48;
     font-size: 19px;
     font-weight: 800;
     letter-spacing: 0.5px;
@@ -231,17 +231,18 @@ export async function generateEPassPngBuffer({
     bottom: 0;
     left: 0;
     right: 0;
-    background: #0a1c3d;
+    background: #ffffff;
+    border-top: 1.5px solid #e2e8f0;
     height: 65px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #e2e8f0;
+    color: #64748b;
     font-size: 13px;
   }
   .footer .tag {
-    color: #fef08a;
+    color: #0a1c3d;
     font-weight: 800;
     font-size: 15px;
     letter-spacing: 0.5px;
