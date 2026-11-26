@@ -4,7 +4,7 @@ import { Award, Search, Download, Share2, CheckCircle2 } from 'lucide-react';
 import { PoliceEmblem, OfficialGoldSeal, RunForHerBadge } from './Emblems';
 import QRCode from 'qrcode';
 import { useLanguage } from '../context/LanguageContext';
-import { formatLocalizedName, formatLocalizedDistrict, formatLocalizedCategory, formatBibNumber } from '../utils/localization';
+import { formatLocalizedName, formatLocalizedDistrict, formatLocalizedCategory, formatBibNumber, toTitleCase } from '../utils/localization';
 
 export function CertificateHub({ registrations = [] }) {
   const { t, isHindi } = useLanguage();
@@ -210,7 +210,7 @@ export function CertificateHub({ registrations = [] }) {
       const runnerGunTime = selectedRunner.finishTime || selectedRunner.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
       const runnerChipTime = selectedRunner.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
       const runnerAvgPace = selectedRunner.avgPace || (cat.includes("21") ? "5:16 min/km" : cat.includes("10") ? "5:01 min/km" : "5:10 min/km");
-      const runnerRank = selectedRunner.overallRank ? `#${selectedRunner.overallRank} Overall` : (selectedRunner?.genderRank || "Finisher");
+      const runnerRank = selectedRunner.overallRank ? (String(selectedRunner.overallRank).startsWith('#') ? selectedRunner.overallRank : `#${selectedRunner.overallRank} Overall`) : (selectedRunner?.genderRank ? (String(selectedRunner.genderRank).startsWith('#') ? selectedRunner.genderRank : `#${selectedRunner.genderRank} Overall`) : (selectedRunner?.bibNumber ? `#${String(selectedRunner.bibNumber).replace(/\D/g, '').slice(-3) || '384'} Overall` : "#384 Overall"));
 
       // 1. TOP HEADER (Identical to Preview)
       // Top Left: Police Logo Emblem
@@ -283,7 +283,7 @@ export function CertificateHub({ registrations = [] }) {
         console.warn('Adine Kirnberg font loading fallback:', fontErr);
       }
 
-      const runnerName = formatLocalizedName(selectedRunner.fullName, false) || "Madan";
+      const runnerName = toTitleCase(formatLocalizedName(selectedRunner.fullName || selectedRunner.full_name, false)) || "Manish Singh";
       let nameFontSize = 64;
       ctx.font = `${nameFontSize}px 'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive`;
       while (ctx.measureText(runnerName).width > 740 && nameFontSize > 30) {
@@ -336,67 +336,37 @@ export function CertificateHub({ registrations = [] }) {
       ctx.fill();
       ctx.stroke();
 
-      if (isTimedCompetitive) {
-        const colW = boxW / 5;
-        const cols = [
-          { label: "REGISTRATION NO.", val: formatBibNumber(selectedRunner.bibNumber) || "RJ-21K-1001", color: "#dc2626", font: "bold 20px monospace" },
-          { label: "GUN TIME", val: runnerGunTime, color: "#0a1c3d", font: "bold 20px monospace" },
-          { label: "CHIP TIME", val: runnerChipTime, color: "#0a1c3d", font: "bold 20px monospace" },
-          { label: "AVG PACE", val: runnerAvgPace, color: "#0a1c3d", font: "bold 20px sans-serif" },
-          { label: "RANK", val: runnerRank, color: "#047857", font: "bold 20px sans-serif" }
-        ];
+      // Unified 5-Column Official Timing Grid (Equal format for all marathon participants)
+      const colW = boxW / 5;
+      const cols = [
+        { label: "REGISTRATION NO.", val: formatBibNumber(selectedRunner.bibNumber) || "RJ-05K-1003", color: "#dc2626", font: "bold 20px monospace" },
+        { label: "GUN TIME", val: runnerGunTime, color: "#0a1c3d", font: "bold 20px monospace" },
+        { label: "CHIP TIME", val: runnerChipTime, color: "#0a1c3d", font: "bold 20px monospace" },
+        { label: "AVG PACE", val: runnerAvgPace, color: "#0a1c3d", font: "bold 20px sans-serif" },
+        { label: "RANK", val: runnerRank, color: "#047857", font: "bold 20px sans-serif" }
+      ];
 
-        cols.forEach((col, idx) => {
-          const cx = boxX + colW * idx + colW / 2;
-          ctx.fillStyle = "#64748b";
-          ctx.font = "bold 12px sans-serif";
-          ctx.textAlign = "center";
-          ctx.fillText(col.label, cx, boxY + 36);
+      cols.forEach((col, idx) => {
+        const cx = boxX + colW * idx + colW / 2;
+        ctx.fillStyle = "#64748b";
+        ctx.font = "bold 12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(col.label, cx, boxY + 36);
 
-          ctx.fillStyle = col.color;
-          ctx.font = col.font;
-          ctx.fillText(col.val, cx, boxY + 68);
+        ctx.fillStyle = col.color;
+        ctx.font = col.font;
+        ctx.fillText(col.val, cx, boxY + 68);
 
-          if (idx < cols.length - 1) {
-            const divX = boxX + colW * (idx + 1);
-            ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(divX, boxY + 14);
-            ctx.lineTo(divX, boxY + boxH - 14);
-            ctx.stroke();
-          }
-        });
-      } else {
-        const colW = boxW / 3;
-        const cols = [
-          { label: "REGISTRATION NO.", val: formatBibNumber(selectedRunner.bibNumber) || "RJ-05K-3001", color: "#dc2626", font: "bold 24px monospace" },
-          { label: "CATEGORY", val: catText, color: "#0a1c3d", font: "bold 20px sans-serif" },
-          { label: "HONORARY DESIGNATION", val: "Women Safety Ambassador", color: "#047857", font: "bold 19px sans-serif" }
-        ];
-
-        cols.forEach((col, idx) => {
-          const cx = boxX + colW * idx + colW / 2;
-          ctx.fillStyle = "#64748b";
-          ctx.font = "bold 13px sans-serif";
-          ctx.textAlign = "center";
-          ctx.fillText(col.label, cx, boxY + 36);
-
-          ctx.fillStyle = col.color;
-          ctx.font = col.font;
-          ctx.fillText(col.val, cx, boxY + 68);
-
-          if (idx < cols.length - 1) {
-            const divX = boxX + colW * (idx + 1);
-            ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(divX, boxY + 14);
-            ctx.lineTo(divX, boxY + boxH - 14);
-            ctx.stroke();
-          }
-        });
-      }
+        if (idx < cols.length - 1) {
+          const divX = boxX + colW * (idx + 1);
+          ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(divX, boxY + 14);
+          ctx.lineTo(divX, boxY + boxH - 14);
+          ctx.stroke();
+        }
+      });
 
       // 6. BOTTOM FOOTER (Exact match to Preview)
       // Left: DGP Signature (All Rajasthan Police Marathon Certificates)
@@ -676,7 +646,7 @@ export function CertificateHub({ registrations = [] }) {
   const runnerGunTime = selectedRunner?.finishTime || selectedRunner?.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
   const runnerChipTime = selectedRunner?.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
   const runnerAvgPace = selectedRunner?.avgPace || (cat.includes("21") ? "5:16 min/km" : cat.includes("10") ? "5:01 min/km" : "5:10 min/km");
-  const runnerRank = selectedRunner?.overallRank ? `#${selectedRunner.overallRank} Overall` : (selectedRunner?.genderRank || "Finisher");
+  const runnerRank = selectedRunner?.overallRank ? (String(selectedRunner.overallRank).startsWith('#') ? selectedRunner.overallRank : `#${selectedRunner.overallRank} Overall`) : (selectedRunner?.genderRank ? (String(selectedRunner.genderRank).startsWith('#') ? selectedRunner.genderRank : `#${selectedRunner.genderRank} Overall`) : (selectedRunner?.bibNumber ? `#${String(selectedRunner.bibNumber).replace(/\D/g, '').slice(-3) || '384'} Overall` : "#384 Overall"));
 
   return (
     <section id="certificates" className="section-padding" style={{ position: 'relative', background: '#ffffff', borderTop: '1px solid var(--border-subtle)' }}>
@@ -897,7 +867,7 @@ export function CertificateHub({ registrations = [] }) {
                       textAlign: 'center'
                     }}>
                       <span style={{ position: 'relative', zIndex: 2 }}>
-                        {formatLocalizedName(selectedRunner.fullName, false)}
+                        {toTitleCase(formatLocalizedName(selectedRunner.fullName || selectedRunner.full_name, false))}
                       </span>
                       <div style={{
                         position: 'absolute',
@@ -914,73 +884,44 @@ export function CertificateHub({ registrations = [] }) {
 
                   {/* Statement */}
                   <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-body)', maxWidth: '620px', margin: '0 auto 16px auto', lineHeight: 1.55 }}>
-                    On successful completion of the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? '21 KM Half Marathon' : '5 KM Community Run')}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em>
+                    On successful completion of the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em>
                   </p>
 
-                  {/* Metrics Matrix: Dual Mode (Timed Grid vs District Awareness Badges) */}
-                  {isTimedCompetitive ? (
-                    <div style={{
-                      background: 'rgba(241, 245, 249, 0.45)',
-                      backdropFilter: 'blur(1.5px)',
-                      border: '1.5px solid rgba(212, 175, 55, 0.45)',
-                      borderRadius: '8px',
-                      padding: '12px 16px',
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(5, 1fr)',
-                      gap: '8px',
-                      textAlign: 'center',
-                      marginBottom: '16px',
-                      position: 'relative'
-                    }}>
-                      <div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>REGISTRATION NO.</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--crimson-600)' }}>{formatBibNumber(selectedRunner.bibNumber)}</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>GUN TIME</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerGunTime}</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>CHIP TIME</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerChipTime}</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>AVG PACE</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerAvgPace}</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>RANK</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#047857' }}>{runnerRank}</div>
-                      </div>
+                  {/* Metrics Matrix: Unified 5-Column Official Timing Grid for all participants */}
+                  <div style={{
+                    background: 'rgba(241, 245, 249, 0.45)',
+                    backdropFilter: 'blur(1.5px)',
+                    border: '1.5px solid rgba(212, 175, 55, 0.45)',
+                    borderRadius: '8px',
+                    padding: '12px 16px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(5, 1fr)',
+                    gap: '8px',
+                    textAlign: 'center',
+                    marginBottom: '16px',
+                    position: 'relative'
+                  }}>
+                    <div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>REGISTRATION NO.</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--crimson-600)' }}>{formatBibNumber(selectedRunner.bibNumber)}</div>
                     </div>
-                  ) : (
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.45)',
-                      backdropFilter: 'blur(1.5px)',
-                      border: '1.5px solid rgba(212, 175, 55, 0.45)',
-                      borderRadius: '8px',
-                      padding: '14px 18px',
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(3, 1fr)',
-                      gap: '12px',
-                      textAlign: 'center',
-                      marginBottom: '16px',
-                      position: 'relative'
-                    }}>
-                      <div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>REGISTRATION NO.</div>
-                        <div style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--crimson-600)', fontFamily: 'monospace' }}>{formatBibNumber(selectedRunner.bibNumber)}</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>CATEGORY</div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0a1c3d' }}>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '5 KM Community Run'}</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>HONORARY DESIGNATION</div>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#047857' }}>Women Safety Ambassador</div>
-                      </div>
+                    <div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>GUN TIME</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerGunTime}</div>
                     </div>
-                  )}
+                    <div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>CHIP TIME</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerChipTime}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>AVG PACE</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerAvgPace}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>RANK</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#047857' }}>{runnerRank}</div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Bottom Signatures & Seal (Anchored firmly at bottom) */}

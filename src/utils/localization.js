@@ -141,6 +141,25 @@ export const KNOWN_NAME_MAP = {
 };
 
 /**
+ * Formats a string to Title Case (capitalizes first letter of every word/name part)
+ */
+export function toTitleCase(str = "") {
+  if (!str) return "";
+  return String(str)
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .map(word => {
+      if (!word) return "";
+      if (word.includes(".")) {
+        return word.split(".").map(part => part ? part.charAt(0).toUpperCase() + part.slice(1) : "").join(".");
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
+}
+
+/**
  * Extracts pure Hindi or pure English from strings with brackets e.g. "मदन पल्सानिया (Madan Palsaniya)"
  */
 export function formatLocalizedName(name = "", isHindi = true) {
@@ -150,7 +169,8 @@ export function formatLocalizedName(name = "", isHindi = true) {
   // 1. Direct dictionary match
   const lower = str.toLowerCase();
   if (KNOWN_NAME_MAP[lower]) {
-    return isHindi ? KNOWN_NAME_MAP[lower].hi : KNOWN_NAME_MAP[lower].en;
+    const matched = isHindi ? KNOWN_NAME_MAP[lower].hi : KNOWN_NAME_MAP[lower].en;
+    return !isHindi && /[a-zA-Z]/.test(matched) ? toTitleCase(matched) : matched;
   }
 
   // 2. Pattern: "Part1 (Part2)"
@@ -161,28 +181,30 @@ export function formatLocalizedName(name = "", isHindi = true) {
     const p1HasDev = /[\u0900-\u097F]/.test(p1);
     const p2HasDev = /[\u0900-\u097F]/.test(p2);
 
+    let chosen = "";
     if (isHindi) {
-      if (p1HasDev) return p1;
-      if (p2HasDev) return p2;
-      return p1 || p2;
+      if (p1HasDev) chosen = p1;
+      else if (p2HasDev) chosen = p2;
+      else chosen = p1 || p2;
     } else {
       // English mode: choose the non-Devanagari part
-      if (!p1HasDev && p1) return p1;
-      if (!p2HasDev && p2) return p2;
-      return p2 || p1;
+      if (!p1HasDev && p1) chosen = p1;
+      else if (!p2HasDev && p2) chosen = p2;
+      else chosen = p2 || p1;
     }
+    return !isHindi && /[a-zA-Z]/.test(chosen) ? toTitleCase(chosen) : chosen;
   }
 
   // 3. If English requested but text is purely Devanagari, check known map partials
   if (!isHindi && /[\u0900-\u097F]/.test(str)) {
     for (const [key, val] of Object.entries(KNOWN_NAME_MAP)) {
       if (str.includes(key) || key.includes(str)) {
-        return val.en;
+        return toTitleCase(val.en);
       }
     }
   }
 
-  return str;
+  return !isHindi && /[a-zA-Z]/.test(str) ? toTitleCase(str) : str;
 }
 
 /**

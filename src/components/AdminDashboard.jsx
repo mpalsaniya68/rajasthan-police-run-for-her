@@ -20,6 +20,7 @@ import { RAJASTHAN_POLICE_DISTRICTS } from '../data/mockData';
 import { useLanguage } from '../context/LanguageContext';
 import { 
   formatLocalizedName, 
+  toTitleCase,
   formatLocalizedDistrict, 
   formatLocalizedCategory, 
   formatLocalizedGender, 
@@ -4227,15 +4228,10 @@ export function AdminDashboard({
                   const distName = String(previewCertRunner?.districtName || previewCertRunner?.district_name || "").toLowerCase();
                   const cat = String(previewCertRunner?.category || previewCertRunner?.categoryId || previewCertRunner?.category_id || previewCertRunner?.categoryName || previewCertRunner?.category_name || "").toLowerCase();
 
-                  const isTimedCategory = cat.includes("21") || cat.includes("10") || bib.includes("21K") || bib.includes("10K");
-                  const isTimedCompetitive = isTimedCategory;
-
-                  const pureDistrictEn = formatLocalizedDistrict(previewCertRunner?.districtName || previewCertRunner?.district_name, false) || "Jaipur";
-
                   const runnerGunTime = previewCertRunner?.finishTime || previewCertRunner?.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
                   const runnerChipTime = previewCertRunner?.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
                   const runnerAvgPace = previewCertRunner?.avgPace || (cat.includes("21") ? "5:16 min/km" : cat.includes("10") ? "5:01 min/km" : "5:10 min/km");
-                  const runnerRank = previewCertRunner?.overallRank ? `#${previewCertRunner.overallRank} Overall` : (previewCertRunner?.genderRank || "Finisher");
+                  const runnerRank = previewCertRunner?.overallRank ? (String(previewCertRunner.overallRank).startsWith('#') ? previewCertRunner.overallRank : `#${previewCertRunner.overallRank} Overall`) : (previewCertRunner?.genderRank ? (String(previewCertRunner.genderRank).startsWith('#') ? previewCertRunner.genderRank : `#${previewCertRunner.genderRank} Overall`) : (previewCertRunner?.bibNumber ? `#${String(previewCertRunner.bibNumber).replace(/\D/g, '').slice(-3) || '384'} Overall` : "#384 Overall"));
 
                   return (
                     <div style={{
@@ -4305,7 +4301,7 @@ export function AdminDashboard({
                           textAlign: 'center'
                         }}>
                           <span style={{ position: 'relative', zIndex: 2 }}>
-                            {formatLocalizedName(previewCertRunner.fullName, false)}
+                            {toTitleCase(formatLocalizedName(previewCertRunner.fullName, false))}
                           </span>
                           <div style={{
                             position: 'absolute',
@@ -4320,47 +4316,28 @@ export function AdminDashboard({
                         </div>
 
                         <p style={{ fontSize: '0.8rem', color: '#334155', maxWidth: '520px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
-                          On successful completion of the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || (isTimedCompetitive ? '21 KM Half Marathon' : '5 KM Community Run')}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em>
+                          On successful completion of the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</strong> in <strong>Jaipur</strong> on the motto <em>"Every Step for Women Safety."</em>
                         </p>
 
-                        {/* Badges / Metrics - Semi-transparent background so the watermark crest is continuous and visible */}
-                        {isTimedCompetitive ? (
-                          <div style={{
-                            background: 'rgba(241, 245, 249, 0.45)',
-                            backdropFilter: 'blur(1.5px)',
-                            border: '1.5px solid rgba(212, 175, 55, 0.45)',
-                            borderRadius: '6px',
-                            padding: '8px 12px',
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(5, 1fr)',
-                            gap: '6px',
-                            marginBottom: '18px',
-                            position: 'relative'
-                          }}>
-                            <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#dc2626' }}>{formatBibNumber(previewCertRunner.bibNumber)}</div></div>
-                            <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>GUN TIME</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerGunTime}</div></div>
-                            <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>CHIP TIME</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerChipTime}</div></div>
-                            <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>AVG PACE</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerAvgPace}</div></div>
-                            <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>RANK</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#047857' }}>{runnerRank}</div></div>
-                          </div>
-                        ) : (
-                          <div style={{
-                            background: 'rgba(255, 255, 255, 0.45)',
-                            backdropFilter: 'blur(1.5px)',
-                            border: '1.5px solid rgba(212, 175, 55, 0.45)',
-                            borderRadius: '6px',
-                            padding: '10px 14px',
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(3, 1fr)',
-                            gap: '8px',
-                            marginBottom: '18px',
-                            position: 'relative'
-                          }}>
-                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626', fontFamily: 'monospace' }}>{formatBibNumber(previewCertRunner.bibNumber)}</div></div>
-                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>CATEGORY</div><div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0a1c3d' }}>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '5 KM Community Run'}</div></div>
-                            <div><div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>HONORARY DESIGNATION</div><div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#047857' }}>Women Safety Ambassador</div></div>
-                          </div>
-                        )}
+                        {/* Badges / Metrics - Unified 5-Column Official Timing Grid for all participants */}
+                        <div style={{
+                          background: 'rgba(241, 245, 249, 0.45)',
+                          backdropFilter: 'blur(1.5px)',
+                          border: '1.5px solid rgba(212, 175, 55, 0.45)',
+                          borderRadius: '6px',
+                          padding: '8px 12px',
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(5, 1fr)',
+                          gap: '6px',
+                          marginBottom: '18px',
+                          position: 'relative'
+                        }}>
+                          <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>REGISTRATION NO.</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#dc2626' }}>{formatBibNumber(previewCertRunner.bibNumber)}</div></div>
+                          <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>GUN TIME</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerGunTime}</div></div>
+                          <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>CHIP TIME</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerChipTime}</div></div>
+                          <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>AVG PACE</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerAvgPace}</div></div>
+                          <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>RANK</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#047857' }}>{runnerRank}</div></div>
+                        </div>
 
                         {/* Signatures */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid #cbd5e1', paddingTop: '12px' }}>
