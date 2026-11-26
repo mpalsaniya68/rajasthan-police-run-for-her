@@ -205,7 +205,9 @@ export function FAQSection({ onNavigate }) {
               क्या आपका कोई और सवाल है?
             </div>
             <div style={{ fontSize: '0.84rem', color: '#cbd5e1', marginTop: '2px' }}>
-              राजस्थान पुलिस महिला गरिमा हेल्पलाइन 1090 एवं राष्ट्रीय आपातकालीन सेवा 112 पर चौबीसों घंटे सहायता उपलब्ध है।
+              {isHindi 
+                ? 'हेल्पलाइन 1090/112 अथवा आधिकारिक ईमेल rajpolicemarathon@rajpolice.gov.in पर चौबीसों घंटे सहायता उपलब्ध है।' 
+                : '24x7 assistance available via Helpline 1090/112 or official email rajpolicemarathon@rajpolice.gov.in.'}
             </div>
           </div>
 

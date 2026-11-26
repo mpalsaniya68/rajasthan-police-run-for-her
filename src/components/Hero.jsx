@@ -109,10 +109,10 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
                 src="/images/run_for_her_official_logo.png"
                 alt="Rajasthan Police Marathon - Run For Her Official Logo"
                 style={{
-                  height: 'clamp(72px, 12vw, 112px)',
+                  height: 'clamp(74px, 12vw, 114px)',
                   width: 'auto',
                   objectFit: 'contain',
-                  filter: 'drop-shadow(0 4px 20px rgba(0, 0, 0, 0.7)) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.5))'
+                  filter: 'drop-shadow(0 2px 10px rgba(0, 0, 0, 0.55))'
                 }}
               />
             </div>

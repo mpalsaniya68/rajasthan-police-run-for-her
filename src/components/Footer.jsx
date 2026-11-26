@@ -89,7 +89,10 @@ export function Footer({ onNavigate }) {
                 <strong style={{ color: '#ffffff' }}>{isHindi ? 'ट्रैफिक समन्वय:' : 'Traffic Coordination:'}</strong> {isHindi ? 'डीसीपी (ट्रैफिक), जयपुर' : 'DCP (Traffic), Jaipur'}
               </div>
               <div style={{ marginBottom: '6px' }}>
-                <strong style={{ color: '#ffffff' }}>{isHindi ? 'ईमेल:' : 'Email:'}</strong> rpm.nodal@rajasthanpolice.gov.in
+                <strong style={{ color: '#ffffff' }}>{isHindi ? 'ईमेल (साझेदारी व संपर्क):' : 'Email (Partnership & Query):'}</strong>{' '}
+                <a href="mailto:rajpolicemarathon@rajpolice.gov.in" style={{ color: '#93c5fd', textDecoration: 'none', fontWeight: 600 }}>
+                  rajpolicemarathon@rajpolice.gov.in
+                </a>
               </div>
               <div style={{ marginTop: '8px', fontSize: '0.74rem', color: '#94a3b8' }}>
                 {isHindi ? 'कंट्रोल रूम एवं आपात स्थिति: 112 / 1090 (24x7)' : 'Control Room & Emergency: 112 / 1090 (24x7)'}
