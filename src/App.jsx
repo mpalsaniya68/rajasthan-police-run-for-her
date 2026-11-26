@@ -134,7 +134,11 @@ export default function App() {
     }
     setActivePage(pageId);
     if (typeof window !== 'undefined') {
-      window.location.hash = pageId;
+      if (pageId === 'home') {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      } else {
+        window.location.hash = pageId;
+      }
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

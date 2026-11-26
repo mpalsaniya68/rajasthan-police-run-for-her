@@ -104,12 +104,19 @@ export function CertificateHub({ registrations = [] }) {
         } else {
           setSearchFeedback({ type: 'success', message: `✅ राजस्थान पुलिस डेटाबेस से प्रमाण पत्र सत्यापित (${res.certificate.certificateId})` });
         }
-      } else {
+      } else if (res && (res.status === 404 || (res.error && res.error.includes("रिकॉर्ड में नहीं मिला")))) {
         setSearchFeedback({
           type: 'error',
           message: isHindi 
             ? `दर्ज किए गए विवरण "${rawQ}" से संबंधित कोई प्रमाण पत्र रिकॉर्ड नहीं मिला।` 
             : `No certificate record found matching "${rawQ}".`
+        });
+      } else {
+        setSearchFeedback({
+          type: 'error',
+          message: isHindi 
+            ? (res?.error || "सर्वर से कनेक्ट करने में असमर्थ। कृपया पुनः प्रयास करें।")
+            : "Unable to connect to the server. Please try again."
         });
       }
     } catch (err) {

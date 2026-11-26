@@ -145,10 +145,11 @@ export async function apiSimulateScan(scanData) {
 export async function apiVerifyCertificate(certId) {
   try {
     const res = await fetchWithRetry(`${API_BASE}/certificates/verify?id=${encodeURIComponent(certId)}`);
-    return await res.json();
+    const data = await res.json().catch(() => ({}));
+    return { ...data, status: res.status };
   } catch (err) {
     console.error("apiVerifyCertificate error:", err);
-    return { success: false, error: "प्रमाण पत्र सत्यापन विफल।" };
+    return { success: false, status: 0, error: "प्रमाण पत्र सत्यापन विफल।" };
   }
 }
 
