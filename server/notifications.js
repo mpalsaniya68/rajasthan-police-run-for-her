@@ -7,7 +7,7 @@
  * 4. Automatic Zero-Cost Secure Local Dev Simulation
  */
 
-import { sendLiveConfirmationEmail } from "./sendSampleEmail.js";
+import { sendLiveConfirmationEmail } from "./emailService.js";
 
 const SMS_SENDER_ID = process.env.SMS_SENDER_ID || "RAJPOL";
 

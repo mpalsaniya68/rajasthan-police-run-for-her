@@ -862,26 +862,3 @@ ${epassUrl}
   console.log(`[Email Dispatch (Simulated)]: Registration confirmation queued for ${recipient} (Bib: ${bibNumber})`);
   return { simulated: true, success: true, recipient, subject };
 }
-
-// Direct CLI Execution
-if (process.argv[1]?.endsWith("sendSampleEmail.js")) {
-  if (fs.existsSync(".env")) {
-    try {
-      process.loadEnvFile(".env");
-    } catch {}
-  }
-  const targetEmail = process.argv[2] || "rajpolicemarathon@rajpolice.gov.in";
-  sendLiveConfirmationEmail({ recipient: targetEmail })
-    .then((res) => {
-      console.log("\n========================================================");
-      console.log(`✅ EMAIL DISPATCHED TO: ${targetEmail}`);
-      console.log(`   Provider: ${res.provider || (res.simulated ? "SIMULATED" : "STATE_GOV_SMTP")}`);
-      console.log(`   E-Pass Attached: ${res.attached ? "YES" : "NO"}`);
-      console.log("========================================================");
-      process.exit(0);
-    })
-    .catch((err) => {
-      console.error("\n❌ DISPATCH FAILED:", err.message);
-      process.exit(1);
-    });
-}
