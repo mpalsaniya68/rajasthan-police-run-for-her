@@ -10,6 +10,7 @@ import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { PoliceEmblem } from './Emblems';
 import { isJaipurDistrict } from '../data/mockData';
 import { formatCleanDistrictName, formatLocalizedDistrict } from '../utils/localization';
+import { useLanguage } from '../context/LanguageContext';
 
 // Single-Window Marathon Security Guard: All verified runners valid at Albert Hall, Jaipur
 export const checkDistrictMismatch = (runner, currentUser) => {
@@ -81,6 +82,7 @@ const playSound = (type = 'success') => {
 };
 
 export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
+  const { isHindi } = useLanguage();
   // Operating Mode: 'expo' (Kit & T-Shirt Handover) or 'gate' (Race Day Morning Entry)
   const [terminalMode, setTerminalMode] = useState(() => {
     return currentUser?.counterId?.startsWith('gate_') ? 'gate' : 'expo';
@@ -1386,7 +1388,7 @@ export function ExpoScannerTerminal({ currentUser, onLogout, onNavigate }) {
               }}
             >
               <LogOut size={14} />
-              <span>लॉगआउट</span>
+              <span>{isHindi ? 'लॉगआउट' : 'Logout'}</span>
             </button>
           </div>
         </div>

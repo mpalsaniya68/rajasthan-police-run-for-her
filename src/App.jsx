@@ -569,7 +569,7 @@ export default function App() {
                           cursor: 'pointer'
                         }}
                       >
-                        📦 एक्सपो स्टेशन पर जाएं
+                        {isHindi ? '📦 एक्सपो स्टेशन पर जाएं' : '📦 Go to Expo Station'}
                       </button>
                       <button
                         onClick={handleAdminLogout}
@@ -583,7 +583,7 @@ export default function App() {
                           color: '#64748b'
                         }}
                       >
-                        लॉगआउट करें
+                        {isHindi ? 'लॉगआउट करें' : 'Log Out'}
                       </button>
                     </div>
                   </div>

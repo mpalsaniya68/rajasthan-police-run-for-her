@@ -103,16 +103,17 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
       <div style={{ position: 'relative', zIndex: 2 }}>
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '880px', margin: '0 auto' }}>
-            {/* Official Event Insignia Emblem (Original with White Badge) */}
-            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '8px 20px', background: '#ffffff', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)', marginBottom: '16px' }}>
+            {/* Official Event Insignia Emblem (Transparent High-Res) */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
               <img
-                src="/images/run_for_her_official_logo.jpg"
+                src="/images/run_for_her_hero_logo.png"
                 alt="Rajasthan Police Marathon - Run For Her Official Logo"
                 style={{
-                  height: 'clamp(68px, 11vw, 102px)',
+                  height: 'clamp(74px, 12vw, 112px)',
                   width: 'auto',
                   objectFit: 'contain',
-                  display: 'block'
+                  display: 'block',
+                  filter: 'drop-shadow(0 4px 20px rgba(255, 255, 255, 0.35)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5))'
                 }}
               />
             </div>
@@ -334,7 +335,9 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
           color: #ffffff;
           border: 1.5px solid rgba(255, 255, 255, 0.45);
-          padding: 13px 28px 11px 28px;
+          height: 48px;
+          min-height: 48px;
+          padding: 0 28px;
           border-radius: 999px;
           font-size: 0.98rem;
           font-weight: 800;
@@ -347,11 +350,18 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           cursor: pointer;
           box-shadow: 0 10px 26px rgba(225, 29, 72, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.25);
           transition: transform 0.2s ease, box-shadow 0.2s ease;
+          box-sizing: border-box;
         }
 
         .hero-btn-primary span {
-          display: inline-block;
-          transform: translateY(1.5px);
+          display: inline-flex;
+          align-items: center;
+          line-height: 1;
+        }
+
+        .hero-btn-primary svg {
+          display: block;
+          flex-shrink: 0;
         }
 
         .hero-btn-primary:hover {
@@ -360,12 +370,14 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
         }
 
         .hero-btn-glass {
-          background: rgba(10, 28, 61, 0.46);
+          background: rgba(10, 28, 61, 0.55);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
           color: #ffffff;
           border: 1.5px solid rgba(255, 255, 255, 0.62);
-          padding: 13px 26px 11px 26px;
+          height: 48px;
+          min-height: 48px;
+          padding: 0 26px;
           border-radius: 999px;
           font-size: 0.95rem;
           font-weight: 800;
@@ -378,15 +390,22 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           cursor: pointer;
           box-shadow: 0 8px 22px rgba(5, 17, 38, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.22);
           transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+          box-sizing: border-box;
         }
 
         .hero-btn-glass span {
-          display: inline-block;
-          transform: translateY(1.5px);
+          display: inline-flex;
+          align-items: center;
+          line-height: 1;
+        }
+
+        .hero-btn-glass svg {
+          display: block;
+          flex-shrink: 0;
         }
 
         .hero-btn-glass:hover {
-          background: rgba(10, 28, 61, 0.68);
+          background: rgba(10, 28, 61, 0.72);
           border-color: #fde68a;
           transform: translateY(-2px);
         }

@@ -1046,7 +1046,7 @@ export function AdminDashboard({
                 cursor: 'pointer'
               }}
             >
-              लॉगआउट करें
+              {isHindi ? 'लॉगआउट करें' : 'Log Out'}
             </button>
           </div>
         </div>

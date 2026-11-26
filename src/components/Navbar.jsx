@@ -328,7 +328,7 @@ export function Navbar({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (window.confirm("क्या आप वर्तमान सत्र से लॉगआउट करना चाहते हैं?")) {
+                  if (window.confirm(isHindi ? "क्या आप वर्तमान सत्र से लॉगआउट करना चाहते हैं?" : "Are you sure you want to log out of the current session?")) {
                     sessionStorage.removeItem('rajpol_admin_auth');
                     sessionStorage.removeItem('rajpol_admin_token');
                     sessionStorage.removeItem('rajpol_admin_user');
@@ -348,10 +348,10 @@ export function Navbar({
                   alignItems: 'center',
                   gap: '4px'
                 }}
-                title="सत्र से लॉगआउट करें (Logout)"
+                title={isHindi ? "सत्र से लॉगआउट करें (Logout)" : "End session and log out"}
               >
                 <LogOut size={12} color="#fca5a5" />
-                <span>लॉगआउट</span>
+                <span>{isHindi ? 'लॉगआउट' : 'Logout'}</span>
               </button>
             )}
           </div>
@@ -469,6 +469,39 @@ export function Navbar({
             {isExpoRole ? <PackageCheck size={16} color="#fde68a" /> : <Shield size={16} color="var(--police-gold-400)" />}
             <span>{navAdminLabel}</span>
           </button>
+
+          {isAdminAuthenticated && (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (window.confirm(isHindi ? "क्या आप वर्तमान सत्र से लॉगआउट करना चाहते हैं?" : "Are you sure you want to log out of the current session?")) {
+                  sessionStorage.removeItem('rajpol_admin_auth');
+                  sessionStorage.removeItem('rajpol_admin_token');
+                  sessionStorage.removeItem('rajpol_admin_user');
+                  window.location.reload();
+                }
+              }}
+              style={{
+                background: 'rgba(239, 68, 68, 0.12)',
+                border: '1px solid #ef4444',
+                color: '#dc2626',
+                padding: '11px 14px',
+                borderRadius: '6px',
+                textAlign: 'center',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                marginTop: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              <LogOut size={16} color="#dc2626" />
+              <span>{isHindi ? 'लॉगआउट' : 'Logout'}</span>
+            </button>
+          )}
         </div>
       )}
 

@@ -7,6 +7,8 @@ export const TRANSLATIONS = {
     govtIdentityEn: 'GOVERNMENT OF RAJASTHAN',
     womenHelpline: 'महिला हेल्पलाइन: 1090 / 112',
     adminLogin: 'प्रशासनिक लॉगिन',
+    logout: 'लॉगआउट',
+    confirmLogout: 'क्या आप वर्तमान सत्र से लॉगआउट करना चाहते हैं?',
     switchLang: 'English',
 
     // Navbar
@@ -42,6 +44,8 @@ export const TRANSLATIONS = {
     govtIdentityEn: 'GOVERNMENT OF RAJASTHAN',
     womenHelpline: 'Women Helpline: 1090 / 112',
     adminLogin: 'Admin Login',
+    logout: 'Logout',
+    confirmLogout: 'Are you sure you want to log out of the current session?',
     switchLang: 'हिन्दी',
 
     // Navbar
