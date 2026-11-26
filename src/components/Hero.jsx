@@ -335,7 +335,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
           color: #ffffff;
           border: 1.5px solid rgba(255, 255, 255, 0.45);
-          height: 48px;
+          height: auto;
           min-height: 48px;
           padding: 0 28px;
           border-radius: 999px;
@@ -375,7 +375,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
           -webkit-backdrop-filter: blur(12px);
           color: #ffffff;
           border: 1.5px solid rgba(255, 255, 255, 0.62);
-          height: 48px;
+          height: auto;
           min-height: 48px;
           padding: 0 26px;
           border-radius: 999px;
