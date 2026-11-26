@@ -135,7 +135,11 @@ export default function App() {
     setActivePage(pageId);
     if (typeof window !== 'undefined') {
       if (pageId === 'home') {
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.delete('page');
+        const searchStr = searchParams.toString();
+        const homeUrl = window.location.pathname + (searchStr ? `?${searchStr}` : '');
+        window.history.pushState(null, '', homeUrl);
       } else {
         window.location.hash = pageId;
       }
@@ -145,7 +149,8 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace(/^#\/?/, '');
+      const rawHash = window.location.hash.replace(/^#\/?/, '');
+      const hash = rawHash === '' ? 'home' : rawHash;
       if (VALID_PAGES.includes(hash)) {
         if (hash === 'find-pass') setSelectedRegTab('find');
         else if (hash === 'register') setSelectedRegTab('register');
@@ -153,7 +158,11 @@ export default function App() {
       }
     };
     window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
   }, []);
 
   const handleOpenAdminTrigger = () => {
