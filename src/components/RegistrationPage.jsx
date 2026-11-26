@@ -874,7 +874,7 @@ export function RegistrationPage({
 
       const eventLogoImg = new Image();
       eventLogoImg.crossOrigin = "anonymous";
-      eventLogoImg.src = "/images/run_for_her_official_logo.jpg";
+      eventLogoImg.src = "/images/run_for_her_official_logo.png";
 
       await Promise.all([
         new Promise((resolve) => {
@@ -1419,9 +1419,9 @@ export function RegistrationPage({
                   </div>
                   <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <img
-                      src="/images/run_for_her_official_logo.jpg"
+                      src="/images/run_for_her_official_logo.png"
                       alt="Run for Her Marathon Official Logo"
-                      style={{ height: '48px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
+                      style={{ height: '48px', width: 'auto', objectFit: 'contain' }}
                     />
                     <StateEmblemOfIndia size={40} />
                   </div>

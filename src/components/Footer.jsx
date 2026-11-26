@@ -42,7 +42,7 @@ export function Footer({ onNavigate }) {
             </p>
             <div style={{ background: '#ffffff', padding: '6px 12px', borderRadius: '8px', display: 'inline-block', maxWidth: '190px' }}>
               <img 
-                src="/images/run_for_her_official_logo.jpg" 
+                src="/images/run_for_her_official_logo.png" 
                 alt="Rajasthan Police Marathon Official Logo" 
                 style={{ width: '100%', height: 'auto', display: 'block' }} 
               />

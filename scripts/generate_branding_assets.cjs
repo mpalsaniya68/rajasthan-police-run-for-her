@@ -9,31 +9,10 @@ async function run() {
   });
   const page = await browser.newPage();
   
-  const logoData = fs.readFileSync('public/images/run_for_her_official_logo.jpg');
-  const logoBase64 = 'data:image/jpeg;base64,' + logoData.toString('base64');
+  const logoData = fs.readFileSync('public/images/run_for_her_official_logo.png');
+  const logoBase64 = 'data:image/png;base64,' + logoData.toString('base64');
 
-  // 1. Generate Square Favicon (512x512)
-  await page.setViewport({ width: 512, height: 512, deviceScaleFactor: 1 });
-  await page.setContent(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <style>
-        body { margin: 0; padding: 0; background: #ffffff; display: flex; align-items: center; justify-content: center; width: 512px; height: 512px; overflow: hidden; }
-        img { width: 490px; height: 245px; object-fit: contain; }
-      </style>
-    </head>
-    <body>
-      <img src="${logoBase64}" />
-    </body>
-    </html>
-  `);
-  await page.screenshot({ path: 'public/favicon.png', type: 'png' });
-  fs.copyFileSync('public/favicon.png', 'public/favicon.ico');
-  console.log('Saved favicon.png and favicon.ico');
-
-  // 2. Generate WhatsApp / Social Share Banner (1200x630)
+  // Generate WhatsApp / Social Share Banner (1200x630)
   await page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
   await page.setContent(`
     <!DOCTYPE html>
@@ -86,7 +65,7 @@ async function run() {
     </html>
   `);
   await page.screenshot({ path: 'public/images/social_share_card.jpg', type: 'jpeg', quality: 96 });
-  console.log('Saved social_share_card.jpg');
+  console.log('Regenerated social_share_card.jpg with transparent trimmed logo!');
 
   await browser.close();
 }
