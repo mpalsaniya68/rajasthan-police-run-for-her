@@ -45,7 +45,19 @@ import {
   apiDispatchCertificate
 } from '../services/api';
 
-
+/**
+ * Safely sanitize phone numbers for tel: links to prevent DOM XSS (CodeQL js/xss-through-dom)
+ * Strictly extracts digits and optional leading +, validates format, or returns null.
+ */
+function getSafeTelUri(val) {
+  if (!val) return null;
+  const digitsOnly = String(val).replace(/[^0-9+]/g, '');
+  const candidate = `tel:${digitsOnly}`;
+  if (/^tel:\+?[0-9]{5,15}$/.test(candidate)) {
+    return candidate;
+  }
+  return null;
+}
 
 export function AdminDashboard({ 
 
@@ -2143,7 +2155,14 @@ export function AdminDashboard({
                       <span style={{ color: '#64748b' }}>{isHindi ? 'जिला:' : 'District:'}</span> <strong style={{ color: '#0f172a' }}>{formatLocalizedDistrict(row.canonicalDistrict || formatCleanDistrictName(row), isHindi)}</strong>
                     </div>
                     <div>
-                      <span style={{ color: '#64748b' }}>{isHindi ? 'फोन:' : 'Mobile:'}</span> <a href={`tel:${row.mobile}`} style={{ color: '#1d4ed8', fontWeight: 700, textDecoration: 'none' }}>📞 {row.mobile}</a>
+                      <span style={{ color: '#64748b' }}>{isHindi ? 'फोन:' : 'Mobile:'}</span>{' '}
+                      {getSafeTelUri(row.mobile) ? (
+                        <a href={getSafeTelUri(row.mobile)} rel="noopener noreferrer" style={{ color: '#1d4ed8', fontWeight: 700, textDecoration: 'none' }}>
+                          📞 {row.mobile}
+                        </a>
+                      ) : (
+                        <span style={{ color: '#0f172a', fontWeight: 700 }}>📞 {row.mobile || '-'}</span>
+                      )}
                     </div>
                     <div>
                       <span style={{ color: '#64748b' }}>{isHindi ? 'टी-शर्ट:' : 'T-Shirt:'}</span> <strong style={{ color: '#0f172a' }}>{row.tshirtSize || 'N/A'}</strong>
@@ -2201,7 +2220,13 @@ export function AdminDashboard({
                         <td style={{ padding: '10px 12px' }}>
                           <div style={{ fontWeight: 700, color: 'var(--police-navy-900)' }}>{formatLocalizedName(row.fullName, isHindi)}</div>
                           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '2px' }}>
-                            <a href={`tel:${row.mobile}`} style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: 600 }}>📞 {row.mobile}</a>
+                            {getSafeTelUri(row.mobile) ? (
+                              <a href={getSafeTelUri(row.mobile)} rel="noopener noreferrer" style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: 600 }}>
+                                📞 {row.mobile}
+                              </a>
+                            ) : (
+                              <span style={{ color: '#64748b', fontWeight: 600 }}>📞 {row.mobile || '-'}</span>
+                            )}
                             {row.email && row.email !== 'police.run@rajasthan.gov.in' && (
                               <span style={{ color: '#475569' }}>✉️ {row.email}</span>
                             )}
@@ -4471,12 +4496,23 @@ export function AdminDashboard({
                         {row.emergencyRelation || (isHindi ? 'अभिभावक' : 'Guardian')}
                       </td>
                       <td style={{ padding: '12px 14px' }}>
-                        <a 
-                          href={`tel:${row.emergencyContact || row.mobile}`}
-                          style={{ fontWeight: 800, color: '#1e40af', textDecoration: 'none' }}
-                        >
-                          📞 {row.emergencyContact || row.mobile}
-                        </a>
+                        {(() => {
+                          const contactDisplay = String(row.emergencyContact || row.mobile || '-');
+                          const safeTel = getSafeTelUri(row.emergencyContact || row.mobile);
+                          return safeTel ? (
+                            <a 
+                              href={safeTel}
+                              rel="noopener noreferrer"
+                              style={{ fontWeight: 800, color: '#1e40af', textDecoration: 'none' }}
+                            >
+                              📞 {contactDisplay}
+                            </a>
+                          ) : (
+                            <span style={{ fontWeight: 800, color: '#334155' }}>
+                              📞 {contactDisplay}
+                            </span>
+                          );
+                        })()}
                       </td>
                     </tr>
                   );
