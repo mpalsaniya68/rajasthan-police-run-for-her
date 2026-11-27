@@ -27,6 +27,16 @@ const DESIGNATION_PRESETS = [
   "आईटी व तकनीकी सपोर्ट (IT Desk)"
 ];
 
+// Cryptographically secure random 3-digit suffix for username suggestions
+const generateSecureSuffix = () => {
+  if (typeof window !== "undefined" && window.crypto && window.crypto.getRandomValues) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return String(100 + (arr[0] % 900));
+  }
+  return String(Date.now()).slice(-3);
+};
+
 export function VolunteerRosterManager() {
   const [volunteers, setVolunteers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,7 +88,7 @@ export function VolunteerRosterManager() {
   const handleNameChange = (name) => {
     setNewVol(prev => {
       const clean = name.trim().toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8);
-      const suffix = prev.mobile ? prev.mobile.slice(-4) : Math.floor(100 + Math.random() * 900);
+      const suffix = prev.mobile ? prev.mobile.slice(-4) : generateSecureSuffix();
       const autoUser = clean ? `vol_${clean}_${suffix}` : prev.username;
       return {
         ...prev,
@@ -92,7 +102,7 @@ export function VolunteerRosterManager() {
     const cleanMobile = mobile.replace(/[^0-9]/g, "").slice(0, 10);
     setNewVol(prev => {
       const clean = prev.fullName.trim().toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8);
-      const suffix = cleanMobile ? cleanMobile.slice(-4) : Math.floor(100 + Math.random() * 900);
+      const suffix = cleanMobile ? cleanMobile.slice(-4) : generateSecureSuffix();
       const autoUser = clean ? `vol_${clean}_${suffix}` : (cleanMobile ? `vol_${cleanMobile}` : prev.username);
       return {
         ...prev,

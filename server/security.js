@@ -304,24 +304,11 @@ export function verifyPassword(password, storedHash) {
   ])).filter(Boolean);
 
   for (const secret of candidateSecrets) {
-    // 1. Primary check: PBKDF2-SHA512 (64 hex characters)
+    // Primary check: PBKDF2-SHA512 (64 hex characters) with 100,000 rounds
     const computedPbkdf2 = hashPassword(password, secret);
     if (computedPbkdf2.length === storedHash.length) {
       try {
         if (crypto.timingSafeEqual(Buffer.from(computedPbkdf2), Buffer.from(storedHash))) {
-          return true;
-        }
-      } catch { }
-    }
-
-    // 2. Compatibility check: legacy salted SHA-256
-    const legacySha256 = crypto
-      .createHash("sha256")
-      .update(`${password}:${secret}`)
-      .digest("hex");
-    if (legacySha256.length === storedHash.length) {
-      try {
-        if (crypto.timingSafeEqual(Buffer.from(legacySha256), Buffer.from(storedHash))) {
           return true;
         }
       } catch { }
