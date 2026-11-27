@@ -4202,11 +4202,17 @@ export function AdminDashboard({
                       background: '#fafbfc',
                       border: '8px double #d4af37',
                       borderRadius: '6px',
-                      padding: '28px 24px',
+                      padding: '28px 22px',
                       color: '#0a1c3d',
                       textAlign: 'center',
                       position: 'relative',
-                      overflow: 'hidden'
+                      overflow: 'hidden',
+                      maxWidth: '540px',
+                      margin: '0 auto',
+                      minHeight: '740px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between'
                     }}>
                       {/* Watermark Rajasthan Police Crest - Crisp & continuously visible behind cards */}
                       <div style={{

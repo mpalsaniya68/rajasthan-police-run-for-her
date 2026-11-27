@@ -713,7 +713,7 @@ input:focus, select:focus, textarea:focus {
   }
 
   /* ========================================================
-     1. CERTIFICATE PRINT ENGINE (A4 LANDSCAPE)
+     1. CERTIFICATE PRINT ENGINE (A4 PORTRAIT)
      ======================================================== */
   #page-certificates .section-padding {
     padding: 0 !important;
@@ -757,21 +757,23 @@ input:focus, select:focus, textarea:focus {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
   }
 
-  /* The Pure Official Finisher Certificate */
+  /* The Pure Official Finisher Certificate (A4 Portrait) */
   .printable-certificate {
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
     visibility: visible !important;
     box-sizing: border-box !important;
-    width: 280mm !important;
-    height: 196mm !important;
-    max-width: 280mm !important;
-    max-height: 196mm !important;
+    width: 200mm !important;
+    height: 285mm !important;
+    max-width: 200mm !important;
+    max-height: 285mm !important;
     margin: 5mm auto !important;
-    padding: 18mm 22mm 14mm 22mm !important;
+    padding: 14mm 12mm 12mm 12mm !important;
     background: #ffffff !important;
     border: 8px double #b45309 !important;
     border-radius: 6px !important;
