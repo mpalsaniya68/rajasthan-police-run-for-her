@@ -424,9 +424,11 @@ export function CertificateHub({ registrations = [] }) {
       ctx.font = "12px sans-serif";
       ctx.fillText("Rajasthan Police Headquarters, Jaipur", sigX, 774);
 
-      // Center: Beti Bachao Beti Padhao Emblem Seal (Official Campaign Seal)
+      // Center: Beti Bachao Beti Padhao Emblem Seal (Official Campaign Seal - Centered at 675)
       if (betiBachaoSealImg.complete && betiBachaoSealImg.naturalWidth > 0) {
-        ctx.drawImage(betiBachaoSealImg, 675 - 32, 714, 64, 64);
+        const sealSize = 72;
+        const sealX = 675 - (sealSize / 2);
+        ctx.drawImage(betiBachaoSealImg, sealX, 710, sealSize, sealSize);
       } else if (logoImg.complete && logoImg.naturalWidth > 0) {
         ctx.drawImage(logoImg, 675 - 30, 716, 60, 60);
       }
@@ -982,16 +984,18 @@ export function CertificateHub({ registrations = [] }) {
                 </div>
 
                 {/* Bottom Signatures & Seal (Anchored firmly at bottom) */}
+                {/* Certificate Footer (3-Column Layout: Left Signature, Center Seal aligned to Top Logo, Right QR Code) */}
                 <div className="cert-footer-content" style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
+                  display: 'grid',
+                  gridTemplateColumns: '1fr auto 1fr',
                   alignItems: 'flex-end',
                   borderTop: '1.5px solid var(--border-subtle)',
                   paddingTop: '16px',
                   marginTop: 'auto',
                   width: '100%'
                 }}>
-                  <div style={{ textAlign: 'center', minWidth: '170px' }}>
+                  {/* Left: DGP Signature */}
+                  <div style={{ textAlign: 'left', minWidth: '170px' }}>
                     <div style={{
                       fontFamily: 'var(--font-serif)',
                       fontStyle: 'italic',
@@ -1002,7 +1006,7 @@ export function CertificateHub({ registrations = [] }) {
                     }}>
                       Rajeev Sharma, IPS
                     </div>
-                    <div style={{ height: '2px', background: '#0a1c3d', width: '150px', margin: '0 auto 4px auto' }}></div>
+                    <div style={{ height: '2px', background: '#0a1c3d', width: '150px', marginBottom: '4px' }}></div>
                     <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0a1c3d', letterSpacing: '0.02em' }}>
                       DIRECTOR GENERAL OF POLICE
                     </div>
@@ -1011,15 +1015,17 @@ export function CertificateHub({ registrations = [] }) {
                     </div>
                   </div>
 
-                  <div style={{ textAlign: 'center' }}>
+                  {/* Center: Beti Bachao Beti Padhao Emblem Seal - Aligned with Top Center Logo */}
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 14px' }}>
                     <img 
                       src="/images/beti_bachao_seal.png" 
                       alt="Beti Bachao Beti Padhao Official Emblem" 
-                      style={{ width: '60px', height: '60px', objectFit: 'contain', display: 'inline-block' }} 
+                      style={{ width: '68px', height: '68px', objectFit: 'contain', display: 'inline-block' }} 
                     />
                   </div>
 
-                  <div style={{ textAlign: 'center', minWidth: '110px' }}>
+                  {/* Right: Security QR Code & Certificate ID */}
+                  <div style={{ textAlign: 'right', minWidth: '110px' }}>
                     {qrCodeUrl && (
                       <img src={qrCodeUrl} alt="Verify QR" style={{ width: '68px', height: '68px', border: '1px solid var(--border-subtle)', padding: '2px', borderRadius: '4px', display: 'inline-block' }} />
                     )}

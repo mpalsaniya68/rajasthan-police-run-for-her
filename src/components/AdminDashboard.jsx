@@ -4375,13 +4375,20 @@ export function AdminDashboard({
                           <div><div style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 700 }}>RANK</div><div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#047857' }}>{runnerRank}</div></div>
                         </div>
 
-                        {/* Signatures */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid #cbd5e1', paddingTop: '12px' }}>
-                          <div style={{ textAlign: 'center', minWidth: '140px' }}>
+                        {/* Signatures & Seal (3-Column Layout aligned with Header) */}
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr auto 1fr',
+                          alignItems: 'flex-end',
+                          borderTop: '1px solid #cbd5e1',
+                          paddingTop: '12px',
+                          width: '100%'
+                        }}>
+                          <div style={{ textAlign: 'left', minWidth: '140px' }}>
                             <div style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: '1.05rem', color: '#0a1c3d', fontWeight: 700 }}>
                               Rajeev Sharma, IPS
                             </div>
-                            <div style={{ height: '1.5px', background: '#0a1c3d', width: '120px', margin: '2px auto' }}></div>
+                            <div style={{ height: '1.5px', background: '#0a1c3d', width: '120px', margin: '2px 0' }}></div>
                             <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0a1c3d' }}>
                               DIRECTOR GENERAL OF POLICE
                             </div>
@@ -4390,15 +4397,15 @@ export function AdminDashboard({
                             </div>
                           </div>
 
-                          <div style={{ textAlign: 'center' }}>
+                          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 8px' }}>
                             <img 
                               src="/images/beti_bachao_seal.png" 
                               alt="Beti Bachao Beti Padhao Official Emblem" 
-                              style={{ width: '56px', height: '56px', objectFit: 'contain', display: 'inline-block' }} 
+                              style={{ width: '60px', height: '60px', objectFit: 'contain', display: 'inline-block' }} 
                             />
                           </div>
 
-                          <div style={{ textAlign: 'center', fontSize: '0.62rem', color: '#0a1c3d' }}>
+                          <div style={{ textAlign: 'right', fontSize: '0.62rem', color: '#0a1c3d' }}>
                             <div style={{ fontFamily: 'monospace', fontWeight: 800 }}>{previewCertRunner.certificateId || 'RJ-POL-2027-SAMPLE'}</div>
                             <div style={{ color: '#16a34a', fontWeight: 700 }}>✓ Digitally Verified</div>
                           </div>
