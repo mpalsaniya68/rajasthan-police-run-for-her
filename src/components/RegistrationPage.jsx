@@ -677,8 +677,8 @@ export function RegistrationPage({
           setStepError(isHindi ? 'कृपया अपने देश (Country of Residence / Citizenship) का नाम दर्ज करें।' : 'Please enter your country of residence / citizenship.');
           return;
         }
-        if (otherSubCategory === 'Other' && !otherCountryOrDetail.trim()) {
-          setStepError(isHindi ? 'कृपया अपनी श्रेणी का विवरण दर्ज करें।' : 'Please specify category details.');
+        if (otherSubCategory === 'Defense / Armed Forces' && !otherCountryOrDetail.trim()) {
+          setStepError(isHindi ? 'कृपया अपने रक्षा बल / बटालियन का विवरण दर्ज करें।' : 'Please enter your defense force / battalion details.');
           return;
         }
       }
@@ -2877,9 +2877,7 @@ export function RegistrationPage({
                           >
                             <option value="NRI">{isHindi ? 'प्रवासी भारतीय (NRI - Non-Resident Indian)' : 'NRI (Non-Resident Indian)'}</option>
                             <option value="Foreign National">{isHindi ? 'विदेशी नागरिक (Foreign National / International)' : 'Foreign National / International'}</option>
-                            <option value="Corporate / Professional">{isHindi ? 'कॉरपोरेट / निजी क्षेत्र (Corporate / Working Professional)' : 'Corporate / Working Professional'}</option>
                             <option value="Defense / Armed Forces">{isHindi ? 'रक्षा / अर्धसैनिक बल (Defense / Armed Forces)' : 'Defense / Armed Forces'}</option>
-                            <option value="Other">{isHindi ? 'अन्य विवरण (Other - Please specify)' : 'Other (Please specify)'}</option>
                           </select>
                         </div>
 
@@ -2887,7 +2885,7 @@ export function RegistrationPage({
                           <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 800, color: '#166534', marginBottom: '6px' }}>
                             {(otherSubCategory === 'NRI' || otherSubCategory === 'Foreign National')
                               ? (isHindi ? 'देश का नाम (Country of Residence / Citizenship):' : 'Country of Residence / Citizenship:')
-                              : (isHindi ? 'श्रेणी / संगठन का विवरण (Specify Details):' : 'Organization / Category Details:')}
+                              : (isHindi ? 'रक्षा बल / बटालियन विवरण (Defense / Force Details):' : 'Defense / Force Details:')}
                             <span style={{ color: '#ef4444' }}> *</span>
                           </label>
                           <input
@@ -2897,7 +2895,7 @@ export function RegistrationPage({
                             placeholder={
                               (otherSubCategory === 'NRI' || otherSubCategory === 'Foreign National')
                                 ? (isHindi ? 'उदा. USA, UK, Canada, Australia, UAE, Germany...' : 'e.g. USA, UK, Canada, Australia, UAE, Germany...')
-                                : (isHindi ? 'उदा. संगठन, कंपनी या क्लब का विवरण' : 'e.g. Organization, Company or Club details')
+                                : (isHindi ? 'उदा. Indian Army, BSF, CRPF, Air Force...' : 'e.g. Indian Army, BSF, CRPF, Air Force...')
                             }
                             style={{
                               width: '100%',
