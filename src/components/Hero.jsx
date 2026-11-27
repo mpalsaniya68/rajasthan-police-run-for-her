@@ -103,13 +103,13 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
       <div style={{ position: 'relative', zIndex: 2 }}>
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '880px', margin: '0 auto' }}>
-            {/* Official Event Insignia Emblem (Original with White Badge) */}
-            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '8px 20px', background: '#ffffff', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)', marginBottom: '16px' }}>
+            {/* Official Event Insignia Emblem */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '8px 20px', background: '#ffffff', borderRadius: '14px', border: '1px solid rgba(255, 255, 255, 0.8)', boxShadow: '0 6px 24px rgba(5, 17, 38, 0.32)', marginBottom: '16px' }}>
               <img
                 src="/images/run_for_her_official_logo.jpg"
                 alt="Rajasthan Police Marathon - Run For Her Official Logo"
                 style={{
-                  height: 'clamp(68px, 11vw, 102px)',
+                  height: 'clamp(68px, 11vw, 100px)',
                   width: 'auto',
                   objectFit: 'contain',
                   display: 'block'

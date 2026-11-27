@@ -27,9 +27,10 @@ export function PatronDesk() {
                 maxWidth: '280px',
                 height: '352px',
                 borderRadius: '16px',
-                padding: '6px',
-                background: 'linear-gradient(135deg, var(--police-gold-500), var(--police-navy-800))',
-                boxShadow: 'var(--shadow-lg)',
+                padding: '4px',
+                background: '#ffffff',
+                border: '2px solid var(--police-gold-500)',
+                boxShadow: '0 6px 20px rgba(10, 28, 61, 0.12)',
                 overflow: 'hidden'
               }}>
                 <img
@@ -50,19 +51,18 @@ export function PatronDesk() {
 
             {/* DGP Official Written Message */}
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
                 <span className="badge-gold">{isHindi ? 'आयोजन संरक्षक संदेश' : "Patron's Message"}</span>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700 }}>
-                  {isHindi ? 'संदेश' : 'Official Message'}
-                </span>
               </div>
-              {/* DGP Official Written Message Area - Left blank per instructions */}
+              {/* DGP Official Written Message Area */}
               <div style={{
                 minHeight: '210px',
-                background: 'rgba(255, 255, 255, 0.7)',
+                background: '#ffffff',
                 borderRadius: '12px',
-                border: '1.5px dashed var(--border-medium)',
-                margin: '18px 0'
+                border: '1px solid var(--border-medium)',
+                boxShadow: 'inset 0 1px 3px rgba(10, 28, 61, 0.03)',
+                margin: '14px 0',
+                position: 'relative'
               }}>
               </div>
 

@@ -22,7 +22,7 @@ export const TRANSLATIONS = {
     navPledge: 'सुरक्षा संकल्प',
 
     // Hero
-    superTitle: '★ राजस्थान पुलिस मैराथन 2027 ★',
+    superTitle: 'राजस्थान पुलिस मैराथन 2027',
     slogan: '"हर कदम नारी सुरक्षा, सम्मान एवं सशक्तिकरण के नाम"',
     days: 'दिन',
     hours: 'घंटे',
@@ -59,7 +59,7 @@ export const TRANSLATIONS = {
     navPledge: 'Safety Pledge',
 
     // Hero
-    superTitle: '★ RAJASTHAN POLICE MARATHON 2027 ★',
+    superTitle: 'RAJASTHAN POLICE MARATHON 2027',
     slogan: '"Every Step for Women Safety, Dignity & Empowerment"',
     days: 'DAYS',
     hours: 'HOURS',
