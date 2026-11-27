@@ -2680,9 +2680,6 @@ export function RegistrationPage({
                             <div style={{ fontWeight: 900, fontSize: '1.35rem', color: 'var(--police-navy-950)', letterSpacing: '0.02em' }}>
                               {shortLabel}
                             </div>
-                            <div style={{ fontSize: '0.78rem', color: isSelected ? 'var(--police-navy-800)' : 'var(--text-muted)', fontWeight: 700, marginTop: '4px' }}>
-                              {cat.name}
-                            </div>
                           </div>
                         );
                       })}
