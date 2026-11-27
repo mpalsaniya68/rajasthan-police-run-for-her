@@ -79,7 +79,7 @@ export function PatronDesk() {
               }}>
                 <div>
                   <div style={{ fontSize: '0.9rem', fontWeight: 900, color: 'var(--police-navy-950)' }}>
-                    {isHindi ? '(राजीव शर्मा, भा.पु.से.)' : '(Rajeev Sharma, IPS)'}
+                    {isHindi ? 'राजीव शर्मा, IPS' : 'Rajeev Sharma, IPS'}
                   </div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--police-gold-700)', fontWeight: 700 }}>
                     {isHindi ? 'महानिदेशक पुलिस, राजस्थान' : 'Director General of Police, Rajasthan'}
