@@ -674,11 +674,11 @@ export function RegistrationPage({
       }
       if (!isPolicePersonnel && nonPoliceCategory === 'Other') {
         if ((otherSubCategory === 'NRI' || otherSubCategory === 'Foreign National') && !otherCountryOrDetail.trim()) {
-          setStepError(isHindi ? 'कृपया अपने देश (Country of Residence / Citizenship) का नाम दर्ज करें।' : 'Please enter your country of residence / citizenship.');
+          setStepError(isHindi ? 'कृपया अपने देश का नाम दर्ज करें।' : 'Please enter your country of residence / citizenship.');
           return;
         }
         if (otherSubCategory === 'Defense / Armed Forces' && !otherCountryOrDetail.trim()) {
-          setStepError(isHindi ? 'कृपया अपने रक्षा बल / बटालियन का विवरण दर्ज करें।' : 'Please enter your defense force / battalion details.');
+          setStepError(isHindi ? 'कृपया अपने रक्षा बल या बटालियन का विवरण दर्ज करें।' : 'Please enter your defense force / battalion details.');
           return;
         }
       }
@@ -2503,7 +2503,7 @@ export function RegistrationPage({
                             textDecoration: 'underline'
                           }}
                         >
-                          {isHindi ? 'OTP पुनः भेजें (Resend)' : 'Resend OTP'}
+                          {isHindi ? 'OTP पुनः भेजें' : 'Resend OTP'}
                         </button>
                       )}
                     </div>
@@ -2859,7 +2859,7 @@ export function RegistrationPage({
                       }}>
                         <div>
                           <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 800, color: '#166534', marginBottom: '6px' }}>
-                            {isHindi ? 'विशिष्ट श्रेणी प्रकार चुनें (Specific Category):' : 'Select Specific Category:'} <span style={{ color: '#ef4444' }}>*</span>
+                            {isHindi ? 'विशिष्ट श्रेणी प्रकार चुनें:' : 'Select Specific Category:'} <span style={{ color: '#ef4444' }}>*</span>
                           </label>
                           <select
                             value={otherSubCategory}
@@ -2875,17 +2875,17 @@ export function RegistrationPage({
                               background: '#ffffff'
                             }}
                           >
-                            <option value="NRI">{isHindi ? 'प्रवासी भारतीय (NRI - Non-Resident Indian)' : 'NRI (Non-Resident Indian)'}</option>
-                            <option value="Foreign National">{isHindi ? 'विदेशी नागरिक (Foreign National / International)' : 'Foreign National / International'}</option>
-                            <option value="Defense / Armed Forces">{isHindi ? 'रक्षा / अर्धसैनिक बल (Defense / Armed Forces)' : 'Defense / Armed Forces'}</option>
+                            <option value="NRI">{isHindi ? 'प्रवासी भारतीय' : 'NRI (Non-Resident Indian)'}</option>
+                            <option value="Foreign National">{isHindi ? 'विदेशी नागरिक' : 'Foreign National / International'}</option>
+                            <option value="Defense / Armed Forces">{isHindi ? 'रक्षा / अर्धसैनिक बल' : 'Defense / Armed Forces'}</option>
                           </select>
                         </div>
 
                         <div>
                           <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 800, color: '#166534', marginBottom: '6px' }}>
                             {(otherSubCategory === 'NRI' || otherSubCategory === 'Foreign National')
-                              ? (isHindi ? 'देश का नाम (Country of Residence / Citizenship):' : 'Country of Residence / Citizenship:')
-                              : (isHindi ? 'रक्षा बल / बटालियन विवरण (Defense / Force Details):' : 'Defense / Force Details:')}
+                              ? (isHindi ? 'देश का नाम:' : 'Country of Residence / Citizenship:')
+                              : (isHindi ? 'रक्षा बल / बटालियन का विवरण:' : 'Defense / Force Details:')}
                             <span style={{ color: '#ef4444' }}> *</span>
                           </label>
                           <input
@@ -3143,7 +3143,7 @@ export function RegistrationPage({
                       />
                       <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '5px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <span>ℹ️</span>
-                        <span>{isHindi ? 'ई-प्रमाण पत्र (Certificate) एवं रेस सूचना इसी ईमेल पर भेजी जाएगी।' : 'E-Certificate and race updates will be sent to this email.'}</span>
+                        <span>{isHindi ? 'ई-प्रमाण पत्र एवं रेस सूचना इसी ईमेल पर भेजी जाएगी।' : 'E-Certificate and race updates will be sent to this email.'}</span>
                       </div>
                     </div>
                   </div>
