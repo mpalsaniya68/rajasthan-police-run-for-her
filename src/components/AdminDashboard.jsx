@@ -1153,21 +1153,8 @@ export function AdminDashboard({
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <span style={{ fontWeight: 800, fontSize: 'clamp(0.96rem, 2.8vw, 1.18rem)', color: '#0f172a', letterSpacing: '0.01em' }}>
                   {isDistrictRole 
-                    ? (isHindi ? `जिला पुलिस अधीक्षक कमान डेस्क - ${adminUser.districtName || 'जिला'}` : `District SP Command Desk - ${adminUser.districtName || 'District'}`)
-                    : (isHindi ? 'पुलिस मुख्यालय कमान एवं राज्य नोडल डेस्क' : 'State Police HQ Command & Nodal Desk')}
-                </span>
-                <span style={{
-                  background: '#fef3c7',
-                  color: '#92400e',
-                  border: '1px solid #fde68a',
-                  fontSize: '0.68rem',
-                  fontWeight: 700,
-                  padding: '2px 8px',
-                  borderRadius: '4px'
-                }}>
-                  {isDistrictRole 
-                    ? (isHindi ? 'जिला स्तर अधिकृत' : 'District Authorized') 
-                    : (isHindi ? '2FA प्रमाणित • राज्य नोडल कमान' : '2FA Verified • State Command')}
+                    ? (isHindi ? `जिला पुलिस कमान - ${adminUser.districtName || 'जिला'}` : `District SP Command - ${adminUser.districtName || 'District'}`)
+                    : (isHindi ? 'पुलिस मुख्यालय • राज्य नोडल डेस्क' : 'State Police HQ • Nodal Desk')}
                 </span>
               </div>
             </div>
@@ -1281,25 +1268,10 @@ export function AdminDashboard({
             gap: '10px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Zap size={16} color="var(--police-gold-600)" />
-              <span style={{ fontSize: '0.88rem', fontWeight: 900, color: 'var(--police-navy-950)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <span style={{ fontSize: '0.94rem', fontWeight: 900, color: 'var(--police-navy-950)', letterSpacing: '0.02em' }}>
                 {isDistrictRole 
-                  ? (isHindi ? `कमांड मुख्यालय • ${adminUser.districtName || 'जिला'} सारांश` : `District Command • ${adminUser.districtName || 'District'} Summary`)
-                  : (isHindi ? 'राज्य नोडल पुलिस कमान • कार्यकारी डैशबोर्ड सारांश' : 'State Nodal Police Command • Executive Dashboard Summary')}
-              </span>
-              <span style={{
-                background: '#dcfce7',
-                color: '#15803d',
-                fontSize: '0.7rem',
-                fontWeight: 800,
-                padding: '2px 8px',
-                borderRadius: '10px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#16a34a', display: 'inline-block' }}></span>
-                {isHindi ? 'लाइव डेटा' : 'Live Data'}
+                  ? (isHindi ? `डैशबोर्ड • ${adminUser.districtName || 'जिला'}` : `Dashboard • ${adminUser.districtName || 'District'}`)
+                  : (isHindi ? 'कार्यकारी डैशबोर्ड' : 'Executive Dashboard')}
               </span>
             </div>
 
@@ -1325,7 +1297,7 @@ export function AdminDashboard({
                 title={isHindi ? "गेट उपस्थिति एवं किट वितरण A4 चेकलिस्ट प्रिंट करें" : "Print Gate & Kit Distribution Checklist"}
               >
                 <Printer size={14} color="var(--police-navy-900)" />
-                <span>{isHindi ? '🖨️ चेकलिस्ट प्रिंट' : '🖨️ Print Checklist'}</span>
+                <span>{isHindi ? 'चेकलिस्ट प्रिंट' : 'Print Checklist'}</span>
               </button>
 
               <button
@@ -1348,7 +1320,7 @@ export function AdminDashboard({
                 title={isHindi ? "धावकों को WhatsApp एवं SMS प्रसारण कमांड सेंटर खोलें" : "Open WhatsApp & SMS Broadcast Command Center"}
               >
                 <Radio size={14} color="#059669" />
-                <span>{isHindi ? '📢 संदेश प्रसारण' : '📢 Broadcast Center'}</span>
+                <span>{isHindi ? 'संदेश प्रसारण' : 'Broadcast Center'}</span>
               </button>
 
               <button
@@ -1505,7 +1477,7 @@ export function AdminDashboard({
             }}
           >
             <Database size={15} color={adminTab === "registrations" ? "#2563eb" : "#64748b"} />
-            <span>{isHindi ? '📋 मैराथन धावक सूची एवं CSV' : '📋 Marathon Runner Directory & CSV'}</span>
+            <span>{isHindi ? 'धावक सूची एवं CSV' : 'Runner Directory & CSV'}</span>
           </button>
 
           {/* Show RFID Kit, Leaderboard & Live Radar ONLY for PHQ Level */}
@@ -1552,7 +1524,7 @@ export function AdminDashboard({
                 }}
               >
                 <Trophy size={16} color={adminTab === "leaderboard" ? "#f59e0b" : "#64748b"} />
-                <span>{isHindi ? '🏆 रेस लीडरबोर्ड व परिणाम' : '🏆 Race Leaderboard & Results'}</span>
+                <span>{isHindi ? 'रेस लीडरबोर्ड' : 'Race Leaderboard'}</span>
               </button>
 
               {/* Point 3: Volunteer & Gate Duty Roster Management */}
@@ -1574,7 +1546,7 @@ export function AdminDashboard({
                 }}
               >
                 <Users size={16} color={adminTab === "volunteers" ? "#16a34a" : "#64748b"} />
-                <span>{isHindi ? '👥 वॉलंटियर व ड्यूटी रोस्टर' : '👥 Volunteer & Duty Roster'}</span>
+                <span>{isHindi ? 'वॉलंटियर व रोस्टर' : 'Volunteer & Roster'}</span>
               </button>
 
               {/* Point 4: Statewide & District Certificate Management Hub */}
@@ -1596,7 +1568,7 @@ export function AdminDashboard({
                 }}
               >
                 <Award size={16} color={adminTab === "certificates" ? "#d97706" : "#64748b"} />
-                <span>{isHindi ? '🎖️ ई-प्रमाण पत्र प्रबंधन' : '🎖️ E-Certificates'}</span>
+                <span>{isHindi ? 'प्रमाण पत्र प्रबंधन' : 'Certificate Management'}</span>
               </button>
 
               {/* Point 5: Dedicated WhatsApp & SMS Broadcast Command Center */}
@@ -1618,7 +1590,7 @@ export function AdminDashboard({
                 }}
               >
                 <Send size={15} color={adminTab === "broadcast" ? "#059669" : "#64748b"} />
-                <span>{isHindi ? '📢 संदेश प्रसारण' : '📢 Broadcast Center'}</span>
+                <span>{isHindi ? 'संदेश प्रसारण' : 'Broadcast Center'}</span>
               </button>
             </>
           ) : (
@@ -1642,7 +1614,7 @@ export function AdminDashboard({
                 }}
               >
                 <QrCode size={15} color={adminTab === "district_certificates" ? "#2563eb" : "#64748b"} />
-                <span>{isHindi ? '🎖️ जिला ई-प्रमाण पत्र प्रबंधन' : '🎖️ District E-Certificates'}</span>
+                <span>{isHindi ? 'जिला प्रमाण पत्र' : 'District Certificates'}</span>
               </button>
 
               <button
@@ -1663,7 +1635,7 @@ export function AdminDashboard({
                 }}
               >
                 <Shield size={15} color={adminTab === "district_medical" ? "#1e40af" : "#64748b"} />
-                <span>{isHindi ? '🛡️ स्थानीय सुरक्षा व आपातकालीन डेस्क' : '🛡️ Local Safety & Emergency Desk'}</span>
+                <span>{isHindi ? 'सुरक्षा व आपातकालीन डेस्क' : 'Safety & Emergency Desk'}</span>
               </button>
 
               <button
@@ -1684,7 +1656,7 @@ export function AdminDashboard({
                 }}
               >
                 <Send size={15} color={adminTab === "broadcast" ? "#059669" : "#64748b"} />
-                <span>{isHindi ? '📢 संदेश प्रसारण' : '📢 Broadcast Center'}</span>
+                <span>{isHindi ? 'संदेश प्रसारण' : 'Broadcast Center'}</span>
               </button>
             </>
           )}
