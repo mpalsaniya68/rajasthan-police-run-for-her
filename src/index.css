@@ -101,11 +101,11 @@ body {
   --shadow-lg: 0 14px 30px -4px rgba(15, 23, 42, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
   --shadow-modal: 0 25px 60px -10px rgba(10, 28, 61, 0.3);
 
-  /* Official Rajasthan Government Hindi Typography (DevLys Serif Aesthetic: Tiro Devanagari Hindi & Martel) */
-  --font-heading: 'Tiro Devanagari Hindi', 'Martel', 'Noto Serif Devanagari', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-body: 'Tiro Devanagari Hindi', 'Martel', 'Noto Serif Devanagari', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Tiro Devanagari Hindi', 'Martel', 'Noto Serif Devanagari', serif;
-  --font-hindi: 'Tiro Devanagari Hindi', 'Martel', 'Noto Serif Devanagari', 'Poppins', sans-serif;
+  /* Official Rajasthan Police Marathon Typography: Roboto, sans-serif */
+  --font-heading: 'Roboto', sans-serif;
+  --font-body: 'Roboto', sans-serif;
+  --font-serif: 'Roboto', sans-serif;
+  --font-hindi: 'Roboto', sans-serif;
 
   --radius-sm: 6px;
   --radius-md: 10px;
