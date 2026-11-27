@@ -206,9 +206,21 @@ export function CertificateHub({ registrations = [] }) {
           eventLogoImg.onload = r;
           eventLogoImg.onerror = r;
         }),
-        new Promise(r => {
-          betiBachaoSealImg.onload = r;
-          betiBachaoSealImg.onerror = r;
+        new Promise(resolve => {
+          let settled = false;
+          const settle = () => {
+            if (!settled) {
+              settled = true;
+              clearTimeout(timer);
+              resolve();
+            }
+          };
+          const timer = setTimeout(settle, 2000);
+          betiBachaoSealImg.onload = settle;
+          betiBachaoSealImg.onerror = settle;
+          if (betiBachaoSealImg.complete) {
+            settle();
+          }
         })
       ]);
 
