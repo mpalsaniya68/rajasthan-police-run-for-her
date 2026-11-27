@@ -696,6 +696,11 @@ export function RegistrationPage({
 
     const cleanId = formData.idNumber ? formData.idNumber.replace(/\s+/g, "").toUpperCase() : "";
 
+    if (!formData.emergencyContactName || !formData.emergencyContactName.trim()) {
+      alert(isHindi ? "कृपया आपातकालीन संपर्क व्यक्ति का नाम दर्ज करें।" : "Please enter emergency contact person's name.");
+      return;
+    }
+
     const cleanEmergency = (formData.emergencyContactPhone || "").replace(/\D/g, "");
     if (!/^[6-9]\d{9}$/.test(cleanEmergency)) {
       alert(isHindi ? "कृपया वैध 10-अंकीय आपातकालीन मोबाइल नंबर दर्ज करें।" : "Please enter a valid 10-digit emergency mobile number.");
