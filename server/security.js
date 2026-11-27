@@ -30,6 +30,8 @@ export const registrationSchema = z.object({
   categoryId: z.enum(["21k", "10k", "5k", "3k", "2k", "inclusive", "adapted"]),
   districtId: z.string().min(2).max(50),
   tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL", "N/A"]).default("N/A"),
+  institution: z.string().max(150).optional().default(""),
+  runnerType: z.string().max(150).optional().default(""),
   idType: z.string().optional().default("Aadhaar"),
   idNumber: z.string().optional().default("NOT_REQUIRED"),
   idLast4: z.string().optional(),

@@ -51,7 +51,23 @@ export function RegistrationPage({
   const [category, setCategory] = useState(initialCategory);
   const [isPolicePersonnel, setIsPolicePersonnel] = useState(false);
   const [nonPoliceCategory, setNonPoliceCategory] = useState("General Citizen");
+  const [otherSubCategory, setOtherSubCategory] = useState("NRI");
+  const [otherCountryOrDetail, setOtherCountryOrDetail] = useState("");
   const [runnerType, setRunnerType] = useState("General Citizen");
+
+  const handleOtherSubCategoryChange = (subCat) => {
+    setOtherSubCategory(subCat);
+    const trDetail = otherCountryOrDetail.trim();
+    setRunnerType(trDetail ? `${subCat} (${trDetail})` : subCat);
+    setStepError('');
+  };
+
+  const handleOtherDetailChange = (detail) => {
+    setOtherCountryOrDetail(detail);
+    const trDetail = (detail || '').trim();
+    setRunnerType(trDetail ? `${otherSubCategory} (${trDetail})` : otherSubCategory);
+    setStepError('');
+  };
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -656,6 +672,16 @@ export function RegistrationPage({
         setStepError(isHindi ? 'कृपया पूर्व दौड़ का विवरण दर्ज करें।' : 'Please enter previous run details.');
         return;
       }
+      if (!isPolicePersonnel && nonPoliceCategory === 'Other') {
+        if ((otherSubCategory === 'NRI' || otherSubCategory === 'Foreign National') && !otherCountryOrDetail.trim()) {
+          setStepError(isHindi ? 'कृपया अपने देश (Country of Residence / Citizenship) का नाम दर्ज करें।' : 'Please enter your country of residence / citizenship.');
+          return;
+        }
+        if (otherSubCategory === 'Other' && !otherCountryOrDetail.trim()) {
+          setStepError(isHindi ? 'कृपया अपनी श्रेणी का विवरण दर्ज करें।' : 'Please specify category details.');
+          return;
+        }
+      }
       setFormStep(2);
       window.scrollTo({ top: 380, behavior: 'smooth' });
       return;
@@ -734,6 +760,8 @@ export function RegistrationPage({
       categoryId: category,
       districtId: selectedDistId,
       tshirtSize: formData.tshirtSize && formData.tshirtSize !== "N/A" ? formData.tshirtSize : "M",
+      institution: !isPolicePersonnel && nonPoliceCategory === 'Other' ? (otherCountryOrDetail.trim() ? `${otherSubCategory} (${otherCountryOrDetail.trim()})` : otherSubCategory) : (isPolicePersonnel ? "Rajasthan Police" : nonPoliceCategory),
+      runnerType: runnerType,
       idType: cleanId ? formData.idType : "",
       idNumber: cleanId,
       idLast4: cleanId ? cleanId.slice(-4) : "",
@@ -765,6 +793,8 @@ export function RegistrationPage({
       categoryId: payload.categoryId,
       districtId: payload.districtId,
       tshirtSize: payload.tshirtSize,
+      institution: payload.institution,
+      runnerType: payload.runnerType,
       idType: payload.idType,
       idNumber: payload.idNumber,
       idLast4: payload.idLast4,
@@ -2761,8 +2791,15 @@ export function RegistrationPage({
                         disabled={isPolicePersonnel}
                         value={isPolicePersonnel ? "Police Personnel" : nonPoliceCategory}
                         onChange={(e) => {
-                          setNonPoliceCategory(e.target.value);
-                          setRunnerType(e.target.value);
+                          const val = e.target.value;
+                          setNonPoliceCategory(val);
+                          if (val === "Other") {
+                            const detail = otherCountryOrDetail.trim();
+                            setRunnerType(detail ? `${otherSubCategory} (${detail})` : otherSubCategory);
+                          } else {
+                            setRunnerType(val);
+                          }
+                          setStepError('');
                         }}
                         style={{
                           width: '100%',
@@ -2806,6 +2843,74 @@ export function RegistrationPage({
                         <option value="XXL">XXL</option>
                       </select>
                     </div>
+
+                    {/* NRI / Foreigner / Other Sub-Menu Details */}
+                    {!isPolicePersonnel && nonPoliceCategory === 'Other' && (
+                      <div style={{
+                        gridColumn: '1 / -1',
+                        background: '#f0fdf4',
+                        border: '1.5px solid #86efac',
+                        borderRadius: '10px',
+                        padding: '16px 18px',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                        gap: '16px',
+                        boxShadow: '0 2px 8px rgba(10, 28, 61, 0.05)'
+                      }}>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 800, color: '#166534', marginBottom: '6px' }}>
+                            {isHindi ? 'विशिष्ट श्रेणी प्रकार चुनें (Specific Category):' : 'Select Specific Category:'} <span style={{ color: '#ef4444' }}>*</span>
+                          </label>
+                          <select
+                            value={otherSubCategory}
+                            onChange={(e) => handleOtherSubCategoryChange(e.target.value)}
+                            style={{
+                              width: '100%',
+                              padding: '11px 13px',
+                              borderRadius: '8px',
+                              border: '1.5px solid #22c55e',
+                              fontSize: '0.94rem',
+                              fontWeight: 700,
+                              color: '#14532d',
+                              background: '#ffffff'
+                            }}
+                          >
+                            <option value="NRI">{isHindi ? 'प्रवासी भारतीय (NRI - Non-Resident Indian)' : 'NRI (Non-Resident Indian)'}</option>
+                            <option value="Foreign National">{isHindi ? 'विदेशी नागरिक (Foreign National / International)' : 'Foreign National / International'}</option>
+                            <option value="Corporate / Professional">{isHindi ? 'कॉरपोरेट / निजी क्षेत्र (Corporate / Working Professional)' : 'Corporate / Working Professional'}</option>
+                            <option value="Defense / Armed Forces">{isHindi ? 'रक्षा / अर्धसैनिक बल (Defense / Armed Forces)' : 'Defense / Armed Forces'}</option>
+                            <option value="Other">{isHindi ? 'अन्य विवरण (Other - Please specify)' : 'Other (Please specify)'}</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 800, color: '#166534', marginBottom: '6px' }}>
+                            {(otherSubCategory === 'NRI' || otherSubCategory === 'Foreign National')
+                              ? (isHindi ? 'देश का नाम (Country of Residence / Citizenship):' : 'Country of Residence / Citizenship:')
+                              : (isHindi ? 'श्रेणी / संगठन का विवरण (Specify Details):' : 'Organization / Category Details:')}
+                            <span style={{ color: '#ef4444' }}> *</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={otherCountryOrDetail}
+                            onChange={(e) => handleOtherDetailChange(e.target.value)}
+                            placeholder={
+                              (otherSubCategory === 'NRI' || otherSubCategory === 'Foreign National')
+                                ? (isHindi ? 'उदा. USA, UK, Canada, Australia, UAE, Germany...' : 'e.g. USA, UK, Canada, Australia, UAE, Germany...')
+                                : (isHindi ? 'उदा. संगठन, कंपनी या क्लब का विवरण' : 'e.g. Organization, Company or Club details')
+                            }
+                            style={{
+                              width: '100%',
+                              padding: '11px 13px',
+                              borderRadius: '8px',
+                              border: '1.5px solid #22c55e',
+                              fontSize: '0.94rem',
+                              background: '#ffffff'
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     {/* पूर्व मैराथन सहभागिता */}
                     <div style={{

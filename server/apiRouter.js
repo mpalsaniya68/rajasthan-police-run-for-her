@@ -1218,9 +1218,10 @@ export async function handleApiRequest(req, res) {
           id, bib_number, full_name, gender, dob, mobile, masked_mobile, email, emergency_contact, emergency_relation, blood_group,
           medical_condition, medical_notes,
           category_id, category_name, district_id, district_name, venue_type, tshirt_size, id_type, id_last4, id_masked, id_raw, id_hash, certificate_id, qr_token,
+          institution,
           fee_amount, payment_status, order_id, transaction_id, payment_method, paid_at,
           status, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?)`,
         args: [
           participantId,
           bibNumber,
@@ -1247,6 +1248,7 @@ export async function handleApiRequest(req, res) {
           idHash,
           certificateId,
           qrToken,
+          data.institution || data.runnerType || "",
           feeAmount,
           paymentStatus,
           orderId,
