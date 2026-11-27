@@ -184,7 +184,7 @@ export function CertificateHub({ registrations = [] }) {
       drawCorner(22, 898);
       drawCorner(1328, 898);
 
-      // Load Official Police Logo & Official Event Logo
+      // Load Official Police Logo, Event Logo & Beti Bachao Seal
       const logoImg = new Image();
       logoImg.crossOrigin = "anonymous";
       logoImg.src = "/rajasthan-police-logo.png";
@@ -192,6 +192,10 @@ export function CertificateHub({ registrations = [] }) {
       const eventLogoImg = new Image();
       eventLogoImg.crossOrigin = "anonymous";
       eventLogoImg.src = "/images/run_for_her_official_logo.jpg";
+
+      const betiBachaoSealImg = new Image();
+      betiBachaoSealImg.crossOrigin = "anonymous";
+      betiBachaoSealImg.src = "/images/beti_bachao_seal.png";
 
       await Promise.all([
         new Promise(r => {
@@ -201,6 +205,10 @@ export function CertificateHub({ registrations = [] }) {
         new Promise(r => {
           eventLogoImg.onload = r;
           eventLogoImg.onerror = r;
+        }),
+        new Promise(r => {
+          betiBachaoSealImg.onload = r;
+          betiBachaoSealImg.onerror = r;
         })
       ]);
 
@@ -404,8 +412,10 @@ export function CertificateHub({ registrations = [] }) {
       ctx.font = "12px sans-serif";
       ctx.fillText("Rajasthan Police Headquarters, Jaipur", sigX, 774);
 
-      // Center: Rajasthan Police Logo Emblem (Exact as in preview)
-      if (logoImg.complete && logoImg.naturalWidth > 0) {
+      // Center: Beti Bachao Beti Padhao Emblem Seal (Official Campaign Seal)
+      if (betiBachaoSealImg.complete && betiBachaoSealImg.naturalWidth > 0) {
+        ctx.drawImage(betiBachaoSealImg, 675 - 32, 714, 64, 64);
+      } else if (logoImg.complete && logoImg.naturalWidth > 0) {
         ctx.drawImage(logoImg, 675 - 30, 716, 60, 60);
       }
 
@@ -990,7 +1000,11 @@ export function CertificateHub({ registrations = [] }) {
                   </div>
 
                   <div style={{ textAlign: 'center' }}>
-                    <PoliceEmblem size={56} />
+                    <img 
+                      src="/images/beti_bachao_seal.png" 
+                      alt="Beti Bachao Beti Padhao Official Emblem" 
+                      style={{ width: '60px', height: '60px', objectFit: 'contain', display: 'inline-block' }} 
+                    />
                   </div>
 
                   <div style={{ textAlign: 'center', minWidth: '110px' }}>

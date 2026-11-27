@@ -4390,7 +4390,13 @@ export function AdminDashboard({
                             </div>
                           </div>
 
-                          <OfficialGoldSeal size={56} />
+                          <div style={{ textAlign: 'center' }}>
+                            <img 
+                              src="/images/beti_bachao_seal.png" 
+                              alt="Beti Bachao Beti Padhao Official Emblem" 
+                              style={{ width: '56px', height: '56px', objectFit: 'contain', display: 'inline-block' }} 
+                            />
+                          </div>
 
                           <div style={{ textAlign: 'center', fontSize: '0.62rem', color: '#0a1c3d' }}>
                             <div style={{ fontFamily: 'monospace', fontWeight: 800 }}>{previewCertRunner.certificateId || 'RJ-POL-2027-SAMPLE'}</div>
