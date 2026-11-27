@@ -310,23 +310,21 @@ export function CertificateHub({ registrations = [] }) {
       ctx.font = "italic 16.5px sans-serif";
       ctx.fillText("This certificate is hereby awarded to", 675, 280);
 
-      // 3. RUNNER NAME in 'Adine Kirnberg' Calligraphy Font (Directly touching underline)
+      // 3. RUNNER NAME in Calligraphy / Script Font (Directly touching underline)
       try {
-        if (typeof document !== 'undefined' && document.fonts && !document.fonts.check('16px "Adine Kirnberg"')) {
-          const adineFont = new FontFace('Adine Kirnberg', 'url(/fonts/ADINEKIR.TTF)');
-          await adineFont.load();
-          document.fonts.add(adineFont);
+        if (typeof document !== 'undefined' && document.fonts) {
+          await document.fonts.load('48px "Great Vibes"');
         }
       } catch (fontErr) {
-        console.warn('Adine Kirnberg font loading fallback:', fontErr);
+        console.warn('Script font loading fallback:', fontErr);
       }
 
       const runnerName = toTitleCase(formatLocalizedName(selectedRunner.fullName || selectedRunner.full_name, false)) || "Manish Singh";
-      let nameFontSize = 64;
-      ctx.font = `${nameFontSize}px 'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive`;
-      while (ctx.measureText(runnerName).width > 740 && nameFontSize > 30) {
+      let nameFontSize = 56;
+      ctx.font = `${nameFontSize}px 'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive`;
+      while (ctx.measureText(runnerName).width > 740 && nameFontSize > 28) {
         nameFontSize -= 2;
-        ctx.font = `${nameFontSize}px 'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive`;
+        ctx.font = `${nameFontSize}px 'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive`;
       }
       ctx.fillStyle = "#0a1c3d";
       ctx.textAlign = "center";
@@ -804,7 +802,7 @@ export function CertificateHub({ registrations = [] }) {
         >
           {/* THE OFFICIAL HIGH-DIGNITY CERTIFICATE (SCROLLABLE ON MOBILE) */}
           <div style={{ overflowX: 'auto', paddingBottom: '10px' }}>
-            <div className="printable-certificate" style={{
+            <div className="printable-certificate" lang="en" style={{
               background: '#ffffff',
               color: '#0a1c3d',
               borderRadius: '8px',
@@ -918,12 +916,16 @@ export function CertificateHub({ registrations = [] }) {
                       lineHeight: 1.0,
                       fontWeight: 400,
                       color: '#0a1c3d',
-                      fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
+                      fontFamily: "'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive",
                       padding: '0 32px',
                       margin: '0 auto 6px auto',
                       textAlign: 'center'
                     }}>
-                      <span style={{ position: 'relative', zIndex: 2 }}>
+                      <span style={{
+                        position: 'relative',
+                        zIndex: 2,
+                        fontFamily: "'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive"
+                      }}>
                         {toTitleCase(formatLocalizedName(selectedRunner.fullName || selectedRunner.full_name, false))}
                       </span>
                       <div style={{

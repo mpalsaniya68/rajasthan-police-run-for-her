@@ -4268,12 +4268,16 @@ export function AdminDashboard({
                           lineHeight: 1.0,
                           fontWeight: 400,
                           color: '#0a1c3d',
-                          fontFamily: "'Adine Kirnberg', 'Adine Kirnberg Regular', 'Segoe Script', cursive",
+                          fontFamily: "'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive",
                           padding: '0 24px',
                           margin: '0 auto 10px auto',
                           textAlign: 'center'
                         }}>
-                          <span style={{ position: 'relative', zIndex: 2 }}>
+                          <span style={{
+                            position: 'relative',
+                            zIndex: 2,
+                            fontFamily: "'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive"
+                          }}>
                             {toTitleCase(formatLocalizedName(previewCertRunner.fullName, false))}
                           </span>
                           <div style={{
