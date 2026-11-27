@@ -2549,7 +2549,7 @@ export function RegistrationPage({
             }}>
               {[
                 { num: 1, labelHi: '1. दौड़ एवं प्रतिभागी वर्ग', labelEn: '1. Race & Profile' },
-                { num: 2, labelHi: '2. व्यक्तिगत एवं आपातकालीन विवरण', labelEn: '2. Personal & Emergency' }
+                { num: 2, labelHi: '2. व्यक्तिगत विवरण', labelEn: '2. Personal Details' }
               ].map(st => {
                 const isActive = formStep === st.num;
                 const isPassed = formStep > st.num;
@@ -3036,7 +3036,7 @@ export function RegistrationPage({
                       fontWeight: 900
                     }}>2</span>
                     <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--police-navy-950)', fontWeight: 800 }}>
-                      {isHindi ? 'व्यक्तिगत एवं आपातकालीन विवरण' : 'Personal & Emergency Details'}
+                      {isHindi ? 'व्यक्तिगत विवरण' : 'Personal Details'}
                     </h3>
                   </div>
 
@@ -3126,7 +3126,7 @@ export function RegistrationPage({
                     </div>
 
                     {/* ईमेल */}
-                    <div style={{ gridColumn: 'span 2' }}>
+                    <div>
                       <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, color: 'var(--police-navy-900)', marginBottom: '6px' }}>
                         {isHindi ? 'ईमेल' : 'Email'}:
                       </label>
@@ -3151,7 +3151,7 @@ export function RegistrationPage({
                   {/* Emergency & Medical Section (from old Step 3) */}
                   <div style={{ marginTop: '20px', paddingTop: '18px', borderTop: '1.5px dashed var(--border-subtle)' }}>
                     <div style={{ fontSize: '0.96rem', fontWeight: 800, color: 'var(--police-navy-950)', marginBottom: '14px' }}>
-                      {isHindi ? 'आपातकालीन संपर्क एवं स्वास्थ्य विवरण:' : 'Emergency Contact & Health Details:'}
+                      {isHindi ? 'आपातकालीन विवरण:' : 'Emergency Details:'}
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '18px' }}>
