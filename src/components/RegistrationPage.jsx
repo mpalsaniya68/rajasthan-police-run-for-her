@@ -1343,13 +1343,13 @@ export function RegistrationPage({
             overflow: 'hidden',
             animation: 'fadeIn 0.3s ease-out'
           }}>
-            {/* Success Top Banner */}
+            {/* Success Top Banner (Light Sky-Blue / Asmani Background) */}
             <div className="no-print" style={{
-              background: 'linear-gradient(135deg, var(--police-navy-950) 0%, var(--police-navy-900) 100%)',
-              color: '#ffffff',
+              background: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)',
+              color: '#0f172a',
               padding: '28px 24px',
               textAlign: 'center',
-              borderBottom: '4px solid var(--police-gold-500)',
+              borderBottom: '3px solid #38bdf8',
               position: 'relative'
             }}>
               <div style={{
@@ -1359,18 +1359,19 @@ export function RegistrationPage({
                 width: '64px',
                 height: '64px',
                 borderRadius: '50%',
-                background: 'rgba(34, 197, 94, 0.2)',
-                border: '2px solid #22c55e',
-                color: '#4ade80',
+                background: '#ffffff',
+                border: '2px solid #0284c7',
+                color: '#0284c7',
+                boxShadow: '0 4px 12px rgba(2, 132, 199, 0.16)',
                 marginBottom: '12px'
               }}>
                 <CheckCircle2 size={36} />
               </div>
-              <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.9rem)', margin: '0 0 6px 0', color: '#fef08a', fontWeight: 900 }}>
+              <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.9rem)', margin: '0 0 6px 0', color: '#0369a1', fontWeight: 900 }}>
                 {isHindi ? 'पंजीकरण सफलतापूर्वक पूर्ण हुआ!' : 'Registration Completed Successfully!'}
               </h2>
-              <div style={{ fontSize: '0.94rem', color: '#e2e8f0' }}>
-                {isHindi ? 'राजस्थान पुलिस मैराथन 2027 • ' : 'Rajasthan Police Marathon 2027 • '}<strong>RUN FOR HER</strong>{isHindi ? ' में आपका ई-पास जारी किया गया है।' : ' - Your E-Pass has been issued.'}
+              <div style={{ fontSize: '0.94rem', color: '#0f172a', fontWeight: 600 }}>
+                {isHindi ? 'राजस्थान पुलिस मैराथन 2027 • ' : 'Rajasthan Police Marathon 2027 • '}<strong style={{ color: '#0369a1', fontWeight: 800 }}>RUN FOR HER</strong>{isHindi ? ' में आपका ई-पास जारी किया गया है।' : ' - Your E-Pass has been issued.'}
               </div>
             </div>
 

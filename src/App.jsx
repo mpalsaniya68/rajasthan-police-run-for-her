@@ -436,13 +436,13 @@ export default function App() {
                   <span>/</span>
 
                   <span style={{ color: 'var(--crimson-600)', fontWeight: 800 }}>
-                    {isHindi ? 'ई-प्रमाण पत्र' : 'E-Certificate'}
+                    {isHindi ? 'सर्टिफिकेट' : 'Certificate'}
                   </span>
 
                 </div>
 
                 <span className="badge-gold">
-                  {isHindi ? 'राजस्थान पुलिस ई-प्रमाण पत्र' : 'Rajasthan Police E-Certificate'}
+                  {isHindi ? 'राजस्थान पुलिस सर्टिफिकेट' : 'Rajasthan Police Certificate'}
                 </span>
 
               </div>

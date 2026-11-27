@@ -18,7 +18,7 @@ export const TRANSLATIONS = {
     navRegister: 'पंजीकरण',
     navFindPass: '🔍 ई-पास खोजें',
     navRoute: 'रूट व एक्सपो',
-    navCertificates: 'ई-प्रमाण पत्र',
+    navCertificates: 'सर्टिफिकेट',
     navPledge: 'सुरक्षा संकल्प',
 
     // Hero
@@ -35,7 +35,7 @@ export const TRANSLATIONS = {
     scheduleHeading: 'कार्यक्रम समय-सारणी, बिब एक्सपो एवं रेस नियम',
     faqHeading: 'अक्सर पूछे जाने वाले महत्वपूर्ण सवाल',
     prizesHeading: 'इनाम व पुरस्कार',
-    certificatesHeading: 'डिजिटल फिनिशर ई-प्रमाण पत्र एवं लेजर सत्यापन',
+    certificatesHeading: 'डिजिटल फिनिशर प्रमाण पत्र एवं लेजर सत्यापन',
     registrationHeading: 'ऑनलाइन पंजीकरण'
   },
   en: {
@@ -55,7 +55,7 @@ export const TRANSLATIONS = {
     navRegister: 'Registration',
     navFindPass: '🔍 Find E-Pass',
     navRoute: 'Route & Expo',
-    navCertificates: 'E-Certificates',
+    navCertificates: 'Certificate',
     navPledge: 'Safety Pledge',
 
     // Hero
@@ -72,7 +72,7 @@ export const TRANSLATIONS = {
     scheduleHeading: 'Event Schedule, Bib Expo & Race Rules',
     faqHeading: 'Frequently Asked Questions (FAQs)',
     prizesHeading: 'Prizes & Rewards',
-    certificatesHeading: 'Digital Finisher E-Certificates & Ledger Verification',
+    certificatesHeading: 'Digital Finisher Certificates & Ledger Verification',
     registrationHeading: 'Online Registration'
   }
 };

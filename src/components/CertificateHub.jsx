@@ -228,24 +228,27 @@ export function CertificateHub({ registrations = [] }) {
       const runnerRank = selectedRunner.overallRank ? (String(selectedRunner.overallRank).startsWith('#') ? selectedRunner.overallRank : `#${selectedRunner.overallRank} Overall`) : (selectedRunner?.genderRank ? (String(selectedRunner.genderRank).startsWith('#') ? selectedRunner.genderRank : `#${selectedRunner.genderRank} Overall`) : (selectedRunner?.bibNumber ? `#${String(selectedRunner.bibNumber).replace(/\D/g, '').slice(-3) || '384'} Overall` : "#384 Overall"));
 
       // 1. TOP HEADER (Identical to Preview)
-      // Top Left: Police Logo Emblem
-      if (logoImg.complete && logoImg.naturalWidth > 0) {
-        ctx.drawImage(logoImg, 55, 52, 76, 76);
-      }
-
       // Top Left: Authority Text Stack
       ctx.textAlign = "left";
       ctx.fillStyle = "#b45309";
       ctx.font = "bold 13.5px sans-serif";
-      ctx.fillText("GOVERNMENT OF RAJASTHAN", 145, 72);
+      ctx.fillText("GOVERNMENT OF RAJASTHAN", 55, 72);
 
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "900 28px sans-serif";
-      ctx.fillText("RAJASTHAN POLICE", 145, 101);
+      ctx.fillText("RAJASTHAN POLICE", 55, 101);
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 13.5px sans-serif";
-      ctx.fillText("Rajasthan Police Headquarters • Jaipur", 145, 122);
+      ctx.fillText("Rajasthan Police Headquarters • Jaipur", 55, 122);
+
+      // Top Center: Police Logo Emblem (Centered at 675)
+      if (logoImg.complete && logoImg.naturalWidth > 0) {
+        const logoW = 76;
+        const logoH = 76;
+        const logoX = 675 - (logoW / 2);
+        ctx.drawImage(logoImg, logoX, 50, logoW, logoH);
+      }
 
       // Top Right: Official RUN FOR HER Marathon Event Logo
       if (eventLogoImg.complete && eventLogoImg.naturalWidth > 0) {
@@ -316,16 +319,16 @@ export function CertificateHub({ registrations = [] }) {
       ctx.fillStyle = "#0a1c3d";
       ctx.fillRect(675 - underlineW / 2, 350, underlineW, 2.5);
 
-      // 4. STATEMENT (Exact lines matching requested content)
-      ctx.fillStyle = "#334155";
-      ctx.font = "16px Georgia, serif";
+      // 4. STATEMENT (Pure Black High Contrast)
+      ctx.fillStyle = "#000000";
+      ctx.font = "600 16px Georgia, serif";
       const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
 
-      ctx.fillText("For demonstrating exceptional determination, endurance and commitment by successfully completing", 675, 396);
-      ctx.fillText(`the ${catText} in Jaipur, supporting the cause of Women's Safety.`, 675, 424);
+      ctx.fillText("For demonstrating exceptional commitment towards women safety by successfully completing", 675, 396);
+      ctx.fillText(`the ${catText} in Jaipur.`, 675, 424);
 
-      ctx.font = "italic 600 16px Georgia, serif";
-      ctx.fillStyle = "#0a1c3d";
+      ctx.font = "italic 700 16px Georgia, serif";
+      ctx.fillStyle = "#000000";
       ctx.fillText("\"Running Together for a Safer Tomorrow.\"", 675, 456);
 
       // 5. METRICS BOX (Exact 5-column / 3-column card)
@@ -672,7 +675,7 @@ export function CertificateHub({ registrations = [] }) {
       <div className="container">
         <div className="section-header no-print" style={{ marginBottom: '28px', textAlign: 'center' }}>
           <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', color: 'var(--police-navy-950)', margin: '0 0 8px 0', fontWeight: 800 }}>
-            {isHindi ? 'मैराथन ई-प्रमाण पत्र' : 'Marathon E-Certificate'}
+            {isHindi ? 'मैराथन प्रमाण पत्र' : 'Marathon Certificate'}
           </h2>
         </div>
 
@@ -818,24 +821,35 @@ export function CertificateHub({ registrations = [] }) {
               }}>
                 {/* Upper & Middle Certificate Body */}
                 <div className="cert-body-content">
-                  {/* Certificate Header */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid var(--police-gold-500)', paddingBottom: '12px', marginBottom: '16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <PoliceEmblem size={54} />
-                      <div>
-                        <div style={{ fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--police-gold-700)', textTransform: 'uppercase' }}>
-                          GOVERNMENT OF RAJASTHAN
-                        </div>
-                        <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0a1c3d', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
-                          RAJASTHAN POLICE
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>
-                          Rajasthan Police Headquarters • Jaipur
-                        </div>
+                  {/* Certificate Header (3-Column Layout: Left Text, Center Logo, Right Event Logo) */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr auto 1fr',
+                    alignItems: 'center',
+                    borderBottom: '2px solid var(--police-gold-500)',
+                    paddingBottom: '12px',
+                    marginBottom: '16px'
+                  }}>
+                    {/* Left: Authority Text Stack */}
+                    <div style={{ textAlign: 'left' }}>
+                      <div style={{ fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--police-gold-700)', textTransform: 'uppercase' }}>
+                        GOVERNMENT OF RAJASTHAN
+                      </div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0a1c3d', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
+                        RAJASTHAN POLICE
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+                        Rajasthan Police Headquarters • Jaipur
                       </div>
                     </div>
 
-                    <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center' }}>
+                    {/* Center: Police Emblem Logo */}
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 14px' }}>
+                      <PoliceEmblem size={56} />
+                    </div>
+
+                    {/* Right: Official Event Logo */}
+                    <div style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                       <img 
                         src="/images/run_for_her_official_logo.jpg" 
                         alt="Run For Her Official Event Logo"
@@ -901,11 +915,11 @@ export function CertificateHub({ registrations = [] }) {
                     </div>
                   </div>
 
-                  {/* Statement */}
-                  <p style={{ textAlign: 'center', fontSize: '0.86rem', color: 'var(--text-body)', maxWidth: '640px', margin: '0 auto 16px auto', lineHeight: 1.55 }}>
-                    For demonstrating exceptional determination, endurance and commitment by successfully completing the <strong>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>Jaipur</strong>, supporting the cause of Women's Safety.
+                  {/* Statement (Pure Black High Contrast) */}
+                  <p style={{ textAlign: 'center', fontSize: '0.88rem', color: '#000000', maxWidth: '680px', margin: '0 auto 16px auto', lineHeight: 1.55, fontWeight: 500 }}>
+                    For demonstrating exceptional commitment towards women safety by successfully completing the <strong style={{ color: '#000000', fontWeight: 800 }}>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong style={{ color: '#000000', fontWeight: 800 }}>Jaipur</strong>.
                     <br />
-                    <em style={{ fontWeight: 600, color: 'var(--police-navy-900)', display: 'inline-block', marginTop: '4px' }}>"Running Together for a Safer Tomorrow."</em>
+                    <em style={{ fontWeight: 700, color: '#000000', display: 'inline-block', marginTop: '4px' }}>"Running Together for a Safer Tomorrow."</em>
                   </p>
 
                   {/* Metrics Matrix: Unified 5-Column Official Timing Grid for all participants */}

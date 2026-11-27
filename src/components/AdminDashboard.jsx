@@ -4258,23 +4258,32 @@ export function AdminDashboard({
                       </div>
 
                       <div style={{ position: 'relative', zIndex: 1 }}>
-                        {/* Header */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #d4af37', paddingBottom: '10px', marginBottom: '16px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', textAlign: 'left' }}>
-                            <PoliceEmblem size={44} />
-                            <div>
-                              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase' }}>
-                                GOVERNMENT OF RAJASTHAN
-                              </div>
-                              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0a1c3d' }}>
-                                RAJASTHAN POLICE
-                              </div>
-                              <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700 }}>
-                                Rajasthan Police Headquarters • Jaipur
-                              </div>
+                        {/* Header (3-Column Layout: Left Text, Center Logo, Right Event Logo) */}
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr auto 1fr',
+                          alignItems: 'center',
+                          borderBottom: '2px solid #d4af37',
+                          paddingBottom: '10px',
+                          marginBottom: '16px'
+                        }}>
+                          <div style={{ textAlign: 'left' }}>
+                            <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase' }}>
+                              GOVERNMENT OF RAJASTHAN
+                            </div>
+                            <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0a1c3d' }}>
+                              RAJASTHAN POLICE
+                            </div>
+                            <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700 }}>
+                              Rajasthan Police Headquarters • Jaipur
                             </div>
                           </div>
-                          <RunForHerBadge size={40} />
+                          <div style={{ display: 'flex', justifyContent: 'center', padding: '0 8px' }}>
+                            <PoliceEmblem size={44} />
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <RunForHerBadge size={40} />
+                          </div>
                         </div>
 
                         {/* Title & Presented To */}
@@ -4315,10 +4324,10 @@ export function AdminDashboard({
                           }} />
                         </div>
 
-                        <p style={{ fontSize: '0.78rem', color: '#334155', maxWidth: '530px', margin: '0 auto 14px auto', lineHeight: 1.5 }}>
-                          For demonstrating exceptional determination, endurance and commitment by successfully completing the <strong>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong>Jaipur</strong>, supporting the cause of Women's Safety.
+                        <p style={{ fontSize: '0.8rem', color: '#000000', maxWidth: '560px', margin: '0 auto 14px auto', lineHeight: 1.5, fontWeight: 500 }}>
+                          For demonstrating exceptional commitment towards women safety by successfully completing the <strong style={{ color: '#000000', fontWeight: 800 }}>{formatLocalizedCategory(previewCertRunner.categoryName || previewCertRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong style={{ color: '#000000', fontWeight: 800 }}>Jaipur</strong>.
                           <br />
-                          <em style={{ fontWeight: 600, color: '#0a1c3d', display: 'inline-block', marginTop: '3px' }}>"Running Together for a Safer Tomorrow."</em>
+                          <em style={{ fontWeight: 700, color: '#000000', display: 'inline-block', marginTop: '3px' }}>"Running Together for a Safer Tomorrow."</em>
                         </p>
 
                         {/* Badges / Metrics - Unified 5-Column Official Timing Grid for all participants */}
