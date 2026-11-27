@@ -140,8 +140,10 @@ export function CertificateHub({ registrations = [] }) {
     }
   };
 
-  const handleDownloadCertificatePNG = async (overrideRunner = null) => {
-    const runner = overrideRunner || selectedRunner;
+  const handleDownloadCertificatePNG = async (targetRunner = null) => {
+    const runner = (targetRunner && !targetRunner.nativeEvent && (targetRunner.certificateId || targetRunner.bibNumber || targetRunner.id))
+      ? targetRunner
+      : selectedRunner;
     if (!runner) return;
     setIsDownloadingCert(true);
 
@@ -424,10 +426,18 @@ export function CertificateHub({ registrations = [] }) {
         ctx.drawImage(logoImg, 690 - 35, 752, 70, 70);
       }
 
-      // Right: Security QR Code
-      if (qrCodeUrl) {
+      // Right: Security QR Code (generated and awaited directly for this runner)
+      try {
+        const certId = runner.certificateId || "RJ-POL-2027-CERT";
+        const origin = (typeof window !== 'undefined' && window.location.origin) ? window.location.origin : '';
+        const verifyUrl = `${origin}#verify?certId=${certId}`;
+        const runnerQrDataUrl = await QRCode.toDataURL(verifyUrl, {
+          width: 130,
+          margin: 1,
+          color: { dark: '#0a1c3d', light: '#ffffff' }
+        });
         const qrImg = new Image();
-        qrImg.src = qrCodeUrl;
+        qrImg.src = runnerQrDataUrl;
         await new Promise((r) => { qrImg.onload = r; qrImg.onerror = r; });
         if (qrImg.complete) {
           ctx.drawImage(qrImg, 1210, 742, 82, 82);
@@ -435,6 +445,8 @@ export function CertificateHub({ registrations = [] }) {
           ctx.lineWidth = 1;
           ctx.strokeRect(1210, 742, 82, 82);
         }
+      } catch (qrErr) {
+        console.warn("Failed to generate QR for certificate canvas:", qrErr);
       }
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 13px monospace";
@@ -954,7 +966,7 @@ export function CertificateHub({ registrations = [] }) {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <button
-                    onClick={handleDownloadCertificatePNG}
+                    onClick={() => handleDownloadCertificatePNG(selectedRunner)}
                     disabled={isDownloadingCert}
                     className="btn-primary"
                     style={{
