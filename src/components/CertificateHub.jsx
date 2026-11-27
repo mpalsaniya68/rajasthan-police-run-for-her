@@ -151,26 +151,26 @@ export function CertificateHub({ registrations = [] }) {
 
     try {
       const canvas = document.createElement("canvas");
-      canvas.width = 1240;
-      canvas.height = 1754;
+      canvas.width = 1380;
+      canvas.height = 980;
       const ctx = canvas.getContext("2d");
 
-      // 1. Parchment / Crisp Background (A4 Portrait 1240 x 1754)
+      // 1. Parchment / Crisp Background (Exact A4 Landscape 1.408 ratio)
       ctx.fillStyle = "#fafbfc";
-      ctx.fillRect(0, 0, 1240, 1754);
+      ctx.fillRect(0, 0, 1380, 980);
 
-      // 2. High-Authority Borders (A4 Portrait)
+      // 2. High-Authority Borders (Matching Sample Certificate)
       ctx.strokeStyle = "#0a1c3d";
       ctx.lineWidth = 14;
-      ctx.strokeRect(7, 7, 1226, 1740);
+      ctx.strokeRect(7, 7, 1366, 966);
 
       ctx.strokeStyle = "#d4af37";
       ctx.lineWidth = 4;
-      ctx.strokeRect(22, 22, 1196, 1710);
+      ctx.strokeRect(22, 22, 1336, 936);
 
       ctx.strokeStyle = "rgba(10, 28, 61, 0.25)";
       ctx.lineWidth = 1.5;
-      ctx.strokeRect(32, 32, 1176, 1690);
+      ctx.strokeRect(32, 32, 1316, 916);
 
       // Corner ornamental squares
       const drawCorner = (x, y) => {
@@ -180,9 +180,9 @@ export function CertificateHub({ registrations = [] }) {
         ctx.fillRect(x - 3, y - 3, 6, 6);
       };
       drawCorner(22, 22);
-      drawCorner(1218, 22);
-      drawCorner(22, 1732);
-      drawCorner(1218, 1732);
+      drawCorner(1358, 22);
+      drawCorner(22, 958);
+      drawCorner(1358, 958);
 
       // Load Official Police Logo, Event Logo & Beti Bachao Seal
       const logoImg = new Image();
@@ -228,7 +228,7 @@ export function CertificateHub({ registrations = [] }) {
       if (logoImg.complete && logoImg.naturalWidth > 0) {
         ctx.save();
         ctx.globalAlpha = 0.16;
-        ctx.drawImage(logoImg, 380, 580, 480, 480);
+        ctx.drawImage(logoImg, 465, 265, 450, 450);
         ctx.restore();
       }
 
@@ -247,36 +247,39 @@ export function CertificateHub({ registrations = [] }) {
       const runnerAvgPace = selectedRunner.avgPace || (cat.includes("21") ? "5:16 min/km" : cat.includes("10") ? "5:01 min/km" : "5:10 min/km");
       const runnerRank = selectedRunner.overallRank ? (String(selectedRunner.overallRank).startsWith('#') ? selectedRunner.overallRank : `#${selectedRunner.overallRank} Overall`) : (selectedRunner?.genderRank ? (String(selectedRunner.genderRank).startsWith('#') ? selectedRunner.genderRank : `#${selectedRunner.genderRank} Overall`) : (selectedRunner?.bibNumber ? `#${String(selectedRunner.bibNumber).replace(/\D/g, '').slice(-3) || '384'} Overall` : "#384 Overall"));
 
-      // 1. TOP HEADER (A4 Portrait)
+      // 1. TOP HEADER (Identical to Sample Certificate)
       // Top Left: Authority Text Stack
       ctx.textAlign = "left";
       ctx.fillStyle = "#b45309";
-      ctx.font = "bold 15px sans-serif";
-      ctx.fillText("GOVERNMENT OF RAJASTHAN", 60, 85);
+      ctx.font = "bold 13.5px sans-serif";
+      ctx.fillText("GOVERNMENT OF RAJASTHAN", 55, 74);
 
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "900 28px sans-serif";
-      ctx.fillText("RAJASTHAN POLICE", 60, 118);
+      ctx.fillText("RAJASTHAN POLICE", 55, 103);
 
       ctx.fillStyle = "#64748b";
-      ctx.font = "bold 14px sans-serif";
-      ctx.fillText("Rajasthan Police Headquarters • Jaipur", 60, 142);
+      ctx.font = "bold 13px sans-serif";
+      ctx.fillText("Rajasthan Police Headquarters • Jaipur", 55, 125);
 
-      // Top Center: Police Logo Emblem (Centered at 620)
+      // Top Center: Police Logo Emblem (Centered at 690)
       if (logoImg.complete && logoImg.naturalWidth > 0) {
-        ctx.drawImage(logoImg, 575, 62, 90, 90);
+        const logoW = 80;
+        const logoH = 80;
+        const logoX = 690 - (logoW / 2);
+        ctx.drawImage(logoImg, logoX, 52, logoW, logoH);
       }
 
       // Top Right: Official RUN FOR HER Marathon Event Logo
       if (eventLogoImg.complete && eventLogoImg.naturalWidth > 0) {
-        const evW = 160;
-        const evH = 80;
-        const evX = 1180 - evW;
-        const evY = 66;
+        const evW = 168;
+        const evH = 84;
+        const evX = 1380 - 55 - evW;
+        const evY = 50;
         ctx.drawImage(eventLogoImg, evX, evY, evW, evH);
       } else {
-        const badgeCX = 1130;
-        const badgeCY = 100;
+        const badgeCX = 1270;
+        const badgeCY = 82;
         ctx.save();
         ctx.beginPath();
         ctx.arc(badgeCX, badgeCY, 24, 0, 2 * Math.PI);
@@ -286,65 +289,65 @@ export function CertificateHub({ registrations = [] }) {
         ctx.fillStyle = "#dc2626";
         ctx.font = "bold 12.5px sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText("RUN FOR HER 2027", badgeCX, 140);
+        ctx.fillText("RUN FOR HER 2027", badgeCX, 126);
       }
 
       // Full Width Golden Line below Header
       ctx.fillStyle = "#d4af37";
-      ctx.fillRect(50, 170, 1140, 2.5);
+      ctx.fillRect(45, 146, 1290, 2);
 
       // 2. CERTIFICATE TITLE & AWARD
       ctx.fillStyle = "#0a1c3d";
-      ctx.font = "bold 38px Georgia, serif";
+      ctx.font = "bold 36px Georgia, serif";
       ctx.textAlign = "center";
-      ctx.fillText("CERTIFICATE OF ACHIEVEMENT", 620, 260);
+      ctx.fillText("CERTIFICATE OF ACHIEVEMENT", 690, 212);
 
       ctx.fillStyle = "#b45309";
-      ctx.font = "bold 17px sans-serif";
-      ctx.fillText("WOMEN'S SAFETY, DIGNITY & EMPOWERMENT", 620, 298);
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText("WOMEN'S SAFETY, DIGNITY & EMPOWERMENT", 690, 244);
 
       ctx.fillStyle = "#64748b";
-      ctx.font = "italic 18px sans-serif";
-      ctx.fillText("This certificate is hereby awarded to", 620, 380);
+      ctx.font = "italic 16.5px sans-serif";
+      ctx.fillText("This certificate is hereby awarded to", 690, 288);
 
-      // 3. RUNNER NAME in Calligraphy / Script Font (Directly touching underline)
+      // 3. RUNNER NAME in Calligraphy / Script Font
       try {
         if (typeof document !== 'undefined' && document.fonts) {
-          await document.fonts.load('56px "Great Vibes"');
+          await document.fonts.load('58px "Great Vibes"');
         }
       } catch (fontErr) {
         console.warn('Script font loading fallback:', fontErr);
       }
 
       const runnerName = toTitleCase(formatLocalizedName(selectedRunner.fullName || selectedRunner.full_name, false)) || "Participant";
-      let nameFontSize = 56;
+      let nameFontSize = 58;
       ctx.font = `${nameFontSize}px 'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive`;
-      while (ctx.measureText(runnerName).width > 740 && nameFontSize > 28) {
+      while (ctx.measureText(runnerName).width > 760 && nameFontSize > 28) {
         nameFontSize -= 2;
         ctx.font = `${nameFontSize}px 'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive`;
       }
       ctx.fillStyle = "#0a1c3d";
       ctx.textAlign = "center";
-      ctx.fillText(runnerName, 620, 500);
+      ctx.fillText(runnerName, 690, 360);
 
       const measuredNameW = ctx.measureText(runnerName).width;
       const underlineW = Math.max(measuredNameW + 60, 320);
       ctx.fillStyle = "#0a1c3d";
-      ctx.fillRect(620 - underlineW / 2, 508, underlineW, 2.5);
+      ctx.fillRect(690 - underlineW / 2, 360, underlineW, 2.5);
 
       // 4. STATEMENT (Pure Black High Contrast)
       ctx.fillStyle = "#000000";
-      ctx.font = "500 19px Georgia, serif";
+      ctx.font = "500 16.5px Georgia, serif";
       const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
 
-      ctx.fillText("For demonstrating exceptional commitment towards women safety by", 620, 600);
-      ctx.fillText(`successfully completing the ${catText} in Jaipur.`, 620, 630);
+      ctx.fillText("For demonstrating exceptional commitment towards women safety by successfully completing", 690, 408);
+      ctx.fillText(`the ${catText} in Jaipur.`, 690, 436);
 
-      ctx.font = "italic 700 18px Georgia, serif";
+      ctx.font = "italic 700 16.5px Georgia, serif";
       ctx.fillStyle = "#000000";
-      ctx.fillText("\"Running Together for a Safer Tomorrow.\"", 620, 675);
+      ctx.fillText("\"Running Together for a Safer Tomorrow.\"", 690, 468);
 
-      // 5. METRICS BOX (5-column card)
+      // 5. METRICS BOX (Exact 5-column card)
       const drawRRect = (x, y, w, h, r) => {
         ctx.beginPath();
         ctx.moveTo(x + r, y);
@@ -359,12 +362,12 @@ export function CertificateHub({ registrations = [] }) {
         ctx.closePath();
       };
 
-      const boxX = 60;
-      const boxY = 740;
-      const boxW = 1120;
-      const boxH = 110;
+      const boxX = 80;
+      const boxY = 502;
+      const boxW = 1220;
+      const boxH = 94;
 
-      ctx.fillStyle = "rgba(241, 245, 249, 0.65)";
+      ctx.fillStyle = "rgba(241, 245, 249, 0.55)";
       ctx.strokeStyle = "rgba(212, 175, 55, 0.55)";
       ctx.lineWidth = 1.5;
       drawRRect(boxX, boxY, boxW, boxH, 8);
@@ -383,46 +386,46 @@ export function CertificateHub({ registrations = [] }) {
       cols.forEach((col, idx) => {
         const cx = boxX + colW * idx + colW / 2;
         ctx.fillStyle = "#64748b";
-        ctx.font = "bold 13px sans-serif";
+        ctx.font = "bold 12.5px sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(col.label, cx, boxY + 40);
+        ctx.fillText(col.label, cx, boxY + 36);
 
         ctx.fillStyle = col.color;
         ctx.font = col.font;
-        ctx.fillText(col.val, cx, boxY + 78);
+        ctx.fillText(col.val, cx, boxY + 70);
 
         if (idx < cols.length - 1) {
           const divX = boxX + colW * (idx + 1);
           ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
           ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.moveTo(divX, boxY + 16);
-          ctx.lineTo(divX, boxY + boxH - 16);
+          ctx.moveTo(divX, boxY + 14);
+          ctx.lineTo(divX, boxY + boxH - 14);
           ctx.stroke();
         }
       });
 
-      // 6. BOTTOM FOOTER (Exact match to Preview)
-      // Left: DGP Signature (All Rajasthan Police Marathon Certificates)
-      const sigX = 220;
+      // 6. BOTTOM FOOTER (Exact match to Sample Certificate)
+      // Left: DGP Signature
+      const sigX = 210;
       ctx.textAlign = "center";
-      ctx.font = "italic bold 28px serif";
+      ctx.font = "italic bold 26px serif";
       ctx.fillStyle = "#0a1c3d";
-      ctx.fillText("Rajeev Sharma, IPS", sigX, 1530);
-      ctx.fillRect(sigX - 100, 1542, 200, 2);
-      ctx.font = "bold 15px sans-serif";
-      ctx.fillText("DIRECTOR GENERAL OF POLICE", sigX, 1566);
+      ctx.fillText("Rajeev Sharma, IPS", sigX, 765);
+      ctx.fillRect(sigX - 95, 775, 190, 2);
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("DIRECTOR GENERAL OF POLICE", sigX, 796);
       ctx.fillStyle = "#64748b";
-      ctx.font = "13px sans-serif";
-      ctx.fillText("Rajasthan Police Headquarters, Jaipur", sigX, 1588);
+      ctx.font = "12px sans-serif";
+      ctx.fillText("Rajasthan Police Headquarters, Jaipur", sigX, 814);
 
-      // Center: Beti Bachao Beti Padhao Emblem Seal (Official Campaign Seal - Centered at 620)
+      // Center: Beti Bachao Beti Padhao Emblem Seal
       if (betiBachaoSealImg.complete && betiBachaoSealImg.naturalWidth > 0) {
-        const sealSize = 100;
-        const sealX = 620 - (sealSize / 2);
-        ctx.drawImage(betiBachaoSealImg, sealX, 1500, sealSize, sealSize);
+        const sealSize = 78;
+        const sealX = 690 - (sealSize / 2);
+        ctx.drawImage(betiBachaoSealImg, sealX, 748, sealSize, sealSize);
       } else if (logoImg.complete && logoImg.naturalWidth > 0) {
-        ctx.drawImage(logoImg, 620 - 45, 1500, 90, 90);
+        ctx.drawImage(logoImg, 690 - 35, 752, 70, 70);
       }
 
       // Right: Security QR Code
@@ -431,19 +434,19 @@ export function CertificateHub({ registrations = [] }) {
         qrImg.src = qrCodeUrl;
         await new Promise((r) => { qrImg.onload = r; qrImg.onerror = r; });
         if (qrImg.complete) {
-          ctx.drawImage(qrImg, 1010, 1485, 96, 96);
+          ctx.drawImage(qrImg, 1210, 742, 82, 82);
           ctx.strokeStyle = "#cbd5e1";
           ctx.lineWidth = 1;
-          ctx.strokeRect(1010, 1485, 96, 96);
+          ctx.strokeRect(1210, 742, 82, 82);
         }
       }
       ctx.fillStyle = "#0a1c3d";
-      ctx.font = "bold 14px monospace";
+      ctx.font = "bold 13px monospace";
       ctx.textAlign = "center";
-      ctx.fillText(selectedRunner.certificateId || "RJ-POL-2027-CERT", 1058, 1605);
+      ctx.fillText(selectedRunner.certificateId || "RJ-POL-2027-CERT", 1251, 840);
       ctx.fillStyle = "#16a34a";
-      ctx.font = "bold 13px sans-serif";
-      ctx.fillText("✓ Digitally Verified", 1058, 1626);
+      ctx.font = "bold 12px sans-serif";
+      ctx.fillText("✓ Digitally Verified", 1251, 858);
 
       // Convert Canvas to PNG and Trigger Download
       canvas.toBlob((blob) => {
@@ -471,7 +474,7 @@ export function CertificateHub({ registrations = [] }) {
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   };
 
-  // Dedicated A4 Portrait Print Engine for Finisher Certificate (Pure Certificate Only)
+  // Dedicated A4 Landscape Print Engine for Finisher Certificate (Pure Certificate Only)
   const handlePrintCertificate = () => {
     let printStyle = document.getElementById('cert-print-page-style');
     if (!printStyle) {
@@ -479,7 +482,7 @@ export function CertificateHub({ registrations = [] }) {
       printStyle.id = 'cert-print-page-style';
       printStyle.innerHTML = `
         @page {
-          size: A4 portrait !important;
+          size: A4 landscape !important;
           margin: 0 !important;
         }
         @media print {
@@ -539,14 +542,14 @@ export function CertificateHub({ registrations = [] }) {
             justify-content: space-between !important;
             visibility: visible !important;
             box-sizing: border-box !important;
-            width: 200mm !important;
-            height: 285mm !important;
-            max-width: 200mm !important;
-            max-height: 285mm !important;
+            width: 280mm !important;
+            height: 196mm !important;
+            max-width: 280mm !important;
+            max-height: 196mm !important;
             margin: 5mm auto !important;
-            padding: 14mm 12mm 12mm 12mm !important;
+            padding: 16mm 22mm 12mm 22mm !important;
             background: #ffffff !important;
-            border: 8px double #b45309 !important;
+            border: 8px double #d4af37 !important;
             border-radius: 6px !important;
             box-shadow: none !important;
             position: relative !important;
@@ -587,7 +590,7 @@ export function CertificateHub({ registrations = [] }) {
     window.print();
   };
 
-  // Ensure browser Ctrl+P also triggers clean A4 portrait
+  // Ensure browser Ctrl+P also triggers clean A4 landscape
   useEffect(() => {
     const handleBeforePrint = () => {
       let printStyle = document.getElementById('cert-print-page-style');
@@ -596,7 +599,7 @@ export function CertificateHub({ registrations = [] }) {
         printStyle.id = 'cert-print-page-style';
         printStyle.innerHTML = `
           @page {
-            size: A4 portrait !important;
+            size: A4 landscape !important;
             margin: 0 !important;
           }
           @media print {
@@ -616,14 +619,14 @@ export function CertificateHub({ registrations = [] }) {
               justify-content: space-between !important;
               visibility: visible !important;
               box-sizing: border-box !important;
-              width: 200mm !important;
-              height: 285mm !important;
-              max-width: 200mm !important;
-              max-height: 285mm !important;
+              width: 280mm !important;
+              height: 196mm !important;
+              max-width: 280mm !important;
+              max-height: 196mm !important;
               margin: 5mm auto !important;
-              padding: 14mm 12mm 12mm 12mm !important;
+              padding: 16mm 22mm 12mm 22mm !important;
               background: #ffffff !important;
-              border: 8px double #b45309 !important;
+              border: 8px double #d4af37 !important;
               border-radius: 6px !important;
               box-shadow: none !important;
               position: relative !important;
@@ -792,31 +795,33 @@ export function CertificateHub({ registrations = [] }) {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: isIssued ? 'minmax(0, 595px) minmax(0, 320px)' : 'minmax(0, 595px)',
+            gridTemplateColumns: isIssued ? 'minmax(0, 960px) minmax(0, 300px)' : 'minmax(0, 960px)',
             justifyContent: 'center',
-            gap: '28px',
+            gap: '24px',
             alignItems: 'start'
           }}
           className="cert-responsive-grid"
         >
-          {/* THE OFFICIAL HIGH-DIGNITY CERTIFICATE (A4 PORTRAIT) */}
+          {/* THE OFFICIAL HIGH-DIGNITY CERTIFICATE (EXACT 1.402 A4 LANDSCAPE RATIO) */}
           <div style={{ overflowX: 'auto', paddingBottom: '10px', display: 'flex', justifyContent: 'center' }}>
             <div className="printable-certificate" lang="en" style={{
               background: '#ffffff',
               color: '#0a1c3d',
               borderRadius: '8px',
-              padding: 'clamp(28px, 4vw, 36px) clamp(20px, 3.5vw, 28px)',
+              padding: 'clamp(20px, 2.5vw, 28px) clamp(24px, 3.2vw, 36px)',
               boxShadow: 'var(--shadow-md)',
-              border: '10px double var(--police-gold-500)',
+              border: '8px double var(--police-gold-500)',
               position: 'relative',
               overflow: 'hidden',
               width: '100%',
-              maxWidth: '595px',
-              minHeight: '840px',
+              maxWidth: '960px',
+              minHeight: '680px',
+              aspectRatio: '1.402 / 1',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              margin: '0 auto'
             }}>
               {/* Watermark Rajasthan Police Crest - Crisp & continuously visible behind cards */}
               <div style={{
@@ -824,11 +829,11 @@ export function CertificateHub({ registrations = [] }) {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                opacity: 0.16,
+                opacity: 0.18,
                 pointerEvents: 'none',
                 zIndex: 0
               }}>
-                <PoliceEmblem size={360} />
+                <PoliceEmblem size={420} />
               </div>
 
               <div className="cert-inner-content" style={{
@@ -850,24 +855,24 @@ export function CertificateHub({ registrations = [] }) {
                     alignItems: 'center',
                     borderBottom: '2px solid var(--police-gold-500)',
                     paddingBottom: '12px',
-                    marginBottom: '18px'
+                    marginBottom: '16px'
                   }}>
                     {/* Left: Authority Text Stack */}
                     <div style={{ textAlign: 'left' }}>
-                      <div style={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.06em', color: 'var(--police-gold-700)', textTransform: 'uppercase' }}>
+                      <div style={{ fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--police-gold-700)', textTransform: 'uppercase' }}>
                         GOVERNMENT OF RAJASTHAN
                       </div>
-                      <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#0a1c3d', fontFamily: 'var(--font-heading)', lineHeight: 1.15 }}>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0a1c3d', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
                         RAJASTHAN POLICE
                       </div>
-                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                        Police Headquarters • Jaipur
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+                        Rajasthan Police Headquarters • Jaipur
                       </div>
                     </div>
 
                     {/* Center: Police Emblem Logo */}
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 8px' }}>
-                      <PoliceEmblem size={50} />
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 14px' }}>
+                      <PoliceEmblem size={56} />
                     </div>
 
                     {/* Right: Official Event Logo */}
@@ -875,16 +880,16 @@ export function CertificateHub({ registrations = [] }) {
                       <img 
                         src="/images/run_for_her_official_logo.jpg" 
                         alt="Run For Her Official Event Logo"
-                        style={{ height: '48px', width: 'auto', objectFit: 'contain' }}
+                        style={{ height: '56px', width: 'auto', objectFit: 'contain' }}
                       />
                     </div>
                   </div>
 
                   {/* Title */}
-                  <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                  <div style={{ textAlign: 'center', marginBottom: '14px' }}>
                     <div style={{
                       fontFamily: 'var(--font-serif)',
-                      fontSize: 'clamp(1.35rem, 2.5vw, 1.65rem)',
+                      fontSize: 'clamp(1.5rem, 3vw, 1.85rem)',
                       fontWeight: 700,
                       color: '#0a1c3d',
                       letterSpacing: '0.04em',
@@ -893,31 +898,31 @@ export function CertificateHub({ registrations = [] }) {
                       Certificate of Achievement
                     </div>
                     <div style={{
-                      fontSize: '0.74rem',
+                      fontSize: '0.8rem',
                       fontWeight: 800,
                       color: 'var(--police-gold-700)',
                       letterSpacing: '0.06em',
                       textTransform: 'uppercase',
-                      marginTop: '3px'
+                      marginTop: '2px'
                     }}>
                       Women's Safety, Dignity & Empowerment
                     </div>
                   </div>
 
                   {/* Presented To */}
-                  <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '4px' }}>
+                  <div style={{ textAlign: 'center', marginBottom: '14px' }}>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '2px' }}>
                       This certificate is hereby awarded to
                     </div>
                     <div style={{
                       position: 'relative',
                       display: 'inline-block',
-                      fontSize: 'clamp(2.2rem, 4vw, 2.85rem)',
-                      lineHeight: 1.1,
+                      fontSize: 'clamp(2.6rem, 4.4vw, 3.4rem)',
+                      lineHeight: 1.0,
                       fontWeight: 400,
                       color: '#0a1c3d',
                       fontFamily: "'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive",
-                      padding: '0 20px',
+                      padding: '0 32px',
                       margin: '0 auto 6px auto',
                       textAlign: 'center'
                     }}>
@@ -930,10 +935,10 @@ export function CertificateHub({ registrations = [] }) {
                       </span>
                       <div style={{
                         position: 'absolute',
-                        bottom: '0.2em',
+                        bottom: '0.22em',
                         left: '0',
                         right: '0',
-                        height: '2px',
+                        height: '2.5px',
                         background: '#0a1c3d',
                         zIndex: 1,
                         pointerEvents: 'none'
@@ -941,100 +946,100 @@ export function CertificateHub({ registrations = [] }) {
                     </div>
                   </div>
 
-                  {/* Statement (High Contrast) */}
-                  <p style={{ textAlign: 'center', fontSize: '0.82rem', color: '#000000', maxWidth: '480px', margin: '0 auto 18px auto', lineHeight: 1.6, fontWeight: 500 }}>
+                  {/* Statement (Pure Black High Contrast) */}
+                  <p style={{ textAlign: 'center', fontSize: '0.88rem', color: '#000000', maxWidth: '680px', margin: '0 auto 16px auto', lineHeight: 1.55, fontWeight: 500 }}>
                     For demonstrating exceptional commitment towards women safety by successfully completing the <strong style={{ color: '#000000', fontWeight: 800 }}>{formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || '21 KM Half Marathon'}</strong> in <strong style={{ color: '#000000', fontWeight: 800 }}>Jaipur</strong>.
                     <br />
-                    <em style={{ fontWeight: 700, color: '#000000', display: 'inline-block', marginTop: '6px' }}>"Running Together for a Safer Tomorrow."</em>
+                    <em style={{ fontWeight: 700, color: '#000000', display: 'inline-block', marginTop: '4px' }}>"Running Together for a Safer Tomorrow."</em>
                   </p>
 
                   {/* Metrics Matrix: Unified 5-Column Official Timing Grid for all participants */}
                   <div style={{
-                    background: 'rgba(241, 245, 249, 0.55)',
+                    background: 'rgba(241, 245, 249, 0.45)',
                     backdropFilter: 'blur(1.5px)',
                     border: '1.5px solid rgba(212, 175, 55, 0.45)',
                     borderRadius: '8px',
-                    padding: '10px 6px',
+                    padding: '12px 16px',
                     display: 'grid',
                     gridTemplateColumns: 'repeat(5, 1fr)',
-                    gap: '4px',
+                    gap: '8px',
                     textAlign: 'center',
-                    marginBottom: '18px',
+                    marginBottom: '16px',
                     position: 'relative'
                   }}>
                     <div>
-                      <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', fontWeight: 700 }}>REG. NO.</div>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--crimson-600)' }}>{formatBibNumber(selectedRunner.bibNumber)}</div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>REGISTRATION NO.</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--crimson-600)' }}>{formatBibNumber(selectedRunner.bibNumber)}</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', fontWeight: 700 }}>GUN TIME</div>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerGunTime}</div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>GUN TIME</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerGunTime}</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', fontWeight: 700 }}>CHIP TIME</div>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerChipTime}</div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>CHIP TIME</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerChipTime}</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', fontWeight: 700 }}>AVG PACE</div>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerAvgPace}</div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>AVG PACE</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0a1c3d' }}>{runnerAvgPace}</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', fontWeight: 700 }}>RANK</div>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#047857' }}>{runnerRank}</div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700 }}>RANK</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#047857' }}>{runnerRank}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Bottom Signatures & Seal (Anchored firmly at bottom) */}
-                {/* Certificate Footer (3-Column Layout: Left Signature, Center Seal, Right QR Code) */}
+                {/* Certificate Footer (3-Column Layout: Left Signature, Center Seal aligned to Top Logo, Right QR Code) */}
                 <div className="cert-footer-content" style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr auto 1fr',
                   alignItems: 'flex-end',
                   borderTop: '1.5px solid var(--border-subtle)',
-                  paddingTop: '14px',
+                  paddingTop: '16px',
                   marginTop: 'auto',
                   width: '100%'
                 }}>
                   {/* Left: DGP Signature */}
-                  <div style={{ textAlign: 'left', minWidth: '130px' }}>
+                  <div style={{ textAlign: 'left', minWidth: '170px' }}>
                     <div style={{
                       fontFamily: 'var(--font-serif)',
                       fontStyle: 'italic',
-                      fontSize: '1.1rem',
+                      fontSize: '1.25rem',
                       color: '#0a1c3d',
                       fontWeight: 700,
-                      marginBottom: '2px'
+                      marginBottom: '4px'
                     }}>
                       Rajeev Sharma, IPS
                     </div>
-                    <div style={{ height: '1.5px', background: '#0a1c3d', width: '130px', marginBottom: '3px' }}></div>
-                    <div style={{ fontSize: '0.66rem', fontWeight: 800, color: '#0a1c3d', letterSpacing: '0.02em' }}>
+                    <div style={{ height: '2px', background: '#0a1c3d', width: '150px', marginBottom: '4px' }}></div>
+                    <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0a1c3d', letterSpacing: '0.02em' }}>
                       DIRECTOR GENERAL OF POLICE
                     </div>
-                    <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)' }}>
+                    <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
                       Rajasthan Police Headquarters, Jaipur
                     </div>
                   </div>
 
-                  {/* Center: Beti Bachao Beti Padhao Emblem Seal */}
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 8px' }}>
+                  {/* Center: Beti Bachao Beti Padhao Emblem Seal - Aligned with Top Center Logo */}
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 14px' }}>
                     <img 
                       src="/images/beti_bachao_seal.png" 
                       alt="Beti Bachao Beti Padhao Official Emblem" 
-                      style={{ width: '64px', height: '64px', objectFit: 'contain', display: 'inline-block' }} 
+                      style={{ width: '68px', height: '68px', objectFit: 'contain', display: 'inline-block' }} 
                     />
                   </div>
 
                   {/* Right: Security QR Code & Certificate ID */}
-                  <div style={{ textAlign: 'right', minWidth: '100px' }}>
+                  <div style={{ textAlign: 'right', minWidth: '110px' }}>
                     {qrCodeUrl && (
-                      <img src={qrCodeUrl} alt="Verify QR" style={{ width: '60px', height: '60px', border: '1px solid var(--border-subtle)', padding: '2px', borderRadius: '4px', display: 'inline-block' }} />
+                      <img src={qrCodeUrl} alt="Verify QR" style={{ width: '68px', height: '68px', border: '1px solid var(--border-subtle)', padding: '2px', borderRadius: '4px', display: 'inline-block' }} />
                     )}
-                    <div style={{ fontSize: '0.62rem', fontWeight: 800, color: '#0a1c3d', marginTop: '2px', fontFamily: 'monospace' }}>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0a1c3d', marginTop: '3px', fontFamily: 'monospace' }}>
                       {selectedRunner.certificateId}
                     </div>
-                    <div style={{ fontSize: '0.58rem', color: '#16a34a', fontWeight: 700 }}>
+                    <div style={{ fontSize: '0.60rem', color: '#16a34a', fontWeight: 700 }}>
                       ✓ Digitally Verified
                     </div>
                   </div>
