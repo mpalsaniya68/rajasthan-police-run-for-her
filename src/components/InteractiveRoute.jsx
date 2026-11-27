@@ -11,7 +11,6 @@ import {
   Flag, 
   Clock, 
   Award,
-  CheckCircle2,
   Compass
 } from 'lucide-react';
 import { 
@@ -240,11 +239,6 @@ export function InteractiveRoute() {
                       {tab.label}
                     </span>
                   </div>
-                  {isSelected && (
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.74rem', fontWeight: 800, color: tab.accent }}>
-                      <CheckCircle2 size={13} /> {isHindi ? 'सक्रिय मैप' : 'Active Map'}
-                    </span>
-                  )}
                 </div>
               </button>
             );

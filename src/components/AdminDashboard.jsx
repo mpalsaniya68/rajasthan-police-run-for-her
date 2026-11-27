@@ -1531,17 +1531,6 @@ export function AdminDashboard({
               >
                 <PackageCheck size={16} color={adminTab === "kit_counter" ? "#2563eb" : "#64748b"} />
                 <span>{isHindi ? 'RFID किट आवंटन' : 'RFID Kit Allotment'}</span>
-                <span style={{
-                  background: '#fef3c7',
-                  color: '#92400e',
-                  fontSize: '0.65rem',
-                  padding: '2px 6px',
-                  borderRadius: '10px',
-                  border: '1px solid #fde68a',
-                  fontWeight: 700
-                }}>
-                  {isHindi ? 'लाइव काउंटर' : 'Live Counter'}
-                </span>
               </button>
 
               {/* Point 2: Leaderboard & Race Day Results */}
@@ -1586,17 +1575,6 @@ export function AdminDashboard({
               >
                 <Users size={16} color={adminTab === "volunteers" ? "#16a34a" : "#64748b"} />
                 <span>{isHindi ? '👥 वॉलंटियर व ड्यूटी रोस्टर' : '👥 Volunteer & Duty Roster'}</span>
-                <span style={{
-                  background: adminTab === "volunteers" ? '#dcfce7' : '#f1f5f9',
-                  color: adminTab === "volunteers" ? '#15803d' : '#64748b',
-                  fontSize: '0.65rem',
-                  padding: '2px 7px',
-                  borderRadius: '10px',
-                  border: '1px solid #bbf7d0',
-                  fontWeight: 700
-                }}>
-                  {isHindi ? 'राज्य कमान' : 'State Command'}
-                </span>
               </button>
 
               {/* Point 4: Statewide & District Certificate Management Hub */}
@@ -1641,17 +1619,6 @@ export function AdminDashboard({
               >
                 <Send size={15} color={adminTab === "broadcast" ? "#059669" : "#64748b"} />
                 <span>{isHindi ? '📢 संदेश प्रसारण' : '📢 Broadcast Center'}</span>
-                <span style={{
-                  background: adminTab === "broadcast" ? '#d1fae5' : '#f1f5f9',
-                  color: adminTab === "broadcast" ? '#065f46' : '#64748b',
-                  fontSize: '0.65rem',
-                  padding: '2px 7px',
-                  borderRadius: '10px',
-                  border: '1px solid #a7f3d0',
-                  fontWeight: 800
-                }}>
-                  {isHindi ? 'व्हाट्सएप / SMS' : 'WhatsApp / SMS'}
-                </span>
               </button>
             </>
           ) : (
