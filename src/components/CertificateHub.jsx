@@ -474,7 +474,7 @@ export function CertificateHub({ registrations = [] }) {
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   };
 
-  // Dedicated A4 Landscape Print Engine for Finisher Certificate (Pure Certificate Only)
+  // Dedicated A4 Landscape Print Engine for Finisher Certificate (Page Orientation)
   const handlePrintCertificate = () => {
     let printStyle = document.getElementById('cert-print-page-style');
     if (!printStyle) {
@@ -484,97 +484,6 @@ export function CertificateHub({ registrations = [] }) {
         @page {
           size: A4 landscape !important;
           margin: 0 !important;
-        }
-        @media print {
-          html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #ffffff !important;
-            width: 100% !important;
-            height: 100% !important;
-          }
-          header, footer, nav, button, input, select, form,
-          .topbar, .navbar-container, .no-print,
-          .section-header, .gov-card, .cert-dispatch-controls,
-          #page-certificates > div:first-child,
-          #page-certificates .section-header,
-          #page-certificates .gov-card,
-          #page-certificates .cert-dispatch-controls,
-          .registration-breadcrumb {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-          }
-          #page-certificates .section-padding {
-            padding: 0 !important;
-            margin: 0 !important;
-            background: #ffffff !important;
-            border: none !important;
-          }
-          #page-certificates .container {
-            max-width: 100% !important;
-            width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-          }
-          #page-certificates .cert-responsive-grid {
-            display: block !important;
-            width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-          }
-          #page-certificates .cert-responsive-grid > div:first-child {
-            padding: 0 !important;
-            margin: 0 !important;
-            width: 100% !important;
-            display: flex !important;
-            justify-content: center !important;
-            overflow: visible !important;
-          }
-          #page-certificates .cert-responsive-grid > div:last-child {
-            display: none !important;
-          }
-          .printable-certificate {
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            visibility: visible !important;
-            box-sizing: border-box !important;
-            width: 280mm !important;
-            height: 196mm !important;
-            max-width: 280mm !important;
-            max-height: 196mm !important;
-            margin: 5mm auto !important;
-            padding: 16mm 22mm 12mm 22mm !important;
-            background: #ffffff !important;
-            border: 8px double #d4af37 !important;
-            border-radius: 6px !important;
-            box-shadow: none !important;
-            position: relative !important;
-            overflow: hidden !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-            page-break-after: avoid !important;
-            break-after: avoid !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          .printable-certificate .cert-inner-content {
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            height: 100% !important;
-            width: 100% !important;
-            flex: 1 !important;
-          }
-          .printable-certificate .cert-footer-content {
-            margin-top: auto !important;
-            padding-top: 14px !important;
-            border-top: 1.5px solid #cbd5e1 !important;
-            width: 100% !important;
-          }
         }
       `;
       document.head.appendChild(printStyle);
@@ -601,57 +510,6 @@ export function CertificateHub({ registrations = [] }) {
           @page {
             size: A4 landscape !important;
             margin: 0 !important;
-          }
-          @media print {
-            header, footer, nav, button, input, select, form,
-            .topbar, .navbar-container, .no-print,
-            .section-header, .gov-card, .cert-dispatch-controls,
-            #page-certificates > div:first-child,
-            #page-certificates .section-header,
-            #page-certificates .gov-card,
-            #page-certificates .cert-dispatch-controls {
-              display: none !important;
-              visibility: hidden !important;
-            }
-            .printable-certificate {
-              display: flex !important;
-              flex-direction: column !important;
-              justify-content: space-between !important;
-              visibility: visible !important;
-              box-sizing: border-box !important;
-              width: 280mm !important;
-              height: 196mm !important;
-              max-width: 280mm !important;
-              max-height: 196mm !important;
-              margin: 5mm auto !important;
-              padding: 16mm 22mm 12mm 22mm !important;
-              background: #ffffff !important;
-              border: 8px double #d4af37 !important;
-              border-radius: 6px !important;
-              box-shadow: none !important;
-              position: relative !important;
-              overflow: hidden !important;
-              page-break-inside: avoid !important;
-              break-inside: avoid !important;
-              page-break-after: avoid !important;
-              break-after: avoid !important;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-            .printable-certificate .cert-inner-content {
-              display: flex !important;
-              flex-direction: column !important;
-              justify-content: space-between !important;
-              height: 100% !important;
-              width: 100% !important;
-              flex: 1 !important;
-            }
-            .printable-certificate .cert-footer-content {
-              margin-top: auto !important;
-              padding-top: 14px !important;
-              border-top: 1.5px solid #cbd5e1 !important;
-              width: 100% !important;
-            }
           }
         `;
         document.head.appendChild(printStyle);
