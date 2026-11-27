@@ -4247,7 +4247,7 @@ export function AdminDashboard({
                               RAJASTHAN POLICE
                             </div>
                             <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700 }}>
-                              Rajasthan Police Headquarters • Jaipur
+                              Committed to Serve
                             </div>
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'center', padding: '0 8px' }}>

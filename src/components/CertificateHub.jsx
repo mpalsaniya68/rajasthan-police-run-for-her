@@ -260,7 +260,7 @@ export function CertificateHub({ registrations = [] }) {
 
       ctx.fillStyle = "#64748b";
       ctx.font = "bold 13px sans-serif";
-      ctx.fillText("Rajasthan Police Headquarters • Jaipur", 55, 125);
+      ctx.fillText("Committed to Serve", 55, 125);
 
       // Top Center: Police Logo Emblem (Centered at 690)
       if (logoImg.complete && logoImg.naturalWidth > 0) {
@@ -724,7 +724,7 @@ export function CertificateHub({ registrations = [] }) {
                         RAJASTHAN POLICE
                       </div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>
-                        Rajasthan Police Headquarters • Jaipur
+                        Committed to Serve
                       </div>
                     </div>
 
