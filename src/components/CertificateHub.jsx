@@ -64,7 +64,7 @@ export function CertificateHub({ registrations = [] }) {
 
   const openNotIssuedPopup = () => {
     setCertNoticePopup({
-      title: isHindi ? "⏳ प्रमाण पत्र रेस डे (24 जनवरी 2027) के बाद उपलब्ध होगा" : "⏳ Certificate available after Race Day (24 Jan 2027)",
+      title: isHindi ? "⏳ प्रमाण पत्र रेस डे (24 जनवरी 2027) के बाद डाउनलोड हेतु उपलब्ध होगा" : "⏳ Certificate available after Race Day (24 Jan 2027)",
       message: isHindi
         ? "आपका पंजीकरण पूर्णतः सुरक्षित है! 24 जनवरी 2027 को दौड़ संपन्न होने, RFID टाइमिंग व उपस्थिति सत्यापन के उपरांत आपका अधिकृत डिजिटल प्रमाण पत्र यहाँ स्वतः डाउनलोड हेतु उपलब्ध हो जाएगा।"
         : "Your registration is completely safe! Official digital certificate will be automatically available for download here after race completion, RFID timing, and committee verification on 24 January 2027."
@@ -79,6 +79,21 @@ export function CertificateHub({ registrations = [] }) {
     setSearchFeedback(null);
     setCertNoticePopup(null);
 
+    const onRunnerFound = (runner) => {
+      setSelectedRunner(runner);
+      if (!checkRunnerIssued(runner)) {
+        openNotIssuedPopup();
+      } else {
+        setSearchFeedback({
+          type: 'success',
+          message: isHindi
+            ? `✓ प्रमाण पत्र प्राप्त हुआ (${runner.certificateId || runner.bibNumber}) - डाउनलोड शुरू हो रहा है...`
+            : `✓ Certificate found (${runner.certificateId || runner.bibNumber}) - Downloading...`
+        });
+        handleDownloadCertificatePNG(runner);
+      }
+    };
+
     // 1. Check in local loaded registrations
     const foundLocal = registrations.find(r => 
       (r.bibNumber && r.bibNumber.toLowerCase() === q) || 
@@ -88,17 +103,7 @@ export function CertificateHub({ registrations = [] }) {
     );
 
     if (foundLocal) {
-      setSelectedRunner(foundLocal);
-      if (!checkRunnerIssued(foundLocal)) {
-        openNotIssuedPopup();
-      } else {
-        setSearchFeedback({
-          type: 'success',
-          message: isHindi
-            ? `प्रमाण पत्र उपलब्ध (${foundLocal.certificateId || foundLocal.bibNumber})`
-            : `Certificate Available (${foundLocal.certificateId || foundLocal.bibNumber})`
-        });
-      }
+      onRunnerFound(foundLocal);
       return;
     }
 
@@ -108,23 +113,13 @@ export function CertificateHub({ registrations = [] }) {
       const res = await apiVerifyCertificate(rawQ);
       setIsSearching(false);
       if (res && res.success && res.certificate) {
-        setSelectedRunner(res.certificate);
-        if (!checkRunnerIssued(res.certificate)) {
-          openNotIssuedPopup();
-        } else {
-          setSearchFeedback({
-            type: 'success',
-            message: isHindi
-              ? `प्रमाण पत्र सत्यापित (${res.certificate.certificateId})`
-              : `Certificate Verified (${res.certificate.certificateId})`
-          });
-        }
+        onRunnerFound(res.certificate);
       } else if (res && (res.status === 404 || (res.error && res.error.includes("रिकॉर्ड में नहीं मिला")))) {
         setSearchFeedback({
           type: 'error',
           message: isHindi 
-            ? `दर्ज किए गए विवरण "${rawQ}" से संबंधित कोई प्रमाण पत्र रिकॉर्ड नहीं मिला।` 
-            : `No certificate record found matching "${rawQ}".`
+            ? `दर्ज किए गए विवरण "${rawQ}" से संबंधित कोई प्रमाण पत्र रिकॉर्ड नहीं मिला। कृपया सही पंजीकरण संख्या या मोबाइल नंबर दर्ज करें।` 
+            : `No certificate record found matching "${rawQ}". Please check your registration or mobile number.`
         });
       } else {
         setSearchFeedback({
@@ -145,8 +140,9 @@ export function CertificateHub({ registrations = [] }) {
     }
   };
 
-  const handleDownloadCertificatePNG = async () => {
-    if (!selectedRunner) return;
+  const handleDownloadCertificatePNG = async (overrideRunner = null) => {
+    const runner = overrideRunner || selectedRunner;
+    if (!runner) return;
     setIsDownloadingCert(true);
 
     try {
@@ -232,20 +228,20 @@ export function CertificateHub({ registrations = [] }) {
         ctx.restore();
       }
 
-      const bib = String(selectedRunner.bibNumber || selectedRunner.bib_number || "").toUpperCase();
-      const distId = String(selectedRunner.districtId || selectedRunner.district_id || "").toLowerCase();
-      const distName = String(selectedRunner.districtName || selectedRunner.district_name || "").toLowerCase();
-      const cat = String(selectedRunner.category || selectedRunner.categoryId || selectedRunner.category_id || selectedRunner.categoryName || selectedRunner.category_name || "").toLowerCase();
+      const bib = String(runner.bibNumber || runner.bib_number || "").toUpperCase();
+      const distId = String(runner.districtId || runner.district_id || "").toLowerCase();
+      const distName = String(runner.districtName || runner.district_name || "").toLowerCase();
+      const cat = String(runner.category || runner.categoryId || runner.category_id || runner.categoryName || runner.category_name || "").toLowerCase();
 
       const isTimedCategory = cat.includes("21") || cat.includes("10") || bib.includes("21K") || bib.includes("10K");
       const isTimedCompetitive = isTimedCategory;
 
-      const pureDistrictEn = formatLocalizedDistrict(selectedRunner.districtName || selectedRunner.district_name, false) || "Jaipur";
+      const pureDistrictEn = formatLocalizedDistrict(runner.districtName || runner.district_name, false) || "Jaipur";
 
-      const runnerGunTime = selectedRunner.finishTime || selectedRunner.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
-      const runnerChipTime = selectedRunner.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
-      const runnerAvgPace = selectedRunner.avgPace || (cat.includes("21") ? "5:16 min/km" : cat.includes("10") ? "5:01 min/km" : "5:10 min/km");
-      const runnerRank = selectedRunner.overallRank ? (String(selectedRunner.overallRank).startsWith('#') ? selectedRunner.overallRank : `#${selectedRunner.overallRank} Overall`) : (selectedRunner?.genderRank ? (String(selectedRunner.genderRank).startsWith('#') ? selectedRunner.genderRank : `#${selectedRunner.genderRank} Overall`) : (selectedRunner?.bibNumber ? `#${String(selectedRunner.bibNumber).replace(/\D/g, '').slice(-3) || '384'} Overall` : "#384 Overall"));
+      const runnerGunTime = runner.finishTime || runner.finish_time || (cat.includes("21") ? "01:52:18" : cat.includes("10") ? "00:51:24" : "00:26:40");
+      const runnerChipTime = runner.chipTime || (cat.includes("21") ? "01:51:04" : cat.includes("10") ? "00:50:10" : "00:25:52");
+      const runnerAvgPace = runner.avgPace || (cat.includes("21") ? "5:16 min/km" : cat.includes("10") ? "5:01 min/km" : "5:10 min/km");
+      const runnerRank = runner.overallRank ? (String(runner.overallRank).startsWith('#') ? runner.overallRank : `#${runner.overallRank} Overall`) : (runner?.genderRank ? (String(runner.genderRank).startsWith('#') ? runner.genderRank : `#${runner.genderRank} Overall`) : (runner?.bibNumber ? `#${String(runner.bibNumber).replace(/\D/g, '').slice(-3) || '384'} Overall` : "#384 Overall"));
 
       // 1. TOP HEADER (Identical to Sample Certificate)
       // Top Left: Authority Text Stack
@@ -319,7 +315,7 @@ export function CertificateHub({ registrations = [] }) {
         console.warn('Script font loading fallback:', fontErr);
       }
 
-      const runnerName = toTitleCase(formatLocalizedName(selectedRunner.fullName || selectedRunner.full_name, false)) || "Participant";
+      const runnerName = toTitleCase(formatLocalizedName(runner.fullName || runner.full_name, false)) || "Participant";
       let nameFontSize = 58;
       ctx.font = `${nameFontSize}px 'Segoe Script', 'Brush Script MT', 'Great Vibes', cursive`;
       while (ctx.measureText(runnerName).width > 760 && nameFontSize > 28) {
@@ -338,7 +334,7 @@ export function CertificateHub({ registrations = [] }) {
       // 4. STATEMENT (Pure Black High Contrast)
       ctx.fillStyle = "#000000";
       ctx.font = "500 16.5px Georgia, serif";
-      const catText = formatLocalizedCategory(selectedRunner.categoryName || selectedRunner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
+      const catText = formatLocalizedCategory(runner.categoryName || runner.category, false) || (isTimedCompetitive ? "21 KM Half Marathon" : "5 KM Community Run");
 
       ctx.fillText("For demonstrating exceptional commitment towards women safety by successfully completing", 690, 408);
       ctx.fillText(`the ${catText} in Jaipur.`, 690, 436);
@@ -376,7 +372,7 @@ export function CertificateHub({ registrations = [] }) {
 
       const colW = boxW / 5;
       const cols = [
-        { label: "REGISTRATION NO.", val: formatBibNumber(selectedRunner.bibNumber) || "RJ-05K-1003", color: "#dc2626", font: "bold 20px monospace" },
+        { label: "REGISTRATION NO.", val: formatBibNumber(runner.bibNumber) || "RJ-05K-1003", color: "#dc2626", font: "bold 20px monospace" },
         { label: "GUN TIME", val: runnerGunTime, color: "#0a1c3d", font: "bold 20px monospace" },
         { label: "CHIP TIME", val: runnerChipTime, color: "#0a1c3d", font: "bold 20px monospace" },
         { label: "AVG PACE", val: runnerAvgPace, color: "#0a1c3d", font: "bold 20px sans-serif" },
@@ -443,7 +439,7 @@ export function CertificateHub({ registrations = [] }) {
       ctx.fillStyle = "#0a1c3d";
       ctx.font = "bold 13px monospace";
       ctx.textAlign = "center";
-      ctx.fillText(selectedRunner.certificateId || "RJ-POL-2027-CERT", 1251, 840);
+      ctx.fillText(runner.certificateId || "RJ-POL-2027-CERT", 1251, 840);
       ctx.fillStyle = "#16a34a";
       ctx.font = "bold 12px sans-serif";
       ctx.fillText("✓ Digitally Verified", 1251, 858);
@@ -452,7 +448,7 @@ export function CertificateHub({ registrations = [] }) {
       canvas.toBlob((blob) => {
         if (!blob) return;
         const link = document.createElement("a");
-        const cleanBib = (formatBibNumber(selectedRunner.bibNumber) || "FINISHER").replace(/[^a-zA-Z0-9_-]/g, "_");
+        const cleanBib = (formatBibNumber(runner.bibNumber) || "FINISHER").replace(/[^a-zA-Z0-9_-]/g, "_");
         link.download = `Rajasthan_Police_Certificate_${cleanBib}.png`;
         link.href = URL.createObjectURL(blob);
         document.body.appendChild(link);
@@ -571,12 +567,15 @@ export function CertificateHub({ registrations = [] }) {
           flexWrap: 'wrap',
           gap: '12px'
         }}>
-          {/* Quick Select Buttons */}
+          {/* Quick Select Buttons (Only 2 Sample Certificates) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>क्विक रनर चयन:</span>
-            {registrations.slice(0, 4).map(r => (
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+              {isHindi ? 'नमूना प्रमाण पत्र (2):' : 'Sample Certificates (2):'}
+            </span>
+            {registrations.slice(0, 2).map(r => (
               <button
                 key={r.id}
+                type="button"
                 onClick={() => setSelectedRunner(r)}
                 style={{
                   padding: '5px 12px',
@@ -585,7 +584,8 @@ export function CertificateHub({ registrations = [] }) {
                   fontWeight: 700,
                   background: selectedRunner.id === r.id ? 'var(--police-navy-800)' : 'var(--police-navy-50)',
                   color: selectedRunner.id === r.id ? '#ffffff' : 'var(--text-body)',
-                  border: '1px solid var(--border-subtle)'
+                  border: '1px solid var(--border-subtle)',
+                  cursor: 'pointer'
                 }}
               >
                 {r.fullName} ({r.category.toUpperCase()})
@@ -593,27 +593,65 @@ export function CertificateHub({ registrations = [] }) {
             ))}
           </div>
 
-          {/* Search by Bib or Phone */}
-          <form onSubmit={handleSearch} style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          {/* Search by Registration No. or Phone to Self-Download */}
+          <form onSubmit={handleSearch} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
             <input
               type="text"
-              placeholder={isHindi ? "पंजीकरण सं. या मोबाइल नंबर..." : "Registration No. or Mobile..."}
+              placeholder={isHindi ? "पंजीकरण संख्या या मोबाइल नंबर दर्ज करें..." : "Enter Registration No. or Mobile..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
-                padding: '7px 12px',
-                borderRadius: '4px',
+                padding: '8px 14px',
+                borderRadius: '6px',
                 background: '#ffffff',
-                border: '1px solid var(--border-strong)',
+                border: '1.5px solid var(--border-strong)',
                 color: 'var(--text-main)',
-                fontSize: '0.82rem',
-                minWidth: '180px'
+                fontSize: '0.85rem',
+                minWidth: '280px'
               }}
             />
-            <button type="submit" disabled={isSearching} className="btn-navy" style={{ padding: '7px 14px', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <Search size={14} /> {isSearching ? "सत्यापित हो रहा है..." : "सत्यापित करें"}
+            <button
+              type="submit"
+              disabled={isSearching}
+              className="btn-navy"
+              style={{
+                padding: '8px 18px',
+                fontSize: '0.85rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'var(--police-navy-900)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer'
+              }}
+            >
+              <Download size={15} color="#fde68a" />
+              {isSearching
+                ? (isHindi ? "डाउनलोड हो रहा है..." : "Downloading...")
+                : (isHindi ? "सर्टिफिकेट डाउनलोड करें" : "Download Certificate")}
             </button>
           </form>
+
+          {/* Helpful Participant Self-Download Guidance Notice */}
+          <div style={{
+            width: '100%',
+            fontSize: '0.78rem',
+            color: '#64748b',
+            marginTop: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <span>ℹ️</span>
+            <span>
+              {isHindi
+                ? "प्रतिभागी अपनी पंजीकरण संख्या या पंजीकृत मोबाइल नंबर डालकर सीधे अपना आधिकारिक ई-सर्टिफिकेट डाउनलोड कर सकते हैं। (24 जनवरी 2027 दौड़ संपन्न होने के बाद डाउनलोड उपलब्ध होगा)"
+                : "Participants can enter their registration or mobile number to download their official e-certificate directly. (Available after race completion on 24 Jan 2027)"}
+            </span>
+          </div>
         </div>
 
         {/* Real-time Police Database Verification Feedback */}
