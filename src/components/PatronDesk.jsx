@@ -45,27 +45,6 @@ export function PatronDesk() {
                     display: 'block'
                   }}
                 />
-                <div style={{
-                  position: 'absolute',
-                  bottom: '16px',
-                  left: '16px',
-                  right: '16px',
-                  background: 'rgba(10, 28, 61, 0.95)',
-                  backdropFilter: 'blur(8px)',
-                  color: '#ffffff',
-                  padding: '8px 12px',
-                  borderRadius: '6px',
-                  border: '1px solid rgba(212, 175, 55, 0.5)',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-                  zIndex: 2
-                }}>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#fef08a' }}>
-                    {isHindi ? 'राजीव शर्मा, भा.पु.से. (IPS)' : 'Rajeev Sharma, IPS'}
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: '#e2e8f0', marginTop: '2px' }}>
-                    {isHindi ? 'महानिदेशक पुलिस, राजस्थान (DGP)' : 'Director General of Police, Rajasthan (DGP)'}
-                  </div>
-                </div>
               </div>
             </div>
 

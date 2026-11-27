@@ -119,7 +119,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
 
             {/* Top Event Super-Title */}
             <div style={{
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: 'var(--font-heading)',
               fontSize: 'clamp(0.78rem, 1.6vw, 1rem)',
               fontWeight: 800,
               color: '#fde68a',
@@ -136,7 +136,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
               translate="no"
               className="notranslate"
               style={{
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: 'var(--font-heading)',
                 fontSize: 'clamp(2.6rem, 6.8vw, 5rem)',
                 fontWeight: 900,
                 lineHeight: 1.04,
@@ -214,7 +214,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
                 justifyContent: 'center',
                 gap: '7px',
                 color: '#fde68a',
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: 'var(--font-heading)',
                 fontWeight: 800,
                 fontSize: '0.8rem',
                 letterSpacing: '0.18em',
@@ -440,7 +440,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
         }
 
         .hero-countdown-val {
-          font-family: 'Poppins', sans-serif;
+          font-family: var(--font-heading);
           font-variant-numeric: tabular-nums;
           font-size: clamp(1.95rem, 4vw, 2.9rem);
           font-weight: 900;
@@ -450,7 +450,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
         }
 
         .hero-countdown-lbl {
-          font-family: 'Poppins', sans-serif;
+          font-family: var(--font-heading);
           font-size: 0.73rem;
           color: #fde68a;
           font-weight: 800;
@@ -460,7 +460,7 @@ export function Hero({ onOpenRegister, onOpenFindPass }) {
         }
 
         .hero-countdown-sep {
-          font-family: 'Poppins', sans-serif;
+          font-family: var(--font-heading);
           font-size: 1.8rem;
           font-weight: 900;
           color: rgba(253, 230, 138, 0.85);
