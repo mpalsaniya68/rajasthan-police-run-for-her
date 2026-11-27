@@ -80,7 +80,7 @@ export function FAQSection({ onNavigate }) {
 
   return (
     <section id="faq-section" style={{ background: '#ffffff', padding: '60px 0', borderTop: '1px solid var(--border-subtle)' }}>
-      <div className="container" style={{ maxWidth: '960px' }}>
+      <div className="container">
         
         {/* Header - Only Middle Heading */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
@@ -170,9 +170,10 @@ export function FAQSection({ onNavigate }) {
                 {isOpen && (
                   <div style={{
                     padding: '0 22px 20px 60px',
-                    color: 'var(--text-body)',
-                    fontSize: '0.92rem',
-                    lineHeight: 1.7,
+                    color: '#000000',
+                    fontWeight: 500,
+                    fontSize: '0.94rem',
+                    lineHeight: 1.75,
                     whiteSpace: 'pre-line',
                     borderTop: '1px solid var(--border-subtle)',
                     paddingTop: '14px',
