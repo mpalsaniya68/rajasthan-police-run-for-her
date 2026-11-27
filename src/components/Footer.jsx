@@ -1,5 +1,4 @@
 import React from 'react';
-import { PoliceEmblem } from './Emblems';
 import { MapPin } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -28,25 +27,26 @@ export function Footer({ onNavigate }) {
         {/* Footer Main Links & Identity */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '30px', marginBottom: '36px' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-              <PoliceEmblem size={40} />
-              <div>
-                <div style={{ fontWeight: 800, color: '#ffffff', fontSize: '1.05rem', letterSpacing: '0.02em' }}>RAJASTHAN POLICE</div>
-                <div translate="no" className="notranslate" style={{ color: '#ff7597', fontWeight: 800, fontSize: '0.8rem' }}>RUN FOR HER 2027</div>
-              </div>
+            <div style={{ 
+              background: '#ffffff', 
+              padding: '6px 12px', 
+              borderRadius: '8px', 
+              display: 'inline-block', 
+              maxWidth: '200px', 
+              marginBottom: '14px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.18)'
+            }}>
+              <img 
+                src="/images/run_for_her_official_logo.jpg" 
+                alt="Rajasthan Police Marathon - Run For Her 2027" 
+                style={{ width: '100%', height: 'auto', display: 'block' }} 
+              />
             </div>
-            <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '12px' }}>
+            <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.6, margin: 0 }}>
               {isHindi 
                 ? 'राजस्थान पुलिस द्वारा महिला सुरक्षा, सम्मान, समानता एवं सशक्तीकरण को समर्पित राज्यव्यापी जनसहभागिता अभियान।'
                 : 'A statewide public participation movement dedicated to women safety, dignity, and empowerment by Rajasthan Police.'}
             </p>
-            <div style={{ background: '#ffffff', padding: '6px 12px', borderRadius: '8px', display: 'inline-block', maxWidth: '190px' }}>
-              <img 
-                src="/images/run_for_her_official_logo.jpg" 
-                alt="Rajasthan Police Marathon Official Logo" 
-                style={{ width: '100%', height: 'auto', display: 'block' }} 
-              />
-            </div>
           </div>
 
           <div>
